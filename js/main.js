@@ -34,6 +34,32 @@ function validateContent(content) {
       if (!validPlaceIds.has(slotPlaceId)) throw new Error(`NPC ${npc.id} 的日程指向未知地点 ${slotPlaceId}`);
     });
   });
+  const npcIds = new Set(content.npcs.map((npc) => npc.id));
+  content.events.forEach((event) => {
+    if (!event.story?.starts || !Array.isArray(event.story?.rumors) || !Array.isArray(event.story?.signs)) {
+      throw new Error(`社会事件 ${event.id} 缺少 starts、rumors 或 signs`);
+    }
+    const choiceIds = new Set((event.choices || []).map((choice) => choice.id));
+    if (!choiceIds.size) throw new Error(`社会事件 ${event.id} 没有可形成的结果`);
+    (event.story.rumors || []).forEach((rumor) => {
+      if (!npcIds.has(rumor.npcId)) throw new Error(`社会事件 ${event.id} 的消息指向未知 NPC ${rumor.npcId}`);
+      if (!rumor.text || !rumor.clue) throw new Error(`社会事件 ${event.id} 的 NPC 消息缺少文本或线索 ID`);
+    });
+    (event.story.signs || []).forEach((sign) => {
+      if (!validPlaceIds.has(sign.sceneId)) throw new Error(`社会事件 ${event.id} 的地图征兆指向未知场景 ${sign.sceneId}`);
+    });
+    (event.choices || []).forEach((choice) => {
+      if (!choice.social?.npcIds?.length || !choice.social?.playerLine) throw new Error(`社会事件 ${event.id}/${choice.id} 缺少谈话影响入口`);
+      choice.social.npcIds.forEach((npcId) => {
+        if (!npcIds.has(npcId)) throw new Error(`社会事件 ${event.id}/${choice.id} 指向未知 NPC ${npcId}`);
+      });
+      const aftermath = event.story.aftermath?.[choice.id];
+      if (!Array.isArray(aftermath) || !aftermath.length) throw new Error(`社会事件 ${event.id}/${choice.id} 缺少事后地图痕迹`);
+      aftermath.forEach((item) => {
+        if (!validPlaceIds.has(item.sceneId)) throw new Error(`社会事件 ${event.id}/${choice.id} 的事后痕迹指向未知场景 ${item.sceneId}`);
+      });
+    });
+  });
   return content;
 }
 

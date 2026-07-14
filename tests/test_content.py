@@ -42,6 +42,7 @@ STATE_PATH_ROOTS = {
     "npcs",
     "completedEvents",
     "pendingEvents",
+    "story",
     "flags",
     "journal",
     "weather",
@@ -52,6 +53,7 @@ STATE_PATH_ROOTS = {
     "statistics",
 }
 PATH_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_:-]*(?:\.[A-Za-z_][A-Za-z0-9_:-]*)*$")
+CLOCK_PATTERN = re.compile(r"^(\d{1,2}):(\d{2})$")
 
 
 class DuplicateKeyError(ValueError):
@@ -151,6 +153,18 @@ def region_reference(item):
     if not isinstance(item, dict):
         return None
     return item.get("regionId", item.get("region"))
+
+
+def clock_minutes(value):
+    if is_finite_number(value):
+        return int(value) if 0 <= value < 1440 else None
+    if not isinstance(value, str):
+        return None
+    match = CLOCK_PATTERN.fullmatch(value.strip())
+    if not match:
+        return None
+    hour, minute = map(int, match.groups())
+    return hour * 60 + minute if 0 <= hour < 24 and 0 <= minute < 60 else None
 
 
 def iter_coordinate_objects(value, path="world"):
@@ -454,6 +468,150 @@ class TestWorldContent(unittest.TestCase):
             with self.subTest(day=day):
                 self.assertGreaterEqual(events_by_day[day], 1, f"day {day} must have at least one event")
 
+    def test_events_are_diegetic_social_processes_with_valid_world_traces(self):
+        scenes = {scene["id"]: scene for scene in self.map_scenes()}
+        all_signal_ids = []
+
+        def assert_nonempty_text(value, path):
+            self.assertIsInstance(value, str, f"{path} must be a string")
+            self.assertTrue(value.strip(), f"{path} must not be empty")
+
+        def assert_requirements(requirements, path):
+            if requirements is None:
+                return
+            if isinstance(requirements, list):
+                rules = requirements
+            elif isinstance(requirements, dict) and "all" in requirements:
+                rules = requirements["all"]
+            else:
+                rules = [requirements]
+            self.assertIsInstance(rules, list, f"{path} must resolve to an array")
+            for rule_index, rule in enumerate(rules):
+                self.assert_condition_rule(rule, f"{path}[{rule_index}]")
+
+        def assert_world_trace(trace, path):
+            self.assertIsInstance(trace, dict, f"{path} must be an object")
+            for field in ("id", "sceneId", "name", "type", "description", "clue"):
+                assert_nonempty_text(trace.get(field), f"{path}.{field}")
+            scene = scenes.get(trace["sceneId"])
+            self.assertIsNotNone(scene, f"{path}.sceneId references unknown scene {trace['sceneId']}")
+            if scene is None:
+                return
+            for field in ("x", "y", "w", "h"):
+                self.assertTrue(is_finite_number(trace.get(field)), f"{path}.{field} must be finite")
+            self.assertGreater(trace["w"], 0, f"{path}.w must be positive")
+            self.assertGreater(trace["h"], 0, f"{path}.h must be positive")
+            self.assertGreaterEqual(trace["x"], 0, f"{path} starts left of its scene")
+            self.assertGreaterEqual(trace["y"], 0, f"{path} starts above its scene")
+            self.assertLessEqual(trace["x"] + trace["w"], scene["width"], f"{path} exceeds scene width")
+            self.assertLessEqual(trace["y"] + trace["h"], scene["height"], f"{path} exceeds scene height")
+            all_signal_ids.append(trace["id"])
+
+        for event_index, event in enumerate(self.world["events"]):
+            event_path = f"events[{event_index}]"
+            self.assertIs(event.get("playerSelectable"), False, f"{event_path} must not open a player choice")
+            story = event.get("story")
+            self.assertIsInstance(story, dict, f"{event_path}.story must be an object")
+            if not isinstance(story, dict):
+                continue
+
+            starts = story.get("starts")
+            self.assertIsInstance(starts, dict, f"{event_path}.story.starts must be an object")
+            start_day = starts.get("day") if isinstance(starts, dict) else None
+            start_minute = clock_minutes(starts.get("hour")) if isinstance(starts, dict) else None
+            resolution_minute = clock_minutes(event.get("hour", event.get("time")))
+            self.assertTrue(isinstance(start_day, int) and not isinstance(start_day, bool) and start_day >= 1, f"{event_path}.story.starts.day must be a positive integer")
+            self.assertIsNotNone(start_minute, f"{event_path}.story.starts.hour must be a valid clock")
+            self.assertIsNotNone(resolution_minute, f"{event_path}.hour must be a valid clock")
+            if isinstance(start_day, int) and start_minute is not None and resolution_minute is not None:
+                start_clock = (start_day - 1) * 1440 + start_minute
+                resolution_clock = (int(event["day"]) - 1) * 1440 + resolution_minute
+                self.assertLess(start_clock, resolution_clock, f"{event_path} needs a missable clue window before resolution")
+
+            rumors = story.get("rumors")
+            self.assertIsInstance(rumors, list, f"{event_path}.story.rumors must be an array")
+            self.assertGreaterEqual(len(rumors or []), 2, f"{event_path} needs at least two NPC information routes")
+            self.assert_unique_nonempty_ids(rumors or [], f"{event_path}.story.rumors")
+            for rumor_index, rumor in enumerate(rumors or []):
+                rumor_path = f"{event_path}.story.rumors[{rumor_index}]"
+                self.assertIn(rumor.get("npcId"), self.npc_ids, f"{rumor_path}.npcId is unknown")
+                self.assertTrue(is_finite_number(rumor.get("minRelationship")), f"{rumor_path}.minRelationship must be finite")
+                for field in ("clue", "text", "memory"):
+                    assert_nonempty_text(rumor.get(field), f"{rumor_path}.{field}")
+                assert_requirements(rumor.get("requirements", rumor.get("requires")), f"{rumor_path}.requirements")
+                all_signal_ids.append(rumor["id"])
+
+            signs = story.get("signs")
+            self.assertIsInstance(signs, list, f"{event_path}.story.signs must be an array")
+            self.assertTrue(signs, f"{event_path} needs a visible map change before resolution")
+            self.assert_unique_nonempty_ids(signs or [], f"{event_path}.story.signs")
+            for sign_index, sign in enumerate(signs or []):
+                assert_world_trace(sign, f"{event_path}.story.signs[{sign_index}]")
+
+            choices = event.get("choices", [])
+            choice_ids = {choice["id"] for choice in choices}
+            aftermath = story.get("aftermath")
+            self.assertIsInstance(aftermath, dict, f"{event_path}.story.aftermath must be an object")
+            self.assertEqual(set(aftermath or {}), choice_ids, f"{event_path} needs a distinct aftermath for every outcome")
+            for choice in choices:
+                choice_path = f"{event_path}.choices[{choice['id']}]"
+                social = choice.get("social")
+                self.assertIsInstance(social, dict, f"{choice_path}.social must be an object")
+                npc_ids = social.get("npcIds", []) if isinstance(social, dict) else []
+                self.assertIsInstance(npc_ids, list, f"{choice_path}.social.npcIds must be an array")
+                self.assertTrue(npc_ids, f"{choice_path} needs at least one persuadable participant")
+                self.assertFalse(set(npc_ids) - self.npc_ids, f"{choice_path} references unknown NPCs")
+                self.assertTrue(is_finite_number(social.get("minRelationship")), f"{choice_path}.social.minRelationship must be finite")
+                for field in ("topic", "playerLine", "acceptText"):
+                    assert_nonempty_text(social.get(field), f"{choice_path}.social.{field}")
+                keywords = social.get("keywords")
+                self.assertIsInstance(keywords, list, f"{choice_path}.social.keywords must be an array")
+                self.assertTrue(keywords and all(isinstance(word, str) and word.strip() for word in keywords), f"{choice_path}.social.keywords must contain useful phrases")
+                assert_requirements(social.get("requirements", social.get("requires")), f"{choice_path}.social.requirements")
+
+                traces = (aftermath or {}).get(choice["id"], [])
+                self.assertIsInstance(traces, list, f"{event_path}.story.aftermath.{choice['id']} must be an array")
+                self.assertTrue(traces, f"{event_path}.story.aftermath.{choice['id']} must leave a map trace")
+                for trace_index, trace in enumerate(traces):
+                    assert_world_trace(trace, f"{event_path}.story.aftermath.{choice['id']}[{trace_index}]")
+
+        self.assertEqual(len(all_signal_ids), len(set(all_signal_ids)), "story rumor/sign/aftermath IDs must be globally unique")
+
+    def test_exactly_five_advanced_outcomes_require_player_evidence(self):
+        landmark_flags = {
+            landmark.get("flag")
+            for scene in self.map_scenes()
+            for landmark in scene.get("landmarks", [])
+            if landmark.get("flag")
+        }
+        scoped_outcomes = []
+        for event in self.world["events"]:
+            for choice in event.get("choices", []):
+                scope = choice.get("requirementsScope")
+                if scope is None:
+                    continue
+                self.assertEqual(scope, "player-evidence", f"{event['id']}:{choice['id']} has an unsupported requirementsScope")
+                requirements = choice.get("requirements", choice.get("requires"))
+                self.assertIsInstance(requirements, list, f"{event['id']}:{choice['id']} needs explicit player evidence")
+                self.assertTrue(requirements, f"{event['id']}:{choice['id']} has an empty evidence gate")
+                for rule_index, rule in enumerate(requirements):
+                    self.assert_condition_rule(rule, f"{event['id']}:{choice['id']}.requirements[{rule_index}]")
+                    path = rule.get("path", "")
+                    self.assertTrue(path.startswith("flags."), f"{event['id']}:{choice['id']} evidence must be a discovered flag")
+                    self.assertIn(path.removeprefix("flags."), landmark_flags, f"{event['id']}:{choice['id']} evidence is not obtainable from a landmark")
+                scoped_outcomes.append((event["id"], choice["id"]))
+
+        self.assertEqual(
+            scoped_outcomes,
+            [
+                ("broken-canal", "hidden-channel"),
+                ("ledger-banquet", "send-to-archive"),
+                ("avalanche", "renew-ice-seal"),
+                ("ruins-awaken", "complete-key"),
+                ("five-lands-council", "renew-first-oath"),
+            ],
+        )
+
     def test_choice_effects_use_only_supported_state_sections(self):
         for event_index, event in enumerate(self.world["events"]):
             for choice_index, choice in enumerate(event.get("choices", [])):
@@ -550,6 +708,40 @@ class TestWorldContent(unittest.TestCase):
                     3,
                     f"{region_id} ambient props should not be one repeated object",
                 )
+
+    def test_portal_access_rules_are_diegetic_and_reference_valid_state(self):
+        gated_portals = []
+        palace_door = None
+        for scene in self.map_scenes():
+            for portal_index, portal in enumerate(scene.get("portals", [])):
+                access = portal.get("access")
+                if access is None:
+                    continue
+                path = f"{scene['id']}.portals[{portal_index}].access"
+                gated_portals.append(portal)
+                self.assertIsInstance(access, dict, f"{path} must be an object")
+                self.assertTrue(access.get("all") or access.get("any"), f"{path} needs at least one access rule")
+                self.assertIsInstance(access.get("denied"), str, f"{path}.denied must be a string")
+                self.assertTrue(access.get("denied", "").strip(), f"{path}.denied must explain the refusal in-world")
+                self.assertNotRegex(access.get("denied", ""), r"(?:关系|声望)\s*[><=]+\s*\d+", f"{path}.denied must not expose numeric game rules")
+                for section in ("all", "any"):
+                    rules = access.get(section, [])
+                    self.assertIsInstance(rules, list, f"{path}.{section} must be an array")
+                    for rule_index, rule in enumerate(rules):
+                        self.assert_condition_rule(rule, f"{path}.{section}[{rule_index}]")
+                if scene["id"] == "capital" and portal.get("id") == "palace-door":
+                    palace_door = portal
+
+        self.assertTrue(gated_portals, "at least one important location must have social access control")
+        self.assertIsNotNone(palace_door, "the royal palace must be entered through its guarded door")
+        if palace_door:
+            target = palace_door.get("target", {})
+            self.assertEqual(target.get("placeId"), "capital-palace")
+            access_paths = {rule.get("path") for rule in palace_door["access"].get("any", [])}
+            self.assertTrue(
+                any(path and (path.startswith("npcs.") or path.startswith("flags.")) for path in access_paths),
+                "palace access should come from a relationship or an in-world invitation",
+            )
 
     def test_npc_schedule_coordinates_fit_their_places(self):
         scenes = {scene["id"]: scene for scene in self.map_scenes()}

@@ -1,5 +1,5 @@
 import { escapeHtml, formatStamp, formatTime } from "./utils.js";
-import { describeEffects, FACTION_META, METRIC_META, requirementsMet } from "./simulation.js";
+import { FACTION_META, METRIC_META } from "./simulation.js";
 
 const MAP_POSITIONS = {
   capital: { left: "41%", top: "35%" },
@@ -15,7 +15,6 @@ export class GameUI {
     this.callbacks = callbacks;
     this.state = null;
     this.currentNpc = null;
-    this.activeEvent = null;
     this.startMode = "player";
     this.lastLayoutMode = null;
     this.cachedJournalHead = null;
@@ -36,7 +35,6 @@ export class GameUI {
       "conversation-history", "conversation-actions", "conversation-form", "conversation-input", "conversation-provider",
       "observer-modal", "observer-portrait", "observer-role", "observer-name", "observer-status", "observer-goal",
       "observer-reflection", "observer-memories", "observer-knowledge",
-      "event-modal", "event-kicker", "event-title", "event-scene", "event-description", "event-context", "event-choices",
       "ending-modal", "ending-glyph", "ending-title", "ending-subtitle", "ending-epilogue", "ending-summary",
       "new-timeline-button", "keep-wandering-button", "chronicles-modal", "ending-gallery", "journal-modal", "help-modal",
       "interaction-hint", "interaction-text", "observer-badge", "region-banner", "region-name", "region-subtitle", "fade-layer",
@@ -222,8 +220,8 @@ export class GameUI {
     this.elements.wait_button.textContent = observer ? "推进 1 小时" : "等待 1 小时";
     this.elements.help_title.textContent = observer ? "上帝观察手册" : "旅行者手册";
     this.elements.help_description.textContent = observer
-      ? "世界中没有玩家。用 WASD 或方向键平移大地图镜头，按 M 打开五地总览并切换观察地区；人物志可查看居民所在的具体地点。第 2–8 日事件只由他们决定，你无法介入。"
-      : "用 WASD 或方向键移动；靠近门、城门、马车、缆车、商队或山道后按 E 进入或乘坐。按 M 只查看五地路线，不能从地图直接传送。居民在你不在场时也会继续生活。";
+      ? "世界中没有玩家。用 WASD 或方向键平移镜头，按 M 切换五地；公告、封路和灾后痕迹会随社会进程改变，人物志可查看居民如何形成自己的结果。"
+      : "用 WASD 或方向键移动，靠近人物、告示、门或交通点后按 E。公共事件不会弹出选择题：留意地图变化，与知情者建立信任，再把主张交给真正参与商议的人。错过消息时，世界仍会继续。";
     this.elements.new_timeline_button.textContent = observer ? "观察另一条世界线" : "踏入另一条世界线";
     this.elements.keep_wandering_button.textContent = observer ? "停在结局前夜继续观察" : "留在结局前夜";
     if (observer) this.elements.interaction_hint.classList.add("hidden");
@@ -479,7 +477,7 @@ export class GameUI {
     this.elements.interaction_hint.dataset.kind = interaction.kind || "interaction";
   }
 
-  openConversation(npc, npcState, greeting) {
+  openConversation(npc, npcState, greeting, storyTopics = []) {
     this.currentNpc = { profile: npc, state: npcState };
     this.elements.conversation_portrait.style.setProperty("--npc-color", npc.color || "#8b708e");
     this.elements.conversation_portrait.style.setProperty("--hair-color", npc.hairColor || "#4d3632");
@@ -489,11 +487,23 @@ export class GameUI {
     this.elements.conversation_history.innerHTML = "";
     this.addSpeech(greeting || npc.intro || `“你是刚来的旅行者吧？我是${npc.name}。”`, "npc");
     const intents = [
-      ["greet", "聊聊近况"], ["help", "我能帮什么？"], ["rumor", "询问传闻"], ["secret", "追问秘密"], ["challenge", "质疑其选择"],
+      ["greet", "聊聊近况"], ["help", "我能帮什么？"], ["rumor", "询问传闻"], ["secret", "追问秘密"], ["challenge", "追问他的理由"],
     ];
-    this.elements.conversation_actions.innerHTML = intents.map(([id, label]) => `<button type="button" data-intent="${id}">${label}</button>`).join("");
+    const topics = Array.isArray(storyTopics)
+      ? storyTopics.filter((topic) => topic?.label && topic?.message)
+      : [];
+    this.elements.conversation_actions.innerHTML = [
+      ...intents.map(([id, label]) => `<button type="button" data-intent="${id}">${label}</button>`),
+      ...topics.map((topic, index) => `<button type="button" data-story-topic="${index}">${escapeHtml(topic.label)}</button>`),
+    ].join("");
     this.elements.conversation_actions.querySelectorAll("[data-intent]").forEach((button) => {
       button.addEventListener("click", () => this.callbacks.onTalk?.(button.textContent, button.dataset.intent));
+    });
+    this.elements.conversation_actions.querySelectorAll("[data-story-topic]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const topic = topics[Number(button.dataset.storyTopic)];
+        if (topic) this.callbacks.onTalk?.(topic.message, topic.intent || "custom");
+      });
     });
     this.elements.conversation_provider.textContent = "他会根据性格与最近发生的事回应。";
     this.openModal("conversation-modal");
@@ -510,7 +520,9 @@ export class GameUI {
     this.elements.observer_status.textContent = `${current ? "◉ 当前镜头 · " : "◎ 其他地点 · "}${location.title} · ${npcState.activity} · ${npcState.mood}`;
     this.elements.observer_goal.textContent = npc.goal || "平安度过坠星之前的日子。";
     this.elements.observer_reflection.textContent = npcState.reflection || "尚未形成明确反思。";
-    const memories = npcState.memories || [];
+    const memories = [...(npcState.coreMemories || []), ...(npcState.memories || [])]
+      .filter((memory, index, list) => list.findIndex((item) => (item.text || item) === (memory.text || memory)) === index)
+      .slice(0, 16);
     this.elements.observer_memories.innerHTML = memories.length
       ? memories.map((memory) => `<article class="observer-memory"><time>${escapeHtml(formatStamp(memory.day || this.state.day, memory.minute || 0))} · ${escapeHtml(memory.type || "记忆")}</time><p>${escapeHtml(memory.text || memory)}</p></article>`).join("")
       : '<div class="nearby-card empty">还没有形成近期记忆。</div>';
@@ -544,50 +556,6 @@ export class GameUI {
     this.elements.conversation_provider.textContent = remote ? `深度思考已启用${detail ? ` · ${detail}` : ""}` : `本地心智${detail ? ` · ${detail}` : ""}`;
   }
 
-  showEvent(event, state, options = {}) {
-    this.activeEvent = event;
-    const observer = options.observer === true || state.mode === "observer";
-    const countdown = Number(options.countdown ?? (observer ? 5 : 30));
-    this.elements.event_kicker.textContent = `第 ${event.day} 日 · ${this.content.regions.find((region) => region.id === (event.regionId || event.region))?.name || "世界事件"}`;
-    this.elements.event_title.textContent = event.title;
-    this.elements.event_description.textContent = event.description;
-    const context = event.context || (observer
-      ? "世界中没有旅行者，在场居民会依据自己的目标与眼前局势作出决定。"
-      : "你的选择会成为所有在场者的共同记忆，并改变世界指标。");
-    this.elements.event_context.dataset.baseText = context;
-    this.elements.event_context.dataset.observer = observer ? "true" : "false";
-    this.elements.event_context.textContent = observer
-      ? `${context} 大家将在 ${Math.max(0, Math.ceil(countdown))} 秒后作出决定。`
-      : `${context} 若你保持沉默，大家将在 ${Math.max(0, Math.ceil(countdown))} 秒后自行决定。`;
-    this.elements.event_scene.style.setProperty("--event-a", event.colors?.[0] || event.color || "#60465f");
-    this.elements.event_scene.style.setProperty("--event-b", event.colors?.[1] || "#c08359");
-    this.elements.event_choices.innerHTML = "";
-    (event.choices || []).forEach((choice, index) => {
-      const status = requirementsMet(choice, state);
-      const button = document.createElement("button");
-      button.className = `event-choice${observer ? " observer-candidate" : ""}`;
-      button.disabled = observer || !status.ok;
-      const effects = describeEffects(choice.effects);
-      button.innerHTML = `<span class="choice-key">${index + 1}</span><span><strong>${escapeHtml(choice.label)}</strong><small>${escapeHtml(choice.description || choice.outcome || "")}${effects ? `<br>${escapeHtml(effects)}` : ""}${status.ok ? "" : `<br><span class="locked">🔒 ${escapeHtml(status.reason)}</span>`}</small></span>`;
-      if (!observer) button.addEventListener("click", () => this.callbacks.onEventChoice?.(event, choice));
-      this.elements.event_choices.appendChild(button);
-    });
-    this.openModal("event-modal");
-  }
-
-  updateEventCountdown(seconds) {
-    const base = this.elements.event_context.dataset.baseText || "世界正在等待回应。";
-    const remaining = Math.max(0, Math.ceil(seconds));
-    this.elements.event_context.textContent = this.elements.event_context.dataset.observer === "true"
-      ? `${base} 大家将在 ${remaining} 秒后作出决定。`
-      : `${base} 若你保持沉默，大家将在 ${remaining} 秒后自行决定。`;
-  }
-
-  closeEvent() {
-    this.activeEvent = null;
-    this.closeModal("event-modal", true);
-  }
-
   showEnding(ending, state) {
     this.elements.ending_glyph.textContent = ending.glyph || "✦";
     this.elements.ending_title.textContent = ending.title;
@@ -596,13 +564,13 @@ export class GameUI {
     this.elements.ending_epilogue.innerHTML = escapeHtml(epilogue || "").replaceAll("\n", "<br>");
     const topMetrics = Object.entries(state.metrics).sort((a, b) => b[1] - a[1]).slice(0, 3);
     const observerSummary = [
-      `<span>居民共同抉择 ${state.statistics.observedChoices || 0} 次</span>`,
+      `<span>社会进程结算 ${state.statistics.observedChoices || 0} 次</span>`,
       `<span>居民日常行动 ${state.statistics.npcActions || 0} 次</span>`,
       `<span>观察切换 ${state.statistics.observerSwitches || 0} 次</span>`,
     ];
     const playerSummary = [
       `<span>交谈 ${state.statistics.conversations} 次</span>`,
-      `<span>抉择 ${state.statistics.choices} 次</span>`,
+      `<span>影响 ${state.statistics.influences || 0} 次</span>`,
     ];
     this.elements.ending_summary.innerHTML = [
       ...topMetrics.map(([key, value]) => `<span>${METRIC_META[key]?.label || key} ${Math.round(value)}</span>`),
@@ -660,7 +628,6 @@ export class GameUI {
   }
 
   closeModal(id, force = false) {
-    if (id === "event-modal" && !force) return;
     document.getElementById(id)?.classList.add("hidden");
     const anyOpen = [...document.querySelectorAll(".modal-layer")].some((modal) => !modal.classList.contains("hidden"));
     this.callbacks.onModalChange?.(anyOpen, id);
@@ -668,7 +635,7 @@ export class GameUI {
 
   closeAllModals(force = false) {
     document.querySelectorAll(".modal-layer").forEach((modal) => {
-      if (force || modal.id !== "event-modal") modal.classList.add("hidden");
+      modal.classList.add("hidden");
     });
     this.callbacks.onModalChange?.(false, "all");
   }

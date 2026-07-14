@@ -60,7 +60,18 @@
         { "id": "capital_tree_se", "name": "运河榆树", "type": "tree", "x": 1050, "y": 835, "w": 30, "h": 47, "interactive": false, "layer": "object" }
       ],
       "portals": [
-        { "id": "palace-door", "kind": "door", "label": "推开晨星宫大门", "x": 742, "y": 268, "w": 52, "h": 40, "target": { "regionId": "capital", "placeId": "capital-palace", "x": 576, "y": 646, "facing": "up" } },
+        {
+          "id": "palace-door", "kind": "door", "label": "向宫卫请求进入晨星宫", "x": 742, "y": 268, "w": 52, "h": 40,
+          "access": {
+            "any": [
+              { "path": "npcs.aveline.relationship", "op": ">=", "value": 30 },
+              { "path": "npcs.taren.relationship", "op": ">=", "value": 25 },
+              { "path": "flags.palace_invitation", "op": "==", "value": true }
+            ],
+            "denied": "两名宫卫把长戟交叉在门前：没有内廷的口信，也没有熟识的巡卫为你作保。"
+          },
+          "target": { "regionId": "capital", "placeId": "capital-palace", "x": 576, "y": 646, "facing": "up" }
+        },
         { "id": "archive-door", "kind": "door", "label": "进入旧档馆", "x": 226, "y": 322, "w": 38, "h": 38, "target": { "regionId": "capital", "placeId": "capital-archive", "x": 480, "y": 548, "facing": "up" } },
         { "id": "barracks-door", "kind": "door", "label": "进入巡卫所", "x": 1269, "y": 322, "w": 38, "h": 38, "target": { "regionId": "capital", "placeId": "capital-barracks", "x": 480, "y": 548, "facing": "up" } },
         { "id": "south-gate", "kind": "road", "label": "穿过南门，步行前往风穗农田", "minutes": 20, "x": 716, "y": 900, "w": 104, "h": 44, "target": { "regionId": "farm", "placeId": "farm", "x": 768, "y": 132, "facing": "down" } },

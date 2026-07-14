@@ -1616,72 +1616,7 @@ body.sidebar-collapsed .sidebar { display: none; }
   line-height: 1.4;
 }
 
-/* Events, journals and endings ------------------------------------------ */
-
-.event-modal { width: min(700px, calc(100vw - 2rem)); }
-
-.event-scene {
-  height: 112px;
-  margin: 1rem 0;
-  border: 4px solid var(--wood-deep);
-  border-radius: 5px;
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 5px, transparent 5px 10px),
-    linear-gradient(135deg, var(--event-a, #6d8053), var(--event-b, #c28b55));
-  box-shadow: inset 0 -18px 0 rgba(68, 47, 29, .14), inset 0 0 0 3px rgba(255,233,183,.23);
-}
-
-.event-description { color: #5f4733 !important; font-size: .82rem; }
-
-.event-context {
-  padding: .6rem .75rem;
-  color: #705941;
-  border: 1px solid #c99b62;
-  border-left: 4px solid var(--sun);
-  border-radius: 2px 5px 5px 2px;
-  background: #f1d7a3;
-  font-size: .66rem;
-  line-height: 1.55;
-}
-
-.event-choices { display: grid; gap: .65rem; margin-top: 1rem; }
-
-.event-choice {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: .7rem;
-  width: 100%;
-  padding: .75rem;
-  color: inherit;
-  text-align: left;
-  border: 3px solid #9d6539;
-  border-radius: 5px;
-  background: #f2d59f;
-  box-shadow: inset 0 -3px 0 rgba(138, 83, 43, .12), 3px 3px 0 rgba(72, 44, 27, .16);
-  cursor: pointer;
-}
-
-.event-choice:hover:not(:disabled) { border-color: var(--leaf); background: #ffe7b3; }
-.event-choice.observer-candidate:disabled { opacity: 1; filter: none; cursor: default; }
-.event-choice.observer-candidate:disabled .choice-key { color: #f4efd5; background: var(--river-dark); }
-
-.event-choice .choice-key {
-  display: grid;
-  width: 25px;
-  height: 25px;
-  place-items: center;
-  color: #563620;
-  border: 2px solid #8a552e;
-  border-radius: 3px;
-  background: var(--sun-light);
-  font-weight: 900;
-}
-
-.event-choice strong,
-.event-choice small { display: block; }
-.event-choice strong { color: #593923; }
-.event-choice small { margin-top: .25rem; color: #80694f; font-size: .62rem; line-height: 1.45; }
-.event-choice .locked { color: #a5483b; }
+/* Journals and endings -------------------------------------------------- */
 
 .journal-full {
   display: grid;

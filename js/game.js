@@ -2,13 +2,21 @@ import { AudioManager } from "./audio.js";
 import { WorldRenderer, movePlayer, nearestLandmark, nearestNpc, nearestPortal, resolveScene, updateNpcMovement } from "./renderer.js";
 import {
   addJournal,
+  advanceStoryEvents,
   advanceWorld,
-  applyEventChoice,
   createInitialState,
+  discoverStoryClue,
   getNpcActionOptions,
+  getNpcStoryCandidates,
+  getNpcStoryContext,
+  getNpcStoryProposal,
+  getStoryConversationTopics,
+  normalizeStoryState,
   observeRegion,
+  recordNpcStoryInfluenceByChoice,
   remember,
   requirementsMet,
+  revealNpcStoryKnowledge,
   resolveEnding,
   shouldResolveEnding,
   syncNpcSchedules,
@@ -52,14 +60,13 @@ export class Game {
     this.meta = readStorage(META_KEY, { endings: [], sound: true, llm: false, thoughts: false });
     this.keys = new Set();
     this.modalOpen = false;
-    this.eventOpen = false;
-    this.eventAutoSeconds = 0;
     this.lastFrame = performance.now();
     this.uiAccumulator = 0;
     this.timeRemainder = 0;
     this.stepTimer = 0;
     this.autosaveTimer = 0;
     this.activeConversation = null;
+    this.conversationSession = 0;
     this.planningPromise = null;
     this.nearby = null;
     this.nearbyLandmark = null;
@@ -84,7 +91,6 @@ export class Game {
       onTravel: (regionId) => this.travel(regionId),
       onWait: () => this.waitOneHour(),
       onTalk: (message, intent) => this.talk(message, intent),
-      onEventChoice: (event, choice) => this.chooseEvent(event, choice),
       onInspectNpc: (npcId) => this.inspectNpc(npcId),
       onToggleLlm: (enabled) => this.toggleLlm(enabled),
       onToggleThoughts: (enabled) => this.toggleThoughts(enabled),
@@ -141,8 +147,6 @@ export class Game {
       if (this.state.endingId && !this.state.endingShown) {
         const ending = this.content.endings.find((item) => item.id === this.state.endingId);
         if (ending) this.ui.showEnding(ending, this.state);
-      } else {
-        this.processPendingEvents();
       }
       this.maybeRefreshStrategicPlans();
     } catch (error) {
@@ -178,20 +182,50 @@ export class Game {
     merged.flags.playerArrived = mode !== "observer";
     merged.flags.observerWorld = mode === "observer";
     merged.statistics = { ...fresh.statistics, ...(saved.statistics || {}) };
+    merged.story = { ...fresh.story, ...(saved.story || {}) };
     merged.npcs = { ...fresh.npcs };
     Object.entries(saved.npcs || {}).forEach(([id, npcState]) => {
-      if (merged.npcs[id]) merged.npcs[id] = { ...merged.npcs[id], ...npcState, memories: npcState.memories || merged.npcs[id].memories };
+      if (merged.npcs[id]) {
+        const memories = npcState.memories || merged.npcs[id].memories;
+        const legacyCore = memories.filter((memory) => Number(memory?.importance || 0) >= 3);
+        merged.npcs[id] = {
+          ...merged.npcs[id],
+          ...npcState,
+          memories,
+          coreMemories: npcState.coreMemories || legacyCore || merged.npcs[id].coreMemories || [],
+        };
+      }
     });
-    merged.pendingEvents = saved.pendingEvents || [];
+    merged.pendingEvents = [];
     merged.completedEvents = saved.completedEvents || [];
     merged.journal = saved.journal || fresh.journal;
+    merged.spokenNpcIds = saved.spokenNpcIds || [];
     merged.visitedRegions = saved.visitedRegions || [saved.regionId || fresh.regionId];
     merged.visitedPlaces = saved.visitedPlaces || [...merged.visitedRegions];
     Object.values(merged.npcs).forEach((npcState) => {
       npcState.placeId ||= npcState.regionId;
     });
     syncNpcSchedules(merged, this.content);
-    merged.version = 2;
+    normalizeStoryState(merged, this.content);
+    if (Number(saved.version || 2) < 3) {
+      const completed = new Set(saved.completedEvents || []);
+      const pending = new Set(saved.pendingEvents || []);
+      (this.content.events || []).forEach((event) => {
+        const story = merged.story[event.id];
+        if (completed.has(event.id) || saved.flags?.[`event:${event.id}`]) {
+          story.processKnown = true;
+          story.outcomeKnown = true;
+          story.discovered = true;
+        } else if (pending.has(event.id)) {
+          story.processKnown = true;
+          story.discovered = true;
+        }
+      });
+    }
+    // Old saves may have stopped on a pending choice screen. The social world
+    // now settles every already-due process immediately and never reopens it.
+    advanceStoryEvents(merged, this.content);
+    merged.version = 3;
     merged.contentVersion = this.content.game?.contentVersion || 2;
     return merged;
   }
@@ -207,8 +241,8 @@ export class Game {
       if (this.state && ["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) this.keys.add(key);
       if (event.repeat) return;
       if (key === "e" && !this.modalOpen && !this.transitionLock && this.state?.mode !== "observer") this.interact();
-      else if (key === "m" && this.state && !this.modalOpen && !this.eventOpen && !this.transitionLock) this.ui.showMap();
-      else if (key === "j" && this.state && !this.modalOpen && !this.eventOpen && !this.transitionLock) this.ui.showJournal();
+      else if (key === "m" && this.state && !this.modalOpen && !this.transitionLock) this.ui.showMap();
+      else if (key === "j" && this.state && !this.modalOpen && !this.transitionLock) this.ui.showJournal();
       else if (key === "b" && this.state && !this.modalOpen && !this.transitionLock) this.ui.toggleSidebar();
       else if (key === "escape") this.ui.closeTopModal();
       else if (["1", "2", "3", "4", "5"].includes(key) && this.state && !this.modalOpen && !this.transitionLock) {
@@ -258,20 +292,13 @@ export class Game {
       if (this.stepTimer <= 0) { this.audio.play("step"); this.stepTimer = .34; }
     }
     this.renderer.setMoving(moving && !observer);
-    if (!this.modalOpen && !this.eventOpen && !this.state.endingId && this.state.speed > 0) {
+    if (!this.modalOpen && !this.state.endingId && this.state.speed > 0) {
       updateNpcMovement(this.state, this.content, delta * Math.min(4, Math.max(1, this.state.speed)));
     }
 
-    if (this.eventOpen && this.eventAutoSeconds > 0) {
-      const previousSecond = Math.ceil(this.eventAutoSeconds);
-      this.eventAutoSeconds -= delta;
-      if (Math.ceil(this.eventAutoSeconds) !== previousSecond) this.ui.updateEventCountdown(this.eventAutoSeconds);
-      if (this.eventAutoSeconds <= 0) this.resolveEventAutonomously();
-    }
-
-    const timeBlocked = this.eventOpen || this.state.endingId || (!observer && this.modalOpen);
-    if (!timeBlocked && this.state.speed > 0) {
-      this.timeRemainder += delta * MINUTES_PER_SECOND * this.state.speed;
+    const modalTimeScale = observer || !this.modalOpen ? 1 : this.activeConversation ? .15 : 0;
+    if (!this.state.endingId && modalTimeScale > 0 && this.state.speed > 0) {
+      this.timeRemainder += delta * MINUTES_PER_SECOND * this.state.speed * modalTimeScale;
       if (this.timeRemainder >= 1) {
         const minutes = Math.floor(this.timeRemainder);
         this.timeRemainder -= minutes;
@@ -299,7 +326,7 @@ export class Game {
       return null;
     }
     this.nearby = nearestNpc(this.state, this.content);
-    this.nearbyLandmark = nearestLandmark(this.state, scene);
+    this.nearbyLandmark = nearestLandmark(this.state, scene, 48, this.content);
     this.nearbyPortal = nearestPortal(this.state, scene);
     const candidates = [];
     if (this.nearby) candidates.push({ kind: "npc", prompt: `与 ${this.nearby.profile.name} 交谈`, distance: this.nearby.distance, ...this.nearby });
@@ -311,76 +338,17 @@ export class Game {
   }
 
   advance(minutes) {
-    const { logs, events } = advanceWorld(this.state, this.content, minutes);
+    const { logs, storyChanges } = advanceWorld(this.state, this.content, minutes);
     logs.forEach((log) => {
+      const playerCanWitness = this.state.mode === "observer"
+        || (log.regionId === this.state.regionId && (log.placeId || log.regionId) === (this.state.placeId || this.state.regionId));
+      if (!playerCanWitness) return;
       addJournal(this.state, log.text, "npc", { npcId: log.npcId });
       if (this.meta.thoughts && log.reason) addJournal(this.state, `思考：${log.reason}`, "thought", { npcId: log.npcId });
     });
     this.maybeRefreshStrategicPlans();
-    if (events.length) {
-      this.processPendingEvents();
-      this.save(false);
-    } else if (shouldResolveEnding(this.state, this.content)) {
-      this.finishTimeline();
-    }
-  }
-
-  processPendingEvents() {
-    if (!this.state?.pendingEvents.length || this.eventOpen) return;
-    const event = this.content.events.find((item) => item.id === this.state.pendingEvents[0]);
-    if (!event) {
-      this.state.pendingEvents.shift();
-      this.processPendingEvents();
-      return;
-    }
-    this.eventOpen = true;
-    const observer = this.state.mode === "observer";
-    this.eventAutoSeconds = observer ? 5 : 30;
-    this.audio.play("event");
-    this.ui.showEvent(event, this.state, { observer, countdown: this.eventAutoSeconds });
-  }
-
-  chooseEvent(event, choice, options = {}) {
-    if (this.state?.mode === "observer" && options.actor !== "world") return;
-    if (!this.eventOpen || !this.state.pendingEvents.includes(event.id)) return;
-    applyEventChoice(this.state, event, choice, this.content, options);
-    this.audio.play("choice");
-    this.ui.closeEvent();
-    this.eventOpen = false;
-    this.ui.update(this.state, this.nearby);
-    const autonomousText = this.state.mode === "observer"
-      ? `在场居民共同选择了「${choice.label}」。`
-      : `你保持沉默；在场居民选择了「${choice.label}」。`;
-    this.ui.toast(options.actor === "world" ? autonomousText : (choice.outcome || "你的选择已写入所有在场者的记忆。"), "success");
-    this.save(false);
-    window.setTimeout(() => {
-      if (this.state.pendingEvents.length) this.processPendingEvents();
-      else if (shouldResolveEnding(this.state, this.content)) this.finishTimeline();
-    }, 450);
-  }
-
-  resolveEventAutonomously() {
-    if (!this.eventOpen || !this.state?.pendingEvents.length) return;
-    const event = this.content.events.find((item) => item.id === this.state.pendingEvents[0]);
-    if (!event) return;
-    const available = (event.choices || []).filter((choice) => requirementsMet(choice, this.state).ok);
-    if (!available.length) {
-      this.chooseEvent(event, {
-        id: "no-consensus",
-        label: "维持现状",
-        outcome: "在场者没有形成新的共识，世界带着原有矛盾继续前进。",
-        effects: {},
-      }, { actor: "world" });
-      return;
-    }
-    const lowestMetric = Object.entries(this.state.metrics).sort((a, b) => a[1] - b[1])[0]?.[0];
-    const scored = available.map((choice, index) => {
-      const repair = Number(choice.effects?.metrics?.[lowestMetric] || 0) * 2;
-      const faction = Math.max(0, ...Object.entries(choice.effects?.factions || {}).map(([key, delta]) => (this.state.factions[key] || 0) / 100 * Number(delta)));
-      const variation = ((this.state.seed + event.day * 17 + index * 31 + this.state.completedEvents.length * 7) % 19) / 10;
-      return { choice, score: repair + faction + variation };
-    }).sort((a, b) => b.score - a.score);
-    this.chooseEvent(event, scored[0].choice, { actor: "world" });
+    if (storyChanges.length) this.save(false);
+    if (shouldResolveEnding(this.state, this.content)) this.finishTimeline();
   }
 
   finishTimeline() {
@@ -417,13 +385,20 @@ export class Game {
   openConversation(npc, npcState) {
     if (this.state?.mode === "observer") return;
     npcState.knownToPlayer = true;
-    npcState.conversations += 1;
-    this.state.statistics.conversations += 1;
-    this.activeConversation = { npc, npcState };
+    const session = ++this.conversationSession;
+    this.activeConversation = { npc, npcState, session };
+    const disclosure = revealNpcStoryKnowledge(this.state, this.content, npc.id);
+    const storyTopics = getStoryConversationTopics(this.state, this.content, npc.id);
     const greetings = npc.dialogue?.greetings || npc.dialogue?.greeting || npc.greetings || [];
     const greetingList = Array.isArray(greetings) ? greetings : [greetings];
     const greeting = pick(greetingList, () => ((npcState.conversations * 37) % 100) / 100) || npc.intro || `我是${npc.name}。你似乎带着不属于这里的时间。`;
-    this.ui.openConversation(npc, npcState, greeting);
+    this.ui.openConversation(npc, npcState, greeting, storyTopics);
+    this.ui.setConversationBusy(false);
+    if (disclosure) {
+      this.ui.addSpeech(disclosure.text, "npc");
+      remember(this.state, npc.id, disclosure.memory, "conversation", 3);
+      this.save(false);
+    }
     this.audio.play("talk");
     remember(this.state, npc.id, `旅行者在${this.currentScene().name || this.currentRegion().name}与我交谈。`, "chat", 1);
   }
@@ -458,57 +433,193 @@ export class Game {
 
   async talk(message, intent = "custom") {
     if (this.state?.mode === "observer" || !this.activeConversation || !message) return;
-    const { npc, npcState } = this.activeConversation;
+    const { npc, npcState, session } = this.activeConversation;
+    const keywordProposal = getNpcStoryProposal(this.state, this.content, npc.id, message, intent);
+    const storyCandidates = intent === "custom" || intent === "story"
+      ? getNpcStoryCandidates(this.state, this.content, npc.id)
+      : [];
+    const candidateByAction = new Map();
+    const allowedStoryActions = storyCandidates.flatMap((candidate) => {
+      const actionSuffix = `${candidate.event.id}:${candidate.choice.id}`;
+      const context = [
+        candidate.choice.label,
+        candidate.social.topic,
+        candidate.social.playerLine,
+        ...(candidate.social.keywords || []),
+      ].filter(Boolean).join("；");
+      candidateByAction.set(`endorse:${actionSuffix}`, { ...candidate, accepted: true });
+      candidateByAction.set(`refuse:${actionSuffix}`, { ...candidate, accepted: false });
+      return [
+        { id: `endorse:${actionSuffix}`, label: `接受这项主张：${context}` },
+        { id: `refuse:${actionSuffix}`, label: `拒绝这项主张：${context}` },
+      ];
+    });
+    const decisionNpc = storyCandidates.length ? {
+      ...npc,
+      allowedActions: [
+        ...allowedStoryActions,
+        { id: "continue_conversation", label: "玩家还没有提出足够明确的主张，继续追问" },
+      ],
+    } : npc;
+    const decisionIntent = storyCandidates.length ? "story" : intent;
     this.ui.addSpeech(message, "player");
     this.ui.setConversationBusy(true);
     try {
-      const result = await this.ai.talk(npc, npcState, this.publicWorldState(), message, intent);
-      if (!this.activeConversation || this.activeConversation.npc.id !== npc.id) return;
+      const result = await this.ai.talk(decisionNpc, npcState, this.publicWorldState(npc.id), message, decisionIntent);
+      if (!this.activeConversation || this.activeConversation.session !== session) return;
+      npcState.conversations = Number(npcState.conversations || 0) + 1;
+      this.state.statistics.conversationTurns = Number(this.state.statistics.conversationTurns || 0) + 1;
+      this.state.spokenNpcIds ||= [];
+      if (!this.state.spokenNpcIds.includes(npc.id)) this.state.spokenNpcIds.push(npc.id);
+      this.state.statistics.conversations = Math.max(
+        Number(this.state.statistics.conversations || 0),
+        this.state.spokenNpcIds.length,
+      );
       this.ui.setConversationBusy(false);
       this.ui.addSpeech(result.reply, "npc");
       this.ui.setConversationProvider(result.provider, result.providerDetail || "");
-      remember(this.state, npc.id, result.memory || `旅行者对我说：“${message.slice(0, 80)}”`, "chat", intent === "secret" ? 2 : 1);
-      const relationshipDelta = this.relationshipDelta(intent, result.action);
+      const classifiedProposal = candidateByAction.get(String(result.action || ""));
+      const proposal = classifiedProposal || (keywordProposal && ["accept_argument", "refuse_argument"].includes(result.action)
+        ? { ...keywordProposal, accepted: result.action === "accept_argument" }
+        : null);
+      const influence = proposal
+        ? recordNpcStoryInfluenceByChoice(
+          this.state,
+          this.content,
+          npc.id,
+          proposal.event.id,
+          proposal.choice.id,
+          message,
+          proposal.accepted,
+        )
+        : null;
+      const acceptedInfluence = influence?.accepted === true;
+      remember(
+        this.state,
+        npc.id,
+        result.memory || `旅行者对我说：“${message.slice(0, 80)}”`,
+        "chat",
+        proposal ? 3 : intent === "secret" ? 2 : 1,
+      );
+      if (influence) {
+        const hasAnotherApproach = getNpcStoryCandidates(this.state, this.content, npc.id)
+          .some((candidate) => candidate.event.id === influence.event.id);
+        const storyButton = [...this.ui.elements.conversation_actions.querySelectorAll("[data-story-topic]")]
+          .find((button) => button.textContent.includes(influence.event.title));
+        if (storyButton && !hasAnotherApproach) {
+          storyButton.disabled = true;
+          storyButton.textContent = `${storyButton.textContent} · 已谈过`;
+        }
+      }
+      if (acceptedInfluence) {
+        this.ui.addSpeech(influence.text, "npc");
+        remember(
+          this.state,
+          npc.id,
+          `关于「${influence.event.title}」，旅行者向我主张「${influence.choice.label}」。我答应把这项主张带进之后的商议。`,
+          "promise",
+          3,
+        );
+      } else if (influence) {
+        remember(
+          this.state,
+          npc.id,
+          `关于「${influence.event.title}」，旅行者向我主张「${influence.choice.label}」，但我拒绝替这项办法背书。`,
+          "refusal",
+          3,
+        );
+      }
+      const relationshipDelta = this.relationshipDelta(proposal ? "story" : intent, result.action, npcState);
       npcState.relationship = clamp(npcState.relationship + relationshipDelta, -100, 100);
       npcState.mood = relationshipDelta > 1 ? "愿意继续听你说" : relationshipDelta < 0 ? "语气变得谨慎" : npcState.mood;
-      addJournal(this.state, `你与${npc.name}谈到${this.intentLabel(intent)}。`, "player", { npcId: npc.id });
+      addJournal(
+        this.state,
+        acceptedInfluence
+          ? `你没有替任何人作决定；${npc.name}答应把你关于「${influence.choice.label}」的主张带进「${influence.event.title}」的商议。`
+          : proposal && influence
+            ? `${npc.name}听完了你对「${proposal.choice.label}」的主张，但没有作出承诺。`
+            : proposal
+              ? `谈话还没有结束，「${proposal.event.title}」却已经在别处形成了结果。`
+            : `你与${npc.name}谈到${this.intentLabel(intent)}。`,
+        "player",
+        { npcId: npc.id, eventId: influence?.event.id, choiceId: influence?.choice.id },
+      );
       if (this.meta.thoughts && result.reason) addJournal(this.state, `${npc.name}的思考：${result.reason}`, "thought", { npcId: npc.id });
       if (intent === "secret" && npcState.relationship >= Number(npc.secretTrust || 55)) this.state.flags[`secret:${npc.id}`] = true;
+      this.advance(proposal ? 8 : 6);
       this.save(false);
     } catch (error) {
       console.error(error);
-      this.ui.setConversationBusy(false);
-      this.ui.addSpeech("……星辉干扰了我的思绪。我们稍后再谈吧。", "npc");
-      this.ui.setConversationProvider("local", "回复失败");
+      if (this.activeConversation?.session === session) {
+        this.ui.addSpeech("……星辉干扰了我的思绪。我们稍后再谈吧。", "npc");
+        this.ui.setConversationProvider("local", "回复失败");
+      }
+    } finally {
+      if (this.activeConversation?.session === session) this.ui.setConversationBusy(false);
     }
   }
 
-  publicWorldState() {
+  publicWorldState(npcId = null) {
     const observer = this.state.mode === "observer";
+    const timeline = this.content.timelines.find((item) => item.id === this.state.timelineId);
+    const publicFlagIds = new Set([
+      "playerArrived",
+      "observerWorld",
+      ...Object.keys(timeline?.modifiers?.flags || {}),
+    ]);
+    const npcState = npcId ? this.state.npcs?.[npcId] : null;
+    const npcRegion = npcState
+      ? this.content.regions.find((item) => item.id === npcState.regionId)
+      : this.currentRegion();
+    const npcScene = npcState
+      ? resolveScene(this.content, npcState.regionId, npcState.placeId || npcState.regionId)
+      : this.currentScene();
+    const personalMemories = [
+      ...(npcState?.coreMemories || []),
+      ...(npcState?.memories || []),
+    ].filter((memory, index, list) => list.findIndex((item) => item.text === memory.text) === index).slice(0, 8);
     return {
       mode: this.state.mode,
       player_present: !observer,
       timeline: this.state.timelineName,
       day: this.state.day,
       minute: this.state.minute,
-      region: observer ? "五地全域" : this.currentRegion().name,
-      place: observer ? this.currentScene().name || this.currentRegion().name : this.currentScene().name || this.currentRegion().name,
+      region: npcRegion?.name || npcState?.regionId || "未知地区",
+      place: npcScene?.name || npcRegion?.name || npcState?.placeId || "未知地点",
       weather: this.state.weather,
       metrics: deepClone(this.state.metrics),
       factions: deepClone(this.state.factions),
-      flags: deepClone(this.state.flags),
-      recent_events: this.state.journal.slice(0, 6).map((entry) => entry.text),
+      flags: Object.fromEntries(Object.entries(this.state.flags).filter(([key]) => publicFlagIds.has(key))),
+      story_context: npcId ? getNpcStoryContext(this.state, this.content, npcId) : [],
+      recent_events: npcId ? personalMemories.map((memory) => memory.text) : [],
     };
   }
 
-  relationshipDelta(intent, action) {
-    const base = { greet: 1, help: 4, rumor: 1, secret: 0, challenge: -1, custom: 1 }[intent] ?? 0;
-    const actionDelta = { thank: 2, trust: 2, confide: 3, refuse: -1, warn: 0, remember: 1 }[action] ?? 0;
-    return base + actionDelta;
+  relationshipDelta(intent, action, npcState = null) {
+    const base = { greet: 1, help: 4, rumor: 1, secret: 0, challenge: -1, story: 1, custom: 1 }[intent] ?? 0;
+    const actionDelta = {
+      thank: 2,
+      trust: 2,
+      confide: 3,
+      refuse: -1,
+      warn: 0,
+      remember: 1,
+      accept_argument: 1,
+      refuse_argument: -1,
+    }[action] ?? 0;
+    const raw = base + actionDelta;
+    if (!npcState || raw <= 0) return raw;
+    const gain = npcState.dailyRelationshipGain?.day === this.state.day
+      ? npcState.dailyRelationshipGain
+      : { day: this.state.day, value: 0 };
+    const applied = Math.min(raw, Math.max(0, 8 - Number(gain.value || 0)));
+    gain.value = Number(gain.value || 0) + applied;
+    npcState.dailyRelationshipGain = gain;
+    return applied;
   }
 
   intentLabel(intent) {
-    return { greet: "近况", help: "如何提供帮助", rumor: "最近的传闻", secret: "未公开的秘密", challenge: "彼此的立场", custom: "一些只属于此刻的话" }[intent] || "近况";
+    return { greet: "近况", help: "如何提供帮助", rumor: "最近的传闻", secret: "未公开的秘密", challenge: "彼此的立场", story: "正在形成的公共议题", custom: "一些只属于此刻的话" }[intent] || "近况";
   }
 
   inspectLandmark(landmark) {
@@ -521,12 +632,27 @@ export class Game {
     if (firstVisit) {
       addJournal(this.state, `你调查了${landmark.name || "一处地标"}：${text}`, "player");
       if (landmark.flag) this.state.flags[landmark.flag] = true;
+      if (landmark.storyEventId) {
+        discoverStoryClue(this.state, this.content, landmark.storyEventId, landmark.storyClue, "landmark");
+      }
+      this.save(false);
     }
     this.audio.play("talk");
   }
 
   usePortal(portal) {
-    if (!this.state || this.state.mode === "observer" || this.transitionLock || this.eventOpen || !portal?.target) return;
+    if (!this.state || this.state.mode === "observer" || this.transitionLock || !portal?.target) return;
+    if (portal.access) {
+      const allRules = portal.access.all || [];
+      const anyRules = portal.access.any || [];
+      const allPass = allRules.every((rule) => requirementsMet({ requirements: [rule] }, this.state).ok);
+      const anyPass = !anyRules.length || anyRules.some((rule) => requirementsMet({ requirements: [rule] }, this.state).ok);
+      if (!allPass || !anyPass) {
+        this.ui.toast(portal.access.denied || "守门人没有让开。你需要先得到这里某个人的信任。", "info");
+        this.audio.play("talk");
+        return;
+      }
+    }
     const sourceRegionId = this.state.regionId;
     const sourcePlaceId = this.state.placeId || sourceRegionId;
     const target = portal.target;
@@ -575,7 +701,7 @@ export class Game {
   }
 
   travel(regionId) {
-    if (!this.state || this.eventOpen || this.transitionLock) return;
+    if (!this.state || this.transitionLock) return;
     if (this.state.mode !== "observer") {
       this.ui.toast("地图只用于查看路线；请从场景中的城门或交通点出发。", "info");
       return;
@@ -613,7 +739,7 @@ export class Game {
   }
 
   waitOneHour() {
-    if (!this.state || this.modalOpen || this.eventOpen || this.state.endingId) return;
+    if (!this.state || this.modalOpen || this.state.endingId) return;
     this.advance(60);
     this.ui.toast(this.state.mode === "observer"
       ? "世界向前运行了一小时，居民继续各自的生活。"
@@ -630,7 +756,11 @@ export class Game {
 
   onModalChange(open, id) {
     this.modalOpen = open;
-    if (id === "conversation-modal" && !open) this.activeConversation = null;
+    if (id === "conversation-modal" && !open) {
+      this.conversationSession += 1;
+      this.activeConversation = null;
+      this.ui.setConversationBusy(false);
+    }
     this.keys.clear();
   }
 
@@ -658,12 +788,26 @@ export class Game {
     const population = this.content.npcs;
     const offset = ((planDay - 1) * 3 + this.state.seed) % population.length;
     const planners = Array.from({ length: Math.min(3, population.length) }, (_, index) => population[(offset + index) % population.length]);
+    const requests = planners.map((npc) => {
+      const options = getNpcActionOptions(npc);
+      const npcSnapshot = deepClone(this.state.npcs[npc.id]);
+      const worldSnapshot = deepClone(this.publicWorldState(npc.id));
+      delete worldSnapshot.mode;
+      delete worldSnapshot.player_present;
+      delete worldSnapshot.flags?.playerArrived;
+      delete worldSnapshot.flags?.observerWorld;
+      return this.ai.plan?.(npc, npcSnapshot, worldSnapshot, options)
+        .then((result) => ({ npc, options, result }))
+        .catch((error) => {
+          console.info(`Daily plan for ${npc.id} fell back to local rules.`, error);
+          return { npc, options, result: null };
+        });
+    });
     this.planningPromise = (async () => {
-      for (const npc of planners) {
-        if (this.state !== plannedState || !this.meta.llm) break;
+      const decisions = await Promise.all(requests);
+      if (this.state !== plannedState || !this.meta.llm || this.state.endingId || this.state.day !== planDay) return;
+      for (const { npc, options, result } of decisions) {
         const npcState = this.state.npcs[npc.id];
-        const options = getNpcActionOptions(npc);
-        const result = await this.ai.plan?.(npc, npcState, this.publicWorldState(), options);
         if (!result || ["local", "local-rules", "rules"].includes(result.provider)) continue;
         const chosen = options.find((option) => option.id === String(result.action).trim())
           || options.find((option) => option.label === String(result.action).trim());

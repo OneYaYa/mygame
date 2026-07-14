@@ -80,6 +80,98 @@ export function getTimelineDifficulty(content, timelineId) {
   };
 }
 
+function storyClock(day, minute) {
+  return Math.max(0, Number(day || 1) - 1) * 1440 + Math.max(0, Number(minute || 0));
+}
+
+function eventStartClock(event) {
+  const starts = event?.story?.starts || {};
+  const day = Number(starts.day ?? Math.max(1, Number(event?.day || 1) - 1));
+  return storyClock(day, parseClock(starts.hour, 9 * 60));
+}
+
+function eventResolutionClock(event) {
+  return storyClock(Number(event?.day || 1), parseClock(event?.hour ?? event?.time, 12 * 60));
+}
+
+function freshStoryState(event, observer = false) {
+  return {
+    status: "dormant",
+    discovered: observer,
+    processKnown: observer,
+    outcomeKnown: false,
+    learnedLate: false,
+    heardRumors: [],
+    clues: [],
+    autonomousDiscoveries: [],
+    influencedNpcs: {},
+    rejectedNpcs: {},
+    influenceHistory: [],
+    outcomeId: null,
+    activatedAt: null,
+    resolvedAt: null,
+    resolutionScores: {},
+    eventId: event.id,
+  };
+}
+
+function ensureStoryState(state, event) {
+  state.story ||= {};
+  const fresh = freshStoryState(event, state.mode === "observer");
+  if (!state.story[event.id]) {
+    state.story[event.id] = fresh;
+    return state.story[event.id];
+  }
+  const story = state.story[event.id];
+  Object.entries(fresh).forEach(([key, value]) => {
+    if (story[key] !== undefined) return;
+    story[key] = Array.isArray(value) ? [...value] : value && typeof value === "object" ? { ...value } : value;
+  });
+  story.processKnown ??= story.discovered ?? fresh.processKnown;
+  story.outcomeKnown ??= false;
+  for (const key of ["heardRumors", "clues", "autonomousDiscoveries", "influenceHistory"]) {
+    if (!Array.isArray(story[key])) story[key] = [];
+  }
+  for (const key of ["influencedNpcs", "rejectedNpcs", "resolutionScores"]) {
+    if (!story[key] || typeof story[key] !== "object" || Array.isArray(story[key])) story[key] = {};
+  }
+  Object.entries(story.rejectedNpcs).forEach(([npcId, choiceIds]) => {
+    if (!Array.isArray(choiceIds)) story.rejectedNpcs[npcId] = choiceIds ? [choiceIds] : [];
+  });
+  return story;
+}
+
+function addStoryJournal(state, eventId, text, phase = "world") {
+  const id = `story-${eventId}-${phase}`;
+  if ((state.journal || []).some((entry) => entry.id === id)) return;
+  state.journal.unshift({ id, day: state.day, minute: Math.floor(state.minute), type: "world", text });
+  state.journal = state.journal.slice(0, 160);
+}
+
+export function normalizeStoryState(state, content) {
+  state.story ||= {};
+  state.flags ||= {};
+  state.completedEvents ||= [];
+  state.statistics ||= {};
+  state.statistics.influences = Number(state.statistics.influences || 0);
+  state.statistics.rejections = Number(state.statistics.rejections || 0);
+  state.statistics.rumorsHeard = Number(state.statistics.rumorsHeard || 0);
+  state.statistics.missedEvents = Number(state.statistics.missedEvents || 0);
+  state.pendingEvents = [];
+  (content.events || []).forEach((event) => {
+    const story = ensureStoryState(state, event);
+    const legacyOutcome = state.flags?.[`event:${event.id}`];
+    if ((state.completedEvents || []).includes(event.id) || legacyOutcome) {
+      story.status = "resolved";
+      story.outcomeId ||= legacyOutcome || null;
+      if (state.mode === "observer") story.outcomeKnown = true;
+      state.flags[`story:${event.id}:active`] = false;
+      state.flags[`story:${event.id}:resolved`] = true;
+    }
+  });
+  return state.story;
+}
+
 function initialNpcState(npc, minute = 420) {
   const firstSchedule = scheduleFor(npc, minute) || npc.schedule?.[0];
   const regionId = firstSchedule?.regionId || firstSchedule?.region || npc.regionId || npc.region || "capital";
@@ -96,7 +188,10 @@ function initialNpcState(npc, minute = 420) {
     mood: "平静",
     activity: firstSchedule?.activity || "开始新的一天",
     actionId: "idle",
-    memories: [{ type: "thought", day: 1, minute: 420, text: `我想先完成自己的目标：${npc.goal || "平安度过这几日"}` }],
+    memories: [{ type: "thought", day: 1, minute: 420, text: `我想先完成自己的目标：${npc.goal || "平安度过这几日"}`, importance: 1 }],
+    // Core memories are social turning points. Routine hourly memories may fade,
+    // but a promise made face-to-face must still matter when the event resolves.
+    coreMemories: [],
     reflection: "尚未看清这条世界线会通向哪里。",
     knownToPlayer: false,
     conversations: 0,
@@ -115,7 +210,7 @@ export function createInitialState(content, timelineId, mode = "player") {
   const spawn = region.spawn || { x: 384, y: 390 };
   const startMinute = Number(content.game?.startMinute ?? 420);
   const state = {
-    version: 2,
+    version: 3,
     contentVersion: content.game?.contentVersion || 1,
     mode: gameMode,
     timelineId: timeline.id,
@@ -137,14 +232,30 @@ export function createInitialState(content, timelineId, mode = "player") {
     npcs: Object.fromEntries((content.npcs || []).map((npc) => [npc.id, initialNpcState(npc, startMinute)])),
     completedEvents: [],
     pendingEvents: [],
+    story: Object.fromEntries((content.events || []).map((event) => [event.id, freshStoryState(event, isObserver)])),
     flags: { playerArrived: !isObserver, observerWorld: isObserver },
+    spokenNpcIds: [],
     journal: [],
     weather: "晴",
     speed: 1,
     pausedByModal: false,
     endingId: null,
     endingShown: false,
-    statistics: { conversations: 0, journeys: 0, observerSwitches: 0, choices: 0, observedChoices: 0, npcActions: 0, llmPlans: 0, lastLlmPlanDay: 0 },
+    statistics: {
+      conversations: 0,
+      conversationTurns: 0,
+      journeys: 0,
+      observerSwitches: 0,
+      choices: 0,
+      observedChoices: 0,
+      influences: 0,
+      rejections: 0,
+      rumorsHeard: 0,
+      missedEvents: 0,
+      npcActions: 0,
+      llmPlans: 0,
+      lastLlmPlanDay: 0,
+    },
   };
   const modifiers = timeline.modifiers || timeline.initialModifiers || {};
   mergeNumbers(state.metrics, modifiers.metrics || {});
@@ -168,12 +279,16 @@ export function createInitialState(content, timelineId, mode = "player") {
   });
   syncNpcSchedules(state, content);
   updateWeather(state, content);
+  normalizeStoryState(state, content);
   return state;
 }
 
 export function addJournal(state, text, type = "world", extra = {}) {
+  state.journalSequence = Number(state.journalSequence || state.journal?.length || 0) + 1;
   const entry = {
-    id: `${state.day}-${state.minute}-${state.journal.length}-${Math.floor(nextRandom(state) * 9999)}`,
+    // UI logging must never advance the simulation RNG. Observer cameras,
+    // journal filters and the "show thoughts" preference are presentation only.
+    id: `${state.day}-${Math.floor(state.minute)}-${state.journalSequence}-${Math.abs(hashString(text)) % 9999}`,
     day: state.day,
     minute: Math.floor(state.minute),
     type,
@@ -188,8 +303,14 @@ export function addJournal(state, text, type = "world", extra = {}) {
 export function remember(state, npcId, text, type = "event", importance = 1) {
   const npcState = state.npcs[npcId];
   if (!npcState || !text) return;
-  npcState.memories.unshift({ type, day: state.day, minute: Math.floor(state.minute), text, importance });
+  const memory = { type, day: state.day, minute: Math.floor(state.minute), text, importance };
+  npcState.memories ||= [];
+  npcState.memories.unshift(memory);
   npcState.memories = npcState.memories.slice(0, 12);
+  if (Number(importance) >= 3) {
+    npcState.coreMemories ||= [];
+    npcState.coreMemories = [memory, ...npcState.coreMemories.filter((item) => item.text !== text)].slice(0, 10);
+  }
   if (npcState.memories.length >= 5 && npcState.memories.length % 4 === 1) {
     const lowest = Object.entries(state.metrics).sort((a, b) => a[1] - b[1])[0];
     const label = METRIC_META[lowest?.[0]]?.label || lowest?.[0];
@@ -307,7 +428,13 @@ export function runAutonomousHour(state, content, hourIndex) {
     // different map could change later NPC choices and the eventual ending.
     const logRoll = Math.abs(hashString(`${state.seed}:${hourIndex}:${npc.id}:log`)) % 100;
     if (hourIndex % 3 === 0 || logRoll >= 78) {
-      logs.push({ npcId: npc.id, text: `${npc.name}${action.label}。${consequence ? `${consequence}。` : ""}`, reason: `${npc.goal || "维持日常"}；当前最关注${METRIC_META[Object.entries(state.metrics).sort((a,b) => a[1]-b[1])[0][0]]?.label}。` });
+      logs.push({
+        npcId: npc.id,
+        regionId: npcState.regionId,
+        placeId: npcState.placeId || npcState.regionId,
+        text: `${npc.name}${action.label}。${consequence ? `${consequence}。` : ""}`,
+        reason: `${npc.goal || "维持日常"}；当前最关注${METRIC_META[Object.entries(state.metrics).sort((a,b) => a[1]-b[1])[0][0]]?.label}。`,
+      });
     }
   });
   return logs;
@@ -320,17 +447,443 @@ export function updateWeather(state, content) {
   state.weather = options[index] || "晴";
 }
 
+function currentStoryClock(state) {
+  return storyClock(state.day, state.minute);
+}
+
+function uniquePush(list, value) {
+  if (value && !list.includes(value)) list.push(value);
+}
+
+function storyParticipants(event) {
+  const ids = new Set(event.npcIds || event.npcs || []);
+  (event.story?.rumors || []).forEach((rumor) => ids.add(rumor.npcId));
+  (event.choices || []).forEach((choice) => (choice.social?.npcIds || []).forEach((npcId) => ids.add(npcId)));
+  return [...ids].filter(Boolean);
+}
+
+function npcSupportsChoice(npc, choice, state) {
+  if (!npc) return 0;
+  const words = `${(npc.values || []).join(" ")} ${(npc.traits || []).join(" ")} ${npc.goal || ""}`;
+  const effects = choice.effects || {};
+  let score = 0;
+  if (/生命|同伴|朋友|回家|安全/.test(words) && Number(effects.metrics?.hope || 0) > 0) score += .8;
+  if (/清水|土地|季节|水/.test(words) && Number(effects.metrics?.water || 0) > 0) score += .7;
+  if (/秩序|职责|责任|王室|可控/.test(words) && Number(effects.metrics?.order || 0) > 0) score += .7;
+  if (/真相|证据|公开|历史|记忆/.test(words) && /公开|证据|原件|记录|誓/.test(`${choice.label} ${choice.social?.topic || ""}`)) score += .9;
+  if (/公平|选择权|互助|普通人|自愿/.test(words) && /共同|公开|自愿|每|民|分享/.test(`${choice.label} ${choice.social?.topic || ""}`)) score += .9;
+  if (/旧誓|平衡|长久|古代技术/.test(words) && Number(effects.metrics?.aether || 0) !== 0) score += .7;
+  const npcState = state.npcs?.[npc.id];
+  score += Math.max(-.35, Math.min(.55, Number(npcState?.relationship || 0) / 160));
+  return score;
+}
+
+function choiceAvailableToSociety(state, content, event, choice, story) {
+  if (!requirementsMet({ requirements: choice.worldRequirements }, state).ok) return false;
+  if (!choice.requirements && !choice.requires) return true;
+  if (choice.requirementsScope !== "player-evidence") return requirementsMet(choice, state).ok;
+
+  const socialNpcIds = choice.social?.npcIds || [];
+  if (socialNpcIds.some((npcId) => story.influencedNpcs?.[npcId] === choice.id)) return true;
+  if (story.autonomousDiscoveries.includes(choice.id)) return true;
+
+  const investigatorDrive = socialNpcIds.reduce((sum, npcId) => {
+    const npc = (content.npcs || []).find((item) => item.id === npcId);
+    const words = `${(npc?.values || []).join(" ")} ${(npc?.traits || []).join(" ")}`;
+    return sum + (/证据|真相|好奇|古代|旧誓|知识|记忆|水/.test(words) ? 3 : 0);
+  }, 0);
+  const threshold = Math.min(55, 20 + Number(state.factions?.keepers || 0) / 5 + investigatorDrive);
+  const roll = Math.abs(hashString(`${state.seed}:${event.id}:${choice.id}:npc-discovery`)) % 100;
+  if (roll >= threshold) return false;
+
+  uniquePush(story.autonomousDiscoveries, choice.id);
+  const discovererId = socialNpcIds[Math.abs(hashString(`${event.id}:${choice.id}:discoverer`)) % Math.max(1, socialNpcIds.length)];
+  if (discovererId) {
+    remember(
+      state,
+      discovererId,
+      `在「${event.title}」商议前，我们从自己的调查中找到了支持「${choice.label}」的新依据。`,
+      "discovery",
+      2,
+    );
+  }
+  return true;
+}
+
+function choiceAlignment(left, right) {
+  let score = 0;
+  for (const section of ["factions", "metrics"]) {
+    const leftEffects = left?.effects?.[section] || {};
+    const rightEffects = right?.effects?.[section] || {};
+    Object.entries(leftEffects).forEach(([key, leftValue]) => {
+      const rightValue = Number(rightEffects[key] || 0);
+      const leftNumber = Number(leftValue || 0);
+      if (!leftNumber || !rightValue) return;
+      const sameDirection = Math.sign(leftNumber) === Math.sign(rightValue);
+      const unit = section === "factions" ? .07 : .025;
+      score += Math.min(Math.abs(leftNumber), Math.abs(rightValue)) * unit * (sameDirection ? 1 : -.4);
+    });
+  }
+  return score;
+}
+
+function historicalChoiceScore(state, content, event, choice) {
+  const finalProcess = event.id === "ember-key";
+  let score = 0;
+  for (const previousEvent of content.events || []) {
+    if (previousEvent.id === event.id) break;
+    const previousStory = ensureStoryState(state, previousEvent);
+    if (previousStory.status !== "resolved") continue;
+    const outcome = (previousEvent.choices || []).find((item) => item.id === previousStory.outcomeId);
+    if (outcome) score += choiceAlignment(choice, outcome) * (finalProcess ? 1.15 : .35);
+    const rememberedChoices = new Set((previousStory.influenceHistory || [])
+      .filter((item) => item.accepted !== false)
+      .map((item) => item.choiceId));
+    rememberedChoices.forEach((choiceId) => {
+      const promised = (previousEvent.choices || []).find((item) => item.id === choiceId);
+      if (promised) score += choiceAlignment(choice, promised) * (finalProcess ? .65 : .18);
+    });
+    const rejectedChoices = new Set((previousStory.influenceHistory || [])
+      .filter((item) => item.accepted === false)
+      .map((item) => item.choiceId));
+    rejectedChoices.forEach((choiceId) => {
+      const rejected = (previousEvent.choices || []).find((item) => item.id === choiceId);
+      if (rejected) score -= choiceAlignment(choice, rejected) * (finalProcess ? .18 : .05);
+    });
+  }
+  return score;
+}
+
+function resolveStoryEvent(state, content, event) {
+  const story = ensureStoryState(state, event);
+  if (story.status === "resolved") return null;
+  const scored = (event.choices || []).map((choice) => {
+    const available = choiceAvailableToSociety(state, content, event, choice, story);
+    if (!available) return { choice, score: -10000, available: false };
+    let score = Number(choice.storySupport ?? choice.social?.baseSupport ?? 1);
+    const socialNpcIds = choice.social?.npcIds || [];
+    const influencedSupporters = socialNpcIds.filter((npcId) => story.influencedNpcs?.[npcId] === choice.id);
+    const rejectingParticipants = socialNpcIds.filter((npcId) => story.rejectedNpcs?.[npcId]?.includes(choice.id));
+    score += influencedSupporters.length * 3.25 + Math.max(0, influencedSupporters.length - 1) * 1.1;
+    score -= rejectingParticipants.length * 1.75;
+    influencedSupporters.forEach((npcId) => {
+      const keptPromise = (state.npcs?.[npcId]?.coreMemories || []).some((memory) => (
+        memory.type === "promise"
+        && String(memory.text || "").includes(event.title)
+        && String(memory.text || "").includes(choice.label)
+      ));
+      if (keptPromise) score += .65;
+    });
+    socialNpcIds.forEach((npcId) => {
+      const npc = (content.npcs || []).find((item) => item.id === npcId);
+      score += npcSupportsChoice(npc, choice, state);
+    });
+    Object.entries(choice.effects?.factions || {}).forEach(([factionId, delta]) => {
+      if (Number(delta) > 0) score += Number(delta) * Number(state.factions?.[factionId] || 0) / 750;
+    });
+    Object.entries(choice.effects?.metrics || {}).forEach(([metricId, delta]) => {
+      if (Number(delta) > 0) score += Number(delta) * Math.max(0, 55 - Number(state.metrics?.[metricId] || 0)) / 1100;
+    });
+    score += historicalChoiceScore(state, content, event, choice);
+    // Stable uncertainty lets the same untouched timeline reproduce exactly,
+    // while different timeline seeds can still grow into different histories.
+    score += (Math.abs(hashString(`${state.seed}:${event.id}:${choice.id}:council`)) % 1000) / 1000;
+    return { choice, score, available: true };
+  }).sort((a, b) => b.score - a.score);
+  const winner = scored.find((item) => item.available)?.choice || null;
+  if (!winner) return null;
+
+  const influenced = Object.values(story.influencedNpcs || {}).some((choiceId) => choiceId === winner.id);
+  applyEventChoice(state, event, winner, content, {
+    actor: "world",
+    silent: state.mode !== "observer" && !story.processKnown,
+    influenced,
+    storyProcess: true,
+  });
+  story.status = "resolved";
+  story.outcomeId = winner.id;
+  story.resolvedAt = currentStoryClock(state);
+  story.resolutionScores = Object.fromEntries(scored.map((item) => [item.choice.id, Math.round(item.score * 100) / 100]));
+  state.flags[`story:${event.id}:active`] = false;
+  state.flags[`story:${event.id}:resolved`] = true;
+  if (state.mode === "observer") {
+    story.outcomeKnown = true;
+    addStoryJournal(state, event.id, `${event.title}并没有等待谁来裁决。参与者最终形成了「${winner.label}」的结果。`, "resolved");
+  } else if (!story.processKnown) {
+    state.statistics.missedEvents = Number(state.statistics.missedEvents || 0) + 1;
+  }
+  story.discovered = Boolean(story.processKnown || story.outcomeKnown);
+  return { type: "resolved", eventId: event.id, choiceId: winner.id, discovered: story.processKnown, outcomeKnown: story.outcomeKnown };
+}
+
+export function advanceStoryEvents(state, content, throughAbsolute = currentStoryClock(state)) {
+  normalizeStoryState(state, content);
+  const changes = [];
+  (content.events || []).forEach((event) => {
+    const story = ensureStoryState(state, event);
+    if (story.status === "dormant" && throughAbsolute >= eventStartClock(event)) {
+      story.status = "active";
+      story.activatedAt = eventStartClock(event);
+      state.flags[`story:${event.id}:active`] = true;
+      if (state.mode === "observer") {
+        story.discovered = true;
+        story.processKnown = true;
+        addStoryJournal(state, event.id, `${event.title}开始在${event.regionId || event.region || "五地"}形成征兆。`, "active");
+      }
+      changes.push({ type: "active", eventId: event.id, discovered: story.processKnown });
+    }
+    if (story.status === "active" && throughAbsolute >= eventResolutionClock(event)) {
+      const resolved = resolveStoryEvent(state, content, event);
+      if (resolved) changes.push(resolved);
+    }
+  });
+  return changes;
+}
+
+export function discoverStoryClue(state, content, eventId, clueId, source = "world") {
+  const event = (content.events || []).find((item) => item.id === eventId);
+  if (!event) return null;
+  const story = ensureStoryState(state, event);
+  const learningOutcome = story.status === "resolved";
+  const wasDiscovered = learningOutcome ? story.outcomeKnown : story.processKnown;
+  if (learningOutcome) story.outcomeKnown = true;
+  else story.processKnown = true;
+  story.discovered = Boolean(story.processKnown || story.outcomeKnown);
+  uniquePush(story.clues, clueId || source);
+  if (clueId) state.flags[`clue:${clueId}`] = true;
+  if (!wasDiscovered && learningOutcome) story.learnedLate = true;
+  return { event, story, firstDiscovery: !wasDiscovered, learnedLate: story.learnedLate, source };
+}
+
+export function revealNpcStoryKnowledge(state, content, npcId) {
+  if (state.mode === "observer") return null;
+  const npcState = state.npcs?.[npcId];
+  if (!npcState) return null;
+  const activeEvents = (content.events || [])
+    .filter((event) => ensureStoryState(state, event).status === "active")
+    .sort((left, right) => eventResolutionClock(left) - eventResolutionClock(right));
+  // Current, expiring knowledge always takes precedence over old history.
+  for (const event of activeEvents) {
+    const story = ensureStoryState(state, event);
+    const rumor = (event.story?.rumors || []).find((item) => (
+      item.npcId === npcId
+      && !story.heardRumors.includes(item.id)
+      && Number(npcState.relationship || 0) >= Number(item.minRelationship || 0)
+      && requirementsMet(item, state).ok
+    ));
+    if (!rumor) continue;
+    story.discovered = true;
+    story.processKnown = true;
+    uniquePush(story.heardRumors, rumor.id);
+    uniquePush(story.clues, rumor.clue || rumor.id);
+    state.flags[`clue:${rumor.clue || rumor.id}`] = true;
+    (rumor.grantsFlags || []).forEach((flag) => { state.flags[flag] = true; });
+    state.statistics.rumorsHeard = Number(state.statistics.rumorsHeard || 0) + 1;
+    addStoryJournal(state, event.id, `${rumor.memory || rumor.text}`, `rumor-${rumor.id}`);
+    return { type: "rumor", event, story, rumor, text: rumor.text, memory: rumor.memory || rumor.text };
+  }
+
+  const unresolvedKnowledge = (content.events || [])
+    .filter((event) => {
+      const story = ensureStoryState(state, event);
+      return story.status === "resolved" && !story.outcomeKnown && storyParticipants(event).includes(npcId);
+    })
+    .sort((left, right) => eventResolutionClock(right) - eventResolutionClock(left));
+  for (const event of unresolvedKnowledge) {
+    const story = ensureStoryState(state, event);
+    const outcome = (event.choices || []).find((choice) => choice.id === story.outcomeId);
+    story.discovered = true;
+    story.outcomeKnown = true;
+    story.learnedLate = true;
+    uniquePush(story.clues, `aftermath:${event.id}`);
+    const text = `${event.title}已经过去了。${outcome?.outcome || `人们最后采取了「${outcome?.label || "自己的办法"}」。`}`;
+    addStoryJournal(state, event.id, `${npcState.knownToPlayer ? "后来你从当事人口中得知" : "后来有人提起"}：${text}`, "learned-late");
+    return { type: "aftermath", event, story, outcome, text, memory: text };
+  }
+  return null;
+}
+
+function eligibleSocialChoices(state, content, npcId) {
+  const result = [];
+  (content.events || []).forEach((event) => {
+    const story = ensureStoryState(state, event);
+    if (story.status !== "active" || !story.processKnown || story.influencedNpcs?.[npcId]) return;
+    (event.choices || []).forEach((choice) => {
+      const social = choice.social;
+      if (!social || !(social.npcIds || []).includes(npcId)) return;
+      if (story.rejectedNpcs?.[npcId]?.includes(choice.id)) return;
+      const requiredPlace = social.requiredPlaces?.[npcId];
+      if (requiredPlace && (state.placeId || state.regionId) !== requiredPlace) return;
+      if (Number(state.npcs?.[npcId]?.relationship || 0) < Number(social.minRelationship || 0)) return;
+      if (!requirementsMet(choice, state).ok || !requirementsMet(social, state).ok) return;
+      result.push({ event, choice, social });
+    });
+  });
+  return result;
+}
+
+export function getStoryConversationTopics(state, content, npcId) {
+  const byEvent = new Map();
+  eligibleSocialChoices(state, content, npcId).forEach(({ event }) => {
+    if (!byEvent.has(event.id)) byEvent.set(event.id, event);
+  });
+  return [...byEvent.values()].map((event) => ({
+    id: `ask:${event.id}`,
+    eventId: event.id,
+    choiceId: null,
+    label: `继续问「${event.title}」`,
+    message: `关于「${event.title}」，你真正担心的是什么？`,
+    intent: "custom",
+  }));
+}
+
+export function getNpcStoryCandidates(state, content, npcId) {
+  return eligibleSocialChoices(state, content, npcId).map(({ event, choice, social }) => ({ event, choice, social }));
+}
+
+function matchNpcStoryProposal(state, content, npcId, message, intent = "custom") {
+  const normalized = String(message || "").toLowerCase().replace(/\s+/g, "");
+  if (!normalized) return null;
+  const candidates = eligibleSocialChoices(state, content, npcId).map((item) => {
+    const keywords = item.social.keywords || [];
+    const hits = keywords.filter((word) => normalized.includes(String(word).toLowerCase().replace(/\s+/g, ""))).length;
+    const exact = normalized === String(item.social.playerLine || "").toLowerCase().replace(/\s+/g, "");
+    return { ...item, hits, exact };
+  }).filter((item) => item.exact || item.hits >= (intent === "story" ? 1 : 2))
+    .sort((a, b) => Number(b.exact) - Number(a.exact) || b.hits - a.hits);
+  return candidates[0] || null;
+}
+
+export function getNpcStoryProposal(state, content, npcId, message, intent = "custom") {
+  const match = matchNpcStoryProposal(state, content, npcId, message, intent);
+  if (!match) return null;
+  return { event: match.event, choice: match.choice, social: match.social };
+}
+
+function commitNpcStoryProposal(state, content, npcId, message, match, accepted) {
+  if (!match) return null;
+  const story = ensureStoryState(state, match.event);
+  if (!accepted) {
+    story.rejectedNpcs[npcId] ||= [];
+    uniquePush(story.rejectedNpcs[npcId], match.choice.id);
+    story.influenceHistory.push({
+      npcId,
+      choiceId: match.choice.id,
+      accepted: false,
+      day: state.day,
+      minute: Math.floor(state.minute),
+      message: String(message || "").slice(0, 220),
+    });
+    state.flags[`rejection:${match.event.id}:${npcId}:${match.choice.id}`] = true;
+    state.statistics.rejections = Number(state.statistics.rejections || 0) + 1;
+    return {
+      accepted: false,
+      event: match.event,
+      choice: match.choice,
+      story,
+      text: "对方听完了，但没有答应把这项主张带进商议。",
+    };
+  }
+  story.influencedNpcs[npcId] = match.choice.id;
+  story.influenceHistory.push({
+    npcId,
+    choiceId: match.choice.id,
+    accepted: true,
+    day: state.day,
+    minute: Math.floor(state.minute),
+    message: String(message || "").slice(0, 220),
+  });
+  state.flags[`influence:${match.event.id}:${npcId}:${match.choice.id}`] = true;
+  state.statistics.influences = Number(state.statistics.influences || 0) + 1;
+  return {
+    accepted: true,
+    event: match.event,
+    choice: match.choice,
+    story,
+    text: match.social.acceptTextByNpc?.[npcId]
+      || (match.social.npcIds?.[0] === npcId ? match.social.acceptText : "")
+      || `${(content.npcs || []).find((npc) => npc.id === npcId)?.name || "对方"}没有替其他人答应，只说会把你的主张带进商议。`,
+  };
+}
+
+export function recordNpcStoryInfluence(state, content, npcId, message, intent = "custom", accepted = true) {
+  return commitNpcStoryProposal(
+    state,
+    content,
+    npcId,
+    message,
+    matchNpcStoryProposal(state, content, npcId, message, intent),
+    accepted,
+  );
+}
+
+export function recordNpcStoryInfluenceByChoice(state, content, npcId, eventId, choiceId, message, accepted = true) {
+  const match = eligibleSocialChoices(state, content, npcId)
+    .find((item) => item.event.id === eventId && item.choice.id === choiceId);
+  return commitNpcStoryProposal(state, content, npcId, message, match, accepted);
+}
+
+export function getNpcStoryContext(state, content, npcId) {
+  const facts = [];
+  const npcState = state.npcs?.[npcId];
+  (content.events || []).forEach((event) => {
+    const story = ensureStoryState(state, event);
+    if (story.status === "active") {
+      if (npcState?.regionId === (event.regionId || event.region)) {
+        (event.story?.signs || []).forEach((sign) => facts.push(`公共迹象：${sign.description}`));
+      }
+      (event.story?.rumors || []).filter((rumor) => (
+        rumor.npcId === npcId
+        && Number(npcState?.relationship || 0) >= Number(rumor.minRelationship || 0)
+        && requirementsMet(rumor, state).ok
+      )).forEach((rumor) => facts.push(`你可以透露：${rumor.text}`));
+      eligibleSocialChoices(state, content, npcId)
+        .filter((item) => item.event.id === event.id)
+        .forEach((item) => facts.push(`你正在权衡：${item.social.topic || item.choice.label}`));
+    } else if (story.status === "resolved" && storyParticipants(event).includes(npcId)) {
+      const outcome = (event.choices || []).find((choice) => choice.id === story.outcomeId);
+      if (outcome) facts.push(`你亲历的结果：${event.title}最终形成「${outcome.label}」。${outcome.outcome || ""}`);
+    }
+  });
+  return facts.slice(0, 8);
+}
+
+export function getStoryLandmarks(state, content, scene) {
+  if (!scene) return [];
+  const result = [];
+  (content.events || []).forEach((event) => {
+    const story = ensureStoryState(state, event);
+    const items = story.status === "active"
+      ? (event.story?.signs || [])
+      : story.status === "resolved"
+        ? (event.story?.aftermath?.[story.outcomeId] || [])
+        : [];
+    items.filter((item) => item.sceneId === scene.id).forEach((item) => result.push({
+      ...item,
+      id: `story-${event.id}-${story.status}-${item.id}`,
+      interactive: true,
+      collision: false,
+      layer: item.layer || "object",
+      storyEventId: event.id,
+      storyClue: item.clue || item.id,
+      storyPhase: story.status,
+    }));
+  });
+  return result;
+}
+
 export function dueEvents(state, content) {
   return (content.events || []).filter((event) => {
-    if (state.completedEvents.includes(event.id) || state.pendingEvents.includes(event.id)) return false;
-    const eventMinute = parseClock(event.hour ?? event.time, 720);
-    return state.day > Number(event.day) || (state.day === Number(event.day) && state.minute >= eventMinute);
+    const story = ensureStoryState(state, event);
+    return story.status !== "resolved" && currentStoryClock(state) >= eventResolutionClock(event);
   });
 }
 
 export function advanceWorld(state, content, minutes) {
-  if (!Number.isFinite(minutes) || minutes <= 0 || state.endingId) return { logs: [], events: [] };
+  if (!Number.isFinite(minutes) || minutes <= 0 || state.endingId) return { logs: [], events: [], storyChanges: [] };
   const logs = [];
+  const storyChanges = [];
+  normalizeStoryState(state, content);
   const beforeAbsolute = (state.day - 1) * 1440 + state.minute;
   let afterAbsolute = beforeAbsolute + minutes;
   const totalDays = Number(content.game?.totalDays || 9);
@@ -358,13 +911,13 @@ export function advanceWorld(state, content, minutes) {
       updateWeather(state, content);
       addJournal(state, `第 ${state.day} 日清晨，天气是${state.weather}。五地的人们继续各自的生活。`, "world");
     }
+    storyChanges.push(...advanceStoryEvents(state, content, hour * 60));
   }
   state.day = Math.floor(afterAbsolute / 1440) + 1;
   state.minute = Math.floor(afterAbsolute % 1440);
   syncNpcSchedules(state, content);
-  const events = dueEvents(state, content);
-  events.forEach((event) => state.pendingEvents.push(event.id));
-  return { logs, events };
+  storyChanges.push(...advanceStoryEvents(state, content, afterAbsolute));
+  return { logs, events: [], storyChanges };
 }
 
 function applyNumericEffects(target, effects = {}) {
@@ -394,7 +947,7 @@ export function applyEventChoice(state, event, choice, content, options = {}) {
   const effects = choice.effects || {};
   applyNumericEffects(state.metrics, effects.metrics);
   applyNumericEffects(state.factions, effects.factions);
-  if (state.mode !== "observer") {
+  if (state.mode !== "observer" || options.actor === "world") {
     Object.entries(effects.relationships || {}).forEach(([npcId, delta]) => {
       if (state.npcs[npcId]) state.npcs[npcId].relationship = clamp(state.npcs[npcId].relationship + Number(delta), -100, 100);
     });
@@ -407,18 +960,21 @@ export function applyEventChoice(state, event, choice, content, options = {}) {
   const isAutonomous = options.actor === "world";
   if (isAutonomous) state.statistics.observedChoices = Number(state.statistics.observedChoices || 0) + 1;
   else state.statistics.choices += 1;
-  const isObserver = state.mode === "observer";
   const memory = isAutonomous
-    ? choice.autonomousMemory || (isObserver
-      ? `在「${event.title}」中，没有旅行者出现，我们自行决定：${choice.label}。`
-      : `在「${event.title}」中，旅行者保持沉默，我们自行决定：${choice.label}。`)
+    ? choice.autonomousMemory || (options.influenced
+      ? `在「${event.title}」中，我们经过各自的争论形成了「${choice.label}」；此前的谈话也改变了部分人的立场。`
+      : `在「${event.title}」中，我们经过各自的争论形成了「${choice.label}」。`)
     : choice.memory || `在「${event.title}」中，旅行者选择了：${choice.label}。`;
-  const involved = event.npcIds || event.npcs || (content.npcs || []).filter((npc) => (npc.regionId || npc.region) === event.regionId || (npc.regionId || npc.region) === event.region).map((npc) => npc.id);
-  involved.forEach((npcId) => remember(state, npcId, memory, "event", 3));
-  const subject = isAutonomous
-    ? isObserver ? "没有旅行者介入，NPC 们共同选择了" : "你没有介入，NPC 们共同选择了"
-    : "你选择了";
-  addJournal(state, `${event.title}：${subject}「${choice.label}」。${choice.outcome || "世界的走向因此发生了变化。"}`, "event", { eventId: event.id, choiceId: choice.id, autonomous: isAutonomous });
+  const involved = storyParticipants(event).length
+    ? storyParticipants(event)
+    : (content.npcs || []).filter((npc) => (npc.regionId || npc.region) === event.regionId || (npc.regionId || npc.region) === event.region).map((npc) => npc.id);
+  // Outcome knowledge belongs to participants, but only an actual conversation
+  // with the player becomes an enduring core memory.
+  involved.forEach((npcId) => remember(state, npcId, memory, "event", isAutonomous ? 2 : 3));
+  if (!options.silent && !options.storyProcess) {
+    const subject = isAutonomous ? "当地人最终形成了" : "你选择了";
+    addJournal(state, `${event.title}：${subject}「${choice.label}」。${choice.outcome || "世界的走向因此发生了变化。"}`, "event", { eventId: event.id, choiceId: choice.id, autonomous: isAutonomous });
+  }
   return { memory, involved };
 }
 
@@ -459,7 +1015,8 @@ export function resolveEnding(state, content) {
 export function shouldResolveEnding(state, content) {
   const endingDay = Number(content.game?.endingDay || content.game?.totalDays || 9);
   const endingMinute = parseClock(content.game?.endingHour ?? content.game?.endingTime, 1260);
-  return !state.endingId && state.day >= endingDay && state.minute >= endingMinute && state.pendingEvents.length === 0;
+  const allStoriesResolved = (content.events || []).every((event) => ensureStoryState(state, event).status === "resolved");
+  return !state.endingId && state.day >= endingDay && state.minute >= endingMinute && allStoriesResolved;
 }
 
 export function travelTo(state, content, regionId) {

@@ -4,6 +4,7 @@ const SUPPORTED_INTENTS = new Set([
   "rumor",
   "secret",
   "challenge",
+  "story",
   "custom",
 ]);
 
@@ -120,14 +121,17 @@ function memoryText(memory) {
 }
 
 function recentMemories(npc, npcState, limit = 8) {
-  const source = Array.isArray(npcState?.memories)
-    ? npcState.memories
-    : Array.isArray(npc?.memories)
-      ? npc.memories
-      : [];
+  const source = [
+    ...(Array.isArray(npcState?.coreMemories) ? npcState.coreMemories : []),
+    ...(Array.isArray(npcState?.memories)
+      ? npcState.memories
+      : Array.isArray(npc?.memories)
+        ? npc.memories
+        : []),
+  ];
   // The game stores newest memories first. Keeping that convention here also
   // ensures a short browser payload contains the most relevant recent context.
-  return source.map(memoryText).filter(Boolean).slice(0, limit);
+  return [...new Set(source.map(memoryText).filter(Boolean))].slice(0, limit);
 }
 
 function relationshipScore(npc, npcState) {
@@ -555,11 +559,14 @@ export class AIService {
     const primaryTrait = traits[0] ?? "谨慎务实";
     const tone = deriveTone(traits);
     const goal = text(npc?.goal, "守住眼前的生活", 220);
-    const facts = collectFacts(npc?.knowledge, { includeSecrets: false });
+    const facts = [
+      ...collectFacts(worldState?.story_context, { includeSecrets: false }),
+      ...collectFacts(npc?.knowledge, { includeSecrets: false }),
+    ];
     const flag = context.flags[0] ?? "";
     const flagClause = describeFlag(flag);
     const metricClause = describeMetric(context.lowestMetric);
-    const latestMemory = context.memories.at(-1) ?? "";
+    const latestMemory = context.memories[0] ?? "";
     const seed = [
       npc?.id ?? npcName,
       context.intent,
@@ -641,20 +648,53 @@ export class AIService {
           `我知道你想要真相，可信任不是一句保证就能换来的。先让我看看你的选择。`,
         ], seed);
       }
+    } else if (context.intent === "story") {
+      const allowed = Array.isArray(npc?.allowedActions) ? npc.allowedActions : [];
+      const tokens = messageTokens(context.playerMessage);
+      const ranked = allowed.filter((item) => String(item.id || "").startsWith("endorse:"))
+        .map((item) => ({
+          item,
+          score: tokens.reduce((sum, token) => sum + (String(item.label || "").toLowerCase().includes(token) ? token.length : 0), 0),
+        }))
+        .sort((left, right) => right.score - left.score);
+      const best = ranked[0];
+      if (!best || best.score < 2) {
+        action = allowed.find((item) => item.id === "continue_conversation")?.id || "continue_conversation";
+        reply = choose([
+          `我听得出你在意这件事，但还不明白你希望我们具体改变什么。再说清楚一点。`,
+          `${fact || anchor}。你是在问发生了什么，还是已经有一项希望我支持的办法？`,
+          `先别急着让我答应。告诉我谁该做什么、又由谁承担代价。`,
+        ], seed);
+      } else {
+        const suffix = String(best.item.id).slice("endorse:".length);
+        const refusal = allowed.find((item) => item.id === `refuse:${suffix}`);
+        const guardedRefusal = tone === "guarded" && context.relationship < 38 && hashString(`${seed}:refuse`) % 3 === 0;
+        action = guardedRefusal && refusal ? refusal.id : best.item.id;
+        reply = action.startsWith("refuse:")
+          ? choose([
+            `我明白你的主张，但现在不能替它背书。${fact || anchor}，这份代价还没有说清。`,
+            `你的理由我会记住，可我不会把它带进商议。至少今天不会。`,
+          ], seed)
+          : choose([
+            `${fact || anchor}。你的话我会带进之后的商议，但最后会答应的不是我一个人。`,
+            `我听见你的理由了。${fact || anchor}；我能承诺的是把它说给在场的人听。`,
+            `这不是一句话就能定下的事。${fact || anchor}，不过你的主张值得被摆到桌面上。`,
+          ], seed);
+      }
     } else if (context.intent === "challenge") {
-      const cautious = tone === "guarded" || /胆小|怯懦|避战/.test(traits.join(" "));
+      const cautious = tone === "guarded" || /寡言|戒备|害怕失控/.test(traits.join(" "));
       const accepts = !cautious || context.relationship >= 55;
-      action = accepts ? "accept_challenge" : "decline_challenge";
+      action = accepts ? "debate_position" : "hold_position";
       reply = accepts
         ? choose([
-          `好，我接受。但别把比试当儿戏——一旦开始，我不会留手。`,
-          `有胆量。地点和规矩由你挑，胜负之后都不许反悔。`,
-          `正合我意。让我看看你的本事配不配得上这份口气。`,
+          `好，那就把理由说清楚。你先告诉我：这项主张会让谁承担代价？`,
+          `我接受你的质疑，但不接受一句漂亮话。拿事实来，我们逐条谈。`,
+          `你可以反对我。只要你也愿意听完那些不会从结果里获益的人。`,
         ], seed)
         : choose([
-          `我不会为了逞强打乱自己的计划。等你有真正的理由，再来找我。`,
-          `现在动手只会让别人得利。我拒绝，不代表我怕你。`,
-          `${flagClause || metricClause || "局势还不明朗"}，这种时候拿性命赌气并不聪明。`,
+          `我不会因为一句质疑就改口。等你带来能让当事人信服的证据，我们再谈。`,
+          `你可以不赞成，但眼下我仍会守住自己的立场。`,
+          `${flagClause || metricClause || "局势还不明朗"}，我不会在事实不足时作出承诺。`,
         ], seed);
     } else {
       if (/谢谢|多谢|感激|thank/i.test(context.playerMessage)) {
@@ -700,6 +740,7 @@ export class AIService {
       rumor: "传闻",
       secret: "秘密",
       challenge: "挑战",
+      story: "公共议题",
       custom: "当前局势",
     };
     const memory = `${npcName}记得玩家曾就${intentNames[context.intent]}与自己交谈；自己的回应是“${reply.slice(0, 100)}”`;
@@ -711,7 +752,7 @@ export class AIService {
       npc_profile: publicNpcProfile(npc, npcState, context),
       world_state: publicWorldState(worldState, context),
       player_message: context.playerMessage,
-      memories: context.memories.slice(-8),
+      memories: context.memories.slice(0, 8),
     };
     const timeout = timeoutSignal(this.timeoutMs);
     try {
@@ -739,11 +780,14 @@ export class AIService {
       const decision = body?.decision && typeof body.decision === "object" ? body.decision : body;
       const reply = text(decision?.reply, "", 4000);
       if (!reply) throw new Error("decision_missing_reply");
+      const action = text(decision?.action, localDecision.action, 1000);
+      const allowedIds = (npc?.allowedActions || []).map((item) => String(item?.id || "")).filter(Boolean);
+      if (allowedIds.length && !allowedIds.includes(action)) throw new Error("decision_action_not_allowed");
       this._backendRetryAt = 0;
       this._status = { ...this._status, reachable: true, error: null };
       return {
         reply,
-        action: text(decision?.action, localDecision.action, 1000),
+        action,
         reason: text(decision?.reason, localDecision.reason, 2000),
         memory: text(decision?.memory, localDecision.memory, 4000),
         provider: text(decision?.provider, this._status.provider || "backend", 80),

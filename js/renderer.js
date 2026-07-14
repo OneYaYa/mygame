@@ -1,4 +1,5 @@
 import { clamp, distance, hashString, rectanglesOverlap, seededNoise } from "./utils.js";
+import { getStoryLandmarks } from "./simulation.js";
 
 const WIDTH = 768;
 const HEIGHT = 480;
@@ -177,12 +178,13 @@ export function nearestNpc(state, content, maxDistance = 58) {
   return result;
 }
 
-export function nearestLandmark(state, scene, maxDistance = 48) {
+export function nearestLandmark(state, scene, maxDistance = 48, content = null) {
   if (state?.mode === "observer" || state?.player?.present === false) return null;
   if (!scene || scene.id !== scenePlaceId(state)) return null;
   let result = null;
   let best = maxDistance;
-  (scene.landmarks || []).forEach((landmark) => {
+  const landmarks = [...(scene.landmarks || []), ...(content ? getStoryLandmarks(state, content, scene) : [])];
+  landmarks.forEach((landmark) => {
     if (itemPlaceId(landmark, scene.id) !== scenePlaceId(state)) return;
     if (!landmark.interactive && !landmark.description) return;
     const currentDistance = pointToRectDistance(state.player, pointRect(landmark, 24));
@@ -349,6 +351,7 @@ export class WorldRenderer {
     const interior = scene.kind === "interior";
     this.updateCamera(state, scene, deltaSeconds);
     const visible = this.visibleWorld(scene);
+    const landmarks = [...(scene.landmarks || []), ...getStoryLandmarks(state, this.content, scene)];
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.fillStyle = interior ? "#241d1b" : palette.edge;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -363,11 +366,11 @@ export class WorldRenderer {
     }
     (scene.zones || []).filter((item) => this.isVisible(item, visible, 24)).forEach((zone) => this.drawZone(ctx, zone, palette, region, scene));
     this.drawPaths(ctx, scene, palette, visible);
-    (scene.landmarks || [])
+    landmarks
       .filter((item) => itemPlaceId(item, scene.id) === scene.id && (item.layer || "ground") === "ground" && this.isVisible(item, visible))
       .forEach((item) => this.drawLandmark(ctx, item, palette));
     (scene.buildings || []).filter((building) => this.isVisible(building, visible)).forEach((building) => this.drawBuilding(ctx, building, palette));
-    (scene.landmarks || [])
+    landmarks
       .filter((item) => itemPlaceId(item, scene.id) === scene.id && (item.layer || "ground") !== "ground" && this.isVisible(item, visible))
       .forEach((item) => this.drawLandmark(ctx, item, palette));
     (scene.portals || []).filter((portal) => !portal.disabled && this.isVisible(portal, visible, 32)).forEach((portal) => this.drawPortal(ctx, portal, palette, interior));
