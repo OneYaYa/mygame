@@ -19,7 +19,7 @@
 只需要 Python 3 和现代浏览器。服务端仅使用 Python 标准库，不需要 `pip install`，前端也不需要 npm 或打包工具。
 
 ```powershell
-cd C:\Users\ethanypan\Desktop\generative_agents\mygame
+cd ~\mygame
 python server.py
 ```
 
