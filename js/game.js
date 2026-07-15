@@ -28,6 +28,9 @@ import { clamp, deepClone, pick } from "./utils.js";
 const SAVE_KEY = "ember_echoes.save.v1";
 const META_KEY = "ember_echoes.meta.v1";
 const MINUTES_PER_SECOND = 8;
+const PLAYER_SPRINT_MULTIPLIER = 1.75;
+const WALK_STEP_INTERVAL = .34;
+const RUN_STEP_INTERVAL = .22;
 
 function readStorage(key, fallback) {
   try {
@@ -238,7 +241,7 @@ export class Game {
       if (!typing && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(event.key)) event.preventDefault();
       if (typing && event.key !== "Escape") return;
       const key = event.key.toLowerCase();
-      if (this.state && ["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) this.keys.add(key);
+      if (this.state && ["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", "shift"].includes(key)) this.keys.add(key);
       if (event.repeat) return;
       if (key === "e" && !this.modalOpen && !this.transitionLock && this.state?.mode !== "observer") this.interact();
       else if (key === "m" && this.state && !this.modalOpen && !this.transitionLock) this.ui.showMap();
@@ -279,6 +282,8 @@ export class Game {
     }
     if (dx && dy) { dx *= Math.SQRT1_2; dy *= Math.SQRT1_2; }
     const moving = Boolean(dx || dy);
+    const sprinting = Boolean(!observer && canMove && moving && this.keys.has("shift"));
+    let playerMoved = false;
     if (moving && observer) {
       const panSpeed = 310;
       this.state.observer.focusedNpcId = null;
@@ -287,11 +292,20 @@ export class Game {
     } else if (moving) {
       if (Math.abs(dx) > Math.abs(dy)) this.state.player.facing = dx > 0 ? "right" : "left";
       else this.state.player.facing = dy > 0 ? "down" : "up";
-      movePlayer(this.state, scene, dx * this.state.player.speed * delta, dy * this.state.player.speed * delta);
-      this.stepTimer -= delta;
-      if (this.stepTimer <= 0) { this.audio.play("step"); this.stepTimer = .34; }
+      const movementSpeed = this.state.player.speed * (sprinting ? PLAYER_SPRINT_MULTIPLIER : 1);
+      playerMoved = movePlayer(this.state, scene, dx * movementSpeed * delta, dy * movementSpeed * delta);
     }
-    this.renderer.setMoving(moving && !observer);
+    if (playerMoved) {
+      const stepInterval = sprinting ? RUN_STEP_INTERVAL : WALK_STEP_INTERVAL;
+      this.stepTimer = Math.min(this.stepTimer, stepInterval) - delta;
+      if (this.stepTimer <= 0) {
+        this.audio.play("step");
+        this.stepTimer = stepInterval;
+      }
+    } else {
+      this.stepTimer = 0;
+    }
+    this.renderer.setMoving(playerMoved, sprinting);
     if (!this.modalOpen && !this.state.endingId && this.state.speed > 0) {
       updateNpcMovement(this.state, this.content, delta * Math.min(4, Math.max(1, this.state.speed)));
     }
@@ -330,7 +344,21 @@ export class Game {
     this.nearbyPortal = nearestPortal(this.state, scene);
     const candidates = [];
     if (this.nearby) candidates.push({ kind: "npc", prompt: `与 ${this.nearby.profile.name} 交谈`, distance: this.nearby.distance, ...this.nearby });
-    if (this.nearbyLandmark) candidates.push({ kind: "landmark", prompt: `调查 ${this.nearbyLandmark.name || "这里"}`, distance: this.nearbyLandmark.distance, landmark: this.nearbyLandmark });
+    if (this.nearbyLandmark) {
+      const type = String(this.nearbyLandmark.type || "").toLowerCase();
+      const verb = this.nearbyLandmark.action || ({
+        board: "阅读",
+        signpost: "阅读",
+        map: "查看",
+        chest: "检查",
+        crystal: "触碰",
+        shrine: "端详",
+        statue: "观察",
+        well: "探看",
+        fountain: "探看",
+      }[type] || "调查");
+      candidates.push({ kind: "landmark", prompt: `${verb} ${this.nearbyLandmark.name || "这里"}`, distance: this.nearbyLandmark.distance, landmark: this.nearbyLandmark });
+    }
     if (this.nearbyPortal) candidates.push({ kind: this.nearbyPortal.kind || "portal", prompt: this.nearbyPortal.label || "前往另一地点", distance: this.nearbyPortal.distance, portal: this.nearbyPortal });
     candidates.sort((left, right) => (left.distance - (left.portal ? 4 : 0)) - (right.distance - (right.portal ? 4 : 0)));
     this.nearbyInteraction = candidates[0] || null;
@@ -627,7 +655,10 @@ export class Game {
     const flag = `landmark:${this.state.regionId}:${this.state.placeId || this.state.regionId}:${landmark.id || landmark.name}`;
     const firstVisit = !this.state.flags[flag];
     this.state.flags[flag] = true;
-    const text = landmark.description || `${landmark.name || "这处遗迹"}沉默地记录着世界的变化。`;
+    const routeText = Array.isArray(landmark.destinations) && landmark.destinations.length
+      ? ` 路牌写着：${landmark.destinations.map((destination) => `${destination.direction || "前方"}：${destination.label || "未知道路"}`).join("；")}。`
+      : "";
+    const text = `${landmark.description || `${landmark.name || "这处遗迹"}沉默地记录着世界的变化。`}${routeText}`;
     this.ui.toast(text, firstVisit ? "success" : "info");
     if (firstVisit) {
       addJournal(this.state, `你调查了${landmark.name || "一处地标"}：${text}`, "player");

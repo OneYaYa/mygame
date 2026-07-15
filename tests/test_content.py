@@ -142,6 +142,17 @@ def scene_collision_rectangles(scene):
     for zone in scene.get("zones", []):
         if zone.get("collision") is True:
             rectangles.append((f"zone:{zone.get('type', '?')}", zone))
+    for collection_name in ("landmarks", "decorations"):
+        for item in scene.get(collection_name, []):
+            if item.get("collision") is False:
+                continue
+            collision_rectangles = item.get("collisionRects")
+            if collision_rectangles is None and item.get("collisionRect") is not None:
+                collision_rectangles = [item["collisionRect"]]
+            if collision_rectangles is None and item.get("collision") is True:
+                collision_rectangles = [item]
+            for rectangle in collision_rectangles or []:
+                rectangles.append((f"{collection_name[:-1]}:{item.get('id', '?')}", rectangle))
     return rectangles
 
 
@@ -709,6 +720,284 @@ class TestWorldContent(unittest.TestCase):
                     f"{region_id} ambient props should not be one repeated object",
                 )
 
+    def test_major_outdoor_landmarks_and_tree_trunks_have_compact_collision(self):
+        layouts = self.maps.get("regions", {})
+        required = {
+            "capital": {"star_fountain"},
+            "mansion": {"mirror_pond"},
+            "snow": {"glacier_seal", "echo_chasm"},
+            "desert": {"ember_ruins", "blue_oasis", "glass_whale"},
+        }
+
+        for region_id, landmark_ids in required.items():
+            landmarks = {item.get("id"): item for item in layouts[region_id].get("landmarks", [])}
+            for landmark_id in landmark_ids:
+                with self.subTest(region_id=region_id, landmark_id=landmark_id):
+                    self.assertIn(landmark_id, landmarks)
+                    self.assert_explicit_compact_collision(landmarks[landmark_id], region_id)
+
+        trees = [
+            (region_id, landmark)
+            for region_id, scene in layouts.items()
+            for landmark in scene.get("landmarks", [])
+            if landmark.get("type") in {"tree", "pine"}
+        ]
+        self.assertGreaterEqual(len(trees), 12, "outdoor biomes need collidable tree trunks")
+        for region_id, tree in trees:
+            with self.subTest(region_id=region_id, tree_id=tree.get("id")):
+                self.assert_explicit_compact_collision(tree, region_id)
+
+    def assert_explicit_compact_collision(self, item, scene_id):
+        collision_rectangles = item.get("collisionRects")
+        if collision_rectangles is None and item.get("collisionRect") is not None:
+            collision_rectangles = [item["collisionRect"]]
+        self.assertIsInstance(collision_rectangles, list, f"{scene_id}.{item.get('id')} needs explicit collision geometry")
+        self.assertGreater(len(collision_rectangles), 0, f"{scene_id}.{item.get('id')} collision is empty")
+
+        collision_area = 0
+        for index, rectangle in enumerate(collision_rectangles):
+            path = f"{scene_id}.{item.get('id')}.collision[{index}]"
+            for key in ("x", "y", "w", "h"):
+                self.assertTrue(is_finite_number(rectangle.get(key)), f"{path}.{key} must be finite")
+            self.assertGreater(rectangle["w"], 0, f"{path}.w must be positive")
+            self.assertGreater(rectangle["h"], 0, f"{path}.h must be positive")
+            self.assertGreaterEqual(rectangle["x"], item["x"], f"{path} starts left of its visual")
+            self.assertGreaterEqual(rectangle["y"], item["y"], f"{path} starts above its visual")
+            self.assertLessEqual(rectangle["x"] + rectangle["w"], item["x"] + item["w"], f"{path} exceeds visual width")
+            self.assertLessEqual(rectangle["y"] + rectangle["h"], item["y"] + item["h"], f"{path} exceeds visual height")
+            collision_area += rectangle["w"] * rectangle["h"]
+
+        visual_area = item["w"] * item["h"]
+        self.assertLessEqual(
+            collision_area,
+            visual_area * 0.75,
+            f"{scene_id}.{item.get('id')} blocks too much of a tall/irregular visual",
+        )
+
+    def test_short_paths_visually_connect_previously_detached_entrances(self):
+        layouts = self.maps.get("regions", {})
+        required_branches = {
+            "capital": [{"x": 1080, "y": 146, "w": 48, "h": 176, "style": "cobble"}],
+            "mansion": [
+                {"x": 216, "y": 390, "w": 82, "h": 40, "style": "garden"},
+                {"x": 1238, "y": 390, "w": 82, "h": 40, "style": "garden"},
+            ],
+            "snow": [
+                {"x": 348, "y": 690, "w": 44, "h": 110, "style": "snow"},
+                {"x": 1260, "y": 542, "w": 78, "h": 44, "style": "snow"},
+            ],
+        }
+        for region_id, branches in required_branches.items():
+            paths = layouts[region_id].get("paths", [])
+            for branch in branches:
+                self.assertIn(branch, paths, f"{region_id} is missing entrance branch {branch}")
+
+        mansion_east_road = next(
+            (
+                path
+                for path in layouts["mansion"].get("paths", [])
+                if path.get("style") == "marble" and path.get("y") == 610 and path.get("x") == 120
+            ),
+            None,
+        )
+        self.assertIsNotNone(mansion_east_road, "mansion needs its east-west carriage road")
+        self.assertGreaterEqual(
+            mansion_east_road["x"] + mansion_east_road["w"],
+            1468,
+            "mansion east road must visually reach the farm exit",
+        )
+
+    def test_outdoor_signposts_mark_only_real_major_junctions(self):
+        layouts = self.maps.get("regions", {})
+        places = self.maps.get("places", [])
+        scene_ids = set(layouts) | {
+            place.get("id")
+            for place in places
+            if isinstance(place, dict) and isinstance(place.get("id"), str)
+        }
+        signposts = []
+        signpost_ids = []
+        signpost_flags = []
+
+        for region_id, scene in layouts.items():
+            region_signposts = [
+                landmark
+                for landmark in scene.get("landmarks", [])
+                if landmark.get("type") == "signpost"
+            ]
+            self.assertGreaterEqual(len(region_signposts), 1, f"{region_id} needs a main-junction signpost")
+            self.assertLessEqual(len(region_signposts), 2, f"{region_id} has signposts away from major junctions")
+            self.assertLess(
+                len(region_signposts),
+                len(scene.get("portals", [])),
+                f"{region_id} must not place one signpost at every portal",
+            )
+
+            direct_targets = {
+                (
+                    portal.get("target", {}).get("regionId"),
+                    portal.get("target", {}).get("placeId", portal.get("target", {}).get("regionId")),
+                )
+                for portal in scene.get("portals", [])
+            }
+
+            for signpost_index, signpost in enumerate(region_signposts):
+                path = f"{region_id}.signposts[{signpost_index}]"
+                signposts.append(signpost)
+                for field in ("id", "name", "description", "flag"):
+                    self.assertIsInstance(signpost.get(field), str, f"{path}.{field} must be a string")
+                    self.assertTrue(signpost.get(field, "").strip(), f"{path}.{field} must not be empty")
+                self.assertIs(signpost.get("interactive"), True, f"{path} must be inspectable")
+                self.assertIs(signpost.get("collision"), False, f"{path} must not block the fork")
+                self.assertEqual(signpost.get("layer"), "object", f"{path} must sort with scene objects")
+                signpost_ids.append(signpost["id"])
+                signpost_flags.append(signpost["flag"])
+
+                destinations = signpost.get("destinations")
+                self.assertIsInstance(destinations, list, f"{path}.destinations must be an array")
+                self.assertGreaterEqual(len(destinations), 2, f"{path} must describe an actual fork")
+                for destination_index, destination in enumerate(destinations):
+                    destination_path = f"{path}.destinations[{destination_index}]"
+                    self.assertIsInstance(destination, dict, f"{destination_path} must be an object")
+                    for field in ("direction", "label", "targetRegionId", "targetPlaceId"):
+                        self.assertIsInstance(destination.get(field), str, f"{destination_path}.{field} must be a string")
+                        self.assertTrue(destination.get(field, "").strip(), f"{destination_path}.{field} must not be empty")
+                    self.assertIn(destination["targetRegionId"], layouts, f"{destination_path} has unknown region")
+                    self.assertIn(destination["targetPlaceId"], scene_ids, f"{destination_path} has unknown place")
+                    self.assertIn(
+                        (destination["targetRegionId"], destination["targetPlaceId"]),
+                        direct_targets,
+                        f"{destination_path} is not reachable from a portal in {region_id}",
+                    )
+
+                self.assertTrue(
+                    any(
+                        rectangles_overlap(
+                            signpost,
+                            {
+                                "x": route["x"] - 12,
+                                "y": route["y"] - 12,
+                                "w": route["w"] + 24,
+                                "h": route["h"] + 24,
+                            },
+                        )
+                        for route in scene.get("paths", [])
+                    ),
+                    f"{path} is not placed at the edge of a walkable route",
+                )
+                for blocker_name, blocker in scene_collision_rectangles(scene):
+                    self.assertFalse(
+                        rectangles_overlap(signpost, blocker),
+                        f"{path} overlaps {region_id} {blocker_name}",
+                    )
+                for portal in scene.get("portals", []):
+                    self.assertFalse(
+                        rectangles_overlap(signpost, portal),
+                        f"{path} covers portal {portal.get('id', '?')}",
+                    )
+                for building in scene.get("buildings", []):
+                    self.assertFalse(
+                        rectangles_overlap(signpost, building),
+                        f"{path} appears on top of building {building.get('id', '?')}",
+                    )
+                for landmark in scene.get("landmarks", []):
+                    if landmark is signpost:
+                        continue
+                    self.assertFalse(
+                        rectangles_overlap(signpost, landmark),
+                        f"{path} overlaps landmark {landmark.get('id', '?')}",
+                    )
+
+        self.assertGreaterEqual(len(signposts), 5, "all five outdoor regions need a useful signpost")
+        self.assertLessEqual(len(signposts), 7, "signposts should remain sparse")
+        self.assertEqual(len(signposts), len(signpost_ids), "signposts must stay outdoors")
+        self.assertEqual(len(signpost_ids), len(set(signpost_ids)), "signpost IDs must be unique")
+        self.assertEqual(len(signpost_flags), len(set(signpost_flags)), "signpost flags must be unique")
+        self.assertLess(
+            len(signposts),
+            sum(len(scene.get("portals", [])) for scene in layouts.values()),
+            "the world must not receive one signpost per portal",
+        )
+
+    def test_all_interiors_have_lived_in_decor_and_interactions(self):
+        places = self.maps.get("places", [])
+        self.assertEqual(len(places), 15)
+        supported_landmark_types = {
+            "board", "chest", "crystal", "fountain", "map", "oasis", "pond",
+            "ruin", "shrine", "statue", "table", "well",
+        }
+        interactive_ids = []
+        interactive_names = []
+        decoration_ids = []
+
+        for place in places:
+            place_id = place.get("id", "?")
+            with self.subTest(place_id=place_id):
+                palette = place.get("palette", {})
+                self.assertIsInstance(palette.get("groundAlt"), str, f"{place_id} needs groundAlt")
+                self.assertTrue(palette.get("groundAlt", "").strip(), f"{place_id}.palette.groundAlt is empty")
+                self.assertIsInstance(palette.get("floorAlt"), str, f"{place_id} needs floorAlt compatibility")
+                self.assertTrue(palette.get("floorAlt", "").strip(), f"{place_id}.palette.floorAlt is empty")
+
+                interactive = [
+                    landmark
+                    for landmark in place.get("landmarks", [])
+                    if landmark.get("interactive") is True
+                ]
+                self.assertGreaterEqual(len(interactive), 3, f"{place_id} needs at least three investigations")
+                for landmark_index, landmark in enumerate(interactive):
+                    path = f"{place_id}.landmarks[{landmark_index}]"
+                    for field in ("id", "name", "type", "description"):
+                        self.assertIsInstance(landmark.get(field), str, f"{path}.{field} must be a string")
+                        self.assertTrue(landmark.get(field, "").strip(), f"{path}.{field} must not be empty")
+                    self.assertIn(landmark["type"], supported_landmark_types, f"{path}.type is not rendered")
+                    interactive_ids.append(landmark["id"])
+                    interactive_names.append(landmark["name"])
+
+                decorations = place.get("decorations")
+                self.assertIsInstance(decorations, list, f"{place_id}.decorations must be an array")
+                self.assertGreaterEqual(len(decorations), 4, f"{place_id} needs at least four ambient props")
+                for decoration_index, decoration in enumerate(decorations):
+                    path = f"{place_id}.decorations[{decoration_index}]"
+                    for field in ("id", "name", "type", "layer"):
+                        self.assertIsInstance(decoration.get(field), str, f"{path}.{field} must be a string")
+                        self.assertTrue(decoration.get(field, "").strip(), f"{path}.{field} must not be empty")
+                    self.assertIn(decoration["type"], supported_landmark_types, f"{path}.type is not rendered")
+                    self.assertIn(
+                        decoration["layer"],
+                        {"ground", "background", "wall", "object", "foreground"},
+                        f"{path}.layer is unsupported",
+                    )
+                    self.assertIs(decoration.get("interactive"), False, f"{path} must remain ambient")
+                    self.assertIs(decoration.get("collision"), False, f"{path} must not close a walking route")
+                    decoration_ids.append(decoration["id"])
+
+                self.assertGreaterEqual(len(place.get("furniture", [])), 6, f"{place_id} needs functional zones")
+
+        self.assertGreaterEqual(len(interactive_ids), 45)
+        self.assertEqual(len(interactive_ids), len(set(interactive_ids)), "interior landmark IDs must be globally unique")
+        self.assertEqual(len(interactive_names), len(set(interactive_names)), "interior landmark names must be globally unique")
+        self.assertEqual(len(decoration_ids), len(set(decoration_ids)), "interior decoration IDs must be globally unique")
+        self.assertFalse(set(interactive_ids) & set(decoration_ids), "landmark and decoration IDs must not overlap")
+
+    def test_wall_hangings_use_the_wall_layer_instead_of_actor_sorting(self):
+        expected_wall_ids = {
+            "palace_crown_banner", "palace_commons_banner", "archive_catalog_board",
+            "barracks_spear_rack", "barracks_shield_rack", "farmhouse_herb_bundle",
+            "farmhouse_family_quilt", "apiary_veil_hooks", "mansion_ancestor_portrait",
+            "mansion_empty_portrait", "servants_uniform_hooks", "servants_spare_keys",
+            "lodge_bed_curtain_west", "lodge_bed_curtain_east", "watchtower_frost_window",
+            "watchtower_signal_flags", "hermit_drying_herbs", "hermit_snow_cloak",
+            "caravan_hanging_rugs", "dig_tool_rack", "guide_route_cords",
+        }
+        actual_wall_ids = {
+            decoration.get("id")
+            for place in self.maps.get("places", [])
+            for decoration in place.get("decorations", [])
+            if decoration.get("layer") == "wall"
+        }
+        self.assertEqual(actual_wall_ids, expected_wall_ids)
+
     def test_portal_access_rules_are_diegetic_and_reference_valid_state(self):
         gated_portals = []
         palace_door = None
@@ -763,7 +1052,7 @@ class TestWorldContent(unittest.TestCase):
         for scene in scenes:
             scene_width = scene.get("width", CANVAS_WIDTH)
             scene_height = scene.get("height", CANVAS_HEIGHT)
-            for collection_name in ("paths", "zones", "buildings", "obstacles", "landmarks", "furniture", "portals"):
+            for collection_name in ("paths", "zones", "buildings", "obstacles", "landmarks", "decorations", "furniture", "portals"):
                 collection = scene.get(collection_name, [])
                 self.assertIsInstance(collection, list, f"{scene['id']}.{collection_name} must be an array")
                 for item_index, rectangle in enumerate(collection):

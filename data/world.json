@@ -470,7 +470,7 @@
       "actionWeights": { "guide": 1.8, "excavate": 0.7, "talk": 1.1 },
       "schedule": [
         { "start": "06:00", "end": "11:00", "regionId": "desert", "placeId": "desert", "x": 1180, "y": 500, "activity": "在东路给旅人带路" },
-        { "start": "11:00", "end": "16:00", "regionId": "desert", "placeId": "desert", "x": 390, "y": 700, "activity": "在蓝镜绿洲测量水流" },
+        { "start": "11:00", "end": "16:00", "regionId": "desert", "placeId": "desert", "x": 390, "y": 638, "activity": "在蓝镜绿洲北岸测量水流" },
         { "start": "16:00", "end": "22:00", "regionId": "desert", "placeId": "desert", "x": 1100, "y": 620, "activity": "追踪沙狐脚印" },
         { "start": "22:00", "end": "06:00", "regionId": "desert", "placeId": "desert-guide-tent", "x": 480, "y": 372, "activity": "在帐篷里绘制星路" }
       ]

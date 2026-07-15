@@ -9,6 +9,24 @@ const MAP_POSITIONS = {
   desert: { left: "68%", top: "61%" },
 };
 
+const MAP_VIEWBOX = { width: 960, height: 540 };
+const MAP_NODE_OFFSET = { x: 8.5, y: 11.5 };
+const MAP_ROUTE_KINDS = new Set(["road", "carriage", "lift", "caravan", "trail"]);
+const PORTRAIT_SKINS = {
+  aveline: "#edbd91", rowan: "#d99a72", taren: "#b87558", mira: "#efc39a", bo: "#c98963",
+  nia: "#a96850", celeste: "#e8b887", oswin: "#d8a179", lune: "#efc6a0", sora: "#c98563",
+  garrick: "#b77759", ymir: "#e4b58d", zahra: "#9d5e49", kade: "#d09369", ruu: "#efc39b",
+};
+
+function numericPercent(value, fallback = 50) {
+  const number = typeof value === "number" ? value : Number.parseFloat(String(value ?? ""));
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function clampMapPercent(value, margin) {
+  return Math.max(margin, Math.min(100 - margin, value));
+}
+
 export class GameUI {
   constructor(content, callbacks = {}) {
     this.content = content;
@@ -221,7 +239,7 @@ export class GameUI {
     this.elements.help_title.textContent = observer ? "上帝观察手册" : "旅行者手册";
     this.elements.help_description.textContent = observer
       ? "世界中没有玩家。用 WASD 或方向键平移镜头，按 M 切换五地；公告、封路和灾后痕迹会随社会进程改变，人物志可查看居民如何形成自己的结果。"
-      : "用 WASD 或方向键移动，靠近人物、告示、门或交通点后按 E。公共事件不会弹出选择题：留意地图变化，与知情者建立信任，再把主张交给真正参与商议的人。错过消息时，世界仍会继续。";
+      : "用 WASD 或方向键移动，按住 Shift 疾跑；靠近人物、告示、门或交通点后按 E。公共事件不会弹出选择题：留意地图变化，与知情者建立信任，再把主张交给真正参与商议的人。错过消息时，世界仍会继续。";
     this.elements.new_timeline_button.textContent = observer ? "观察另一条世界线" : "踏入另一条世界线";
     this.elements.keep_wandering_button.textContent = observer ? "停在结局前夜继续观察" : "留在结局前夜";
     if (observer) this.elements.interaction_hint.classList.add("hidden");
@@ -266,6 +284,13 @@ export class GameUI {
     `).join("");
   }
 
+  portraitAttributes(npc, known = true) {
+    const npcColor = known ? npc.color || "#8b708e" : "#756c62";
+    const hairColor = known ? npc.hairColor || "#4d3632" : "#574f49";
+    const skinColor = known ? npc.skinColor || PORTRAIT_SKINS[npc.id] || "#efbf87" : "#a99a86";
+    return `data-portrait="${escapeHtml(known ? npc.id : "unknown")}" style="--npc-color:${escapeHtml(npcColor)};--hair-color:${escapeHtml(hairColor)};--skin-color:${escapeHtml(skinColor)}"`;
+  }
+
   renderNearby(nearby, state = this.state) {
     const card = this.elements.nearby_card;
     if (state?.mode === "observer") {
@@ -281,7 +306,7 @@ export class GameUI {
       const current = this.sameLocation(npcState, state);
       card.className = "nearby-card";
       card.innerHTML = `<div class="nearby-person">
-        <div class="mini-portrait" style="--npc-color:${npc.color || "#8b708e"};--hair-color:${npc.hairColor || "#4d3632"}"></div>
+        <div class="mini-portrait" ${this.portraitAttributes(npc)}></div>
         <div><strong>正在观察：${escapeHtml(npc.name)}</strong><small>${escapeHtml(location.title)} · ${escapeHtml(npcState.activity)}</small>
         <div class="nearby-meta"><span class="tag">${current ? "◉ 当前镜头" : "◎ 其他地点"}</span><span class="tag">${escapeHtml(npcState.mood)}</span><span class="tag">记忆 ${npcState.memories.length}</span></div></div>
       </div>`;
@@ -295,7 +320,7 @@ export class GameUI {
     const { profile: npc, state: npcState } = nearby;
     card.className = "nearby-card";
     card.innerHTML = `<div class="nearby-person">
-      <div class="mini-portrait" style="--npc-color:${npc.color || "#8b708e"};--hair-color:${npc.hairColor || "#4d3632"}"></div>
+      <div class="mini-portrait" ${this.portraitAttributes(npc)}></div>
       <div><strong>${escapeHtml(npc.name)} · ${escapeHtml(npc.role)}</strong><small>${escapeHtml(npcState.activity)} · ${escapeHtml(npcState.mood)}</small>
       <div class="nearby-meta"><span class="tag">关系 ${Math.round(npcState.relationship)}</span><span class="tag">记忆 ${npcState.memories.length}</span></div></div>
     </div>`;
@@ -319,7 +344,7 @@ export class GameUI {
       const location = this.describeLocation(npcState?.regionId, npcState?.placeId);
       const current = this.sameLocation(npcState, state);
       return `<button class="person-entry" data-npc-id="${escapeHtml(npc.id)}">
-        <div class="mini-portrait" style="--npc-color:${known ? npc.color || "#8b708e" : "#756c62"};--hair-color:${known ? npc.hairColor || "#4d3632" : "#574f49"}"></div>
+        <div class="mini-portrait" ${this.portraitAttributes(npc, known)}></div>
         <span><strong>${known ? escapeHtml(npc.name) : "尚未结识"}</strong><small>${known ? `${escapeHtml(npc.role)} · ${escapeHtml(location.title)}` : escapeHtml(location.title)}</small></span>
         <span class="relation-value">${observer ? (current ? "◉" : "◎") : known ? Math.round(npcState.relationship) : "?"}</span>
       </button>`;
@@ -387,27 +412,182 @@ export class GameUI {
     return `无直达交通，需经${intermediateNames.join("、")}中转${totalMinutes > 0 ? ` · 约 ${totalMinutes} 分钟` : ""}`;
   }
 
+  mapPoint(region, index) {
+    const fallback = { left: `${8 + (index % 3) * 31}%`, top: `${10 + Math.floor(index / 3) * 48}%` };
+    const position = region.mapPosition || MAP_POSITIONS[region.id] || fallback;
+    // Existing mapPosition values described the top-left corner of the old cards.
+    // Keep those authored coordinates useful by shifting them to the illustrated icon centre.
+    const centered = position.anchor === "center";
+    const rawX = numericPercent(position.x ?? position.left, numericPercent(fallback.left));
+    const rawY = numericPercent(position.y ?? position.top, numericPercent(fallback.top));
+    const x = clampMapPercent(rawX + (centered ? 0 : MAP_NODE_OFFSET.x), 8);
+    const y = clampMapPercent(rawY + (centered ? 0 : MAP_NODE_OFFSET.y), 12);
+    return {
+      x,
+      y,
+      svgX: x / 100 * MAP_VIEWBOX.width,
+      svgY: y / 100 * MAP_VIEWBOX.height,
+    };
+  }
+
+  mapRouteEdges() {
+    const edges = new Map();
+    this.content.regions.forEach((region) => {
+      this.regionConnections(region.id).forEach(({ regionId, portal }) => {
+        const ends = [region.id, regionId].sort();
+        const key = ends.join("--");
+        if (edges.has(key)) return;
+        const rawKind = String(portal.kind || "road").toLowerCase();
+        edges.set(key, {
+          key,
+          from: region.id,
+          to: regionId,
+          kind: MAP_ROUTE_KINDS.has(rawKind) ? rawKind : "road",
+          label: portal.label || "地区道路",
+        });
+      });
+    });
+    return [...edges.values()].sort((left, right) => left.key.localeCompare(right.key));
+  }
+
+  renderWorldMapArtwork(points) {
+    const routeMarkup = this.mapRouteEdges().map((edge, index) => {
+      const from = points.get(edge.from);
+      const to = points.get(edge.to);
+      if (!from || !to) return "";
+      const dx = to.svgX - from.svgX;
+      const dy = to.svgY - from.svgY;
+      const length = Math.max(1, Math.hypot(dx, dy));
+      const bend = (index % 2 === 0 ? 1 : -1) * Math.min(18, length * .055);
+      const controlX = (from.svgX + to.svgX) / 2 - dy / length * bend;
+      const controlY = (from.svgY + to.svgY) / 2 + dx / length * bend;
+      const path = `M ${from.svgX.toFixed(1)} ${from.svgY.toFixed(1)} Q ${controlX.toFixed(1)} ${controlY.toFixed(1)} ${to.svgX.toFixed(1)} ${to.svgY.toFixed(1)}`;
+      return `<path class="world-route__shadow" d="${path}"></path><path class="world-route world-route--${edge.kind}" d="${path}" data-route="${escapeHtml(edge.key)}"><title>${escapeHtml(edge.label)}</title></path>`;
+    }).join("");
+
+    return `<svg class="world-map-art" viewBox="0 0 ${MAP_VIEWBOX.width} ${MAP_VIEWBOX.height}" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="map-water-ripples" width="48" height="28" patternUnits="userSpaceOnUse">
+          <path d="M4 14h18m8 7h12" class="map-art__ripple"></path>
+        </pattern>
+        <pattern id="map-land-speckles" width="32" height="32" patternUnits="userSpaceOnUse">
+          <rect x="7" y="8" width="3" height="3" class="map-art__speck"></rect>
+          <rect x="24" y="23" width="2" height="2" class="map-art__speck"></rect>
+        </pattern>
+      </defs>
+      <rect width="960" height="540" class="map-art__water"></rect>
+      <rect width="960" height="540" fill="url(#map-water-ripples)" opacity=".55"></rect>
+      <path class="map-art__land-shadow" d="M66 124L92 90l88-30 130 9 75 35 96-13 75-56 118-9 104 35 52 73 79 42 30 84-17 82-79 55-69 65-131 27-121-17-99 25-116-4-99-42-93-22-46-71 13-77-29-75z"></path>
+      <path class="map-art__land" d="M58 112L91 78l88-27 129 10 78 34 94-12 72-53 119-8 103 34 49 70 82 42 27 82-17 78-81 52-64 63-130 25-120-17-100 24-112-5-98-39-94-22-42-67 13-76-31-72z"></path>
+      <path class="map-art__coast" d="M58 112L91 78l88-27 129 10 78 34 94-12 72-53 119-8 103 34 49 70 82 42 27 82-17 78-81 52-64 63-130 25-120-17-100 24-112-5-98-39-94-22-42-67 13-76-31-72z"></path>
+      <path class="map-art__river-shadow" d="M695 42c-22 65-91 88-96 145-5 54 48 74 8 119-45 51-150 18-205 67-32 28-52 61-85 96"></path>
+      <path class="map-art__river" d="M695 42c-22 65-91 88-96 145-5 54 48 74 8 119-45 51-150 18-205 67-32 28-52 61-85 96"></path>
+
+      <g class="map-art__mansion" transform="translate(132 55)">
+        <path d="M4 45h222v91H4z" class="map-art__garden"></path>
+        <path d="M10 54h60v12H10zm148 0h60v12h-60zM10 112h72v12H10zm136 0h72v12h-72z" class="map-art__hedge"></path>
+        <ellipse cx="38" cy="91" rx="25" ry="12" class="map-art__pond"></ellipse>
+        <path d="M90 40h49v80H90zM72 78h86v12H72z" class="map-art__garden-path"></path>
+      </g>
+      <g class="map-art__snow" transform="translate(555 17)">
+        <path d="M0 142L69 23l31 50 47-70 91 139z" class="map-art__mountain-back"></path>
+        <path d="M45 142L112 40l32 47 29-48 65 103z" class="map-art__mountain"></path>
+        <path d="M69 23l31 50-22-8-13 18-10-21zm78-20l35 55-21-12-16 18-14-21z" class="map-art__snowcap"></path>
+        <path d="M18 134h203" class="map-art__ice-line"></path>
+      </g>
+      <g class="map-art__capital" transform="translate(355 171)">
+        <path d="M12 31h221v142H12z" class="map-art__capital-ground"></path>
+        <path d="M12 82h221M112 31v142" class="map-art__capital-road"></path>
+        <path d="M2 44h242v9H2zm0 110h242v9H2z" class="map-art__capital-wall"></path>
+        <path d="M10 121h225" class="map-art__capital-canal"></path>
+      </g>
+      <g class="map-art__farm" transform="translate(68 298)">
+        <path d="M3 10h275v159H3z" class="map-art__farm-ground"></path>
+        <path d="M16 23h103v54H16z" class="map-art__field map-art__field--wheat"></path>
+        <path d="M151 23h108v54H151z" class="map-art__field map-art__field--green"></path>
+        <path d="M16 101h103v50H16z" class="map-art__field map-art__field--earth"></path>
+        <path d="M151 101h108v50H151z" class="map-art__field map-art__field--gold"></path>
+        <path d="M134 8v153M4 88h273" class="map-art__farm-road"></path>
+      </g>
+      <g class="map-art__desert" transform="translate(606 310)">
+        <path d="M0 51q54-68 110-3 55-71 142 6v111H0z" class="map-art__sand"></path>
+        <path d="M14 93q38-28 81 0m71 24q34-29 73 0" class="map-art__dune"></path>
+        <ellipse cx="79" cy="132" rx="47" ry="19" class="map-art__oasis"></ellipse>
+        <path d="M180 57h37v67h-37zm-12 13h61" class="map-art__ruin"></path>
+      </g>
+
+      <g class="world-route-layer">${routeMarkup}</g>
+      <rect width="960" height="540" fill="url(#map-land-speckles)" opacity=".3"></rect>
+      <g class="map-art__compass" transform="translate(876 68)">
+        <path d="M0-31L8-8 31 0 8 8 0 31-8 8-31 0-8-8z"></path>
+        <path d="M0-23L5-5 0 0-5-5z" class="map-art__compass-north"></path>
+        <text x="0" y="-38">N</text>
+      </g>
+    </svg>
+    <div class="map-route-key" aria-label="地图线路图例">
+      <span><i class="route-swatch route-swatch--road"></i>步行</span>
+      <span><i class="route-swatch route-swatch--carriage"></i>马车</span>
+      <span><i class="route-swatch route-swatch--lift"></i>缆车</span>
+      <span><i class="route-swatch route-swatch--caravan"></i>商队</span>
+      <span><i class="route-swatch route-swatch--trail"></i>古道</span>
+    </div>`;
+  }
+
+  mapRegionIcon(regionId) {
+    if (regionId === "capital") return `<svg viewBox="0 0 96 76" aria-hidden="true">
+      <path class="map-icon__shadow" d="M7 62h82v8H7z"></path><path class="map-icon__wall" d="M10 31h76v34H10z"></path>
+      <path class="map-icon__roof" d="M7 31L20 14l13 17zm56 0l13-17 13 17zM29 28L48 7l19 21z"></path>
+      <path class="map-icon__tower" d="M12 29h17v34H12zm55 0h17v34H67zM33 25h30v38H33z"></path>
+      <path class="map-icon__door" d="M42 48h12v15H42z"></path><path class="map-icon__water" d="M4 67h88v5H4z"></path>
+    </svg>`;
+    if (regionId === "farm") return `<svg viewBox="0 0 96 76" aria-hidden="true">
+      <path class="map-icon__shadow" d="M4 64h88v7H4z"></path><path class="map-icon__field" d="M4 41h88v25H4z"></path>
+      <path class="map-icon__furrow" d="M7 48h84M7 56h84M7 64h84"></path><path class="map-icon__barn" d="M13 31h31v31H13z"></path>
+      <path class="map-icon__roof" d="M8 32l20-17 21 17z"></path><path class="map-icon__door" d="M22 46h13v16H22z"></path>
+      <path class="map-icon__mill" d="M67 25v39M53 38h29M58 18l18 39M78 18L57 57"></path><circle class="map-icon__hub" cx="67" cy="38" r="4"></circle>
+    </svg>`;
+    if (regionId === "mansion") return `<svg viewBox="0 0 96 76" aria-hidden="true">
+      <path class="map-icon__shadow" d="M5 64h86v7H5z"></path><path class="map-icon__hedge" d="M3 52h21v14H3zm69 0h21v14H72z"></path>
+      <path class="map-icon__wall" d="M20 28h57v37H20z"></path><path class="map-icon__roof" d="M14 30L48 8l35 22z"></path>
+      <path class="map-icon__window" d="M28 36h10v11H28zm30 0h10v11H58z"></path><path class="map-icon__door" d="M43 46h12v19H43z"></path>
+      <ellipse class="map-icon__water" cx="13" cy="66" rx="11" ry="4"></ellipse>
+    </svg>`;
+    if (regionId === "snow") return `<svg viewBox="0 0 96 76" aria-hidden="true">
+      <path class="map-icon__shadow" d="M4 65h88v6H4z"></path><path class="map-icon__mountain-back" d="M3 62L31 17l20 45z"></path>
+      <path class="map-icon__mountain" d="M26 64L59 7l34 57z"></path><path class="map-icon__snow" d="M31 17l8 13-9-3-7 7zm28-10l13 23-12-6-9 10-6-4z"></path>
+      <path class="map-icon__cable" d="M6 22l82 20"></path><path class="map-icon__lift" d="M21 25h14v10H21zm43 11h14v10H64z"></path>
+    </svg>`;
+    if (regionId === "desert") return `<svg viewBox="0 0 96 76" aria-hidden="true">
+      <path class="map-icon__shadow" d="M3 65h90v7H3z"></path><path class="map-icon__sand" d="M3 49q19-23 42 0 25-25 48 0v18H3z"></path>
+      <ellipse class="map-icon__water" cx="31" cy="59" rx="20" ry="7"></ellipse><path class="map-icon__palm" d="M27 55l7-32m0 2l-15-5m15 5l13-9m-13 9L23 12m11 13l17 4"></path>
+      <path class="map-icon__ruin" d="M61 24h23v40H61zM57 24h31v7H57zM66 31v33m13-33v33"></path>
+    </svg>`;
+    return `<svg viewBox="0 0 96 76" aria-hidden="true"><path class="map-icon__wall" d="M15 20h66v45H15z"></path></svg>`;
+  }
+
   showMap() {
     if (!this.state || this.transitionLocked) return;
     const observer = this.state.mode === "observer";
     const map = this.elements.world_map;
-    map.innerHTML = "";
+    const points = new Map(this.content.regions.map((region, index) => [region.id, this.mapPoint(region, index)]));
+    map.innerHTML = this.renderWorldMapArtwork(points);
     this.content.regions.forEach((region, index) => {
-      const position = region.mapPosition || MAP_POSITIONS[region.id] || { left: `${8 + (index % 3) * 31}%`, top: `${10 + Math.floor(index / 3) * 48}%` };
+      const point = points.get(region.id) || this.mapPoint(region, index);
       const current = region.id === this.state.regionId;
       const currentPlaceId = this.state.placeId || this.state.regionId;
       const currentInterior = current && currentPlaceId !== this.state.regionId;
       const entry = document.createElement(observer ? "button" : "article");
-      entry.className = `map-region${current ? " current" : ""}${observer ? "" : " read-only"}`;
-      entry.style.left = typeof position.x === "number" ? `${position.x}%` : position.left;
-      entry.style.top = typeof position.y === "number" ? `${position.y}%` : position.top;
+      entry.className = `map-region map-region--${region.id}${current ? " current" : ""}${observer ? "" : " read-only"}${point.y > 58 ? " map-region--south" : ""}`;
+      entry.style.left = `${point.x}%`;
+      entry.style.top = `${point.y}%`;
       entry.style.setProperty("--region-color", region.mapColor || region.palette?.accent || "#66596a");
       if (current) entry.setAttribute("aria-current", "location");
       if (observer) {
         entry.type = "button";
         entry.disabled = current && !currentInterior;
       } else {
-        entry.style.cursor = "default";
+        entry.tabIndex = 0;
+        entry.setAttribute("role", "group");
       }
       const population = Object.values(this.state.npcs || {}).filter((npcState) => npcState?.regionId === region.id).length;
       const currentLocation = current ? this.describeLocation(this.state.regionId, this.state.placeId) : null;
@@ -415,19 +595,24 @@ export class GameUI {
       const stateLabel = observer
         ? current
           ? currentInterior
-            ? ` · 正在观察（${currentLocation?.placeName || "室内"}） · 点击返回地区大地图`
-            : " · 正在观察"
-          : " · 点击切换镜头"
+            ? `正在观察${currentLocation?.placeName || "室内"}；点击返回地区室外`
+            : "当前观察镜头"
+          : "点击切换观察镜头"
         : current
-          ? ` · 当前所在${currentLocation?.placeName ? `（${currentLocation.placeName}）` : ""}`
-          : ` · ${routeHint}`;
-      entry.innerHTML = `<strong>${escapeHtml(region.name)}</strong><small>${escapeHtml(region.subtitle || region.description || "")}<br>${population} 位居民${escapeHtml(stateLabel)}</small>`;
+          ? `当前所在${currentLocation?.placeName ? `：${currentLocation.placeName}` : ""}`
+          : routeHint;
+      const subtitle = region.subtitle || region.description || "";
+      entry.setAttribute("aria-label", `${region.name}，${subtitle}，${population} 位居民，${stateLabel}`);
+      entry.innerHTML = `<span class="map-region__icon">${this.mapRegionIcon(region.id)}</span>
+        <span class="map-region__label"><strong>${escapeHtml(region.name)}</strong><span>${escapeHtml(subtitle)}</span></span>
+        <span class="map-region__population" aria-hidden="true">${population}</span>
+        <small class="map-region__detail">${population} 位居民<br>${escapeHtml(stateLabel)}</small>`;
       if (observer && (!current || currentInterior)) entry.addEventListener("click", () => this.callbacks.onTravel?.(region.id));
       map.appendChild(entry);
     });
     this.elements.map_note.textContent = observer
-      ? "点击五地可切换大地图观察镜头；在室内时点击当前地区可返回室外。切换不消耗游戏时间，也不会被任何居民察觉。"
-      : "M 只用于查看路线，不能直接传送。卡片显示从当前地区出发的直达交通与预计时间；没有直达路线时会标出中转地区。";
+      ? "点击地图地标可切换观察镜头；在室内时点击当前地区可返回室外。切换不消耗游戏时间，也不会被居民察觉。"
+      : "M 只用于查看路线，不能直接传送。将指针移到地点上或用 Tab 聚焦，即可查看从当前位置出发的交通方式与时间。";
     this.openModal("map-modal");
   }
 
@@ -481,6 +666,8 @@ export class GameUI {
     this.currentNpc = { profile: npc, state: npcState };
     this.elements.conversation_portrait.style.setProperty("--npc-color", npc.color || "#8b708e");
     this.elements.conversation_portrait.style.setProperty("--hair-color", npc.hairColor || "#4d3632");
+    this.elements.conversation_portrait.style.setProperty("--skin-color", npc.skinColor || PORTRAIT_SKINS[npc.id] || "#efbf87");
+    this.elements.conversation_portrait.dataset.portrait = npc.id;
     this.elements.conversation_role.textContent = `${npc.role} · ${npc.traits?.slice(0, 2).join(" / ") || "旅人"}`;
     this.elements.conversation_name.textContent = npc.name;
     this.elements.conversation_mood.textContent = `${npcState.mood} · 关系 ${Math.round(npcState.relationship)}`;
@@ -515,6 +702,8 @@ export class GameUI {
     const current = this.sameLocation(npcState, this.state);
     this.elements.observer_portrait.style.setProperty("--npc-color", npc.color || "#8b708e");
     this.elements.observer_portrait.style.setProperty("--hair-color", npc.hairColor || "#4d3632");
+    this.elements.observer_portrait.style.setProperty("--skin-color", npc.skinColor || PORTRAIT_SKINS[npc.id] || "#efbf87");
+    this.elements.observer_portrait.dataset.portrait = npc.id;
     this.elements.observer_role.textContent = `${npc.role} · ${npc.traits?.slice(0, 3).join(" / ") || "居民"}`;
     this.elements.observer_name.textContent = npc.name;
     this.elements.observer_status.textContent = `${current ? "◉ 当前镜头 · " : "◎ 其他地点 · "}${location.title} · ${npcState.activity} · ${npcState.mood}`;

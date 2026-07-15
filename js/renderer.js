@@ -7,6 +7,13 @@ const TILE = 24;
 const PIXEL = 2;
 const CAMERA_EASE = 8;
 const CULL_PADDING = 64;
+const MAX_COLLISION_STEP = 5;
+const NPC_ROUTE_GRID = 24;
+const NPC_WAYPOINT_EPSILON = 4;
+const MOTION_FRAME_COUNT = 6;
+const WALK_FRAME_RATE = 12;
+const RUN_FRAME_RATE = 18;
+const NPC_ROUTE_CACHE = new Map();
 
 const FALLBACK_PALETTES = {
   capital: { ground: "#87906b", groundAlt: "#929a73", path: "#c2aa7d", edge: "#455744", accent: "#d5a75d", water: "#55a2ad", wall: "#c9ad7e", roof: "#824e56" },
@@ -139,11 +146,202 @@ export function getCollisionRects(scene) {
     return { ...rect, x: rect.x + inset, y: rect.y + rect.h * .35, w: Math.max(2, rect.w - inset * 2), h: Math.max(2, rect.h * .65) };
   });
   const solidZones = (scene?.zones || []).filter((item) => item.collision === true).map(normalizeRect);
-  return [...obstacles, ...buildings, ...furniture, ...solidZones];
+  const explicitSolids = [...(scene?.landmarks || []), ...(scene?.decorations || [])]
+    .filter((item) => item.collision !== false)
+    .flatMap((item) => {
+      if (Array.isArray(item.collisionRects) && item.collisionRects.length) return item.collisionRects.map(normalizeRect);
+      if (item.collisionRect) return [normalizeRect(item.collisionRect)];
+      return item.collision === true ? [normalizeRect(item)] : [];
+    });
+  return [...obstacles, ...buildings, ...furniture, ...solidZones, ...explicitSolids];
+}
+
+function actorFootRect(x, y) {
+  return { x: x - 8, y: y - 7, w: 16, h: 13 };
+}
+
+function pointWalkable(scene, x, y, blockers = getCollisionRects(scene)) {
+  const foot = actorFootRect(x, y);
+  const outside = foot.x < 8 || foot.y < 8
+    || foot.x + foot.w > sceneWidth(scene) - 8
+    || foot.y + foot.h > sceneHeight(scene) - 8;
+  return !outside && !blockers.some((rect) => rectanglesOverlap(foot, rect));
+}
+
+function segmentWalkable(scene, from, to, blockers = getCollisionRects(scene)) {
+  const length = Math.hypot(to.x - from.x, to.y - from.y);
+  const samples = Math.max(1, Math.ceil(length / MAX_COLLISION_STEP));
+  for (let index = 0; index <= samples; index += 1) {
+    const ratio = index / samples;
+    const x = from.x + (to.x - from.x) * ratio;
+    const y = from.y + (to.y - from.y) * ratio;
+    if (!pointWalkable(scene, x, y, blockers)) return false;
+  }
+  return true;
+}
+
+function npcGridShape(scene) {
+  return {
+    columns: Math.max(1, Math.floor((sceneWidth(scene) - 24) / NPC_ROUTE_GRID) + 1),
+    rows: Math.max(1, Math.floor((sceneHeight(scene) - 24) / NPC_ROUTE_GRID) + 1),
+  };
+}
+
+function gridPoint(column, row) {
+  return { x: 12 + column * NPC_ROUTE_GRID, y: 12 + row * NPC_ROUTE_GRID, column, row };
+}
+
+function nearestWalkableGridPoint(scene, point, blockers, connector = null) {
+  const { columns, rows } = npcGridShape(scene);
+  const centerColumn = clamp(Math.round((point.x - 12) / NPC_ROUTE_GRID), 0, columns - 1);
+  const centerRow = clamp(Math.round((point.y - 12) / NPC_ROUTE_GRID), 0, rows - 1);
+  const maxRadius = Math.max(columns, rows);
+  let best = null;
+  let bestDistance = Infinity;
+  for (let radius = 0; radius <= maxRadius; radius += 1) {
+    for (let row = Math.max(0, centerRow - radius); row <= Math.min(rows - 1, centerRow + radius); row += 1) {
+      for (let column = Math.max(0, centerColumn - radius); column <= Math.min(columns - 1, centerColumn + radius); column += 1) {
+        if (radius && Math.max(Math.abs(column - centerColumn), Math.abs(row - centerRow)) !== radius) continue;
+        const candidate = gridPoint(column, row);
+        if (!pointWalkable(scene, candidate.x, candidate.y, blockers)) continue;
+        if (connector && !segmentWalkable(scene, connector, candidate, blockers)) continue;
+        const candidateDistance = Math.hypot(candidate.x - point.x, candidate.y - point.y);
+        if (candidateDistance < bestDistance) {
+          best = candidate;
+          bestDistance = candidateDistance;
+        }
+      }
+    }
+    if (best) return best;
+  }
+  return null;
+}
+
+function reconstructGridPath(cameFrom, nodeByKey, goalKey) {
+  const path = [];
+  let cursor = goalKey;
+  while (cursor) {
+    const node = nodeByKey.get(cursor);
+    if (node) path.push(node);
+    cursor = cameFrom.get(cursor) || null;
+  }
+  return path.reverse();
+}
+
+/** Build a cached, collision-safe route between two schedule points. */
+export function planNpcRoute(scene, start, target) {
+  const blockers = getCollisionRects(scene);
+  const startPoint = { x: Number(start.x), y: Number(start.y) };
+  const requestedTarget = { x: Number(target.x), y: Number(target.y) };
+  if (![startPoint.x, startPoint.y, requestedTarget.x, requestedTarget.y].every(Number.isFinite)) {
+    return { waypoints: [], blockedGoal: true };
+  }
+  const targetWalkable = pointWalkable(scene, requestedTarget.x, requestedTarget.y, blockers);
+  if (targetWalkable && segmentWalkable(scene, startPoint, requestedTarget, blockers)) {
+    return { waypoints: [requestedTarget], blockedGoal: false };
+  }
+  const startNode = nearestWalkableGridPoint(scene, startPoint, blockers, pointWalkable(scene, startPoint.x, startPoint.y, blockers) ? startPoint : null);
+  const goalNode = targetWalkable
+    ? nearestWalkableGridPoint(scene, requestedTarget, blockers, requestedTarget)
+    : nearestWalkableGridPoint(scene, requestedTarget, blockers);
+  if (!startNode || !goalNode) return { waypoints: [], blockedGoal: !targetWalkable };
+
+  const nodeKey = (column, row) => `${column}:${row}`;
+  const startKey = nodeKey(startNode.column, startNode.row);
+  const goalKey = nodeKey(goalNode.column, goalNode.row);
+  const open = [{ ...startNode, key: startKey, score: 0 }];
+  const openKeys = new Set([startKey]);
+  const closed = new Set();
+  const cameFrom = new Map();
+  const nodeByKey = new Map([[startKey, startNode]]);
+  const gScore = new Map([[startKey, 0]]);
+  const { columns, rows } = npcGridShape(scene);
+  const directions = [
+    [1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1],
+    [1, 1, Math.SQRT2], [1, -1, Math.SQRT2], [-1, 1, Math.SQRT2], [-1, -1, Math.SQRT2],
+  ];
+  let found = false;
+  while (open.length) {
+    let bestIndex = 0;
+    for (let index = 1; index < open.length; index += 1) {
+      if (open[index].score < open[bestIndex].score) bestIndex = index;
+    }
+    const current = open.splice(bestIndex, 1)[0];
+    openKeys.delete(current.key);
+    if (current.key === goalKey) {
+      found = true;
+      break;
+    }
+    if (closed.has(current.key)) continue;
+    closed.add(current.key);
+    for (const [columnDelta, rowDelta, cost] of directions) {
+      const column = current.column + columnDelta;
+      const row = current.row + rowDelta;
+      if (column < 0 || row < 0 || column >= columns || row >= rows) continue;
+      const neighbor = gridPoint(column, row);
+      const key = nodeKey(column, row);
+      if (closed.has(key) || !pointWalkable(scene, neighbor.x, neighbor.y, blockers)) continue;
+      if (columnDelta && rowDelta) {
+        const sideA = gridPoint(current.column + columnDelta, current.row);
+        const sideB = gridPoint(current.column, current.row + rowDelta);
+        if (!pointWalkable(scene, sideA.x, sideA.y, blockers) || !pointWalkable(scene, sideB.x, sideB.y, blockers)) continue;
+      }
+      const tentative = (gScore.get(current.key) ?? Infinity) + cost;
+      if (tentative >= (gScore.get(key) ?? Infinity)) continue;
+      cameFrom.set(key, current.key);
+      nodeByKey.set(key, neighbor);
+      gScore.set(key, tentative);
+      const heuristic = Math.hypot(goalNode.column - column, goalNode.row - row);
+      const entry = { ...neighbor, key, score: tentative + heuristic };
+      if (!openKeys.has(key)) {
+        open.push(entry);
+        openKeys.add(key);
+      } else {
+        const existing = open.find((item) => item.key === key);
+        if (existing) Object.assign(existing, entry);
+      }
+    }
+  }
+  if (!found) return { waypoints: [], blockedGoal: !targetWalkable };
+
+  const gridPath = reconstructGridPath(cameFrom, nodeByKey, goalKey).slice(1);
+  const raw = gridPath.map(({ x, y }) => ({ x, y }));
+  if (targetWalkable && segmentWalkable(scene, raw.at(-1) || startPoint, requestedTarget, blockers)) raw.push(requestedTarget);
+  const simplified = [];
+  let anchor = startPoint;
+  for (let cursor = 0; cursor < raw.length;) {
+    let farthest = cursor;
+    for (let candidate = raw.length - 1; candidate >= cursor; candidate -= 1) {
+      if (segmentWalkable(scene, anchor, raw[candidate], blockers)) {
+        farthest = candidate;
+        break;
+      }
+    }
+    simplified.push(raw[farthest]);
+    anchor = raw[farthest];
+    cursor = farthest + 1;
+  }
+  return { waypoints: simplified, blockedGoal: !targetWalkable };
+}
+
+function moveNpcWithCollision(npcState, scene, dx, dy, blockers = getCollisionRects(scene)) {
+  const steps = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)) / MAX_COLLISION_STEP));
+  const stepX = dx / steps;
+  const stepY = dy / steps;
+  for (let step = 0; step < steps; step += 1) {
+    for (const [axis, amount] of [["x", stepX], ["y", stepY]]) {
+      if (!amount) continue;
+      const nextX = npcState.x + (axis === "x" ? amount : 0);
+      const nextY = npcState.y + (axis === "y" ? amount : 0);
+      if (pointWalkable(scene, nextX, nextY, blockers)) npcState[axis] += amount;
+    }
+  }
 }
 
 export function movePlayer(state, scene, dx, dy) {
   const player = state.player;
+  const startX = player.x;
+  const startY = player.y;
   const blockers = getCollisionRects(scene);
   const worldWidth = sceneWidth(scene);
   const worldHeight = sceneHeight(scene);
@@ -156,8 +354,14 @@ export function movePlayer(state, scene, dx, dy) {
     if (outside || blockers.some((rect) => rectanglesOverlap(next, rect))) return;
     player[axis] += amount;
   };
-  tryAxis("x", dx);
-  tryAxis("y", dy);
+  const steps = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)) / MAX_COLLISION_STEP));
+  const stepX = dx / steps;
+  const stepY = dy / steps;
+  for (let step = 0; step < steps; step += 1) {
+    tryAxis("x", stepX);
+    tryAxis("y", stepY);
+  }
+  return Math.hypot(player.x - startX, player.y - startY) > .01;
 }
 
 export function nearestNpc(state, content, maxDistance = 58) {
@@ -221,16 +425,70 @@ export function updateNpcMovement(state, content, deltaSeconds) {
   (content.npcs || []).forEach((npc) => {
     const npcState = state.npcs[npc.id];
     if (!npcState) return;
-    const dx = npcState.targetX - npcState.x;
-    const dy = npcState.targetY - npcState.y;
+    const scene = resolveScene(content, npcState.regionId, npcState.placeId || npcState.regionId);
+    if (!scene) return;
+    const target = { x: Number(npcState.targetX), y: Number(npcState.targetY) };
+    if (![target.x, target.y, npcState.x, npcState.y].every(Number.isFinite)) return;
+    if (Math.hypot(target.x - npcState.x, target.y - npcState.y) < 1) {
+      NPC_ROUTE_CACHE.delete(npc.id);
+      return;
+    }
+    const blockers = getCollisionRects(scene);
+    if (!pointWalkable(scene, npcState.x, npcState.y, blockers)) {
+      const recovery = nearestWalkableGridPoint(scene, npcState, blockers);
+      if (recovery && Math.hypot(recovery.x - npcState.x, recovery.y - npcState.y) <= NPC_ROUTE_GRID * 3) {
+        npcState.x = recovery.x;
+        npcState.y = recovery.y;
+      }
+    }
+    const routeKey = `${scene.id}:${Math.round(target.x)}:${Math.round(target.y)}`;
+    let route = NPC_ROUTE_CACHE.get(npc.id);
+    const routeDiscontinuous = route && Number.isFinite(route.lastX) && Number.isFinite(route.lastY)
+      && Math.hypot(npcState.x - route.lastX, npcState.y - route.lastY) > NPC_ROUTE_GRID * 2;
+    if (!route || route.key !== routeKey || routeDiscontinuous) {
+      route = {
+        key: routeKey,
+        ...planNpcRoute(scene, npcState, target),
+        index: 0,
+        stuckFor: 0,
+        lastX: npcState.x,
+        lastY: npcState.y,
+      };
+      NPC_ROUTE_CACHE.set(npc.id, route);
+    }
+    while (route.index < route.waypoints.length
+      && Math.hypot(route.waypoints[route.index].x - npcState.x, route.waypoints[route.index].y - npcState.y) <= NPC_WAYPOINT_EPSILON) {
+      route.index += 1;
+    }
+    route.lastX = npcState.x;
+    route.lastY = npcState.y;
+    if (route.index >= route.waypoints.length) return;
+    const waypoint = route.waypoints[route.index];
+    const dx = waypoint.x - npcState.x;
+    const dy = waypoint.y - npcState.y;
     const length = Math.hypot(dx, dy);
-    if (length < 1) return;
+    if (length < .01) return;
     if (Math.abs(dx) > Math.abs(dy)) npcState.facing = dx > 0 ? "right" : "left";
     else npcState.facing = dy > 0 ? "down" : "up";
     const speed = 16 + (hashString(npc.id) % 12);
     const travel = Math.min(length, speed * deltaSeconds);
-    npcState.x += dx / length * travel;
-    npcState.y += dy / length * travel;
+    const previousX = npcState.x;
+    const previousY = npcState.y;
+    moveNpcWithCollision(npcState, scene, dx / length * travel, dy / length * travel, blockers);
+    const moved = Math.hypot(npcState.x - previousX, npcState.y - previousY);
+    route.lastX = npcState.x;
+    route.lastY = npcState.y;
+    route.stuckFor = moved > .01 ? 0 : route.stuckFor + deltaSeconds;
+    if (route.stuckFor > .6) {
+      NPC_ROUTE_CACHE.set(npc.id, {
+        key: routeKey,
+        ...planNpcRoute(scene, npcState, target),
+        index: 0,
+        stuckFor: 0,
+        lastX: npcState.x,
+        lastY: npcState.y,
+      });
+    }
   });
 }
 
@@ -241,7 +499,7 @@ export class WorldRenderer {
     this.context.imageSmoothingEnabled = false;
     this.content = content;
     this.elapsed = 0;
-    this.playerMoving = false;
+    this.playerRunning = false;
     this.actorMotion = new Map();
     this.motionSceneId = null;
     this.camera = { x: 0, y: 0, offsetX: 0, offsetY: 0, sceneId: null };
@@ -253,9 +511,9 @@ export class WorldRenderer {
     }));
   }
 
-  setMoving(value) { this.playerMoving = value; }
+  setMoving(moving, running = false) { this.playerRunning = Boolean(moving && running); }
 
-  sampleActorMotion(actorId, x, y, requestedFacing = "down") {
+  sampleActorMotion(actorId, x, y, requestedFacing = "down", options = {}) {
     const validFacing = ["up", "down", "left", "right"].includes(requestedFacing) ? requestedFacing : null;
     const previous = this.actorMotion.get(actorId);
     const dx = previous ? x - previous.x : 0;
@@ -264,12 +522,14 @@ export class WorldRenderer {
     const moving = Boolean(previous && travel > .01 && travel < 24);
     let facing = validFacing || previous?.facing || "down";
     if (moving) facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
-    const distance = (previous?.distance || 0) + (moving ? travel : 0);
-    this.actorMotion.set(actorId, { x, y, facing, distance });
+    const running = Boolean(moving && options.running);
+    const frameRate = running ? RUN_FRAME_RATE : WALK_FRAME_RATE;
+    this.actorMotion.set(actorId, { x, y, facing });
     return {
       moving,
+      running,
       facing,
-      walkFrame: moving ? Math.floor(this.elapsed * 9 + distance * .18) % 4 : 0,
+      walkFrame: moving ? Math.floor(this.elapsed * frameRate) % MOTION_FRAME_COUNT : 0,
     };
   }
 
@@ -352,6 +612,7 @@ export class WorldRenderer {
     this.updateCamera(state, scene, deltaSeconds);
     const visible = this.visibleWorld(scene);
     const landmarks = [...(scene.landmarks || []), ...getStoryLandmarks(state, this.content, scene)];
+    const decorations = scene.decorations || [];
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.fillStyle = interior ? "#241d1b" : palette.edge;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -366,12 +627,22 @@ export class WorldRenderer {
     }
     (scene.zones || []).filter((item) => this.isVisible(item, visible, 24)).forEach((zone) => this.drawZone(ctx, zone, palette, region, scene));
     this.drawPaths(ctx, scene, palette, visible);
+    if (!interior) this.drawPathsideDetails(ctx, scene, region, palette, visible, state.seed);
+    decorations
+      .filter((item) => (item.layer || "object") === "ground" && this.isVisible(item, visible))
+      .forEach((item) => this.drawDecoration(ctx, item, palette));
     landmarks
       .filter((item) => itemPlaceId(item, scene.id) === scene.id && (item.layer || "ground") === "ground" && this.isVisible(item, visible))
       .forEach((item) => this.drawLandmark(ctx, item, palette));
+    decorations
+      .filter((item) => ["background", "wall"].includes(item.layer) && this.isVisible(item, visible))
+      .forEach((item) => this.drawDecoration(ctx, item, palette));
     (scene.buildings || []).filter((building) => this.isVisible(building, visible)).forEach((building) => this.drawBuilding(ctx, building, palette));
     landmarks
-      .filter((item) => itemPlaceId(item, scene.id) === scene.id && (item.layer || "ground") !== "ground" && this.isVisible(item, visible))
+      .filter((item) => {
+        const layer = item.layer || "ground";
+        return itemPlaceId(item, scene.id) === scene.id && ["background", "wall"].includes(layer) && this.isVisible(item, visible);
+      })
       .forEach((item) => this.drawLandmark(ctx, item, palette));
     (scene.portals || []).filter((portal) => !portal.disabled && this.isVisible(portal, visible, 32)).forEach((portal) => this.drawPortal(ctx, portal, palette, interior));
 
@@ -391,11 +662,35 @@ export class WorldRenderer {
       const rect = normalizeRect(item);
       actors.push({ kind: "furniture", state: item, y: Number(item.sortY ?? rect.y + rect.h) });
     });
+    const supportedObjectY = (item) => {
+      const rect = normalizeRect(item);
+      const supportBottom = (scene.furniture || [])
+        .filter((furniture) => rectanglesOverlap(rect, normalizeRect(furniture)))
+        .reduce((bottom, furniture) => {
+          const support = normalizeRect(furniture);
+          return Math.max(bottom, support.y + support.h + .5);
+        }, rect.y + rect.h);
+      return Number(item.sortY ?? supportBottom);
+    };
+    landmarks
+      .filter((item) => itemPlaceId(item, scene.id) === scene.id && item.layer === "object" && this.isVisible(item, visible))
+      .forEach((item) => actors.push({ kind: "landmark", state: item, y: supportedObjectY(item) }));
+    decorations
+      .filter((item) => (item.layer || "object") === "object" && this.isVisible(item, visible))
+      .forEach((item) => actors.push({ kind: "decoration", state: item, y: supportedObjectY(item) }));
     actors.sort((a, b) => a.y - b.y).forEach((actor) => {
       if (actor.kind === "player") this.drawPlayer(ctx, actor.state);
       else if (actor.kind === "furniture") this.drawFurniture(ctx, actor.state, palette);
+      else if (actor.kind === "decoration") this.drawDecoration(ctx, actor.state, palette);
+      else if (actor.kind === "landmark") this.drawLandmark(ctx, actor.state, palette);
       else this.drawNpc(ctx, actor.profile, actor.state, state);
     });
+    decorations
+      .filter((item) => item.layer === "foreground" && this.isVisible(item, visible))
+      .forEach((item) => this.drawDecoration(ctx, item, palette));
+    landmarks
+      .filter((item) => itemPlaceId(item, scene.id) === scene.id && item.layer === "foreground" && this.isVisible(item, visible))
+      .forEach((item) => this.drawLandmark(ctx, item, palette));
     ctx.restore();
 
     if (interior) this.drawInteriorLight(ctx, state, scene);
@@ -585,9 +880,20 @@ export class WorldRenderer {
           pixelRect(ctx, x + 3, y, 2, 8, "#4f793d");
           pixelRect(ctx, x, y + 4, 4, 2, "#6e9a48");
           pixelRect(ctx, x + 5, y + 2, 5, 2, "#87ac53");
+          if (hash % 11 === 0) {
+            const wing = Math.sin(this.elapsed * 8 + hash) > 0 ? 2 : 0;
+            pixelRect(ctx, x + 13, y - 5 - wing, 3, 2, "#f0c75f");
+            pixelRect(ctx, x + 17, y - 4 + wing, 3, 2, "#e79a55");
+            pixelRect(ctx, x + 16, y - 3, 2, 3, "#5d4737");
+          }
         } else if (biome === "mansion") {
           if (hash % 3 === 0) this.drawFlower(ctx, x, y, hash % 2 ? "#e69aaa" : "#eecb72");
           else pixelRect(ctx, x, y, 5, 2, "rgba(51,91,51,.24)");
+          if (hash % 13 === 0) {
+            const drift = Math.round(Math.sin(this.elapsed * 1.7 + hash) * 4);
+            pixelRect(ctx, x + 13 + drift, y - 5, 3, 2, "rgba(239,174,185,.7)");
+            pixelRect(ctx, x + 20 - drift, y + 1, 2, 2, "rgba(246,199,155,.62)");
+          }
         } else if (biome === "snow") {
           pixelRect(ctx, x, y + 2, 9, 2, "rgba(99,151,164,.2)");
           pixelRect(ctx, x + 5, y, 3, 2, "rgba(255,255,255,.62)");
@@ -596,6 +902,102 @@ export class WorldRenderer {
           if (hash % 4 === 0) this.drawRock(ctx, x + 9, y + 8, "#a16d47", 1);
         }
       }
+    }
+  }
+
+  drawPathsideDetails(ctx, scene, region, palette, visible, seed) {
+    const occupied = [
+      ...(scene.buildings || []),
+      ...(scene.portals || []),
+      ...(scene.landmarks || []),
+      ...(scene.obstacles || []),
+    ].map(normalizeRect);
+    const paths = scene.paths || [];
+    paths.forEach((path, pathIndex) => {
+      const rect = normalizeRect(path);
+      const horizontal = rect.w >= rect.h;
+      const length = horizontal ? rect.w : rect.h;
+      const spacing = region.id === "capital" ? 116 : region.id === "mansion" ? 104 : 92;
+      const initial = 38 + (hashString(`${seed}:${scene.id}:pathside:${pathIndex}`) % 39);
+      for (let step = initial, marker = 0; step < length - 28; step += spacing, marker += 1) {
+        const hash = hashString(`${seed}:${scene.id}:${pathIndex}:${marker}`);
+        const side = hash % 2 ? -1 : 1;
+        const edgeOffset = 10 + (hash % 8);
+        const x = horizontal ? rect.x + step : rect.x + (side < 0 ? -edgeOffset : rect.w + edgeOffset);
+        const y = horizontal ? rect.y + (side < 0 ? -edgeOffset : rect.h + edgeOffset) : rect.y + step;
+        const footprint = { x: x - 11, y: y - 14, w: 22, h: 24 };
+        if (!rectIntersects(footprint, visible, 24)) continue;
+        if (paths.some((otherPath, otherIndex) => otherIndex !== pathIndex && rectIntersects(footprint, normalizeRect(otherPath), 5))) continue;
+        if (occupied.some((item) => rectIntersects(footprint, item, 16))) continue;
+        this.drawPathsideProp(ctx, region.id, x, y, hash, palette);
+      }
+    });
+  }
+
+  drawPathsideProp(ctx, regionId, x, y, hash, palette) {
+    const variant = hash % 3;
+    if (regionId === "capital") {
+      if (variant === 0) {
+        pixelRect(ctx, x - 6, y + 3, 13, 4, "rgba(54,43,34,.2)");
+        pixelRect(ctx, x - 5, y - 5, 11, 11, "#7f6951");
+        pixelRect(ctx, x - 3, y - 7, 7, 4, "#c5b278");
+        pixelRect(ctx, x - 3, y - 2, 3, 5, "#6e8b56");
+        pixelRect(ctx, x + 1, y - 1, 3, 4, "#8ba663");
+      } else {
+        pixelRect(ctx, x - 1, y - 15, 3, 21, "#645448");
+        pixelRect(ctx, x - 5, y - 17, 11, 5, "#806d56");
+        pixelRect(ctx, x - 3, y - 16, 7, 3, variant === 1 ? "#e5c466" : "#9eb4ad");
+      }
+      return;
+    }
+    if (regionId === "farm") {
+      if (variant === 0) {
+        pixelRect(ctx, x - 7, y - 2, 15, 8, "#8d613d");
+        pixelRect(ctx, x - 5, y - 5, 11, 5, "#c09252");
+        pixelRect(ctx, x - 4, y - 7, 3, 5, "#d2a84f");
+        pixelRect(ctx, x + 1, y - 8, 3, 6, "#7f9d48");
+      } else {
+        pixelRect(ctx, x, y - 9, 2, 15, "#4f743d");
+        pixelRect(ctx, x - 5, y - 5, 6, 3, "#72964a");
+        pixelRect(ctx, x + 1, y - 8, 6, 3, "#91ac55");
+        if (variant === 2) this.drawFlower(ctx, x - 7, y - 7, hash % 2 ? "#edb15d" : "#d9889e");
+      }
+      return;
+    }
+    if (regionId === "mansion") {
+      pixelRect(ctx, x - 7, y + 1, 15, 5, "rgba(46,42,35,.2)");
+      pixelRect(ctx, x - 6, y - 4, 13, 10, "#89765d");
+      pixelRect(ctx, x - 4, y - 8, 9, 6, "#b7a276");
+      if (variant === 0) {
+        pixelRect(ctx, x - 5, y - 15, 11, 9, shade(palette.edge, 12));
+        pixelRect(ctx, x - 2, y - 18, 5, 6, shade(palette.groundAlt, -12));
+      } else {
+        this.drawFlower(ctx, x - 3, y - 14, variant === 1 ? "#e399ac" : "#efc76e");
+      }
+      return;
+    }
+    if (regionId === "snow") {
+      if (variant === 0) {
+        pixelRect(ctx, x - 8, y + 1, 17, 5, "rgba(83,105,108,.18)");
+        pixelRect(ctx, x - 6, y - 2, 13, 6, "#73878a");
+        pixelRect(ctx, x - 3, y - 7, 8, 6, "#91a3a2");
+        pixelRect(ctx, x - 1, y - 10, 5, 4, "#eef4ed");
+      } else {
+        pixelRect(ctx, x - 1, y - 15, 3, 21, "#765a47");
+        pixelRect(ctx, x - 4, y - 16, 9, 5, variant === 1 ? "#bb6759" : "#79a5aa");
+        pixelRect(ctx, x - 5, y + 3, 11, 3, "#e9f0ea");
+      }
+      return;
+    }
+    if (variant === 0) {
+      pixelRect(ctx, x - 7, y + 2, 15, 4, "rgba(93,60,39,.2)");
+      pixelRect(ctx, x - 5, y - 2, 11, 6, "#9a6847");
+      pixelRect(ctx, x - 2, y - 6, 7, 5, "#b27b50");
+    } else {
+      pixelRect(ctx, x, y - 13, 3, 18, "#76513d");
+      pixelRect(ctx, x + 2, y - 12, 8, 5, variant === 1 ? "#b55f49" : "#5f9476");
+      pixelRect(ctx, x + 5, y - 10, 5, 2, "#e0b66f");
+      pixelRect(ctx, x - 7, y + 1, 15, 3, "#b27b4d");
     }
   }
 
@@ -627,6 +1029,65 @@ export class WorldRenderer {
     pixelRect(ctx, 0, 0, 7, height, trim);
     pixelRect(ctx, width - 7, 0, 7, height, shade(trim, -9));
     pixelRect(ctx, 0, height - 7, width, 7, shade(trim, -18));
+
+    // A small set of authored shells keeps rooms from reading as one recolored template.
+    const sceneId = String(scene.id || "");
+    const shell = /watchtower/.test(sceneId) ? "tower"
+      : /guide-tent/.test(sceneId) ? "tent"
+        : /palace|barracks|mansion-house|caravanserai/.test(sceneId) ? "hall"
+          : /archive|mill|apiary|studio|servants|dig-house/.test(sceneId) ? "workshop"
+            : "home";
+    if (shell === "hall") {
+      pixelRect(ctx, 20, wallDepth + 17, width - 40, 4, shade(trim, 8));
+      pixelRect(ctx, 28, wallDepth + 23, width - 56, 2, shade(floor, 22));
+      for (let columnX = 62; columnX < width - 44; columnX += 132) {
+        pixelRect(ctx, columnX, 8, 18, wallDepth - 8, shade(wall, -25));
+        pixelRect(ctx, columnX + 4, 9, 10, wallDepth - 14, shade(wall, 13));
+        pixelRect(ctx, columnX - 3, wallDepth - 10, 24, 8, trim);
+        pixelRect(ctx, columnX + 6, 17, 6, 7, palette.accent);
+      }
+    } else if (shell === "workshop") {
+      for (let beamX = 74; beamX < width - 50; beamX += 164) {
+        pixelRect(ctx, beamX, 5, 9, wallDepth + 10, shade(trim, -11));
+        pixelRect(ctx, beamX + 3, 6, 3, wallDepth + 7, shade(trim, 13));
+      }
+      for (let seamY = wallDepth + 52; seamY < height - 20; seamY += 86) {
+        pixelRect(ctx, 16, seamY, width - 32, 2, "rgba(76,53,39,.15)");
+        for (let pegX = 34; pegX < width - 24; pegX += 118) pixelRect(ctx, pegX, seamY - 2, 4, 5, "rgba(77,55,42,.2)");
+      }
+    } else if (shell === "tower") {
+      for (let blockY = wallDepth + 10; blockY < height - 8; blockY += 38) {
+        const offset = ((blockY - wallDepth) / 38) % 2 ? 24 : 0;
+        for (let blockX = 8 - offset; blockX < width; blockX += 72) {
+          pixelRect(ctx, blockX, blockY, 62, 2, "rgba(67,82,88,.2)");
+          pixelRect(ctx, blockX + 60, blockY, 2, 30, "rgba(67,82,88,.13)");
+        }
+      }
+      pixelRect(ctx, width / 2 - 3, wallDepth + 8, 6, 44, shade(palette.accent, -20));
+      pixelRect(ctx, width / 2 - 17, wallDepth + 24, 34, 4, shade(palette.accent, 10));
+    } else if (shell === "tent") {
+      for (let stripeX = 20; stripeX < width - 16; stripeX += 58) {
+        pixelRect(ctx, stripeX, 7, 31, wallDepth - 11, stripeX % 3 ? shade(wall, 8) : shade(wall, -8));
+        pixelRect(ctx, stripeX + 29, 7, 3, wallDepth - 11, shade(trim, -4));
+      }
+      pixelRect(ctx, 14, wallDepth + 8, width - 28, 3, shade(trim, 14));
+      pixelRect(ctx, 28, wallDepth + 13, width - 56, 2, shade(palette.accent, -8));
+      for (const knotX of [32, width - 37]) {
+        pixelRect(ctx, knotX, wallDepth - 2, 5, 28, shade(trim, -18));
+        pixelRect(ctx, knotX - 3, wallDepth + 20, 11, 5, shade(palette.accent, 5));
+      }
+    } else {
+      pixelRect(ctx, 13, wallDepth - 17, width - 26, 12, shade(wall, -9));
+      for (let panelX = 32; panelX < width - 40; panelX += 112) {
+        pixelRect(ctx, panelX, wallDepth - 15, 82, 2, shade(wall, 15));
+        pixelRect(ctx, panelX, wallDepth - 15, 2, 9, shade(trim, -7));
+        pixelRect(ctx, panelX + 80, wallDepth - 15, 2, 9, shade(trim, -7));
+      }
+      for (let stitchX = 42; stitchX < width - 36; stitchX += 148) {
+        pixelRect(ctx, stitchX, wallDepth + 28, 18, 2, "rgba(94,65,45,.16)");
+        pixelRect(ctx, stitchX + 8, wallDepth + 23, 2, 12, "rgba(94,65,45,.13)");
+      }
+    }
   }
 
   drawZone(ctx, zone, palette, region, scene) {
@@ -1208,8 +1669,24 @@ export class WorldRenderer {
       pixelRect(ctx, x, y, w, Math.max(8, h * .55), dark);
       pixelRect(ctx, x + 2, y + 2, w - 4, Math.max(5, h * .42), wood);
       pixelRect(ctx, x + 4, y + 3, w - 8, 3, light);
+      for (let seamX = x + 42; seamX < x + w - 30; seamX += 54) {
+        pixelRect(ctx, seamX, y + 7, 2, Math.max(3, h * .31), shade(wood, -12));
+        pixelRect(ctx, seamX + 2, y + 7, 1, Math.max(3, h * .31), shade(wood, 10));
+      }
       pixelRect(ctx, x + 4, y + h * .48, 5, Math.max(6, h * .45), dark);
       pixelRect(ctx, x + w - 9, y + h * .48, 5, Math.max(6, h * .45), dark);
+      if (type === "table" && w >= 160) {
+        const runner = item.fabricColor || shade(palette.accent, -16);
+        pixelRect(ctx, x + 18, y + 11, w - 36, 9, shade(runner, -22));
+        pixelRect(ctx, x + 21, y + 10, w - 42, 7, runner);
+        pixelRect(ctx, x + 25, y + 11, w - 50, 2, shade(runner, 25));
+        for (let settingX = x + 55; settingX < x + w - 38; settingX += 92) {
+          pixelRect(ctx, settingX, y + 22, 18, 9, "#d8c28b");
+          pixelRect(ctx, settingX + 3, y + 24, 12, 2, "#967759");
+          pixelRect(ctx, settingX + 22, y + 20, 5, 8, "#55463e");
+          pixelRect(ctx, settingX + 23, y + 18, 3, 3, "#e9c365");
+        }
+      }
       if (type === "desk") {
         pixelRect(ctx, x + w * .2, y - 3, Math.max(8, w * .42), 5, "#e2c987");
         pixelRect(ctx, x + w * .22, y - 4, Math.max(5, w * .18), 2, "#fff0b0");
@@ -1310,11 +1787,188 @@ export class WorldRenderer {
     pixelRect(ctx, x + 5, y + 5, Math.max(2, w - 10), 3, light);
   }
 
+  drawDecoration(ctx, item, palette) {
+    const { x, y, w, h } = normalizeRect(item);
+    const id = String(item.id || "").toLowerCase();
+    const accent = item.color || palette.accent;
+    const wood = item.woodColor || "#7b543b";
+    const darkWood = shade(wood, -31);
+    if (/portrait|canvas/.test(id)) {
+      pixelRect(ctx, x + 4, y + 5, w, h, "rgba(45,30,29,.22)");
+      pixelRect(ctx, x, y, w, h, darkWood);
+      pixelRect(ctx, x + 4, y + 4, w - 8, h - 8, "#c69b5e");
+      pixelRect(ctx, x + 8, y + 8, w - 16, h - 16, /empty|blank/.test(id) ? "#c8b792" : shade(accent, -12));
+      if (!/empty|blank/.test(id)) {
+        pixelRect(ctx, x + w * .43, y + h * .28, Math.max(4, w * .14), Math.max(5, h * .16), "#e1b082");
+        pixelRect(ctx, x + w * .34, y + h * .46, Math.max(8, w * .32), Math.max(7, h * .3), shade(accent, 18));
+      }
+      return;
+    }
+    if (/banner|quilt|curtain|cloak|rug|blanket|linen|uniform|flag|veil/.test(id)) {
+      const fabric = item.fabricColor || accent;
+      pixelRect(ctx, x + 2, y, w - 4, 4, darkWood);
+      pixelRect(ctx, x, y + 3, w, 3, wood);
+      const clothX = x + Math.max(3, w * .12);
+      const clothW = Math.max(8, w - Math.max(6, w * .24));
+      pixelRect(ctx, clothX + 3, y + 9, clothW, h - 7, "rgba(48,31,32,.2)");
+      pixelRect(ctx, clothX, y + 6, clothW, h - 10, shade(fabric, -25));
+      pixelRect(ctx, clothX + 3, y + 7, clothW - 6, h - 14, fabric);
+      for (let fold = clothX + 7; fold < clothX + clothW - 3; fold += 9) pixelRect(ctx, fold, y + 9, 2, h - 19, shade(fabric, fold % 2 ? 18 : -12));
+      if (/quilt|rug|blanket/.test(id)) {
+        for (let patchY = y + 12; patchY < y + h - 10; patchY += 10) {
+          for (let patchX = clothX + 5; patchX < clothX + clothW - 6; patchX += 11) {
+            pixelRect(ctx, patchX, patchY, 6, 5, (patchX + patchY) % 3 ? shade(fabric, 24) : shade(fabric, -20));
+          }
+        }
+      }
+      pixelRect(ctx, clothX + 2, y + h - 7, 3, 5, shade(fabric, 20));
+      pixelRect(ctx, clothX + clothW - 5, y + h - 7, 3, 5, shade(fabric, -18));
+      return;
+    }
+    if (/brazier|lantern|candelabra|lamp/.test(id)) {
+      const pulse = Math.sin(this.elapsed * 8 + hashString(id)) > 0 ? -2 : 0;
+      pixelRect(ctx, x + w * .2, y + h - 7, w * .6, 5, "rgba(44,31,29,.25)");
+      if (/candelabra/.test(id)) {
+        pixelRect(ctx, x + w / 2 - 2, y + 12, 4, h - 17, "#8b795c");
+        pixelRect(ctx, x + w * .22, y + 16, w * .56, 3, "#b09a68");
+        for (const candleX of [x + w * .25, x + w / 2, x + w * .75]) {
+          pixelRect(ctx, candleX - 2, y + 5, 4, 12, "#e8d5a1");
+          pixelRect(ctx, candleX - 1, y + 1 + pulse, 3, 6, "#f1b646");
+        }
+      } else if (/brazier/.test(id)) {
+        pixelRect(ctx, x + w * .18, y + h * .42, w * .64, h * .32, "#5c5147");
+        pixelRect(ctx, x + w * .12, y + h * .38, w * .76, 5, "#9a7d55");
+        pixelRect(ctx, x + w * .35, y + h * .18 + pulse, w * .3, h * .28, "#d95835");
+        pixelRect(ctx, x + w * .43, y + h * .12 + pulse, w * .16, h * .27, "#f2bb45");
+        pixelRect(ctx, x + w * .27, y + h * .7, 3, h * .22, darkWood);
+        pixelRect(ctx, x + w * .7, y + h * .7, 3, h * .22, darkWood);
+      } else {
+        pixelRect(ctx, x + w / 2 - 2, y + h * .48, 4, h * .4, darkWood);
+        pixelRect(ctx, x + w * .25, y + h * .18, w * .5, h * .38, "#5c554a");
+        pixelRect(ctx, x + w * .31, y + h * .23, w * .38, h * .26, /blue|green/.test(id) ? shade(accent, 24) : "#efc46b");
+        pixelRect(ctx, x + w * .44, y + h * .08 + pulse, w * .13, h * .23, "#f2b94a");
+      }
+      return;
+    }
+    if (/herb|wheat|grain|flour|flower|dates|sack|basket|water_skins/.test(id)) {
+      const basketY = y + h * .55;
+      pixelRect(ctx, x + w * .13, basketY + 4, w * .74, h * .34, "rgba(57,39,30,.22)");
+      pixelRect(ctx, x + w * .16, basketY, w * .68, h * .34, darkWood);
+      pixelRect(ctx, x + w * .2, basketY + 3, w * .6, h * .25, "#b1814e");
+      for (let weaveX = x + w * .25; weaveX < x + w * .78; weaveX += 8) pixelRect(ctx, weaveX, basketY + 4, 2, h * .21, "#d0a15e");
+      if (/flour|sack|water_skins/.test(id)) {
+        for (let bag = 0; bag < 3; bag += 1) {
+          const bagX = x + 3 + bag * Math.max(8, (w - 12) / 3);
+          pixelRect(ctx, bagX, y + 7 + (bag % 2) * 5, Math.max(7, w * .24), h * .48, /water_skins/.test(id) ? "#8d5e43" : "#d0ba8a");
+          pixelRect(ctx, bagX + 2, y + 10 + (bag % 2) * 5, Math.max(3, w * .15), 2, shade(accent, -12));
+        }
+      } else {
+        for (let stem = x + w * .24; stem < x + w * .8; stem += 7) {
+          pixelRect(ctx, stem, y + 8 + (stem % 3), 2, h * .48, "#5c783e");
+          pixelRect(ctx, stem - 3, y + 9 + (stem % 4), 5, 3, /flower|dates/.test(id) ? accent : "#b49345");
+        }
+      }
+      return;
+    }
+    if (/spear|shield|tool|rack|hooks|keys|crank|sieve|drying_frame|press|cart/.test(id)) {
+      pixelRect(ctx, x, y + 3, w, 5, darkWood);
+      pixelRect(ctx, x + 3, y + 5, w - 6, 3, wood);
+      pixelRect(ctx, x + 3, y + h - 7, w - 6, 5, darkWood);
+      const count = Math.max(2, Math.min(5, Math.floor(w / 17)));
+      for (let tool = 0; tool < count; tool += 1) {
+        const toolX = x + 7 + tool * ((w - 14) / Math.max(1, count - 1));
+        pixelRect(ctx, toolX, y + 7, 3, h - 13, tool % 2 ? "#665448" : "#826346");
+        if (/shield/.test(id)) {
+          pixelRect(ctx, toolX - 5, y + 13, 13, 15, tool % 2 ? "#6f7d7b" : "#936154");
+          pixelRect(ctx, toolX - 1, y + 16, 5, 9, "#c0a66d");
+        } else {
+          pixelRect(ctx, toolX - 4, y + 9 + (tool % 2) * 4, 11, 4, "#9e9a87");
+          pixelRect(ctx, toolX + 1, y + 5, 3, 5, "#c4b681");
+        }
+      }
+      return;
+    }
+    if (/basin|bowl|pot|pail|jar|mould|shard|seal|offcut|kettle/.test(id)) {
+      const vesselCount = Math.max(2, Math.min(5, Math.floor(w / 15)));
+      pixelRect(ctx, x + 2, y + h - 7, w - 4, 5, "rgba(52,36,30,.22)");
+      for (let vessel = 0; vessel < vesselCount; vessel += 1) {
+        const vesselW = Math.max(8, (w - 8) / vesselCount - 2);
+        const vesselX = x + 4 + vessel * ((w - 8) / vesselCount);
+        const vesselH = h * (.32 + (vessel % 3) * .1);
+        pixelRect(ctx, vesselX, y + h - vesselH - 4, vesselW, vesselH, shade(accent, -22 + vessel * 7));
+        pixelRect(ctx, vesselX + 2, y + h - vesselH - 2, Math.max(3, vesselW - 4), 3, shade(accent, 24));
+        pixelRect(ctx, vesselX - 1, y + h - vesselH - 6, vesselW + 2, 4, darkWood);
+      }
+      return;
+    }
+    if (/globe|compass|route_cords/.test(id)) {
+      const radius = Math.min(w, h) * .28;
+      pixelRect(ctx, x + w / 2 - 2, y + h * .56, 4, h * .32, darkWood);
+      pixelRect(ctx, x + w * .25, y + h * .84, w * .5, 5, wood);
+      ctx.fillStyle = shade(palette.water, -10);
+      ctx.beginPath();
+      ctx.arc(x + w / 2, y + h * .36, radius, 0, Math.PI * 2);
+      ctx.fill();
+      pixelRect(ctx, x + w * .36, y + h * .27, w * .18, 3, shade(palette.groundAlt, -18));
+      pixelRect(ctx, x + w * .51, y + h * .39, w * .16, 3, shade(palette.groundAlt, -6));
+      pixelRect(ctx, x + w / 2 - 1, y + h * .13, 2, radius * 1.7, "rgba(238,221,167,.55)");
+      return;
+    }
+    this.drawLandmark(ctx, item, palette);
+  }
+
+  drawSignpost(ctx, item, palette) {
+    const { x, y, w, h } = normalizeRect(item);
+    const destinations = Array.isArray(item.destinations) ? item.destinations.slice(0, 5) : [];
+    const postX = x + w / 2 - 2;
+    const boardHeight = Math.max(8, Math.min(11, Math.floor((h - 8) / Math.max(1, destinations.length))));
+    const wood = item.color || "#9a6841";
+    const dark = shade(wood, -35);
+    pixelRect(ctx, x + w * .25, y + h - 5, w * .5, 5, "rgba(54,38,30,.25)");
+    pixelRect(ctx, postX, y + 6, 5, h - 9, dark);
+    pixelRect(ctx, postX + 2, y + 8, 2, h - 13, shade(wood, 18));
+    destinations.forEach((destination, index) => {
+      const place = (this.content.places || []).find((entry) => entry.id === destination.targetPlaceId);
+      const region = (this.content.regions || []).find((entry) => entry.id === destination.targetRegionId);
+      const fallback = String(destination.label || "前路").split("·").pop().trim();
+      const destinationName = String(place?.name || region?.name || fallback).replace(/白棘豪宅/, "白棘宅").slice(0, 5);
+      const direction = String(destination.direction || "").slice(0, 2);
+      const label = `${direction}${destinationName}`;
+      const boardY = y + 1 + index * boardHeight;
+      const pointsWest = /西/.test(direction) && !/东/.test(direction);
+      const offset = index % 2 ? 2 : -2;
+      const boardX = x + offset;
+      pixelRect(ctx, boardX + 2, boardY + 2, w - 4, boardHeight, "rgba(46,31,27,.2)");
+      pixelRect(ctx, boardX, boardY, w, boardHeight, dark);
+      pixelRect(ctx, boardX + 2, boardY + 2, w - 4, Math.max(4, boardHeight - 4), index % 2 ? shade(wood, 9) : wood);
+      if (pointsWest) {
+        pixelRect(ctx, boardX - 4, boardY + 3, 6, Math.max(3, boardHeight - 6), dark);
+        pixelRect(ctx, boardX - 6, boardY + Math.floor(boardHeight / 2) - 1, 4, 3, dark);
+      } else {
+        pixelRect(ctx, boardX + w - 2, boardY + 3, 6, Math.max(3, boardHeight - 6), dark);
+        pixelRect(ctx, boardX + w + 2, boardY + Math.floor(boardHeight / 2) - 1, 4, 3, dark);
+      }
+      ctx.save();
+      ctx.font = `bold ${boardHeight <= 8 ? 7 : 8}px "Microsoft YaHei", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#4c3527";
+      ctx.fillText(label, boardX + w / 2, boardY + boardHeight / 2 + 1, w - 5);
+      ctx.restore();
+    });
+    pixelRect(ctx, postX - 4, y + h - 8, 13, 5, dark);
+    pixelRect(ctx, postX - 2, y + h - 9, 9, 3, shade(palette.path, 14));
+  }
+
   drawLandmark(ctx, item, palette) {
     const { x, y, w, h } = normalizeRect(item);
     const type = String(item.type || item.id || "marker").toLowerCase();
     const id = String(item.id || "").toLowerCase();
     const cx = x + w / 2;
+    if (type === "signpost") {
+      this.drawSignpost(ctx, item, palette);
+      return;
+    }
     if (/water|pond|oasis|lake/.test(type)) {
       const water = item.color || palette.water;
       pixelRect(ctx, x - 5, y + 4, w + 10, h - 8, shade(palette.edge, -5));
@@ -1675,6 +2329,7 @@ export class WorldRenderer {
       moving,
       walkFrame,
       facing,
+      phase: (hashString(npc.id) % 37) / 11,
     });
     if (state.mode === "observer" || distance(state.player, npcState) < 82) {
       ctx.font = 'bold 10px "Microsoft YaHei", sans-serif';
@@ -1699,17 +2354,22 @@ export class WorldRenderer {
     const { body, hair, skin, style = {}, stride = 0 } = character;
     const facing = ["up", "down", "left", "right"].includes(character.facing) ? character.facing : "down";
     const moving = Boolean(character.moving ?? stride);
-    const frame = moving ? ((Number(character.walkFrame || 0) % 4) + 4) % 4 : 0;
-    const gait = moving ? [1, 0, -1, 0][frame] : 0;
-    const bob = moving && frame === 1 ? -1 : 0;
-    const py = y + bob;
+    const running = Boolean(moving && character.running);
+    const frame = moving ? ((Number(character.walkFrame || 0) % MOTION_FRAME_COUNT) + MOTION_FRAME_COUNT) % MOTION_FRAME_COUNT : 0;
+    const strideScale = running ? 1.65 : 1;
+    const gait = moving ? [0, 1, 2, 0, -1, -2][frame] * strideScale : 0;
+    const bob = moving && (frame === 2 || frame === 5) ? (running ? -2 : -1) : 0;
+    const idleClock = (this.elapsed + Number(character.phase || 0)) % 4.2;
+    const idleBob = !moving && idleClock > 2.7 && idleClock < 3.05 ? -1 : 0;
+    const blink = !moving && idleClock > 3.86 && idleClock < 4.08;
+    const py = y + bob + idleBob;
     const outline = "#3d3035";
     const trim = style.trim || shade(body, 30);
     const pants = shade(body, -42);
     const shoe = "#493b3a";
     const side = facing === "right" ? 1 : facing === "left" ? -1 : 0;
-    const leftFootY = py + 3 + gait * 2;
-    const rightFootY = py + 3 - gait * 2;
+    const leftFootY = py + 3 + gait;
+    const rightFootY = py + 3 - gait;
 
     // Hair and braids that sit behind the body.
     if (style.hair === "long") {
@@ -1724,42 +2384,45 @@ export class WorldRenderer {
       pixelRect(ctx, braidX + 1, py - 9, 5, 5, shade(hair, 18));
     }
 
-    // Two separate legs use opposite gait offsets, leaving the collision foot point unchanged.
-    pixelRect(ctx, x - 10, py - 8, 9, Math.max(9, leftFootY - py + 12), outline);
-    pixelRect(ctx, x + 1, py - 8, 9, Math.max(9, rightFootY - py + 12), outline);
-    pixelRect(ctx, x - 8, py - 7, 6, Math.max(7, leftFootY - py + 9), pants);
-    pixelRect(ctx, x + 2, py - 7, 6, Math.max(7, rightFootY - py + 9), shade(pants, -5));
-    const leftShoeX = side < 0 ? x - 12 : x - 10;
+    // A narrow, stepped silhouette reads more like a hand-drawn sprite than two square columns.
+    // The foot anchor remains unchanged so art never changes collision behavior.
+    pixelRect(ctx, x - 9, py - 8, 8, Math.max(9, leftFootY - py + 12), outline);
+    pixelRect(ctx, x + 1, py - 8, 8, Math.max(9, rightFootY - py + 12), outline);
+    pixelRect(ctx, x - 7, py - 7, 5, Math.max(7, leftFootY - py + 9), pants);
+    pixelRect(ctx, x + 2, py - 7, 5, Math.max(7, rightFootY - py + 9), shade(pants, -6));
+    const leftShoeX = side < 0 ? x - 12 : x - 9;
     const rightShoeX = side > 0 ? x + 1 : x + 2;
-    pixelRect(ctx, leftShoeX, leftFootY, side < 0 ? 11 : 9, 5, outline);
-    pixelRect(ctx, leftShoeX + (side < 0 ? 0 : 2), leftFootY + 1, side < 0 ? 9 : 7, 3, shoe);
-    pixelRect(ctx, rightShoeX, rightFootY, side > 0 ? 11 : 9, 5, outline);
-    pixelRect(ctx, rightShoeX + 1, rightFootY + 1, side > 0 ? 9 : 7, 3, shade(shoe, -3));
+    pixelRect(ctx, leftShoeX, leftFootY, side < 0 ? 11 : 8, 5, outline);
+    pixelRect(ctx, leftShoeX + (side < 0 ? 1 : 2), leftFootY + 1, side < 0 ? 8 : 6, 3, shoe);
+    pixelRect(ctx, rightShoeX, rightFootY, side > 0 ? 11 : 8, 5, outline);
+    pixelRect(ctx, rightShoeX + 1, rightFootY + 1, side > 0 ? 8 : 6, 3, shade(shoe, -3));
 
     const isDress = style.outfit === "dress" || style.outfit === "robe";
-    const leftArmShift = moving ? -gait * 2 : 0;
-    const rightArmShift = moving ? gait * 2 : 0;
-    const leftArmX = side > 0 ? x - 10 : x - 15;
-    const rightArmX = side < 0 ? x + 6 : x + 10;
-    pixelRect(ctx, leftArmX, py - 19 + leftArmShift, 6, 17, outline);
-    pixelRect(ctx, leftArmX + 2, py - 17 + leftArmShift, 3, 12, shade(body, 10));
-    pixelRect(ctx, leftArmX + 2, py - 5 + leftArmShift, 4, 5, skin);
-    pixelRect(ctx, rightArmX, py - 19 + rightArmShift, 6, 17, outline);
-    pixelRect(ctx, rightArmX + 1, py - 17 + rightArmShift, 3, 12, shade(body, -12));
-    pixelRect(ctx, rightArmX, py - 5 + rightArmShift, 4, 5, shade(skin, -8));
+    const armSwing = moving ? Math.sign(gait) * Math.min(4, Math.max(1, Math.abs(gait) + 1)) : 0;
+    const leftArmShift = -armSwing;
+    const rightArmShift = armSwing;
+    const leftArmX = side > 0 ? x - 9 : x - 13;
+    const rightArmX = side < 0 ? x + 5 : x + 8;
+    pixelRect(ctx, leftArmX, py - 19 + leftArmShift, 5, 16, outline);
+    pixelRect(ctx, leftArmX + 2, py - 17 + leftArmShift, 2, 11, shade(body, 12));
+    pixelRect(ctx, leftArmX + 1, py - 6 + leftArmShift, 4, 5, skin);
+    pixelRect(ctx, rightArmX, py - 19 + rightArmShift, 5, 16, outline);
+    pixelRect(ctx, rightArmX + 1, py - 17 + rightArmShift, 2, 11, shade(body, -13));
+    pixelRect(ctx, rightArmX, py - 6 + rightArmShift, 4, 5, shade(skin, -8));
 
     if (isDress) {
-      pixelRect(ctx, x - 13, py - 9, 26, 13, outline);
-      pixelRect(ctx, x - 11, py - 10, 22, 12, body);
-      pixelRect(ctx, x - 8, py - 8, 16, 3, shade(body, 16));
+      pixelRect(ctx, x - 12, py - 9, 24, 13, outline);
+      pixelRect(ctx, x - 10, py - 10, 20, 12, body);
+      pixelRect(ctx, x - 7, py - 8, 14, 3, shade(body, 16));
     }
-    const torsoX = side ? x - 10 : x - 12;
-    const torsoW = side ? 20 : 24;
-    pixelRect(ctx, torsoX, py - 22, torsoW, 23, outline);
-    pixelRect(ctx, torsoX + 2, py - 20, torsoW - 4, 20, body);
-    pixelRect(ctx, torsoX + 2, py - 19, 4, 16, shade(body, 18));
-    pixelRect(ctx, torsoX + torsoW - 5, py - 18, 3, 16, shade(body, -22));
-    pixelRect(ctx, x - (side ? 8 : 10), py - 20, side ? 16 : 20, 4, shade(body, 10));
+    const torsoX = side ? x - 8 : x - 10;
+    const torsoW = side ? 16 : 20;
+    pixelRect(ctx, torsoX + 2, py - 23, torsoW - 4, 2, outline);
+    pixelRect(ctx, torsoX, py - 21, torsoW, 22, outline);
+    pixelRect(ctx, torsoX + 2, py - 20, torsoW - 4, 19, body);
+    pixelRect(ctx, torsoX + 2, py - 19, 3, 15, shade(body, 18));
+    pixelRect(ctx, torsoX + torsoW - 4, py - 18, 2, 15, shade(body, -22));
+    pixelRect(ctx, x - (side ? 6 : 8), py - 20, side ? 12 : 16, 3, shade(body, 12));
 
     if (facing === "up") {
       pixelRect(ctx, x - 1, py - 19, 2, 17, shade(body, -26));
@@ -1792,98 +2455,115 @@ export class WorldRenderer {
     pixelRect(ctx, x - 5, py - 27, 10, 7, outline);
     pixelRect(ctx, x - 3, py - 27, 6, 7, skin);
     if (facing === "up") {
-      pixelRect(ctx, x - 11, py - 40, 22, 19, shade(hair, -30));
-      pixelRect(ctx, x - 9, py - 39, 18, 17, hair);
-      pixelRect(ctx, x - 6, py - 38, 7, 4, shade(hair, 23));
-      pixelRect(ctx, x - 9, py - 27, 4, 7, shade(hair, -22));
-      pixelRect(ctx, x + 5, py - 27, 4, 7, shade(hair, -28));
+      pixelRect(ctx, x - 7, py - 42, 14, 2, shade(hair, -34));
+      pixelRect(ctx, x - 10, py - 40, 20, 17, shade(hair, -30));
+      pixelRect(ctx, x - 8, py - 39, 16, 15, hair);
+      pixelRect(ctx, x - 5, py - 38, 7, 3, shade(hair, 23));
+      pixelRect(ctx, x - 8, py - 27, 3, 7, shade(hair, -22));
+      pixelRect(ctx, x + 5, py - 27, 3, 7, shade(hair, -28));
     } else if (side) {
-      const headX = x - 10 + side;
-      pixelRect(ctx, headX, py - 40, 21, 19, outline);
-      pixelRect(ctx, headX + 2, py - 38, 17, 15, skin);
-      pixelRect(ctx, x + side * 9 - (side < 0 ? 3 : 0), py - 32, 4, 5, shade(skin, -7));
-      pixelRect(ctx, x - side * 8 - 2, py - 32, 4, 6, shade(skin, -13));
+      const headX = x - 9 + side;
+      pixelRect(ctx, headX + 4, py - 42, 12, 2, outline);
+      pixelRect(ctx, headX + 1, py - 40, 18, 17, outline);
+      pixelRect(ctx, headX + 3, py - 38, 14, 13, skin);
+      pixelRect(ctx, x + side * 8 - (side < 0 ? 3 : 0), py - 32, 4, 5, shade(skin, -7));
+      pixelRect(ctx, x - side * 7 - 2, py - 32, 3, 5, shade(skin, -13));
     } else {
-      pixelRect(ctx, x - 11, py - 40, 22, 19, outline);
-      pixelRect(ctx, x - 9, py - 38, 18, 15, skin);
-      pixelRect(ctx, x - 11, py - 34, 3, 9, skin);
-      pixelRect(ctx, x + 8, py - 34, 3, 9, shade(skin, -9));
+      pixelRect(ctx, x - 7, py - 42, 14, 2, outline);
+      pixelRect(ctx, x - 10, py - 40, 20, 17, outline);
+      pixelRect(ctx, x - 8, py - 38, 16, 13, skin);
+      pixelRect(ctx, x - 10, py - 34, 3, 7, skin);
+      pixelRect(ctx, x + 7, py - 34, 3, 7, shade(skin, -9));
+      pixelRect(ctx, x - 6, py - 37, 5, 2, shade(skin, 17));
     }
 
     this.drawHair(ctx, x, py, hair, style.hair || "short", facing);
-    this.drawFace(ctx, x, py, facing, skin, style);
+    this.drawFace(ctx, x, py, facing, skin, { ...style, blink });
     this.drawAccessory(ctx, x, py, body, hair, skin, style, facing, gait);
   }
 
   drawHair(ctx, x, y, hair, hairStyle, facing = "down") {
     const dark = shade(hair, -28);
     if (facing === "up") {
-      pixelRect(ctx, x - 10, y - 41, 20, 7, dark);
-      pixelRect(ctx, x - 8, y - 40, 16, 6, hair);
-      if (hairStyle === "bob" || hairStyle === "long") pixelRect(ctx, x - 10, y - 34, 20, 13, dark);
+      pixelRect(ctx, x - 7, y - 43, 14, 2, dark);
+      pixelRect(ctx, x - 9, y - 41, 18, 7, dark);
+      pixelRect(ctx, x - 7, y - 40, 14, 5, hair);
+      if (hairStyle === "bob" || hairStyle === "long") pixelRect(ctx, x - 9, y - 34, 18, 13, dark);
       return;
     }
     const side = facing === "right" ? 1 : facing === "left" ? -1 : 0;
-    pixelRect(ctx, x - 10, y - 42, 20, 7, dark);
-    pixelRect(ctx, x - 8, y - 41, 16, 6, hair);
-    pixelRect(ctx, x - 10, y - 38, 4, hairStyle === "bob" ? 16 : 10, dark);
+    pixelRect(ctx, x - 7, y - 43, 14, 2, dark);
+    pixelRect(ctx, x - 9, y - 41, 18, 7, dark);
+    pixelRect(ctx, x - 7, y - 40, 14, 5, hair);
+    pixelRect(ctx, x - 9, y - 38, 3, hairStyle === "bob" ? 15 : 9, dark);
     if (side) {
-      const backX = side > 0 ? x - 10 : x + 6;
-      pixelRect(ctx, backX, y - 38, 5, hairStyle === "bob" ? 17 : 12, dark);
-      pixelRect(ctx, x - side * 2 - 5, y - 39, 10, 5, hair);
+      const backX = side > 0 ? x - 9 : x + 6;
+      pixelRect(ctx, backX, y - 38, 4, hairStyle === "bob" ? 16 : 11, dark);
+      pixelRect(ctx, x - side * 2 - 5, y - 39, 9, 4, hair);
     }
     if (hairStyle === "bob") {
-      pixelRect(ctx, x + 6, y - 38, 4, 16, dark);
-      pixelRect(ctx, x - 7, y - 42, 7, 3, shade(hair, 22));
+      pixelRect(ctx, x + 6, y - 38, 3, 15, dark);
+      pixelRect(ctx, x - 5, y - 42, 6, 2, shade(hair, 22));
     } else if (hairStyle === "side") {
-      pixelRect(ctx, x + 3, y - 41, 7, 12, hair);
-      pixelRect(ctx, x + 6, y - 34, 4, 11, dark);
-      pixelRect(ctx, x - 5, y - 40, 8, 4, shade(hair, 18));
+      pixelRect(ctx, x + 2, y - 41, 7, 11, hair);
+      pixelRect(ctx, x + 6, y - 34, 3, 10, dark);
+      pixelRect(ctx, x - 5, y - 40, 7, 3, shade(hair, 18));
     } else if (hairStyle === "bun") {
-      const bunX = side < 0 ? x + 6 : x - 13;
-      pixelRect(ctx, bunX, y - 46, 10, 10, dark);
-      pixelRect(ctx, bunX + 2, y - 45, 7, 7, hair);
-      pixelRect(ctx, x - 7, y - 42, 6, 3, shade(hair, 26));
+      const bunX = side < 0 ? x + 5 : x - 12;
+      pixelRect(ctx, bunX, y - 47, 9, 9, dark);
+      pixelRect(ctx, bunX + 2, y - 46, 6, 6, hair);
+      pixelRect(ctx, x - 5, y - 42, 5, 2, shade(hair, 26));
     } else if (hairStyle === "long") {
-      pixelRect(ctx, x - 10, y - 35, 4, 15, dark);
-      pixelRect(ctx, x + 6, y - 35, 4, 15, dark);
+      pixelRect(ctx, x - 9, y - 35, 3, 15, dark);
+      pixelRect(ctx, x + 6, y - 35, 3, 15, dark);
     } else if (hairStyle === "braid") {
-      pixelRect(ctx, x - 8, y - 41, 7, 4, shade(hair, 20));
-      pixelRect(ctx, side < 0 ? x + 6 : x - 10, y - 35, 4, 10, dark);
+      pixelRect(ctx, x - 6, y - 41, 6, 3, shade(hair, 20));
+      pixelRect(ctx, side < 0 ? x + 6 : x - 9, y - 35, 3, 10, dark);
     }
   }
 
   drawFace(ctx, x, y, facing, skin, style) {
     const ink = "#40343a";
+    const blush = shade(skin, -8);
+    const blink = Boolean(style.blink);
+    const eyeY = blink ? y - 31 : y - 32;
+    const eyeH = blink ? 1 : 3;
     if (facing === "up") return;
     if (facing === "left") {
-      pixelRect(ctx, x - 5, y - 32, 3, 3, ink);
-      pixelRect(ctx, x - 11, y - 29, 4, 3, shade(skin, -14));
-      pixelRect(ctx, x - 5, y - 26, 4, 2, shade(skin, -25));
+      pixelRect(ctx, x - 6, y - 34, 4, 1, shade(ink, 13));
+      pixelRect(ctx, x - 5, eyeY, 2, eyeH, ink);
+      pixelRect(ctx, x - 10, y - 29, 3, 2, shade(skin, -13));
+      pixelRect(ctx, x - 5, y - 26, 3, 1, shade(skin, -25));
+      pixelRect(ctx, x - 8, y - 27, 2, 1, blush);
     }
     else if (facing === "right") {
-      pixelRect(ctx, x + 3, y - 32, 3, 3, ink);
-      pixelRect(ctx, x + 8, y - 29, 4, 3, shade(skin, -14));
-      pixelRect(ctx, x + 2, y - 26, 4, 2, shade(skin, -25));
+      pixelRect(ctx, x + 2, y - 34, 4, 1, shade(ink, 13));
+      pixelRect(ctx, x + 3, eyeY, 2, eyeH, ink);
+      pixelRect(ctx, x + 7, y - 29, 3, 2, shade(skin, -13));
+      pixelRect(ctx, x + 2, y - 26, 3, 1, shade(skin, -25));
+      pixelRect(ctx, x + 6, y - 27, 2, 1, blush);
     }
     else if (facing === "down") {
-      pixelRect(ctx, x - 5, y - 32, 3, 3, ink);
-      pixelRect(ctx, x + 3, y - 32, 3, 3, ink);
-      pixelRect(ctx, x - 2, y - 27, 5, 2, shade(skin, -22));
-      pixelRect(ctx, x - 6, y - 29, 2, 2, shade(skin, 18));
-      pixelRect(ctx, x + 5, y - 29, 2, 2, shade(skin, 12));
+      pixelRect(ctx, x - 6, y - 34, 4, 1, shade(ink, 13));
+      pixelRect(ctx, x + 2, y - 34, 4, 1, shade(ink, 13));
+      pixelRect(ctx, x - 5, eyeY, 2, eyeH, ink);
+      pixelRect(ctx, x + 3, eyeY, 2, eyeH, ink);
+      pixelRect(ctx, x - 1, y - 29, 2, 2, shade(skin, -12));
+      pixelRect(ctx, x - 2, y - 26, 4, 1, shade(skin, -25));
+      pixelRect(ctx, x - 7, y - 28, 3, 1, shade(skin, 3));
+      pixelRect(ctx, x + 4, y - 28, 3, 1, blush);
     }
     if (style.accessory === "glasses") {
       if (facing === "down") {
-        pixelRect(ctx, x - 7, y - 34, 7, 6, "#4d4a4a");
-        pixelRect(ctx, x + 1, y - 34, 7, 6, "#4d4a4a");
-        pixelRect(ctx, x, y - 32, 2, 2, "#4d4a4a");
-        pixelRect(ctx, x - 5, y - 32, 3, 3, "#b9d8d2");
-        pixelRect(ctx, x + 3, y - 32, 3, 3, "#b9d8d2");
+        pixelRect(ctx, x - 7, y - 34, 6, 5, "#4d4a4a");
+        pixelRect(ctx, x + 1, y - 34, 6, 5, "#4d4a4a");
+        pixelRect(ctx, x - 1, y - 32, 2, 1, "#4d4a4a");
+        pixelRect(ctx, x - 5, y - 32, 2, 2, "#b9d8d2");
+        pixelRect(ctx, x + 3, y - 32, 2, 2, "#b9d8d2");
       } else {
         const lensX = facing === "left" ? x - 7 : x + 1;
-        pixelRect(ctx, lensX, y - 34, 8, 6, "#4d4a4a");
-        pixelRect(ctx, lensX + 2, y - 32, 3, 3, "#b9d8d2");
+        pixelRect(ctx, lensX, y - 34, 6, 5, "#4d4a4a");
+        pixelRect(ctx, lensX + 2, y - 32, 2, 2, "#b9d8d2");
       }
     }
     if (style.accessory === "mustache") {
@@ -1959,24 +2639,63 @@ export class WorldRenderer {
         pixelRect(ctx, x - 10, y - 41, 20, 4, trim);
         pixelRect(ctx, x + (side < 0 ? -13 : 8), y - 40, 6, 4, shade(trim, 15));
         break;
+      case "traveler": {
+        // An original woven head scarf and field satchel: readable at game scale,
+        // but deliberately not patterned after a character from another game.
+        pixelRect(ctx, x - 10, y - 41, 20, 4, shade(trim, -12));
+        pixelRect(ctx, x - 8, y - 40, 16, 2, trim);
+        const tieX = side < 0 ? x + 8 : x - 13;
+        pixelRect(ctx, tieX, y - 40, 6, 4, shade(trim, 14));
+        pixelRect(ctx, tieX + (side < 0 ? 2 : 1), y - 36, 3, 6, shade(trim, -18));
+        if (facing === "up") {
+          for (let row = 0; row < 4; row += 1) pixelRect(ctx, x - 7 + row * 3, y - 19 + row * 4, 3, 5, "#75513d");
+        } else if (side) {
+          const strapX = side > 0 ? x - 7 : x + 4;
+          pixelRect(ctx, strapX, y - 19, 3, 19, "#75513d");
+        } else {
+          for (let row = 0; row < 4; row += 1) pixelRect(ctx, x - 7 + row * 3, y - 19 + row * 4, 3, 5, "#75513d");
+        }
+        const pouchX = side < 0 ? x + 7 : x - 14;
+        pixelRect(ctx, pouchX, y - 7 + Math.abs(gait), 9, 10, "#4a3431");
+        pixelRect(ctx, pouchX + 1, y - 6 + Math.abs(gait), 7, 8, "#9b6543");
+        pixelRect(ctx, pouchX + 2, y - 5 + Math.abs(gait), 5, 2, "#c68a50");
+        pixelRect(ctx, pouchX + 4, y - 2 + Math.abs(gait), 2, 2, "#e2b45f");
+        break;
+      }
       default:
         break;
     }
   }
 
+  drawRunDust(ctx, x, y, motion) {
+    if (!motion.running || !motion.moving) return;
+    const phase = motion.walkFrame % MOTION_FRAME_COUNT;
+    if (phase !== 2 && phase !== 5) return;
+    const horizontal = motion.facing === "left" || motion.facing === "right";
+    const trail = motion.facing === "right" ? -1 : motion.facing === "left" ? 1 : phase === 2 ? -1 : 1;
+    const dustX = horizontal ? x + trail * 15 : x + trail * 10;
+    const dustY = y + (motion.facing === "up" ? 7 : 9);
+    pixelRect(ctx, dustX - 3, dustY, 6, 3, "rgba(224,204,151,.55)");
+    pixelRect(ctx, dustX + trail * 5, dustY - 3, 3, 3, "rgba(238,221,174,.42)");
+    pixelRect(ctx, dustX - trail * 4, dustY + 3, 2, 2, "rgba(183,158,116,.32)");
+  }
+
   drawPlayer(ctx, player) {
     const x = Math.round(player.x);
     const y = Math.round(player.y);
-    const motion = this.sampleActorMotion("player", player.x, player.y, player.facing);
-    this.drawShadow(ctx, x, y, motion.moving ? 30 : 28);
+    const motion = this.sampleActorMotion("player", player.x, player.y, player.facing, { running: this.playerRunning });
+    this.drawShadow(ctx, x, y, motion.moving ? (motion.running ? 32 : 30) : 28);
+    this.drawRunDust(ctx, x, y, motion);
     this.drawCharacter(ctx, x, y, {
       body: "#3e8580",
       hair: "#513a43",
       skin: "#edbb8c",
-      style: { hair: "side", trim: "#e1b454", outfit: "guide", accessory: "headband" },
+      style: { hair: "side", trim: "#e1b454", outfit: "guide", accessory: "traveler" },
       moving: motion.moving,
+      running: motion.running,
       walkFrame: motion.walkFrame,
       facing: motion.facing,
+      phase: 0,
     });
   }
 
