@@ -1,5 +1,5 @@
 import { clamp, distance, hashString, rectanglesOverlap, seededNoise } from "./utils.js";
-import { getStoryLandmarks } from "./simulation.js";
+import { getStoryLandmarks, requirementsMet } from "./simulation.js";
 
 const WIDTH = 768;
 const HEIGHT = 480;
@@ -39,6 +39,13 @@ const PATH_STYLES = {
 
 const SKIN_TONES = ["#efbd91", "#e3aa7d", "#cf8e66", "#a9684f", "#f1c9a2"];
 const NPC_STYLE = {
+  arthur: { hair: "side", accessory: "glasses", trim: "#c29a5d", outfit: "vest" },
+  beatrice: { hair: "bun", trim: "#d6bd83", outfit: "dress" },
+  conrad: { hair: "short", trim: "#d29b5b", outfit: "coat" },
+  dorothea: { hair: "braid", accessory: "kerchief", trim: "#e3c278", outfit: "apron" },
+  elias: { hair: "side", accessory: "glasses", trim: "#d2aa62", outfit: "artist" },
+  florence: { hair: "bob", accessory: "glasses", trim: "#b8a7cf", outfit: "coat" },
+  ada: { hair: "long", accessory: "headband", trim: "#e0bd67", outfit: "uniform" },
   aveline: { hair: "bun", trim: "#e5bc68", outfit: "dress" },
   rowan: { hair: "bob", accessory: "glasses", trim: "#b9a5d1", outfit: "coat" },
   taren: { hair: "short", accessory: "guard", trim: "#9fb4b3", outfit: "uniform" },
@@ -96,6 +103,18 @@ function sceneHeight(scene) {
 
 function scenePlaceId(state) {
   return state?.placeId || state?.regionId || "";
+}
+
+function portalRevealed(portal, state) {
+  return !portal?.revealFlag || Boolean(state?.flags?.[portal.revealFlag]);
+}
+
+function portalAccessMet(portal, state) {
+  const allRules = portal?.access?.all || [];
+  const anyRules = portal?.access?.any || [];
+  const allPass = allRules.every((rule) => requirementsMet({ requirements: [rule] }, state).ok);
+  const anyPass = !anyRules.length || anyRules.some((rule) => requirementsMet({ requirements: [rule] }, state).ok);
+  return allPass && anyPass;
 }
 
 function itemPlaceId(item, fallback = "") {
@@ -410,7 +429,8 @@ export function nearestPortal(state, sceneOrContent, maxDistance = 52) {
   let result = null;
   let best = maxDistance;
   (scene.portals || []).forEach((portal) => {
-    if (portal.disabled || itemPlaceId(portal, scene.id) !== scenePlaceId(state)) return;
+    if (portal.disabled || !portalRevealed(portal, state) || itemPlaceId(portal, scene.id) !== scenePlaceId(state)) return;
+    if (portal.deferUntilAccessible && !portalAccessMet(portal, state)) return;
     const rect = pointRect(portal, 24);
     const currentDistance = pointToRectDistance(state.player, rect);
     if (currentDistance < best) {
@@ -644,7 +664,7 @@ export class WorldRenderer {
         return itemPlaceId(item, scene.id) === scene.id && ["background", "wall"].includes(layer) && this.isVisible(item, visible);
       })
       .forEach((item) => this.drawLandmark(ctx, item, palette));
-    (scene.portals || []).filter((portal) => !portal.disabled && this.isVisible(portal, visible, 32)).forEach((portal) => this.drawPortal(ctx, portal, palette, interior));
+    (scene.portals || []).filter((portal) => !portal.disabled && portalRevealed(portal, state) && this.isVisible(portal, visible, 32)).forEach((portal) => this.drawPortal(ctx, portal, palette, interior));
 
     const actors = [];
     this.content.npcs.forEach((npc) => {
@@ -1656,6 +1676,17 @@ export class WorldRenderer {
     const wood = item.color || "#875c3c";
     const dark = shade(wood, -35);
     const light = shade(wood, 24);
+    if (type === "bench") {
+      pixelRect(ctx, x + 4, y + h - 4, w - 8, 4, "rgba(46,31,27,.25)");
+      pixelRect(ctx, x + 3, y + 2, w - 6, 7, dark);
+      pixelRect(ctx, x, y, w, 6, wood);
+      pixelRect(ctx, x + 3, y + 1, w - 6, 2, light);
+      pixelRect(ctx, x + 6, y + 8, w - 12, 5, shade(wood, -10));
+      pixelRect(ctx, x + 8, y + 12, 5, Math.max(5, h - 12), dark);
+      pixelRect(ctx, x + w - 13, y + 12, 5, Math.max(5, h - 12), dark);
+      for (let boltX = x + 12; boltX < x + w - 8; boltX += 24) pixelRect(ctx, boltX, y + 3, 2, 2, "#d0a25d");
+      return;
+    }
     if (type === "bed") {
       pixelRect(ctx, x + 4, y + 6, w, h, "rgba(48,30,28,.22)");
       pixelRect(ctx, x, y, w, h, dark);
@@ -1967,6 +1998,154 @@ export class WorldRenderer {
     const cx = x + w / 2;
     if (type === "signpost") {
       this.drawSignpost(ctx, item, palette);
+      return;
+    }
+    if (/boat|ferry|skiff/.test(`${id} ${type}`)) {
+      const hull = item.color || "#81503b";
+      pixelRect(ctx, x + 8, y + h - 10, w - 16, 7, "rgba(24,37,39,.25)");
+      pixelRect(ctx, x + 5, y + h - 19, w - 10, 11, shade(hull, -25));
+      pixelRect(ctx, x + 12, y + h - 23, w - 24, 12, hull);
+      pixelRect(ctx, x + 18, y + h - 22, w - 36, 3, shade(hull, 28));
+      pixelRect(ctx, cx - 2, y + 4, 4, h - 25, "#5c493b");
+      ctx.fillStyle = item.fabricColor || "#d2c18f";
+      ctx.beginPath(); ctx.moveTo(cx + 2, y + 6); ctx.lineTo(cx + w * .31, y + h * .52); ctx.lineTo(cx + 2, y + h * .52); ctx.closePath(); ctx.fill();
+      pixelRect(ctx, x + 23, y + h - 15, 9, 5, "#d4ac60");
+      pixelRect(ctx, x + w - 31, y + h - 15, 9, 5, "#d4ac60");
+      return;
+    }
+    if (/post/.test(type)) {
+      const post = item.color || "#8d6846";
+      const waterLine = /low/.test(id) ? .72 : /mid/.test(id) ? .5 : .3;
+      pixelRect(ctx, cx - 6, y + 4, 12, h - 4, shade(post, -28));
+      pixelRect(ctx, cx - 4, y, 8, h - 3, post);
+      pixelRect(ctx, cx - 7, y + 4, 14, 5, shade(post, 22));
+      pixelRect(ctx, cx - 5, y + h * waterLine, 10, 3, "#7fb0ad");
+      pixelRect(ctx, cx - 9, y + 15, 4, 24, "#59463a");
+      pixelRect(ctx, cx + 5, y + 15, 4, 24, "#59463a");
+      return;
+    }
+    if (/clockwork|gear/.test(type)) {
+      const metal = item.color || "#9a845a";
+      pixelRect(ctx, x, y, w, h, "#3d403d");
+      pixelRect(ctx, x + 4, y + 4, w - 8, h - 8, "#5a5548");
+      const gears = [{ px: .28, py: .52, r: .2 }, { px: .57, py: .38, r: .25 }, { px: .76, py: .65, r: .16 }];
+      gears.forEach((gear, index) => {
+        const radius = Math.max(9, Math.min(w, h) * gear.r);
+        const gx = x + w * gear.px;
+        const gy = y + h * gear.py;
+        ctx.fillStyle = shade(metal, index * 9 - 12);
+        ctx.beginPath(); ctx.arc(gx, gy, radius, 0, Math.PI * 2); ctx.fill();
+        for (let tooth = 0; tooth < 8; tooth += 1) {
+          const angle = tooth / 8 * Math.PI * 2;
+          pixelRect(ctx, gx + Math.cos(angle) * (radius - 1) - 3, gy + Math.sin(angle) * (radius - 1) - 3, 6, 6, shade(metal, -22));
+        }
+        ctx.fillStyle = "#45433c"; ctx.beginPath(); ctx.arc(gx, gy, radius * .34, 0, Math.PI * 2); ctx.fill();
+        pixelRect(ctx, gx - 1, gy - radius + 3, 3, radius - 4, "#b65342");
+      });
+      pixelRect(ctx, x + 8, y + 7, w - 16, 3, shade(metal, 24));
+      return;
+    }
+    if (/console/.test(type)) {
+      const metal = item.color || "#72766e";
+      pixelRect(ctx, x + 3, y + 5, w, h, "rgba(35,29,28,.25)");
+      pixelRect(ctx, x, y, w, h, shade(metal, -35));
+      pixelRect(ctx, x + 5, y + 5, w - 10, h - 10, metal);
+      pixelRect(ctx, x + 9, y + 9, w - 18, h * .42, "#293638");
+      const lights = Math.max(3, Math.min(7, Math.floor(w / 28)));
+      for (let light = 0; light < lights; light += 1) {
+        const lx = x + 14 + light * ((w - 28) / Math.max(1, lights - 1));
+        pixelRect(ctx, lx, y + 15, 7, 7, light === lights - 1 ? "#a34b3e" : light % 2 ? "#d0a357" : "#668d78");
+        pixelRect(ctx, lx + 2, y + 14, 3, 2, "#eee0a8");
+      }
+      pixelRect(ctx, x + 14, y + h * .66, w - 28, 5, shade(metal, -30));
+      pixelRect(ctx, x + w * .45, y + h * .58, w * .1, h * .22, "#c99a4e");
+      return;
+    }
+    if (/bell/.test(type)) {
+      const bronze = item.color || "#b1894c";
+      pixelRect(ctx, cx - 3, y, 6, 13, "#57483b");
+      ctx.fillStyle = shade(bronze, -28); ctx.beginPath(); ctx.moveTo(cx - w * .31, y + h * .68); ctx.lineTo(cx - w * .2, y + h * .24); ctx.lineTo(cx + w * .2, y + h * .24); ctx.lineTo(cx + w * .31, y + h * .68); ctx.fill();
+      pixelRect(ctx, cx - w * .28, y + h * .66, w * .56, 8, bronze);
+      pixelRect(ctx, cx - w * .2, y + h * .3, w * .4, 4, shade(bronze, 27));
+      pixelRect(ctx, cx - 4, y + h * .72, 8, 10, shade(bronze, -34));
+      pixelRect(ctx, x + 12, y + h - 10, w - 24, 6, "#59483a");
+      return;
+    }
+    if (/photo_bench/.test(type)) {
+      const wood = item.color || "#80583f";
+      pixelRect(ctx, x, y + h * .55, w, h * .45, shade(wood, -28));
+      pixelRect(ctx, x + 3, y + h * .58, w - 6, h * .36, wood);
+      for (let tray = 0; tray < 3; tray += 1) {
+        const trayX = x + 8 + tray * ((w - 20) / 3);
+        const trayW = (w - 34) / 3;
+        pixelRect(ctx, trayX, y + 10, trayW, h * .38, "#454b49");
+        pixelRect(ctx, trayX + 3, y + 13, trayW - 6, h * .27, tray === 0 ? "#6f8581" : tray === 1 ? "#93836d" : "#4e696d");
+        pixelRect(ctx, trayX + trayW * .25, y + 16, trayW * .5, h * .2, "rgba(232,218,174,.4)");
+      }
+      return;
+    }
+    if (/papers|book|photo/.test(type)) {
+      const paper = /photo/.test(type) ? "#c8bea0" : "#ead7a6";
+      pixelRect(ctx, x + 4, y + 4, w - 4, h - 4, "rgba(50,35,30,.22)");
+      pixelRect(ctx, x, y + 3, w - 5, h - 5, shade(paper, -12));
+      pixelRect(ctx, x + 5, y, w - 7, h - 4, paper);
+      if (/book/.test(type)) pixelRect(ctx, x + w / 2 - 1, y + 2, 2, h - 8, "#8c6b4d");
+      if (/photo/.test(type)) {
+        pixelRect(ctx, x + 9, y + 5, w - 18, h - 13, "#657173");
+        pixelRect(ctx, cx - 3, y + 8, 6, 6, "#c69d78");
+        pixelRect(ctx, cx - 6, y + 14, 12, Math.max(4, h - 23), "#596a73");
+      } else for (let line = y + 7; line < y + h - 5; line += 5) pixelRect(ctx, x + 8, line, Math.max(4, w - 17 - (line % 3) * 3), 1, "#9b7b59");
+      return;
+    }
+    if (/lens|reflector/.test(type)) {
+      const glass = item.color || "#8db0ad";
+      pixelRect(ctx, x + 2, y + h - 6, w - 4, 5, "rgba(45,35,30,.25)");
+      ctx.fillStyle = "#5e574d"; ctx.beginPath(); ctx.arc(cx, y + h * .46, Math.min(w, h) * .42, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = glass; ctx.beginPath(); ctx.arc(cx, y + h * .46, Math.min(w, h) * .33, 0, Math.PI * 2); ctx.fill();
+      pixelRect(ctx, cx - w * .12, y + h * .2, w * .12, h * .34, "rgba(227,240,218,.55)");
+      pixelRect(ctx, cx - 2, y + h * .77, 4, h * .2, "#615143");
+      return;
+    }
+    if (/keys|tool/.test(type)) {
+      const metal = item.color || "#c1a060";
+      pixelRect(ctx, x + 2, y + h * .48, w - 4, 4, "#684f39");
+      const count = Math.max(2, Math.min(4, Math.floor(w / 13)));
+      for (let index = 0; index < count; index += 1) {
+        const tx = x + 5 + index * ((w - 10) / Math.max(1, count - 1));
+        pixelRect(ctx, tx, y + 3, 3, h * .6, metal);
+        pixelRect(ctx, tx - 3, y + h * .58, 9, 4, shade(metal, -20));
+        if (/keys/.test(type)) pixelRect(ctx, tx + 3, y + h * .55, 3, 8, metal);
+      }
+      return;
+    }
+    if (/rope/.test(type)) {
+      for (let yy = y; yy < y + h - 14; yy += 8) {
+        pixelRect(ctx, cx - 3 + ((yy / 8) % 2 ? 2 : 0), yy, 5, 9, "#b18b55");
+        pixelRect(ctx, cx - 1 + ((yy / 8) % 2 ? 2 : 0), yy + 1, 2, 7, "#d0aa68");
+      }
+      pixelRect(ctx, cx - 10, y + h - 18, 20, 6, "#79563d");
+      pixelRect(ctx, cx - 7, y + h - 13, 14, 10, "#aa7f4e");
+      return;
+    }
+    if (/lever|knob/.test(type)) {
+      const active = /lever/.test(type) ? "#a64a39" : "#e2d7b7";
+      pixelRect(ctx, x + w * .2, y + h * .68, w * .6, h * .25, "#44433f");
+      pixelRect(ctx, x + w * .3, y + h * .72, w * .4, h * .14, "#777369");
+      if (/lever/.test(type)) {
+        pixelRect(ctx, cx - 3, y + h * .2, 6, h * .55, "#514740");
+        pixelRect(ctx, cx - 8, y + h * .08, 16, 16, active);
+        pixelRect(ctx, cx - 5, y + h * .1, 10, 4, shade(active, 25));
+      } else {
+        ctx.fillStyle = active; ctx.beginPath(); ctx.arc(cx, y + h * .58, Math.min(w, h) * .22, 0, Math.PI * 2); ctx.fill();
+        pixelRect(ctx, cx - 3, y + h * .38, 6, 8, "#fff4d2");
+      }
+      return;
+    }
+    if (/portrait_slot/.test(type)) {
+      pixelRect(ctx, x, y, w, h, "#473b36");
+      pixelRect(ctx, x + 4, y + 4, w - 8, h - 8, "#8d744e");
+      pixelRect(ctx, x + 9, y + 9, w - 18, h - 18, "#25292a");
+      pixelRect(ctx, x + w / 2 - 1, y + 15, 2, h - 30, "#4d5553");
       return;
     }
     if (/water|pond|oasis|lake/.test(type)) {
@@ -2319,11 +2498,16 @@ export class WorldRenderer {
       pixelRect(ctx, x, y - 55, 2, 2, "#fff7cf");
     }
     this.drawShadow(ctx, x, y, moving ? 29 : 27);
-    const style = NPC_STYLE[npc.id] || { hair: "short", trim: shade(npc.color || "#8f6975", 25), outfit: "coat" };
-    const skin = npc.skinColor || SKIN_TONES[hashString(npc.id) % SKIN_TONES.length];
+    const appearance = npc.appearance || {};
+    const style = { ...(NPC_STYLE[npc.id] || { hair: "short", trim: shade(npc.color || "#8f6975", 25), outfit: "coat" }),
+      ...(appearance.hairStyle ? { hair: appearance.hairStyle } : {}),
+      ...(appearance.trim ? { trim: appearance.trim } : {}),
+      ...(appearance.outfit ? { outfit: appearance.outfit } : {}),
+      ...(appearance.accessory ? { accessory: appearance.accessory } : {}) };
+    const skin = appearance.skin || npc.skinColor || SKIN_TONES[hashString(npc.id) % SKIN_TONES.length];
     this.drawCharacter(ctx, x, y, {
-      body: npc.color || "#9a6c78",
-      hair: npc.hairColor || "#4c3841",
+      body: appearance.body || npc.color || "#9a6c78",
+      hair: appearance.hair || npc.hairColor || "#4c3841",
       skin,
       style,
       moving,

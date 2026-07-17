@@ -1,636 +1,232 @@
 {
-  "schemaVersion": 2,
-  "regions": {
-    "capital": {
-      "width": 1536,
-      "height": 960,
-      "biome": "capital",
-      "spawn": { "x": 768, "y": 868 },
-      "paths": [
-        { "x": 704, "y": 0, "w": 128, "h": 960, "style": "royal" },
-        { "x": 0, "y": 458, "w": 1536, "h": 112, "style": "market" },
-        { "x": 190, "y": 300, "w": 1156, "h": 72, "style": "cobble" },
-        { "x": 1080, "y": 146, "w": 48, "h": 176, "style": "cobble" }
-      ],
+  "schemaVersion": 1,
+  "regions": [
+    {
+      "id": "town",
+      "name": "钟影广场",
+      "subtitle": "所有路都从同一座钟下分开",
+      "biome": "town",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 768,
+      "spawn": {"x": 576, "y": 650},
+      "palette": {"ground":"#718b5f","groundAlt":"#7f9968","path":"#b7a178","edge":"#38554c","accent":"#d4ac60","water":"#557f8d","wall":"#c2a777","roof":"#6e4a46"},
       "zones": [
-        { "type": "plaza", "x": 560, "y": 350, "w": 416, "h": 300 },
-        { "type": "cobble", "x": 72, "y": 400, "w": 360, "h": 250 },
-        { "type": "cobble", "x": 1104, "y": 400, "w": 360, "h": 250 },
-        { "type": "wall", "x": 0, "y": 0, "w": 1536, "h": 34 },
-        { "type": "canal", "x": 50, "y": 742, "w": 1436, "h": 52 }
+        {"type":"plaza","x":338,"y":170,"w":476,"h":408},
+        {"type":"flowerbed","x":244,"y":220,"w":72,"h":246},
+        {"type":"flowerbed","x":836,"y":220,"w":72,"h":246},
+        {"type":"hedge","x":196,"y":112,"w":220,"h":24,"collision":true},
+        {"type":"hedge","x":736,"y":112,"w":220,"h":24,"collision":true},
+        {"type":"pond","x":85,"y":480,"w":170,"h":105,"collision":true}
+      ],
+      "paths": [
+        {"x":520,"y":0,"w":112,"h":768,"style":"cobble"},
+        {"x":0,"y":338,"w":1152,"h":98,"style":"cobble"},
+        {"x":420,"y":152,"w":312,"h":466,"style":"royal"}
       ],
       "buildings": [
-        {
-          "id": "palace", "label": "晨星宫", "x": 528, "y": 52, "w": 480, "h": 250, "roofColor": "#633f51",
-          "collisionRects": [
-            { "x": 528, "y": 145, "w": 210, "h": 157 },
-            { "x": 798, "y": 145, "w": 210, "h": 157 }
-          ]
-        },
-        {
-          "id": "archive", "label": "旧档馆", "x": 102, "y": 170, "w": 286, "h": 186, "roofColor": "#654f5e",
-          "collisionRects": [
-            { "x": 102, "y": 240, "w": 121, "h": 116 },
-            { "x": 267, "y": 240, "w": 121, "h": 116 }
-          ]
-        },
-        {
-          "id": "barracks", "label": "南墙巡卫所", "x": 1148, "y": 172, "w": 282, "h": 184, "roofColor": "#51464c",
-          "collisionRects": [
-            { "x": 1148, "y": 240, "w": 118, "h": 116 },
-            { "x": 1310, "y": 240, "w": 120, "h": 116 }
-          ]
-        },
-        { "id": "market_awning_west", "label": "钟下集市", "x": 100, "y": 604, "w": 230, "h": 116, "roofColor": "#9b5945", "collision": false },
-        { "id": "market_awning_east", "label": "五地驿亭", "x": 1200, "y": 604, "w": 230, "h": 116, "roofColor": "#5d6c68", "collision": false }
+        {"id":"master_clock_tower","label":"MASTER CLOCK","x":451,"y":75,"w":250,"h":190,"wallColor":"#b6aa8e","roofColor":"#53636a","collisionRects":[{"x":451,"y":142,"w":250,"h":123}]},
+        {"id":"bakery","label":"BAKERY","x":82,"y":155,"w":140,"h":110,"wallColor":"#bd9267","roofColor":"#8f5144"},
+        {"id":"bookbinder","label":"BINDERY","x":930,"y":160,"w":145,"h":108,"wallColor":"#a89979","roofColor":"#5c5969"}
       ],
-      "obstacles": [
-        { "x": 0, "y": 0, "w": 690, "h": 24 }, { "x": 846, "y": 0, "w": 690, "h": 24 },
-        { "x": 50, "y": 742, "w": 620, "h": 52 }, { "x": 866, "y": 742, "w": 620, "h": 52 }
+      "furniture": [
+        {"type":"bench","x":366,"y":325,"w":70,"h":22,"color":"#7f5b3d"},
+        {"type":"bench","x":716,"y":325,"w":70,"h":22,"color":"#7f5b3d"},
+        {"type":"table","x":312,"y":625,"w":104,"h":30,"color":"#865c3e"},
+        {"type":"crate","x":1010,"y":302,"w":28,"h":26,"color":"#986a43"},
+        {"type":"barrel","x":1042,"y":297,"w":23,"h":31,"color":"#76513a"}
+      ],
+      "decorations": [
+        {"id":"market_banner","x":332,"y":132,"w":42,"h":55,"fabricColor":"#a54f4c","layer":"background"},
+        {"id":"clock_banner","x":778,"y":132,"w":42,"h":55,"fabricColor":"#486b6d","layer":"background"},
+        {"id":"flower_basket_a","x":276,"y":504,"w":34,"h":38,"color":"#d18488"},
+        {"id":"flower_basket_b","x":842,"y":504,"w":34,"h":38,"color":"#e1bd69"},
+        {"id":"street_lantern_a","x":330,"y":258,"w":22,"h":48},
+        {"id":"street_lantern_b","x":800,"y":258,"w":22,"h":48},
+        {"id":"street_lantern_c","x":330,"y":474,"w":22,"h":48},
+        {"id":"street_lantern_d","x":800,"y":474,"w":22,"h":48},
+        {"id":"notice_board_tools","x":958,"y":490,"w":90,"h":55,"color":"#9d7448"},
+        {"id":"laundry_basket","x":168,"y":302,"w":36,"h":34,"color":"#d5b46e"},
+        {"id":"town_flag","x":556,"y":288,"w":40,"h":64,"fabricColor":"#9c5950","layer":"background"}
       ],
       "landmarks": [
-        { "id": "star_fountain", "name": "五路星盘喷泉", "type": "fountain", "x": 690, "y": 420, "w": 156, "h": 108, "interactive": true, "description": "五条水路从王城向外延伸；其中一条在地下转向了白棘宅邸。", "flag": "found_five_channels", "layer": "ground", "collisionRect": { "x": 704, "y": 446, "w": 128, "h": 64 } },
-        { "id": "oath_statue", "name": "初王誓像", "type": "statue", "x": 505, "y": 438, "w": 52, "h": 82, "interactive": true, "description": "石座背面新刻着：王冠应当记得土地，而土地无需记得王冠。", "flag": "read_first_oath", "layer": "object" },
-        { "id": "gate_bell", "name": "南门铜钟", "type": "shrine", "x": 872, "y": 830, "w": 42, "h": 56, "interactive": true, "description": "钟绳磨得发白。守卫说每次饥荒前，它都会在无风时自行作响。", "flag": "heard_gate_bell", "layer": "object" },
-        { "id": "capital_market_board", "name": "今日市价板", "type": "board", "x": 360, "y": 654, "w": 110, "h": 58, "interactive": false, "layer": "object" },
-        { "id": "capital_canal_well", "name": "运河汲水井", "type": "well", "x": 1030, "y": 660, "w": 72, "h": 62, "interactive": false, "layer": "object" },
-        {
-          "id": "capital_market_signpost", "name": "钟下岔路牌", "type": "signpost", "x": 850, "y": 540, "w": 58, "h": 60,
-          "interactive": true, "collision": false, "layer": "object",
-          "description": "旧橡木箭牌立在钟下大道与市集横街相接处，南箭沾着麦壳，西箭系着白棘家的紫缎，指向雪山的铜片则被寒气蚀成了浅蓝。",
-          "flag": "read_capital_market_signpost",
-          "destinations": [
-            { "direction": "北", "label": "晨星宫", "targetRegionId": "capital", "targetPlaceId": "capital-palace" },
-            { "direction": "南", "label": "南门 · 风穗农田", "targetRegionId": "farm", "targetPlaceId": "farm" },
-            { "direction": "西", "label": "白棘车站 · 豪宅", "targetRegionId": "mansion", "targetPlaceId": "mansion" },
-            { "direction": "东北", "label": "北境绞盘 · 雪山", "targetRegionId": "snow", "targetPlaceId": "snow" }
-          ]
-        },
-        { "id": "capital_tree_nw", "name": "城墙榆树", "type": "tree", "x": 24, "y": 92, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 35, "y": 126, "w": 8, "h": 13 } },
-        { "id": "capital_tree_ne", "name": "城墙榆树", "type": "tree", "x": 1450, "y": 90, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 1461, "y": 124, "w": 8, "h": 13 } },
-        { "id": "capital_tree_sw", "name": "运河榆树", "type": "tree", "x": 430, "y": 830, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 441, "y": 864, "w": 8, "h": 13 } },
-        { "id": "capital_tree_se", "name": "运河榆树", "type": "tree", "x": 1050, "y": 835, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 1061, "y": 869, "w": 8, "h": 13 } }
+        {"id":"square_clock_face","type":"clock","label":"主钟钟面","description":"钟面停在 06:00，三枚齿轮透过维护窗彼此错开。","interactive":true,"x":537,"y":118,"w":78,"h":76,"layer":"wall"},
+        {"id":"square_signpost","type":"signpost","label":"广场路标","description":"木板只立在真正的分岔口。","interactive":true,"x":820,"y":565,"w":100,"h":85,"destinations":[{"direction":"南","label":"湖畔旅店","targetPlaceId":"inn-yard"},{"direction":"北","label":"礼拜堂","targetPlaceId":"chapel-hill"},{"direction":"西","label":"照相馆","targetPlaceId":"photo-lane"},{"direction":"东","label":"港口","targetPlaceId":"harbor"}]},
+        {"id":"white_line_view","type":"lake_marker","label":"湖面的反光","description":"从广场东侧看去，湖面偶尔闪过一道不合时宜的白线。","interactive":true,"x":1070,"y":365,"w":50,"h":32}
       ],
       "portals": [
-        {
-          "id": "palace-door", "kind": "door", "label": "向宫卫请求进入晨星宫", "x": 742, "y": 268, "w": 52, "h": 40,
-          "access": {
-            "any": [
-              { "path": "npcs.aveline.relationship", "op": ">=", "value": 30 },
-              { "path": "npcs.taren.relationship", "op": ">=", "value": 25 },
-              { "path": "flags.palace_invitation", "op": "==", "value": true }
-            ],
-            "denied": "两名宫卫把长戟交叉在门前：没有内廷的口信，也没有熟识的巡卫为你作保。"
-          },
-          "target": { "regionId": "capital", "placeId": "capital-palace", "x": 576, "y": 646, "facing": "up" }
-        },
-        { "id": "archive-door", "kind": "door", "label": "进入旧档馆", "x": 226, "y": 322, "w": 38, "h": 38, "target": { "regionId": "capital", "placeId": "capital-archive", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "barracks-door", "kind": "door", "label": "进入巡卫所", "x": 1269, "y": 322, "w": 38, "h": 38, "target": { "regionId": "capital", "placeId": "capital-barracks", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "south-gate", "kind": "road", "label": "穿过南门，步行前往风穗农田", "minutes": 20, "x": 716, "y": 900, "w": 104, "h": 44, "target": { "regionId": "farm", "placeId": "farm", "x": 768, "y": 132, "facing": "down" } },
-        { "id": "thorn-carriage", "kind": "carriage", "label": "乘白棘马车前往豪宅", "minutes": 25, "x": 84, "y": 492, "w": 92, "h": 76, "target": { "regionId": "mansion", "placeId": "mansion", "x": 768, "y": 858, "facing": "up" } },
-        { "id": "mountain-lift", "kind": "lift", "label": "乘北境绞盘缆车上雪山", "minutes": 30, "x": 1112, "y": 82, "w": 104, "h": 92, "target": { "regionId": "snow", "placeId": "snow", "x": 174, "y": 820, "facing": "up" } }
-      ]
-    },
-    "farm": {
-      "width": 1536,
-      "height": 960,
-      "biome": "farm",
-      "spawn": { "x": 768, "y": 132 },
-      "paths": [
-        { "x": 718, "y": 0, "w": 100, "h": 960, "style": "dirt" },
-        { "x": 0, "y": 410, "w": 1536, "h": 76, "style": "dirt" },
-        { "x": 170, "y": 710, "w": 1180, "h": 64, "style": "farm" },
-        { "x": 195, "y": 330, "w": 60, "h": 100, "style": "farm" },
-        { "x": 510, "y": 300, "w": 60, "h": 146, "style": "farm" },
-        { "x": 1253, "y": 330, "w": 60, "h": 100, "style": "farm" }
-      ],
-      "zones": [
-        { "type": "crop", "x": 70, "y": 500, "w": 560, "h": 330, "crop": "wheat" },
-        { "type": "crop", "x": 900, "y": 500, "w": 560, "h": 330, "crop": "turnip" },
-        { "type": "orchard", "x": 850, "y": 70, "w": 145, "h": 240 },
-        { "type": "orchard", "x": 1020, "y": 70, "w": 420, "h": 280 },
-        { "type": "paddock", "x": 72, "y": 70, "w": 390, "h": 260 },
-        { "type": "canal", "x": 0, "y": 340, "w": 1536, "h": 44 },
-        { "type": "canal", "x": 650, "y": 340, "w": 44, "h": 620 }
-      ],
-      "buildings": [
-        { "id": "farmhouse", "label": "米拉农舍", "x": 100, "y": 250, "w": 250, "h": 150, "collisionRects": [{ "x": 100, "y": 306, "w": 101, "h": 94 }, { "x": 249, "y": 306, "w": 101, "h": 94 }] },
-        { "id": "mill", "label": "风穗磨坊", "x": 390, "y": 110, "w": 300, "h": 214, "roofColor": "#765049", "collisionRects": [{ "x": 390, "y": 190, "w": 126, "h": 134 }, { "x": 564, "y": 190, "w": 126, "h": 134 }] },
-        { "id": "apiary", "label": "蜂语棚", "x": 1160, "y": 250, "w": 246, "h": 150, "roofColor": "#9a6c3d", "collisionRects": [{ "x": 1160, "y": 306, "w": 99, "h": 94 }, { "x": 1307, "y": 306, "w": 99, "h": 94 }] }
-      ],
-      "obstacles": [
-        { "x": 0, "y": 340, "w": 190, "h": 44 }, { "x": 260, "y": 340, "w": 240, "h": 44 },
-        { "x": 580, "y": 340, "w": 100, "h": 44 }, { "x": 856, "y": 340, "w": 392, "h": 44 }, { "x": 1318, "y": 340, "w": 218, "h": 44 },
-        { "x": 650, "y": 384, "w": 44, "h": 305 }, { "x": 650, "y": 795, "w": 44, "h": 165 }
-      ],
-      "landmarks": [
-        { "id": "dry_canal", "name": "北渠铜闸", "type": "ruin", "x": 664, "y": 350, "w": 152, "h": 62, "interactive": true, "description": "渠底露出带星形孔洞的铜闸，似乎能接入被遗忘的地下水路。", "flag": "inspected_dry_canal", "layer": "ground" },
-        { "id": "seed_stone", "name": "歉收种子碑", "type": "shrine", "x": 508, "y": 668, "w": 42, "h": 58, "interactive": true, "description": "农人刻下每次歉收，却从未刻下任何人的名字。", "flag": "read_seed_stone", "layer": "object" },
-        { "id": "old_scarecrow", "name": "会转头的稻草人", "type": "statue", "x": 1240, "y": 650, "w": 38, "h": 64, "interactive": true, "description": "它的影子始终指向缺水最严重的田垄。", "flag": "watched_scarecrow", "layer": "object" },
-        { "id": "west_field_scarecrow", "name": "旧田稻草人", "type": "scarecrow", "x": 176, "y": 570, "w": 38, "h": 64, "interactive": false, "layer": "object" },
-        { "id": "farm_blue_honey_rack", "name": "蓝蜜罐架", "type": "shrine", "x": 1440, "y": 270, "w": 74, "h": 54, "interactive": false, "layer": "object" },
-        { "id": "farm_seed_chest", "name": "旧种子箱", "type": "chest", "x": 560, "y": 860, "w": 70, "h": 55, "interactive": false, "layer": "object" },
-        { "id": "farm_east_well", "name": "东田水井", "type": "well", "x": 826, "y": 626, "w": 58, "h": 56, "interactive": false, "layer": "object" },
-        { "id": "farm_tree_southwest", "name": "田边榆树", "type": "tree", "x": 90, "y": 865, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 101, "y": 899, "w": 8, "h": 13 } },
-        { "id": "farm_tree_southeast", "name": "田边榆树", "type": "tree", "x": 1180, "y": 865, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 1191, "y": 899, "w": 8, "h": 13 } },
-        {
-          "id": "farm_canal_signpost", "name": "四渠口田路牌", "type": "signpost", "x": 828, "y": 416, "w": 72, "h": 50,
-          "interactive": true, "collision": false, "layer": "object",
-          "description": "三块谷仓旧木板钉在干渠交叉口：北面的王道脚印最密，西向私道有细窄车辙，东向商路的红布条永远朝沙漠飘。",
-          "flag": "read_farm_canal_signpost",
-          "destinations": [
-            { "direction": "北", "label": "王道 · 晨星王城", "targetRegionId": "capital", "targetPlaceId": "capital" },
-            { "direction": "西", "label": "白棘私道 · 豪宅", "targetRegionId": "mansion", "targetPlaceId": "mansion" },
-            { "direction": "东", "label": "赤帆商路 · 沙漠", "targetRegionId": "desert", "targetPlaceId": "desert" }
-          ]
-        }
-      ],
-      "portals": [
-        { "id": "farmhouse-door", "kind": "door", "label": "进入米拉农舍", "x": 204, "y": 366, "w": 42, "h": 38, "target": { "regionId": "farm", "placeId": "farm-farmhouse", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "mill-door", "kind": "door", "label": "进入风穗磨坊", "x": 516, "y": 290, "w": 48, "h": 38, "target": { "regionId": "farm", "placeId": "farm-mill", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "apiary-door", "kind": "door", "label": "进入蜂语棚", "x": 1262, "y": 366, "w": 42, "h": 38, "target": { "regionId": "farm", "placeId": "farm-apiary", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "north-road", "kind": "road", "label": "沿王道步行前往晨星王城", "minutes": 20, "x": 716, "y": 18, "w": 104, "h": 54, "target": { "regionId": "capital", "placeId": "capital", "x": 768, "y": 856, "facing": "up" } },
-        { "id": "desert-caravan", "kind": "caravan", "label": "随赤帆商队穿越到赤沙漠", "minutes": 40, "x": 1410, "y": 410, "w": 98, "h": 84, "target": { "regionId": "desert", "placeId": "desert", "x": 118, "y": 570, "facing": "right" } },
-        { "id": "estate-lane", "kind": "road", "label": "沿白棘私道步行前往豪宅", "minutes": 18, "x": 18, "y": 400, "w": 62, "h": 92, "target": { "regionId": "mansion", "placeId": "mansion", "x": 1406, "y": 650, "facing": "left" } }
-      ]
-    },
-    "mansion": {
-      "width": 1536,
-      "height": 960,
-      "biome": "mansion",
-      "spawn": { "x": 768, "y": 858 },
-      "paths": [
-        { "x": 704, "y": 252, "w": 128, "h": 708, "style": "marble" },
-        { "x": 120, "y": 610, "w": 1348, "h": 74, "style": "marble" },
-        { "x": 286, "y": 390, "w": 964, "h": 58, "style": "garden" },
-        { "x": 216, "y": 390, "w": 82, "h": 40, "style": "garden" },
-        { "x": 1238, "y": 390, "w": 82, "h": 40, "style": "garden" }
-      ],
-      "zones": [
-        { "type": "hedge", "x": 150, "y": 470, "w": 430, "h": 42 },
-        { "type": "hedge", "x": 956, "y": 470, "w": 430, "h": 42 },
-        { "type": "hedge", "x": 150, "y": 730, "w": 430, "h": 42 },
-        { "type": "hedge", "x": 956, "y": 730, "w": 430, "h": 42 },
-        { "type": "flowerbed", "x": 430, "y": 350, "w": 130, "h": 60 },
-        { "type": "flowerbed", "x": 976, "y": 350, "w": 130, "h": 60 },
-        { "type": "flowerbed", "x": 220, "y": 520, "w": 300, "h": 78 },
-        { "type": "flowerbed", "x": 1016, "y": 520, "w": 300, "h": 78 },
-        { "type": "pond", "x": 140, "y": 790, "w": 360, "h": 116 },
-        { "type": "plaza", "x": 590, "y": 330, "w": 356, "h": 320 }
-      ],
-      "buildings": [
-        { "id": "white_thorn_house", "label": "白棘主宅", "x": 388, "y": 48, "w": 760, "h": 278, "roofColor": "#4d3c5a", "collisionRects": [{ "x": 388, "y": 150, "w": 342, "h": 176 }, { "x": 806, "y": 150, "w": 342, "h": 176 }] },
-        { "id": "studio", "label": "玻璃画室", "x": 76, "y": 248, "w": 260, "h": 164, "roofColor": "#52616a", "collisionRects": [{ "x": 76, "y": 310, "w": 105, "h": 102 }, { "x": 229, "y": 310, "w": 107, "h": 102 }] },
-        { "id": "servants_house", "label": "管家偏厅", "x": 1200, "y": 248, "w": 260, "h": 164, "roofColor": "#4f4b55", "collisionRects": [{ "x": 1200, "y": 310, "w": 105, "h": 102 }, { "x": 1353, "y": 310, "w": 107, "h": 102 }] }
-      ],
-      "obstacles": [
-        { "x": 150, "y": 470, "w": 430, "h": 42 }, { "x": 956, "y": 470, "w": 430, "h": 42 },
-        { "x": 150, "y": 730, "w": 430, "h": 42 }, { "x": 956, "y": 730, "w": 430, "h": 42 },
-        { "x": 140, "y": 790, "w": 360, "h": 116 }
-      ],
-      "landmarks": [
-        { "id": "mirror_pond", "name": "沉账镜池", "type": "pond", "x": 170, "y": 806, "w": 300, "h": 84, "interactive": true, "description": "池底压着防水账簿，记录豪宅多年来买下的王城水债。", "flag": "found_water_ledger", "layer": "ground", "collisionRect": { "x": 176, "y": 824, "w": 288, "h": 52 } },
-        { "id": "thorn_clock", "name": "白棘花钟", "type": "shrine", "x": 1010, "y": 714, "w": 72, "h": 72, "interactive": true, "description": "花钟每天慢九分钟，仿佛有一段时间被这座宅邸藏了起来。", "flag": "noticed_missing_minutes", "layer": "object" },
-        { "id": "masked_gate", "name": "无纹章侧门", "type": "statue", "x": 1370, "y": 514, "w": 44, "h": 70, "interactive": true, "description": "门后的车辙通往农田，却没有一辆车登记在宅邸账册上。", "flag": "found_estate_supply_route", "layer": "object" },
-        { "id": "mansion_statue_west", "name": "西庭女神像", "type": "statue", "x": 575, "y": 810, "w": 42, "h": 62, "interactive": false, "layer": "object" },
-        { "id": "mansion_statue_east", "name": "东庭女神像", "type": "statue", "x": 919, "y": 810, "w": 42, "h": 62, "interactive": false, "layer": "object" },
-        { "id": "mansion_tree_west", "name": "修剪过的紫杉", "type": "tree", "x": 36, "y": 520, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 47, "y": 554, "w": 8, "h": 13 } },
-        { "id": "mansion_tree_east", "name": "修剪过的紫杉", "type": "tree", "x": 1470, "y": 500, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 1481, "y": 534, "w": 8, "h": 13 } },
-        { "id": "mansion_guest_board", "name": "夜宴宾客牌", "type": "board", "x": 58, "y": 650, "w": 84, "h": 52, "interactive": false, "layer": "object" },
-        { "id": "mansion_sundial", "name": "白石日晷", "type": "shrine", "x": 1120, "y": 812, "w": 48, "h": 60, "interactive": false, "layer": "object" },
-        {
-          "id": "mansion_court_signpost", "name": "白棘中庭指路牌", "type": "signpost", "x": 842, "y": 614, "w": 62, "h": 58,
-          "interactive": true, "collision": false, "layer": "object",
-          "description": "漆成象牙色的箭牌只立在中庭主轴的岔口。访客被引向主宅与画室，仆役偏厅的细箭藏在背面，南向车道还留着王城马车的黑色油渍。",
-          "flag": "read_mansion_court_signpost",
-          "destinations": [
-            { "direction": "北", "label": "白棘主宅", "targetRegionId": "mansion", "targetPlaceId": "mansion-house" },
-            { "direction": "西北", "label": "玻璃画室", "targetRegionId": "mansion", "targetPlaceId": "mansion-studio" },
-            { "direction": "东北", "label": "管家偏厅", "targetRegionId": "mansion", "targetPlaceId": "mansion-servants" },
-            { "direction": "南", "label": "马车道 · 晨星王城", "targetRegionId": "capital", "targetPlaceId": "capital" },
-            { "direction": "东", "label": "雇农小径 · 风穗农田", "targetRegionId": "farm", "targetPlaceId": "farm" }
-          ]
-        }
-      ],
-      "portals": [
-        { "id": "mansion-door", "kind": "door", "label": "进入白棘主宅", "x": 736, "y": 288, "w": 64, "h": 42, "target": { "regionId": "mansion", "placeId": "mansion-house", "x": 576, "y": 646, "facing": "up" } },
-        { "id": "studio-door", "kind": "door", "label": "进入玻璃画室", "x": 184, "y": 378, "w": 42, "h": 38, "target": { "regionId": "mansion", "placeId": "mansion-studio", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "servants-door", "kind": "door", "label": "进入管家偏厅", "x": 1308, "y": 378, "w": 42, "h": 38, "target": { "regionId": "mansion", "placeId": "mansion-servants", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "capital-carriage", "kind": "carriage", "label": "乘宅邸马车返回晨星王城", "minutes": 25, "x": 710, "y": 892, "w": 116, "h": 52, "target": { "regionId": "capital", "placeId": "capital", "x": 154, "y": 520, "facing": "right" } },
-        { "id": "farm-lane", "kind": "road", "label": "沿雇农小径前往风穗农田", "minutes": 18, "x": 1456, "y": 610, "w": 62, "h": 92, "target": { "regionId": "farm", "placeId": "farm", "x": 112, "y": 450, "facing": "right" } }
-      ]
-    },
-    "snow": {
-      "width": 1536,
-      "height": 960,
-      "biome": "snow",
-      "spawn": { "x": 174, "y": 820 },
-      "paths": [
-        { "x": 90, "y": 790, "w": 610, "h": 70, "style": "snow" },
-        { "x": 348, "y": 690, "w": 44, "h": 110, "style": "snow" },
-        { "x": 620, "y": 560, "w": 76, "h": 300, "style": "snow" },
-        { "x": 620, "y": 530, "w": 650, "h": 72, "style": "snow" },
-        { "x": 1260, "y": 542, "w": 78, "h": 44, "style": "snow" },
-        { "x": 1194, "y": 250, "w": 76, "h": 352, "style": "ice" },
-        { "x": 760, "y": 218, "w": 510, "h": 72, "style": "ice" },
-        { "x": 1360, "y": 246, "w": 176, "h": 88, "style": "ice" }
-      ],
-      "zones": [
-        { "type": "cliff", "x": 0, "y": 0, "w": 560, "h": 480 },
-        { "type": "cliff", "x": 820, "y": 640, "w": 716, "h": 320 },
-        { "type": "ice", "x": 600, "y": 60, "w": 520, "h": 340 },
-        { "type": "pond", "x": 22, "y": 610, "w": 160, "h": 110, "collision": true },
-        { "type": "wall", "x": 1370, "y": 100, "w": 130, "h": 560 }
-      ],
-      "buildings": [
-        { "id": "hearth_lodge", "label": "暖炉医舍", "x": 218, "y": 520, "w": 300, "h": 180, "roofColor": "#556c75", "collisionRects": [{ "x": 218, "y": 587, "w": 125, "h": 113 }, { "x": 397, "y": 587, "w": 121, "h": 113 }] },
-        { "id": "watchtower", "label": "霜脊瞭望塔", "x": 690, "y": 92, "w": 310, "h": 220, "roofColor": "#445865", "collisionRects": [{ "x": 690, "y": 173, "w": 128, "h": 139 }, { "x": 876, "y": 173, "w": 124, "h": 139 }] },
-        { "id": "hermit_hut", "label": "伊米尔小屋", "x": 1224, "y": 420, "w": 244, "h": 164, "roofColor": "#5c6470", "collisionRects": [{ "x": 1224, "y": 481, "w": 97, "h": 103 }, { "x": 1369, "y": 481, "w": 99, "h": 103 }] }
-      ],
-      "obstacles": [
-        { "x": 0, "y": 0, "w": 560, "h": 460 }, { "x": 820, "y": 690, "w": 716, "h": 270 },
-        { "x": 600, "y": 60, "w": 80, "h": 330 }, { "x": 1040, "y": 60, "w": 80, "h": 330 },
-        { "x": 1370, "y": 100, "w": 130, "h": 134 }, { "x": 1370, "y": 354, "w": 130, "h": 306 }
-      ],
-      "landmarks": [
-        { "id": "glacier_seal", "name": "倒燃冰川封印", "type": "crystal", "x": 798, "y": 370, "w": 112, "h": 136, "interactive": true, "description": "火光逆着冰缝流动。封印不是在阻止火焰出去，而是在阻止某物进来。", "flag": "understood_glacier_seal", "layer": "object", "collisionRect": { "x": 816, "y": 466, "w": 76, "h": 30 } },
-        { "id": "meltwater_cairn", "name": "融水路标", "type": "shrine", "x": 548, "y": 670, "w": 52, "h": 62, "interactive": true, "description": "石块间夹着通往风穗农田的旧水路图。", "flag": "found_meltwater_map", "layer": "object" },
-        { "id": "echo_chasm", "name": "回声裂谷", "type": "ruin", "x": 1180, "y": 182, "w": 120, "h": 72, "interactive": true, "description": "向裂谷呼喊，九秒后会传回另一个人的声音。", "flag": "heard_chasm_reply", "layer": "ground", "collisionRect": { "x": 1190, "y": 210, "w": 100, "h": 28 } },
-        { "id": "snow_pine_southwest", "name": "覆雪冷杉", "type": "pine", "x": 280, "y": 875, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 291, "y": 909, "w": 8, "h": 13 } },
-        { "id": "snow_pine_south", "name": "覆雪冷杉", "type": "pine", "x": 520, "y": 882, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 531, "y": 916, "w": 8, "h": 13 } },
-        { "id": "snow_middle_cairn", "name": "中坡石龛", "type": "shrine", "x": 724, "y": 640, "w": 44, "h": 62, "interactive": false, "layer": "object" },
-        { "id": "snow_high_crystal", "name": "高台蓝冰", "type": "crystal", "x": 1128, "y": 92, "w": 44, "h": 70, "interactive": false, "layer": "object" },
-        { "id": "snow_pine_northeast", "name": "风蚀冷杉", "type": "pine", "x": 1308, "y": 112, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 1319, "y": 146, "w": 8, "h": 13 } },
-        { "id": "snow_supply_chest", "name": "医舍补给箱", "type": "chest", "x": 530, "y": 650, "w": 66, "h": 48, "interactive": false, "layer": "object" },
-        {
-          "id": "snow_ridge_signpost", "name": "霜脊换向路牌", "type": "signpost", "x": 700, "y": 472, "w": 62, "h": 56,
-          "interactive": true, "collision": false, "layer": "object",
-          "description": "覆蜡松木牌守着山腰折返处。回缆车的箭头结着细霜，通往瞭望塔与赤脊隘口的箭头被风磨得发亮，小屋方向则绑着一段紫色誓绳。",
-          "flag": "read_snow_ridge_signpost",
-          "destinations": [
-            { "direction": "西南", "label": "缆车 · 晨星王城", "targetRegionId": "capital", "targetPlaceId": "capital" },
-            { "direction": "北", "label": "霜脊瞭望塔", "targetRegionId": "snow", "targetPlaceId": "snow-watchtower" },
-            { "direction": "东", "label": "伊米尔小屋", "targetRegionId": "snow", "targetPlaceId": "snow-hermit" },
-            { "direction": "东北", "label": "赤脊隘口 · 沙漠", "targetRegionId": "desert", "targetPlaceId": "desert" }
-          ]
-        }
-      ],
-      "portals": [
-        { "id": "lodge-door", "kind": "door", "label": "进入暖炉医舍", "x": 347, "y": 664, "w": 46, "h": 40, "target": { "regionId": "snow", "placeId": "snow-lodge", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "watchtower-door", "kind": "door", "label": "进入霜脊瞭望塔", "x": 823, "y": 276, "w": 50, "h": 40, "target": { "regionId": "snow", "placeId": "snow-watchtower", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "hermit-door", "kind": "door", "label": "进入伊米尔小屋", "x": 1324, "y": 550, "w": 42, "h": 38, "target": { "regionId": "snow", "placeId": "snow-hermit", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "capital-lift", "kind": "lift", "label": "乘绞盘缆车下到晨星王城", "minutes": 30, "x": 102, "y": 820, "w": 104, "h": 92, "target": { "regionId": "capital", "placeId": "capital", "x": 1092, "y": 188, "facing": "down" } },
-        { "id": "red-pass", "kind": "trail", "label": "穿过红石山腹古道去赤沙漠", "minutes": 36, "x": 1454, "y": 242, "w": 64, "h": 104, "target": { "regionId": "desert", "placeId": "desert", "x": 1200, "y": 124, "facing": "down" } }
-      ]
-    },
-    "desert": {
-      "width": 1536,
-      "height": 960,
-      "biome": "desert",
-      "spawn": { "x": 118, "y": 570 },
-      "paths": [
-        { "x": 0, "y": 520, "w": 1536, "h": 88, "style": "sand" },
-        { "x": 700, "y": 0, "w": 84, "h": 960, "style": "ruin" },
-        { "x": 186, "y": 282, "w": 1140, "h": 66, "style": "sand" },
-        { "x": 1150, "y": 0, "w": 104, "h": 230, "style": "ruin" }
-      ],
-      "zones": [
-        { "type": "dune", "x": 0, "y": 0, "w": 620, "h": 240 },
-        { "type": "dune", "x": 920, "y": 650, "w": 616, "h": 310 },
-        { "type": "mesa", "x": 1040, "y": 40, "w": 390, "h": 180 },
-        { "type": "oasis", "x": 110, "y": 650, "w": 430, "h": 220 },
-        { "type": "plaza", "x": 570, "y": 380, "w": 400, "h": 310 }
-      ],
-      "buildings": [
-        { "id": "caravanserai", "label": "赤帆驿站", "x": 138, "y": 210, "w": 330, "h": 190, "roofColor": "#865340", "collisionRects": [{ "x": 138, "y": 281, "w": 139, "h": 119 }, { "x": 335, "y": 281, "w": 133, "h": 119 }] },
-        { "id": "dig_house", "label": "遗迹工棚", "x": 590, "y": 180, "w": 330, "h": 196, "roofColor": "#735148", "collisionRects": [{ "x": 590, "y": 253, "w": 138, "h": 123 }, { "x": 786, "y": 253, "w": 134, "h": 123 }] },
-        { "id": "guide_tent", "label": "绿洲向导帐篷", "x": 1160, "y": 252, "w": 250, "h": 154, "roofColor": "#79505b", "collisionRects": [{ "x": 1160, "y": 310, "w": 102, "h": 96 }, { "x": 1310, "y": 310, "w": 100, "h": 96 }] },
-        { "id": "market_tent_west", "x": 480, "y": 420, "w": 80, "h": 68, "roofColor": "#a2684b", "collision": false },
-        { "id": "market_tent_east", "x": 980, "y": 420, "w": 100, "h": 68, "roofColor": "#76556d", "collision": false }
-      ],
-      "obstacles": [
-        { "x": 1040, "y": 40, "w": 110, "h": 170 }, { "x": 1254, "y": 40, "w": 176, "h": 170 },
-        { "x": 570, "y": 678, "w": 120, "h": 210 }, { "x": 846, "y": 678, "w": 120, "h": 210 }
-      ],
-      "landmarks": [
-        { "id": "ember_ruins", "name": "五钥余烬遗迹", "type": "ruin", "x": 650, "y": 610, "w": 236, "h": 210, "interactive": true, "description": "五地浮雕可以拼成一把钥匙，中心缺少的恰是一滴水。", "flag": "decoded_ember_key", "layer": "object", "collisionRects": [{ "x": 666, "y": 758, "w": 48, "h": 44 }, { "x": 822, "y": 758, "w": 48, "h": 44 }, { "x": 730, "y": 788, "w": 76, "h": 24 }] },
-        { "id": "blue_oasis", "name": "蓝镜绿洲", "type": "oasis", "x": 160, "y": 690, "w": 330, "h": 138, "interactive": true, "description": "水面在无风时仍向北荡漾，似乎与雪山融水相连。", "flag": "tested_oasis_current", "layer": "ground", "collisionRect": { "x": 176, "y": 706, "w": 298, "h": 104 } },
-        { "id": "glass_whale", "name": "玻璃鲸骨", "type": "statue", "x": 1060, "y": 520, "w": 190, "h": 74, "interactive": true, "description": "骨骼被沙熔成半透明的拱门，里面夹着王城铸币。", "flag": "found_glass_whale", "layer": "object", "collisionRect": { "x": 1080, "y": 570, "w": 150, "h": 20 } },
-        { "id": "desert_north_ruin", "name": "断裂的北柱", "type": "ruin", "x": 930, "y": 80, "w": 78, "h": 90, "interactive": false, "layer": "object" },
-        { "id": "desert_buried_skeleton", "name": "半掩兽骨", "type": "skeleton", "x": 1040, "y": 760, "w": 170, "h": 72, "interactive": false, "layer": "object" },
-        { "id": "desert_caravan_contracts", "name": "商队契约板", "type": "contract", "x": 1420, "y": 430, "w": 90, "h": 62, "interactive": false, "layer": "object" },
-        { "id": "desert_oasis_tree_west", "name": "绿洲枣树", "type": "tree", "x": 60, "y": 690, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 71, "y": 724, "w": 8, "h": 13 } },
-        { "id": "desert_oasis_tree_east", "name": "绿洲枣树", "type": "tree", "x": 510, "y": 705, "w": 30, "h": 47, "interactive": false, "layer": "object", "collisionRect": { "x": 521, "y": 739, "w": 8, "h": 13 } },
-        { "id": "desert_glass_shard", "name": "沙熔玻璃柱", "type": "crystal", "x": 980, "y": 620, "w": 48, "h": 70, "interactive": false, "layer": "object" },
-        { "id": "desert_supply_chest", "name": "驿路补给箱", "type": "chest", "x": 470, "y": 450, "w": 64, "h": 48, "interactive": false, "layer": "object" },
-        {
-          "id": "desert_crossroads_signpost", "name": "赤沙驿路牌", "type": "signpost", "x": 792, "y": 530, "w": 62, "h": 56,
-          "interactive": true, "collision": false, "layer": "object",
-          "description": "包着铜边的路牌立在旧石道与商队横路相交处。西箭挂着风穗，北箭沾满遗迹粉尘，通往雪山的长箭上钻着让风穿过的小孔。",
-          "flag": "read_desert_crossroads_signpost",
-          "destinations": [
-            { "direction": "西", "label": "赤帆商路 · 风穗农田", "targetRegionId": "farm", "targetPlaceId": "farm" },
-            { "direction": "西北", "label": "赤帆驿站", "targetRegionId": "desert", "targetPlaceId": "desert-caravanserai" },
-            { "direction": "北", "label": "遗迹工棚", "targetRegionId": "desert", "targetPlaceId": "desert-dig-house" },
-            { "direction": "东北", "label": "赤脊古道 · 雪山", "targetRegionId": "snow", "targetPlaceId": "snow" },
-            { "direction": "东", "label": "绿洲向导帐篷", "targetRegionId": "desert", "targetPlaceId": "desert-guide-tent" }
-          ]
-        }
-      ],
-      "portals": [
-        { "id": "caravanserai-door", "kind": "door", "label": "进入赤帆驿站", "x": 281, "y": 365, "w": 50, "h": 40, "target": { "regionId": "desert", "placeId": "desert-caravanserai", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "dig-door", "kind": "door", "label": "进入遗迹工棚", "x": 733, "y": 342, "w": 50, "h": 38, "target": { "regionId": "desert", "placeId": "desert-dig-house", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "guide-door", "kind": "door", "label": "进入向导帐篷", "x": 1266, "y": 372, "w": 42, "h": 38, "target": { "regionId": "desert", "placeId": "desert-guide-tent", "x": 480, "y": 548, "facing": "up" } },
-        { "id": "farm-caravan", "kind": "caravan", "label": "随补给商队返回风穗农田", "minutes": 40, "x": 18, "y": 518, "w": 100, "h": 92, "target": { "regionId": "farm", "placeId": "farm", "x": 1392, "y": 450, "facing": "left" } },
-        { "id": "snow-pass", "kind": "trail", "label": "沿古道攀上霜脊雪山", "minutes": 36, "x": 1150, "y": 18, "w": 104, "h": 64, "target": { "regionId": "snow", "placeId": "snow", "x": 1392, "y": 300, "facing": "left" } }
+        {"id":"square_to_inn","label":"沿南路去旅店","type":"road","x":516,"y":715,"w":120,"h":50,"targetRegionId":"town","targetPlaceId":"inn-yard","spawn":{"x":576,"y":95},"travelSeconds":10},
+        {"id":"square_to_chapel","label":"沿北路上礼拜堂","type":"road","x":516,"y":0,"w":120,"h":52,"targetRegionId":"town","targetPlaceId":"chapel-hill","spawn":{"x":560,"y":650},"travelSeconds":15},
+        {"id":"square_to_photo","label":"沿西街去照相馆","type":"road","x":0,"y":326,"w":60,"h":120,"targetRegionId":"town","targetPlaceId":"photo-lane","spawn":{"x":1010,"y":390},"travelSeconds":15},
+        {"id":"square_to_harbor","label":"沿东街去港口","type":"road","x":1092,"y":326,"w":60,"h":120,"targetRegionId":"town","targetPlaceId":"harbor","spawn":{"x":110,"y":380},"travelSeconds":15},
+        {"id":"square_to_cabin","label":"进入主钟维修舱","type":"door","x":552,"y":229,"w":48,"h":46,"targetRegionId":"town","targetPlaceId":"clock-cabin","spawn":{"x":384,"y":405}}
       ]
     }
-  },
+  ],
   "places": [
     {
-      "id": "capital-palace", "regionId": "capital", "name": "晨星宫 · 议政长厅", "kind": "interior", "width": 1152, "height": 720, "spawn": { "x": 576, "y": 646 },
-      "palette": { "ground": "#6e6055", "groundAlt": "#7b6a5a", "floorAlt": "#7b6a5a", "path": "#9d3650", "edge": "#3d3434", "accent": "#d7b767", "wall": "#aa947b", "roof": "#5a3d4d" },
-      "zones": [{ "type": "rug", "x": 486, "y": 84, "w": 180, "h": 570 }, { "type": "cobble", "x": 100, "y": 120, "w": 300, "h": 180 }, { "type": "cobble", "x": 752, "y": 120, "w": 300, "h": 180 }],
-      "furniture": [{ "type": "throne", "x": 532, "y": 76, "w": 88, "h": 86 }, { "type": "table", "x": 310, "y": 314, "w": 532, "h": 86 }, { "type": "chair", "x": 274, "y": 330, "w": 30, "h": 38 }, { "type": "chair", "x": 848, "y": 330, "w": 30, "h": 38 }, { "type": "fireplace", "x": 76, "y": 74, "w": 92, "h": 74 }, { "type": "shelf", "x": 944, "y": 70, "w": 120, "h": 54 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 1152, "h": 46 }, { "x": 0, "y": 0, "w": 42, "h": 720 }, { "x": 1110, "y": 0, "w": 42, "h": 720 }],
-      "landmarks": [
-        { "id": "five_seal_table", "name": "五地誓约桌", "type": "shrine", "x": 548, "y": 336, "w": 56, "h": 42, "interactive": true, "description": "桌面有五个席位，王座却被故意放在圆环之外。", "flag": "saw_five_seat_table", "layer": "object" },
-        { "id": "palace_unsealed_decree", "name": "未盖印的晨星法令", "type": "board", "x": 908, "y": 198, "w": 126, "h": 66, "interactive": true, "description": "书记留下三版措辞：王令、议会公示和一张被揉皱的民间誓词，印玺还悬在最后一行上方。", "flag": "read_unsealed_decree", "layer": "object" },
-        { "id": "palace_petition_coffer", "name": "磨损的五地请愿匣", "type": "chest", "x": 116, "y": 216, "w": 96, "h": 62, "interactive": true, "description": "匣口被谷穗、盐粒和蓝色蜂蜡磨出不同颜色；最底下的雪山请愿从未拆封。", "flag": "inspected_palace_petitions", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "palace_crown_banner", "name": "晨星王旗", "type": "board", "x": 430, "y": 58, "w": 54, "h": 104, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "palace_commons_banner", "name": "五地旧旗", "type": "board", "x": 668, "y": 58, "w": 54, "h": 104, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "palace_west_brazier", "name": "西厅星火盆", "type": "shrine", "x": 226, "y": 176, "w": 42, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "palace_east_brazier", "name": "东厅星火盆", "type": "shrine", "x": 884, "y": 176, "w": 42, "h": 54, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "palace-exit", "kind": "door", "label": "离开晨星宫", "x": 532, "y": 676, "w": 88, "h": 34, "target": { "regionId": "capital", "placeId": "capital", "x": 768, "y": 332, "facing": "down" } }]
+      "id":"inn-yard","regionId":"town","name":"湖畔旅店前庭","subtitle":"面包、湿木头与刚醒来的湖风","kind":"outdoor","width":1152,"height":720,
+      "palette":{"ground":"#78945f","groundAlt":"#86a168","path":"#b99662","edge":"#3d5b48","accent":"#d69f59","water":"#557f8d","wall":"#c49b6d","roof":"#8b4e42"},
+      "zones":[{"type":"orchard","x":55,"y":120,"w":250,"h":285},{"type":"crop","crop":"greens","x":842,"y":392,"w":210,"h":170},{"type":"pond","x":70,"y":492,"w":210,"h":128,"collision":true},{"type":"flowerbed","x":400,"y":370,"w":350,"h":42}],
+      "paths":[{"x":520,"y":0,"w":108,"h":720,"style":"dirt"},{"x":354,"y":390,"w":444,"h":78,"style":"garden"}],
+      "buildings":[{"id":"lakeside_inn","label":"LAKESIDE INN","x":370,"y":96,"w":412,"h":258,"wallColor":"#c6a06f","roofColor":"#914c42"},{"id":"inn_shed","x":905,"y":120,"w":135,"h":105,"wallColor":"#977653","roofColor":"#5b4a40"}],
+      "furniture":[{"type":"bench","x":430,"y":478,"w":78,"h":22},{"type":"barrel","x":815,"y":292,"w":25,"h":34},{"type":"crate","x":845,"y":298,"w":30,"h":29},{"type":"table","x":714,"y":526,"w":104,"h":34}],
+      "decorations":[{"id":"inn_laundry","x":324,"y":216,"w":34,"h":86,"fabricColor":"#d5c28b","layer":"background"},{"id":"herb_basket","x":755,"y":382,"w":40,"h":40,"color":"#7e9a58"},{"id":"red_lantern","x":396,"y":298,"w":20,"h":42},{"id":"yellow_lantern","x":742,"y":298,"w":20,"h":42},{"id":"water_pails","x":300,"y":430,"w":55,"h":34,"color":"#6f8490"},{"id":"tool_rack","x":942,"y":242,"w":72,"h":55},{"id":"inn_roof_flag","x":750,"y":62,"w":42,"h":70,"fabricColor":"#b9654e","layer":"background"}],
+      "landmarks":[{"id":"inn_roof_glint","type":"reflector","label":"屋顶上的旧支架","description":"烟囱旁有一只锈住的转向支架，缺少照向哪里的说明。","interactive":true,"x":720,"y":116,"w":42,"h":38,"layer":"wall"}],
+      "portals":[{"id":"innyard_to_square","label":"北上钟影广场","type":"road","x":516,"y":0,"w":120,"h":54,"targetRegionId":"town","targetPlaceId":"town","spawn":{"x":576,"y":670},"travelSeconds":10},{"id":"enter_inn","label":"进入湖畔旅店","type":"door","x":558,"y":310,"w":48,"h":48,"targetRegionId":"town","targetPlaceId":"inn-lobby","spawn":{"x":384,"y":420}}]
     },
     {
-      "id": "capital-archive", "regionId": "capital", "name": "旧档馆 · 失时书库", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#625a54", "groundAlt": "#71675f", "floorAlt": "#71675f", "path": "#755c4e", "edge": "#373238", "accent": "#9b83aa", "wall": "#8d7c6f", "roof": "#4a414d" },
-      "zones": [{ "type": "rug", "x": 416, "y": 80, "w": 128, "h": 470 }],
-      "furniture": [{ "type": "shelf", "x": 74, "y": 70, "w": 280, "h": 54 }, { "type": "shelf", "x": 606, "y": 70, "w": 280, "h": 54 }, { "type": "shelf", "x": 90, "y": 238, "w": 220, "h": 54 }, { "type": "shelf", "x": 650, "y": 238, "w": 220, "h": 54 }, { "type": "desk", "x": 388, "y": 220, "w": 184, "h": 78 }, { "type": "table", "x": 352, "y": 390, "w": 256, "h": 70 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "missing_clock", "name": "少了九分钟的地下钟", "type": "shrine", "x": 450, "y": 76, "w": 60, "h": 78, "interactive": true, "description": "分针经过整点时会跳过九格，而钟芯里夹着一页尚未发生的纪事。", "flag": "found_archive_clock", "layer": "object" },
-        { "id": "archive_water_registry", "name": "历代水权索引柜", "type": "board", "x": 92, "y": 326, "w": 184, "h": 64, "interactive": true, "description": "每块索引牌都写着水的去向，唯有白棘宅邸那一格被反复刮去受让人的姓名。", "flag": "read_water_registry", "layer": "object" },
-        { "id": "archive_three_inks", "name": "三种墨迹的同日案卷", "type": "map", "x": 684, "y": 330, "w": 166, "h": 62, "interactive": true, "description": "同一份法令先后用王室金墨、档馆灰墨和巡卫黑墨誊写，三个落款时间却完全相同。", "flag": "compared_archive_inks", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "archive_return_cart", "name": "待归档书车", "type": "chest", "x": 62, "y": 430, "w": 94, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "archive_seal_press", "name": "旧封印压具", "type": "shrine", "x": 806, "y": 432, "w": 52, "h": 52, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "archive_catalog_board", "name": "目录换签板", "type": "board", "x": 318, "y": 84, "w": 76, "h": 44, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "archive_dusty_globe", "name": "五地旧地仪", "type": "statue", "x": 566, "y": 170, "w": 44, "h": 58, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "archive-exit", "kind": "door", "label": "离开旧档馆", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "capital", "placeId": "capital", "x": 245, "y": 388, "facing": "down" } }]
+      "id":"chapel-hill","regionId":"town","name":"六声礼拜堂","subtitle":"风从铜瓦间穿过，带走了第七个回音","kind":"outdoor","width":1120,"height":744,
+      "palette":{"ground":"#6f8663","groundAlt":"#7f9270","path":"#aaa18c","edge":"#405550","accent":"#c5aa68","water":"#5d8390","wall":"#b8b09b","roof":"#53616a"},
+      "zones":[{"type":"cliff","x":0,"y":0,"w":1120,"h":92,"collision":true},{"type":"hedge","x":70,"y":160,"w":275,"h":28,"collision":true},{"type":"hedge","x":775,"y":160,"w":275,"h":28,"collision":true},{"type":"flowerbed","x":180,"y":320,"w":130,"h":220},{"type":"flowerbed","x":810,"y":320,"w":130,"h":220}],
+      "paths":[{"x":510,"y":300,"w":100,"h":444,"style":"cobble"},{"x":390,"y":380,"w":340,"h":82,"style":"marble"}],
+      "buildings":[{"id":"chapel_tower","label":"CHAPEL OF SIX","x":370,"y":105,"w":380,"h":280,"wallColor":"#b5ad96","roofColor":"#4f5c63"}],
+      "furniture":[{"type":"bench","x":315,"y":494,"w":82,"h":22},{"type":"bench","x":723,"y":494,"w":82,"h":22}],
+      "decorations":[{"id":"chapel_blue_lantern","x":396,"y":350,"w":20,"h":44,"color":"#729aa3"},{"id":"chapel_blue_lantern_2","x":704,"y":350,"w":20,"h":44,"color":"#729aa3"},{"id":"memorial_flower","x":92,"y":572,"w":48,"h":42,"color":"#d8d5b1"},{"id":"old_bell_cart","x":920,"y":540,"w":92,"h":52,"color":"#8f7752"},{"id":"chapel_banner","x":535,"y":54,"w":50,"h":72,"fabricColor":"#647789","layer":"background"}],
+      "landmarks":[{"id":"chapel_weather_vane","type":"marker","label":"逆转的风向标","description":"风从湖上来，铜鸟却固执地指向湖心。","interactive":true,"x":544,"y":96,"w":32,"h":30,"layer":"wall"}],
+      "portals":[{"id":"chapel_to_square","label":"下山回钟影广场","type":"road","x":500,"y":690,"w":120,"h":54,"targetRegionId":"town","targetPlaceId":"town","spawn":{"x":576,"y":72},"travelSeconds":15},{"id":"enter_chapel","label":"进入礼拜堂","type":"door","x":536,"y":336,"w":48,"h":50,"targetRegionId":"town","targetPlaceId":"chapel-interior","spawn":{"x":384,"y":416}}]
     },
     {
-      "id": "capital-barracks", "regionId": "capital", "name": "南墙巡卫所", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#625f5a", "groundAlt": "#716e66", "floorAlt": "#716e66", "path": "#6a4c46", "edge": "#34383a", "accent": "#8fa5a3", "wall": "#8c887c", "roof": "#465259" },
-      "zones": [{ "type": "rug", "x": 410, "y": 210, "w": 140, "h": 342 }],
-      "furniture": [{ "type": "bed", "x": 74, "y": 92, "w": 170, "h": 74 }, { "type": "bed", "x": 716, "y": 92, "w": 170, "h": 74 }, { "type": "table", "x": 330, "y": 250, "w": 300, "h": 84 }, { "type": "shelf", "x": 350, "y": 72, "w": 260, "h": 52 }, { "type": "crate", "x": 112, "y": 340, "w": 70, "h": 60 }, { "type": "barrel", "x": 778, "y": 350, "w": 52, "h": 58 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "ration_board", "name": "被涂改的军粮板", "type": "shrine", "x": 660, "y": 76, "w": 70, "h": 52, "interactive": true, "description": "账面上的两日口粮，被另一个人的笔迹改成了三十日。", "flag": "read_guard_rations", "layer": "object" },
-        { "id": "barracks_shift_roster", "name": "南门换岗簿", "type": "board", "x": 82, "y": 220, "w": 162, "h": 58, "interactive": true, "description": "每次王城张贴新告示，塔伦都把自己的夜岗换到告示墙对面，旁边记着几个被拦下的名字。", "flag": "read_gate_roster", "layer": "object" },
-        { "id": "barracks_dented_helm", "name": "没有编号的凹盔", "type": "statue", "x": 748, "y": 218, "w": 82, "h": 62, "interactive": true, "description": "盔沿沾着干涸的运河泥，内衬却是王室仪仗队才用的紫布。", "flag": "inspected_guard_helm", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "barracks_spear_rack", "name": "巡卫长矛架", "type": "statue", "x": 270, "y": 66, "w": 48, "h": 108, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "barracks_shield_rack", "name": "旧盾墙", "type": "board", "x": 632, "y": 150, "w": 82, "h": 58, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "barracks_boot_bench", "name": "沾泥军靴凳", "type": "chest", "x": 88, "y": 430, "w": 122, "h": 48, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "barracks_kettle", "name": "长鸣铜水壶", "type": "shrine", "x": 752, "y": 438, "w": 46, "h": 46, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "barracks-exit", "kind": "door", "label": "离开巡卫所", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "capital", "placeId": "capital", "x": 1288, "y": 388, "facing": "down" } }]
+      "id":"photo-lane","regionId":"town","name":"银盐巷","subtitle":"晾晒的照片在风里翻出不同的背面","kind":"outdoor","width":1152,"height":720,
+      "palette":{"ground":"#708663","groundAlt":"#7d906b","path":"#9d8e76","edge":"#3f514b","accent":"#c18b69","water":"#557f8d","wall":"#b99d79","roof":"#624c59"},
+      "zones":[{"type":"wall","x":0,"y":70,"w":92,"h":560,"color":"#777368","collision":true},{"type":"orchard","x":600,"y":60,"w":300,"h":180},{"type":"hedge","x":580,"y":562,"w":370,"h":28,"collision":true}],
+      "paths":[{"x":0,"y":330,"w":1152,"h":112,"style":"cobble"},{"x":250,"y":235,"w":100,"h":250,"style":"garden"}],
+      "buildings":[{"id":"silver_salt_studio","label":"VALE & QUINN STUDIO","x":115,"y":112,"w":410,"h":250,"wallColor":"#b9a07b","roofColor":"#574b5b"},{"id":"frame_shop","label":"FRAMES","x":805,"y":320,"w":190,"h":145,"wallColor":"#a98d6b","roofColor":"#765046"}],
+      "furniture":[{"type":"bench","x":570,"y":455,"w":86,"h":22},{"type":"crate","x":735,"y":390,"w":30,"h":28},{"type":"barrel","x":770,"y":388,"w":24,"h":31}],
+      "decorations":[{"id":"photo_drying_frame","x":560,"y":160,"w":150,"h":72,"color":"#8d6847","layer":"background"},{"id":"blank_portrait_line","x":720,"y":132,"w":46,"h":65,"color":"#b9af90","layer":"background"},{"id":"studio_lantern","x":138,"y":330,"w":20,"h":44},{"id":"studio_flower_basket","x":470,"y":368,"w":38,"h":38,"color":"#ba7b86"},{"id":"glass_jars","x":668,"y":474,"w":60,"h":36,"color":"#6e8b8e"},{"id":"route_cords","x":1015,"y":280,"w":55,"h":55,"color":"#cba45f"}],
+      "landmarks":[{"id":"photo_lane_signpost","type":"signpost","label":"银盐巷分岔路标","description":"这里才是西街真正的分岔点。","interactive":true,"x":930,"y":520,"w":100,"h":88,"destinations":[{"direction":"东","label":"钟影广场","targetPlaceId":"town"},{"direction":"西","label":"档案馆","targetPlaceId":"archive-lane"}]}],
+      "portals":[{"id":"photo_to_square","label":"向东回钟影广场","type":"road","x":1092,"y":324,"w":60,"h":126,"targetRegionId":"town","targetPlaceId":"town","spawn":{"x":85,"y":385},"travelSeconds":15},{"id":"photo_to_archive","label":"穿过西墙小径去档案馆","type":"road","x":0,"y":324,"w":64,"h":126,"targetRegionId":"town","targetPlaceId":"archive-lane","spawn":{"x":1020,"y":382},"travelSeconds":10},{"id":"enter_studio","label":"进入照相馆","type":"door","x":296,"y":316,"w":48,"h":48,"targetRegionId":"town","targetPlaceId":"photo-studio","spawn":{"x":384,"y":416}}]
     },
     {
-      "id": "farm-farmhouse", "regionId": "farm", "name": "米拉农舍", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#866846", "groundAlt": "#967650", "floorAlt": "#967650", "path": "#a4774a", "edge": "#4c4435", "accent": "#d1ae58", "wall": "#b68a5d", "roof": "#70483d" },
-      "zones": [{ "type": "rug", "x": 380, "y": 260, "w": 200, "h": 290 }],
-      "furniture": [{ "type": "bed", "x": 78, "y": 88, "w": 190, "h": 78 }, { "type": "table", "x": 350, "y": 260, "w": 260, "h": 82 }, { "type": "fireplace", "x": 760, "y": 72, "w": 92, "h": 76 }, { "type": "shelf", "x": 360, "y": 72, "w": 240, "h": 52 }, { "type": "crate", "x": 760, "y": 330, "w": 78, "h": 62 }, { "type": "chair", "x": 300, "y": 276, "w": 34, "h": 42 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "star_seed_chest", "name": "上锁的星种箱", "type": "crystal", "x": 746, "y": 340, "w": 86, "h": 58, "interactive": true, "description": "木缝间长出蓝色嫩芽，夜里像呼吸一样明灭。", "flag": "found_star_seed_chest", "layer": "object" },
-        { "id": "farmhouse_seed_calendar", "name": "米拉的留种历", "type": "board", "x": 92, "y": 222, "w": 178, "h": 64, "interactive": true, "description": "每个月都留有一小袋种子，歉收年份反而留得更多；最后一格写着‘给没赶上春天的人’。", "flag": "read_seed_calendar", "layer": "object" },
-        { "id": "farmhouse_mud_boots", "name": "沾着王城泥的农靴", "type": "shrine", "x": 762, "y": 226, "w": 72, "h": 54, "interactive": true, "description": "鞋底既有田垄黄土，也有王城告示墙下才铺的红砂，米拉显然刚去过那里。", "flag": "noticed_mira_city_trip", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "farmhouse_herb_bundle", "name": "梁下草药束", "type": "shrine", "x": 290, "y": 74, "w": 42, "h": 52, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "farmhouse_grain_basket", "name": "补过三次的谷篮", "type": "chest", "x": 96, "y": 334, "w": 76, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "farmhouse_wash_basin", "name": "门边洗泥盆", "type": "well", "x": 786, "y": 438, "w": 52, "h": 44, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "farmhouse_family_quilt", "name": "五色拼布被", "type": "board", "x": 110, "y": 96, "w": 116, "h": 56, "interactive": false, "collision": false, "layer": "wall" }
-      ],
-      "portals": [{ "id": "farmhouse-exit", "kind": "door", "label": "离开农舍", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "farm", "placeId": "farm", "x": 225, "y": 432, "facing": "down" } }]
+      "id":"archive-lane","regionId":"town","name":"档案坡道","subtitle":"苔藓正在替每一块编号石重新编号","kind":"outdoor","width":1100,"height":720,
+      "palette":{"ground":"#687d64","groundAlt":"#75896e","path":"#9e9985","edge":"#3b4e48","accent":"#b69a6a","water":"#557f8d","wall":"#aaa591","roof":"#526067"},
+      "zones":[{"type":"cliff","x":0,"y":0,"w":1100,"h":96,"collision":true},{"type":"hedge","x":90,"y":490,"w":320,"h":28,"collision":true},{"type":"pond","x":680,"y":478,"w":220,"h":130,"collision":true}],
+      "paths":[{"x":0,"y":326,"w":1100,"h":108,"style":"ruin"},{"x":448,"y":300,"w":100,"h":420,"style":"marble"}],
+      "buildings":[{"id":"town_archive","label":"MUNICIPAL ARCHIVE","x":270,"y":92,"w":460,"h":260,"wallColor":"#aaa896","roofColor":"#4e5c64"}],
+      "furniture":[{"type":"bench","x":182,"y":398,"w":86,"h":22},{"type":"crate","x":768,"y":344,"w":32,"h":30},{"type":"crate","x":806,"y":348,"w":29,"h":27}],
+      "decorations":[{"id":"archive_banner","x":502,"y":54,"w":45,"h":70,"fabricColor":"#536a73","layer":"background"},{"id":"stone_lantern","x":233,"y":326,"w":22,"h":50},{"id":"stone_lantern_2","x":746,"y":326,"w":22,"h":50},{"id":"paper_cart","x":76,"y":272,"w":110,"h":62,"color":"#92714f"},{"id":"sealed_crates","x":855,"y":272,"w":94,"h":62,"color":"#84674a"},{"id":"white_flower_basket","x":934,"y":474,"w":40,"h":38,"color":"#d8d7bd"}],
+      "landmarks":[{"id":"weathered_index_stone","type":"marker","label":"被重刻的编号石","description":"每个旧编号上都覆盖着一个更新、更整齐的编号。","interactive":true,"x":590,"y":500,"w":44,"h":38}],
+      "portals":[{"id":"archive_to_photo","label":"沿东坡回银盐巷","type":"road","x":1040,"y":320,"w":60,"h":124,"targetRegionId":"town","targetPlaceId":"photo-lane","spawn":{"x":100,"y":385},"travelSeconds":10},{"id":"enter_archive","label":"进入档案馆","type":"door","x":478,"y":306,"w":48,"h":48,"targetRegionId":"town","targetPlaceId":"archive-room","spawn":{"x":384,"y":416}}]
     },
     {
-      "id": "farm-mill", "regionId": "farm", "name": "风穗磨坊 · 齿轮间", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#76583e", "groundAlt": "#87664a", "floorAlt": "#87664a", "path": "#a57b4e", "edge": "#473c31", "accent": "#d0a653", "wall": "#aa8055", "roof": "#694b43" },
-      "zones": [{ "type": "rug", "x": 420, "y": 120, "w": 120, "h": 430 }],
-      "furniture": [{ "type": "barrel", "x": 86, "y": 92, "w": 56, "h": 64 }, { "type": "barrel", "x": 154, "y": 92, "w": 56, "h": 64 }, { "type": "crate", "x": 730, "y": 88, "w": 90, "h": 70 }, { "type": "counter", "x": 250, "y": 310, "w": 460, "h": 72 }, { "type": "table", "x": 350, "y": 150, "w": 260, "h": 72 }, { "type": "shelf", "x": 72, "y": 248, "w": 174, "h": 54 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "false_grain_wall", "name": "可转动的粮仓墙", "type": "ruin", "x": 700, "y": 70, "w": 136, "h": 66, "interactive": true, "description": "墙板后藏着一条不经税站的旧粮路。", "flag": "found_mill_cache", "layer": "object" },
-        { "id": "mill_gear_marks", "name": "反向磨损的主齿轮", "type": "ruin", "x": 82, "y": 200, "w": 144, "h": 76, "interactive": true, "description": "齿槽显示磨坊曾整夜反转，把已经装袋的粮食重新倒回公共粮仓。", "flag": "read_mill_gear_marks", "layer": "object" },
-        { "id": "mill_flour_tally", "name": "藏在面粉下的出货簿", "type": "board", "x": 728, "y": 202, "w": 150, "h": 68, "interactive": true, "description": "账上少掉的每一袋面粉，都在饥年次日出现在某户门前，没有留下收货人的签名。", "flag": "read_secret_flour_tally", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "mill_wheat_sheaves", "name": "待磨麦束", "type": "statue", "x": 90, "y": 374, "w": 72, "h": 72, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "mill_flour_sacks", "name": "平码面粉袋", "type": "chest", "x": 746, "y": 374, "w": 104, "h": 58, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "mill_hand_crank", "name": "备用手摇柄", "type": "ruin", "x": 264, "y": 112, "w": 54, "h": 52, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "mill_dust_lantern", "name": "罩网防尘灯", "type": "shrine", "x": 640, "y": 104, "w": 42, "h": 52, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "mill-exit", "kind": "door", "label": "离开磨坊", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "farm", "placeId": "farm", "x": 540, "y": 342, "facing": "down" } }]
+      "id":"harbor","regionId":"town","name":"回潮港","subtitle":"每根系船柱都记着一条不同高度的水线","kind":"outdoor","width":1280,"height":768,
+      "palette":{"ground":"#687d62","groundAlt":"#778b69","path":"#a38e6e","edge":"#354f4c","accent":"#d4a55f","water":"#477d8c","wall":"#b89a72","roof":"#49606a"},
+      "zones":[{"type":"canal","x":670,"y":0,"w":610,"h":768,"collision":true},{"type":"dune","x":405,"y":510,"w":265,"h":200},{"type":"cliff","x":1040,"y":0,"w":90,"h":250,"collision":true}],
+      "paths":[{"x":0,"y":326,"w":720,"h":108,"style":"dirt"},{"x":560,"y":250,"w":96,"h":300,"style":"cobble"},{"x":640,"y":336,"w":330,"h":56,"style":"market","color":"#88705a"}],
+      "buildings":[{"id":"harbor_control","label":"HARBOR OFFICE","x":180,"y":116,"w":260,"h":185,"wallColor":"#aa8c66","roofColor":"#4c6570"},{"id":"lighthouse_watchtower","label":"LIGHTHOUSE","x":1015,"y":88,"w":118,"h":270,"wallColor":"#c0b79c","roofColor":"#8c5144"}],
+      "furniture":[{"type":"barrel","x":482,"y":286,"w":25,"h":34},{"type":"barrel","x":513,"y":286,"w":25,"h":34},{"type":"crate","x":546,"y":290,"w":31,"h":30},{"type":"bench","x":292,"y":418,"w":82,"h":22}],
+      "decorations":[{"id":"fishing_net_rack","x":72,"y":470,"w":120,"h":74,"color":"#887255"},{"id":"harbor_crank","x":585,"y":414,"w":70,"h":64},{"id":"route_cords_harbor","x":462,"y":110,"w":68,"h":60,"color":"#c8a66a"},{"id":"fish_basket","x":390,"y":430,"w":42,"h":38,"color":"#6e8f74"},{"id":"lighthouse_flag","x":1050,"y":40,"w":42,"h":74,"fabricColor":"#a9584d","layer":"background"},{"id":"dock_lantern_a","x":702,"y":300,"w":22,"h":48},{"id":"dock_lantern_b","x":845,"y":300,"w":22,"h":48},{"id":"dock_lantern_c","x":946,"y":300,"w":22,"h":48}],
+      "landmarks":[{"id":"harbor_skiff","type":"boat","label":"康拉德的维护艇","description":"船头朝向镇子，像是刻意保留着回程。","interactive":true,"x":770,"y":520,"w":150,"h":92,"layer":"object","color":"#8b563d","fabricColor":"#d0be88"},{"id":"moored_ferry","type":"ferry","x":1010,"y":382,"w":205,"h":112,"layer":"object","color":"#6e4a3b","fabricColor":"#879b91"},{"id":"spare_lens_pickup","type":"lens","label":"海滩上的厚镜片","description":"半埋在沙里的厚玻璃镜片，边框上有两道导轨。","interactive":true,"x":500,"y":590,"w":34,"h":24,"layer":"object"},{"id":"dock_post_low","type":"post","label":"一号系船柱","description":"最新水线停在低刻度。","interactive":true,"x":715,"y":405,"w":26,"h":56,"layer":"object"},{"id":"dock_post_mid","type":"post","label":"二号系船柱","description":"最新水线停在中刻度。","interactive":true,"x":825,"y":405,"w":26,"h":56,"layer":"object"},{"id":"dock_post_high","type":"post","label":"三号系船柱","description":"最新水线停在高刻度。","interactive":true,"x":935,"y":405,"w":26,"h":56,"layer":"object"},{"id":"tide_clock","type":"clock","label":"潮汐钟","description":"三重刻度环停在互相矛盾的潮位上。","interactive":true,"x":570,"y":203,"w":66,"h":64,"layer":"wall"}],
+      "portals":[{"id":"harbor_to_square","label":"沿西街回钟影广场","type":"road","x":0,"y":320,"w":64,"h":126,"targetRegionId":"town","targetPlaceId":"town","spawn":{"x":1060,"y":385},"travelSeconds":15},{"id":"enter_harbor_control","label":"进入港务控制室","type":"door","x":284,"y":257,"w":48,"h":48,"targetRegionId":"town","targetPlaceId":"harbor-control","spawn":{"x":384,"y":416}},{"id":"enter_low_tide_cave","label":"进入退潮洞穴","type":"cave","x":1135,"y":486,"w":90,"h":100,"targetRegionId":"town","targetPlaceId":"low-tide-cave","spawn":{"x":120,"y":320},"revealFlag":"low_tide"}]
     },
     {
-      "id": "farm-apiary", "regionId": "farm", "name": "蜂语棚", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#806344", "groundAlt": "#937550", "floorAlt": "#937550", "path": "#aa824c", "edge": "#454331", "accent": "#e0b84e", "wall": "#ad8457", "roof": "#74523d" },
-      "zones": [{ "type": "rug", "x": 392, "y": 300, "w": 176, "h": 250 }],
-      "furniture": [{ "type": "shelf", "x": 88, "y": 72, "w": 220, "h": 54 }, { "type": "shelf", "x": 652, "y": 72, "w": 220, "h": 54 }, { "type": "table", "x": 330, "y": 260, "w": 300, "h": 78 }, { "type": "barrel", "x": 110, "y": 340, "w": 56, "h": 64 }, { "type": "barrel", "x": 790, "y": 340, "w": 56, "h": 64 }, { "type": "crate", "x": 706, "y": 426, "w": 118, "h": 58 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "blue_honey", "name": "蓝光蜂蜜架", "type": "crystal", "x": 650, "y": 74, "w": 142, "h": 58, "interactive": true, "description": "每只蜂巢都保存着一段不属于蜜蜂的梦。", "flag": "tasted_memory_honey", "layer": "object" },
-        { "id": "apiary_smoker", "name": "刻着安抚词的熏蜂壶", "type": "shrine", "x": 98, "y": 216, "w": 78, "h": 68, "interactive": true, "description": "壶身刻着博反复念给蜂群的短句，其中一句最近被改成了‘别怕城里的钟声’。", "flag": "read_bee_calming_words", "layer": "object" },
-        { "id": "apiary_queen_log", "name": "蜂王迁巢记录", "type": "board", "x": 720, "y": 214, "w": 150, "h": 68, "interactive": true, "description": "每次水位下降前，蜂王都会提前把巢迁向北面；今年它们却朝王城飞去。", "flag": "read_queen_migration", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "apiary_wax_moulds", "name": "五地纹章蜡模", "type": "shrine", "x": 218, "y": 156, "w": 74, "h": 48, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "apiary_flower_baskets", "name": "晒干花篮", "type": "chest", "x": 82, "y": 430, "w": 108, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "apiary_veil_hooks", "name": "养蜂面网挂钩", "type": "board", "x": 532, "y": 78, "w": 66, "h": 48, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "apiary_drinking_bowl", "name": "蜂群饮水浅盘", "type": "well", "x": 216, "y": 410, "w": 58, "h": 42, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "apiary-exit", "kind": "door", "label": "离开蜂语棚", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "farm", "placeId": "farm", "x": 1285, "y": 432, "facing": "down" } }]
+      "id":"player-room","regionId":"town","name":"湖畔旅店 · 八号房","subtitle":"一只行李箱和三张还没拆封的维修单","kind":"interior","width":768,"height":480,"shell":"inn","wallDepth":120,
+      "palette":{"ground":"#8c6b4e","groundAlt":"#9a7756","path":"#ad8a5f","edge":"#382f2d","accent":"#d8b36b","wall":"#b99569","roof":"#6e4740"},
+      "zones":[{"type":"rug","x":260,"y":240,"w":250,"h":125,"color":"#795a59"}],
+      "furniture":[{"type":"bed","x":92,"y":180,"w":145,"h":72,"fabricColor":"#708998"},{"type":"desk","x":506,"y":180,"w":128,"h":45},{"type":"chair","x":548,"y":232,"w":28,"h":35},{"type":"shelf","x":658,"y":135,"w":60,"h":125},{"type":"fireplace","x":320,"y":130,"w":92,"h":80},{"type":"crate","x":120,"y":320,"w":40,"h":36}],
+      "decorations":[{"id":"room8_quilt","x":118,"y":136,"w":80,"h":54,"fabricColor":"#647d8a","layer":"wall"},{"id":"travel_bag","x":172,"y":306,"w":54,"h":40,"color":"#806044"},{"id":"warm_lamp","x":568,"y":145,"w":22,"h":40},{"id":"blank_canvas","x":438,"y":145,"w":45,"h":58,"layer":"wall"}],
+      "landmarks":[{"id":"repair_orders","type":"papers","label":"三份维修委托单","description":"主钟、礼拜堂钟与潮汐钟。委托时间都写着 SATURDAY 06:00。","interactive":true,"x":515,"y":172,"w":82,"h":28,"layer":"object"},{"id":"player_journal","type":"book","label":"维修日志","description":"你的字迹不会随清晨的白光消失。","interactive":true,"x":605,"y":173,"w":34,"h":24,"layer":"object"}],
+      "portals":[{"id":"room8_to_hall","label":"走出八号房","type":"door","x":358,"y":425,"w":52,"h":52,"targetRegionId":"town","targetPlaceId":"inn-upstairs","spawn":{"x":625,"y":190}}]
     },
     {
-      "id": "mansion-house", "regionId": "mansion", "name": "白棘主宅 · 夜宴长廊", "kind": "interior", "width": 1152, "height": 720, "spawn": { "x": 576, "y": 646 },
-      "palette": { "ground": "#65545d", "groundAlt": "#765f69", "floorAlt": "#765f69", "path": "#743f54", "edge": "#353039", "accent": "#d08da0", "wall": "#b49c91", "roof": "#503e59" },
-      "zones": [{ "type": "rug", "x": 480, "y": 70, "w": 192, "h": 580 }, { "type": "cobble", "x": 84, "y": 164, "w": 320, "h": 200 }, { "type": "cobble", "x": 748, "y": 164, "w": 320, "h": 200 }],
-      "furniture": [{ "type": "table", "x": 250, "y": 300, "w": 652, "h": 92 }, { "type": "chair", "x": 212, "y": 326, "w": 32, "h": 38 }, { "type": "chair", "x": 908, "y": 326, "w": 32, "h": 38 }, { "type": "fireplace", "x": 72, "y": 70, "w": 104, "h": 82 }, { "type": "shelf", "x": 938, "y": 70, "w": 136, "h": 54 }, { "type": "desk", "x": 474, "y": 120, "w": 204, "h": 72 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 1152, "h": 46 }, { "x": 0, "y": 0, "w": 42, "h": 720 }, { "x": 1110, "y": 0, "w": 42, "h": 720 }],
-      "landmarks": [
-        { "id": "burned_letters", "name": "未烧尽的继承书", "type": "ruin", "x": 96, "y": 98, "w": 70, "h": 52, "interactive": true, "description": "火盆里残留着摄政继承书的第二份笔迹。", "flag": "found_burned_succession", "layer": "object" },
-        { "id": "mansion_guest_ledger", "name": "没有主人姓名的夜宴簿", "type": "board", "x": 920, "y": 212, "w": 150, "h": 68, "interactive": true, "description": "宾客都以头衔登记，唯独主位空白；旁边的座次修改次数比来客人数还多。", "flag": "read_mansion_guest_ledger", "layer": "object" },
-        { "id": "mansion_servant_bell", "name": "通往密廊的银铃绳", "type": "shrine", "x": 114, "y": 210, "w": 72, "h": 74, "interactive": true, "description": "拉绳末端沾着档馆常用的灰蜡，铃声没有传向厨房，而是沿墙进入地下。", "flag": "traced_mansion_bell", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "mansion_ancestor_portrait", "name": "被移开的祖先像", "type": "board", "x": 210, "y": 78, "w": 96, "h": 112, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "mansion_empty_portrait", "name": "空白主位画框", "type": "board", "x": 844, "y": 76, "w": 96, "h": 112, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "mansion_west_candelabra", "name": "西席银烛台", "type": "shrine", "x": 222, "y": 414, "w": 42, "h": 62, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "mansion_east_candelabra", "name": "东席银烛台", "type": "shrine", "x": 886, "y": 414, "w": 42, "h": 62, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "mansion-exit", "kind": "door", "label": "离开白棘主宅", "x": 532, "y": 676, "w": 88, "h": 34, "target": { "regionId": "mansion", "placeId": "mansion", "x": 768, "y": 360, "facing": "down" } }]
+      "id":"inn-lobby","regionId":"town","name":"湖畔旅店 · 大堂","subtitle":"早餐香味把空白也照顾得井井有条","kind":"interior","width":840,"height":520,"shell":"inn","wallDepth":124,
+      "palette":{"ground":"#8a674a","groundAlt":"#967354","path":"#b78e5f","edge":"#382e2a","accent":"#d8ae61","wall":"#c09b6e","roof":"#78483e"},
+      "zones":[{"type":"rug","x":300,"y":260,"w":270,"h":135,"color":"#8f514d"}],
+      "furniture":[{"type":"counter","x":480,"y":175,"w":230,"h":58},{"type":"table","x":100,"y":250,"w":155,"h":48,"fabricColor":"#8b5952"},{"type":"chair","x":115,"y":307,"w":28,"h":35},{"type":"chair","x":210,"y":307,"w":28,"h":35},{"type":"fireplace","x":75,"y":135,"w":100,"h":84},{"type":"shelf","x":728,"y":135,"w":62,"h":150},{"type":"barrel","x":680,"y":360,"w":28,"h":38}],
+      "decorations":[{"id":"key_rack","x":650,"y":135,"w":70,"h":76,"layer":"wall"},{"id":"breakfast_basket","x":130,"y":220,"w":44,"h":37,"color":"#d3a75a"},{"id":"lobby_lamp","x":365,"y":135,"w":24,"h":44},{"id":"inn_red_curtain","x":205,"y":128,"w":68,"h":83,"fabricColor":"#97544d","layer":"wall"},{"id":"inn_portrait_family","x":405,"y":138,"w":52,"h":66,"color":"#8c6a5d","layer":"wall"}],
+      "landmarks":[{"id":"inn_ledger","type":"book","label":"旅店登记簿","description":"1 至 6 号房排列整齐，下一行被挖去，然后直接是你的 8 号房。","interactive":true,"x":525,"y":164,"w":84,"h":27,"layer":"object"},{"id":"installation_wrench_pickup","type":"tool","label":"安装扳手","description":"多萝西娅为三份委托准备的市政制式工具。","interactive":true,"x":618,"y":178,"w":48,"h":20,"layer":"object"},{"id":"unnumbered_key_rack","type":"keys","label":"柜台后的无编号钥匙","description":"它挂在七号钩和八号钩之间，却没有自己的编号。","interactive":true,"x":668,"y":148,"w":26,"h":32,"layer":"wall"}],
+      "portals":[{"id":"lobby_to_yard","label":"走出旅店","type":"door","x":388,"y":464,"w":58,"h":54,"targetRegionId":"town","targetPlaceId":"inn-yard","spawn":{"x":582,"y":388}},{"id":"lobby_to_upstairs","label":"上楼去客房","type":"stairs","x":748,"y":268,"w":70,"h":105,"targetRegionId":"town","targetPlaceId":"inn-upstairs","spawn":{"x":110,"y":330}}]
     },
     {
-      "id": "mansion-studio", "regionId": "mansion", "name": "玻璃画室", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#667279", "groundAlt": "#75848b", "floorAlt": "#75848b", "path": "#8c6470", "edge": "#343b42", "accent": "#dc9b80", "wall": "#a8aaa4", "roof": "#50606b" },
-      "zones": [{ "type": "rug", "x": 390, "y": 290, "w": 180, "h": 260 }],
-      "furniture": [{ "type": "desk", "x": 320, "y": 238, "w": 320, "h": 82 }, { "type": "shelf", "x": 74, "y": 72, "w": 240, "h": 54 }, { "type": "shelf", "x": 646, "y": 72, "w": 240, "h": 54 }, { "type": "loom", "x": 110, "y": 320, "w": 140, "h": 96 }, { "type": "table", "x": 710, "y": 330, "w": 140, "h": 74 }, { "type": "chair", "x": 662, "y": 344, "w": 34, "h": 42 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "other_timeline_canvas", "name": "另一条世界线的长卷", "type": "shrine", "x": 352, "y": 74, "w": 256, "h": 80, "interactive": true, "description": "画中的旅行者站在这里，却穿着你从未拥有过的衣服。", "flag": "saw_other_timeline_canvas", "layer": "object" },
-        { "id": "studio_pigment_formula", "name": "会褪回昨日颜色的颜料谱", "type": "board", "x": 82, "y": 210, "w": 174, "h": 68, "interactive": true, "description": "露恩记录了每种颜料醒来后的颜色，其中王室紫总会在午夜变成农田的麦金色。", "flag": "read_reversing_pigments", "layer": "object" },
-        { "id": "studio_cracked_skylight", "name": "接住另一片天空的碎玻璃", "type": "crystal", "x": 724, "y": 188, "w": 136, "h": 84, "interactive": true, "description": "从特定角度看，碎片映出的不是宅邸屋顶，而是一座尚未建成的五地议事厅。", "flag": "saw_future_skylight", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "studio_blank_canvases", "name": "待绷画布", "type": "board", "x": 78, "y": 430, "w": 146, "h": 72, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "studio_pigment_jars", "name": "分层颜料瓶", "type": "crystal", "x": 270, "y": 170, "w": 58, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "studio_glass_offcuts", "name": "彩玻璃边角料", "type": "crystal", "x": 760, "y": 430, "w": 82, "h": 52, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "studio_drying_frame", "name": "夜色晾画架", "type": "statue", "x": 864, "y": 286, "w": 48, "h": 96, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "studio-exit", "kind": "door", "label": "离开玻璃画室", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "mansion", "placeId": "mansion", "x": 205, "y": 448, "facing": "down" } }]
+      "id":"inn-upstairs","regionId":"town","name":"湖畔旅店 · 二楼走廊","subtitle":"门牌依次排列，走廊却在六和八之间多走了一步","kind":"interior","width":960,"height":430,"shell":"inn","wallDepth":145,
+      "palette":{"ground":"#795b45","groundAlt":"#87674d","path":"#a5815e","edge":"#342b29","accent":"#d3ad68","wall":"#b8956d","roof":"#6c453e"},
+      "zones":[{"type":"rug","x":70,"y":248,"w":820,"h":72,"color":"#67545a"}],
+      "furniture":[{"type":"bench","x":400,"y":340,"w":110,"h":24},{"type":"shelf","x":865,"y":150,"w":55,"h":115}],
+      "decorations":[{"id":"door1_banner","x":80,"y":145,"w":44,"h":70,"fabricColor":"#516774","layer":"wall"},{"id":"door2_banner","x":196,"y":145,"w":44,"h":70,"fabricColor":"#6a5870","layer":"wall"},{"id":"door3_banner","x":312,"y":145,"w":44,"h":70,"fabricColor":"#476a6f","layer":"wall"},{"id":"door4_banner","x":428,"y":145,"w":44,"h":70,"fabricColor":"#8c5351","layer":"wall"},{"id":"door5_banner","x":544,"y":145,"w":44,"h":70,"fabricColor":"#526c58","layer":"wall"},{"id":"door6_banner","x":660,"y":145,"w":44,"h":70,"fabricColor":"#4c526b","layer":"wall"},{"id":"hall_lamp","x":382,"y":165,"w":20,"h":42},{"id":"hall_lamp_2","x":730,"y":165,"w":20,"h":42}],
+      "landmarks":[{"id":"room1_door","type":"door","label":"1 · MERCER","description":"亚瑟的房间。门内已经没有人。","interactive":true,"x":80,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room2_door","type":"door","label":"2 · HALE","description":"比阿特丽斯的房间，床头放着一双擦亮的钟楼鞋。","interactive":true,"x":196,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room3_door","type":"door","label":"3 · VOSS","description":"康拉德的房间，门把上还沾着盐。","interactive":true,"x":312,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room4_door","type":"door","label":"4 · VALE","description":"多萝西娅很少锁门，但今天门缝里没有光。","interactive":true,"x":428,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room5_door","type":"door","label":"5 · QUINN","description":"伊莱亚斯的门上贴着一张过曝的湖面照片。","interactive":true,"x":544,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room6_door","type":"door","label":"6 · RAINE","description":"弗洛伦斯的房门下塞着一张旧索引卡。","interactive":true,"x":660,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room7_gap","type":"wall_mark","label":"六号与八号之间的空墙","description":"墙纸花纹在这里少了一朵，踢脚线也比别处新。","interactive":true,"x":748,"y":174,"w":56,"h":75,"layer":"wall"}],
+      "portals":[{"id":"hall_to_lobby","label":"下楼回大堂","type":"stairs","x":42,"y":285,"w":72,"h":105,"targetRegionId":"town","targetPlaceId":"inn-lobby","spawn":{"x":735,"y":340}},{"id":"hall_to_room8","label":"进入八号房","type":"door","x":805,"y":190,"w":48,"h":62,"targetRegionId":"town","targetPlaceId":"player-room","spawn":{"x":384,"y":405}}]
     },
     {
-      "id": "mansion-servants", "regionId": "mansion", "name": "管家偏厅 · 钟表隧道", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#5e5958", "groundAlt": "#6e6664", "floorAlt": "#6e6664", "path": "#796352", "edge": "#353434", "accent": "#b89467", "wall": "#938578", "roof": "#4a474c" },
-      "zones": [{ "type": "rug", "x": 404, "y": 200, "w": 152, "h": 350 }],
-      "furniture": [{ "type": "bed", "x": 80, "y": 82, "w": 190, "h": 78 }, { "type": "desk", "x": 350, "y": 250, "w": 260, "h": 78 }, { "type": "shelf", "x": 650, "y": 74, "w": 220, "h": 54 }, { "type": "crate", "x": 744, "y": 330, "w": 82, "h": 64 }, { "type": "barrel", "x": 114, "y": 350, "w": 56, "h": 64 }, { "type": "counter", "x": 650, "y": 246, "w": 196, "h": 66 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "clock_tunnel", "name": "通往地下的齿轮门", "type": "ruin", "x": 690, "y": 72, "w": 130, "h": 84, "interactive": true, "description": "齿轮转动一圈恰好需要九分钟，门缝里吹来旧档馆纸张的气味。", "flag": "found_clock_tunnel", "layer": "object" },
-        { "id": "servants_bell_roster", "name": "仆役铃声对照表", "type": "board", "x": 80, "y": 210, "w": 184, "h": 70, "interactive": true, "description": "餐厅、画室和主卧都有各自铃号，另有一个没有房名的第九铃，只在议会前夜响。", "flag": "read_ninth_bell", "layer": "object" },
-        { "id": "servants_hidden_key", "name": "缝进制服里的档馆钥匙", "type": "chest", "x": 724, "y": 220, "w": 112, "h": 66, "interactive": true, "description": "钥匙齿上带着旧档馆地下层的灰尘，制服名牌却属于早已离职的管家。", "flag": "found_archive_service_key", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "servants_uniform_hooks", "name": "分班制服挂钩", "type": "board", "x": 286, "y": 78, "w": 58, "h": 92, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "servants_linen_stack", "name": "压平的宴会桌布", "type": "chest", "x": 738, "y": 420, "w": 104, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "servants_cleaning_pail", "name": "铜边清洁桶", "type": "well", "x": 202, "y": 386, "w": 48, "h": 44, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "servants_spare_keys", "name": "未标记备用钥匙板", "type": "board", "x": 568, "y": 82, "w": 64, "h": 52, "interactive": false, "collision": false, "layer": "wall" }
-      ],
-      "portals": [{ "id": "servants-exit", "kind": "door", "label": "离开管家偏厅", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "mansion", "placeId": "mansion", "x": 1329, "y": 448, "facing": "down" } }]
+      "id":"clock-cabin","regionId":"town","name":"主钟维修舱","subtitle":"齿轮油、红色校准线和一条通向地下的冷风","kind":"interior","width":768,"height":480,"shell":"workshop","wallDepth":112,
+      "palette":{"ground":"#62584b","groundAlt":"#6e6253","path":"#88745a","edge":"#2d3030","accent":"#d0a55a","wall":"#918776","roof":"#47535a"},
+      "zones":[{"type":"rug","x":290,"y":320,"w":188,"h":82,"color":"#684947"}],
+      "furniture":[{"type":"desk","x":84,"y":155,"w":180,"h":52},{"type":"shelf","x":650,"y":130,"w":62,"h":145},{"type":"crate","x":92,"y":330,"w":38,"h":36},{"type":"barrel","x":138,"y":326,"w":28,"h":40}],
+      "decorations":[{"id":"clock_tools","x":92,"y":120,"w":165,"h":64,"layer":"wall"},{"id":"gear_rack","x":550,"y":138,"w":80,"h":94,"color":"#a28c62","layer":"wall"},{"id":"oil_lamp","x":310,"y":136,"w":22,"h":42},{"id":"maintenance_blueprint","x":350,"y":140,"w":120,"h":58,"color":"#5d7882","layer":"wall"}],
+      "landmarks":[{"id":"master_clock_mechanism","type":"clockwork","label":"主钟三齿轮机构","description":"三枚齿轮装错了槽位，红色校准线也没有朝上。","interactive":true,"x":292,"y":190,"w":190,"h":125,"layer":"object","collision":true},{"id":"master_console","type":"console","label":"七信号控制台","description":"七枚信号灯中，第七枚的铭牌被拆掉了。","interactive":true,"x":490,"y":170,"w":110,"h":72,"layer":"object"},{"id":"silver_tuning_fork_pickup","type":"tool","label":"掉在地上的银色音叉","description":"它侧面刻着 VII，似乎不属于主钟。","interactive":true,"x":530,"y":318,"w":42,"h":20,"layer":"object"}],
+      "portals":[{"id":"cabin_to_square","label":"返回钟影广场","type":"door","x":358,"y":425,"w":52,"h":52,"targetRegionId":"town","targetPlaceId":"town","spawn":{"x":576,"y":300}},{"id":"cabin_to_basement","label":"下到主钟地下室","type":"stairs","x":640,"y":312,"w":78,"h":100,"targetRegionId":"town","targetPlaceId":"clock-basement","spawn":{"x":384,"y":405},"revealFlag":"basement_open"}]
     },
     {
-      "id": "snow-lodge", "regionId": "snow", "name": "暖炉医舍", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#6b6257", "groundAlt": "#7d7164", "floorAlt": "#7d7164", "path": "#7a5652", "edge": "#394548", "accent": "#8fc4c8", "wall": "#9a9182", "roof": "#536a72" },
-      "zones": [{ "type": "rug", "x": 384, "y": 250, "w": 192, "h": 300 }],
-      "furniture": [{ "type": "bed", "x": 74, "y": 88, "w": 190, "h": 78 }, { "type": "bed", "x": 696, "y": 88, "w": 190, "h": 78 }, { "type": "fireplace", "x": 420, "y": 70, "w": 120, "h": 90 }, { "type": "table", "x": 330, "y": 278, "w": 300, "h": 78 }, { "type": "shelf", "x": 690, "y": 300, "w": 190, "h": 54 }, { "type": "counter", "x": 74, "y": 300, "w": 190, "h": 66 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "shared_dream_notes", "name": "共享梦境病历", "type": "shrine", "x": 692, "y": 306, "w": 174, "h": 58, "interactive": true, "description": "不同病人的梦都画着同一口发光古井。", "flag": "read_shared_dreams", "layer": "object" },
-        { "id": "lodge_medicine_cabinet", "name": "按风向排列的药柜", "type": "chest", "x": 90, "y": 216, "w": 170, "h": 68, "interactive": true, "description": "药瓶不是按病症，而是按雪山风向摆放；来自王城方向的那一格最近空得最快。", "flag": "read_wind_medicine_cabinet", "layer": "object" },
-        { "id": "lodge_stove_log", "name": "暖炉值守病志", "type": "board", "x": 696, "y": 210, "w": 174, "h": 72, "interactive": true, "description": "索拉把夜间添柴次数和病人的梦话并排记录，二者都在冰川发光时骤然增加。", "flag": "read_hearth_log", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "lodge_bed_curtain_west", "name": "西床亚麻帘", "type": "board", "x": 270, "y": 84, "w": 42, "h": 112, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "lodge_bed_curtain_east", "name": "东床亚麻帘", "type": "board", "x": 648, "y": 84, "w": 42, "h": 112, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "lodge_herb_rack", "name": "融雪草晾架", "type": "shrine", "x": 238, "y": 416, "w": 72, "h": 56, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "lodge_water_pot", "name": "炉边融雪壶", "type": "well", "x": 610, "y": 120, "w": 50, "h": 42, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "lodge-exit", "kind": "door", "label": "离开医舍", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "snow", "placeId": "snow", "x": 370, "y": 742, "facing": "down" } }]
+      "id":"chapel-interior","regionId":"town","name":"六声礼拜堂 · 钟厅","subtitle":"星盘嵌在地面，六根绳索垂到同一高度","kind":"interior","width":768,"height":480,"shell":"tower","wallDepth":118,
+      "palette":{"ground":"#696b65","groundAlt":"#77786f","path":"#9b9581","edge":"#303536","accent":"#c6a95f","wall":"#98998d","roof":"#48565d"},
+      "zones":[{"type":"rug","x":268,"y":240,"w":232,"h":150,"color":"#53636c"}],
+      "furniture":[{"type":"bench","x":90,"y":260,"w":125,"h":24},{"type":"bench","x":553,"y":260,"w":125,"h":24},{"type":"chair","x":610,"y":325,"w":34,"h":45},{"type":"shelf","x":665,"y":130,"w":58,"h":120}],
+      "decorations":[{"id":"chapel_candelabra","x":238,"y":132,"w":42,"h":72},{"id":"chapel_candelabra_2","x":488,"y":132,"w":42,"h":72},{"id":"six_rope_rack","x":290,"y":130,"w":190,"h":72,"color":"#8d7550","layer":"wall"},{"id":"astronomy_banner","x":100,"y":128,"w":72,"h":95,"fabricColor":"#4e6674","layer":"wall"}],
+      "landmarks":[{"id":"chapel_clock_mechanism","type":"clockwork","label":"礼拜堂六锤机构","description":"第四枚擒纵销缺失，拉绳只能带出五个完整声音和一次空响。","interactive":true,"x":310,"y":190,"w":148,"h":96,"layer":"object","collision":true},{"id":"chapel_rope","type":"rope","label":"试钟绳","description":"粗麻绳被六代司钟人的手磨得发亮。","interactive":true,"x":468,"y":180,"w":26,"h":138,"layer":"object"},{"id":"missing_pin","type":"tool","label":"掉在长椅下的擒纵销","description":"普通黄铜零件，尺寸与空槽吻合。","interactive":true,"x":170,"y":286,"w":28,"h":18,"layer":"object"}],
+      "portals":[{"id":"chapel_inside_to_hill","label":"走出礼拜堂","type":"door","x":358,"y":425,"w":52,"h":52,"targetRegionId":"town","targetPlaceId":"chapel-hill","spawn":{"x":560,"y":420}},{"id":"chapel_to_belfry","label":"沿螺旋梯登上钟楼","type":"stairs","x":675,"y":298,"w":60,"h":100,"targetRegionId":"town","targetPlaceId":"chapel-belfry","spawn":{"x":120,"y":350}}]
     },
     {
-      "id": "snow-watchtower", "regionId": "snow", "name": "霜脊瞭望塔", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#5c686b", "groundAlt": "#6c797c", "floorAlt": "#6c797c", "path": "#586b70", "edge": "#303d43", "accent": "#9bc5cc", "wall": "#849396", "roof": "#455a64" },
-      "zones": [{ "type": "rug", "x": 408, "y": 210, "w": 144, "h": 340 }],
-      "furniture": [{ "type": "telescope", "x": 390, "y": 70, "w": 180, "h": 110 }, { "type": "desk", "x": 330, "y": 280, "w": 300, "h": 78 }, { "type": "bed", "x": 74, "y": 90, "w": 180, "h": 76 }, { "type": "crate", "x": 746, "y": 96, "w": 88, "h": 68 }, { "type": "shelf", "x": 694, "y": 304, "w": 184, "h": 54 }, { "type": "chair", "x": 274, "y": 338, "w": 34, "h": 42 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "falling_star_scope", "name": "逆轨星镜", "type": "crystal", "x": 410, "y": 82, "w": 140, "h": 82, "interactive": true, "description": "镜中坠星不是落向大地，而是从古井升向天空。", "flag": "saw_reverse_star", "layer": "object" },
-        { "id": "watchtower_weather_log", "name": "断了三页的风雪日志", "type": "board", "x": 86, "y": 222, "w": 176, "h": 72, "interactive": true, "description": "缺页都对应王城来使抵达的日子；残留压痕写着‘封印不是边界，而是门闩’。", "flag": "read_missing_weather_pages", "layer": "object" },
-        { "id": "watchtower_signal_lens", "name": "朝向农田的信号透镜", "type": "crystal", "x": 730, "y": 214, "w": 136, "h": 84, "interactive": true, "description": "透镜外圈标着从雪峰到干渠的角度，说明这里曾用光替山下人测量融水。", "flag": "aligned_meltwater_signal", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "watchtower_compass_rose", "name": "磨亮的五向罗盘", "type": "map", "x": 254, "y": 190, "w": 70, "h": 62, "interactive": false, "collision": false, "layer": "ground" },
-        { "id": "watchtower_frost_window", "name": "结霜观测窗", "type": "board", "x": 584, "y": 70, "w": 88, "h": 72, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "watchtower_signal_flags", "name": "卷起的信号旗", "type": "statue", "x": 856, "y": 176, "w": 42, "h": 88, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "watchtower_coal_brazier", "name": "防冻煤火盆", "type": "shrine", "x": 94, "y": 414, "w": 54, "h": 58, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "watchtower-exit", "kind": "door", "label": "离开瞭望塔", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "snow", "placeId": "snow", "x": 848, "y": 350, "facing": "down" } }]
+      "id":"chapel-belfry","regionId":"town","name":"六声礼拜堂 · 钟楼","subtitle":"湖、灯塔和广场第一次落在同一条视线上","kind":"interior","width":850,"height":460,"shell":"tower","wallDepth":105,
+      "palette":{"ground":"#555a56","groundAlt":"#606560","path":"#847b68","edge":"#292e30","accent":"#caaa61","wall":"#82867e","roof":"#405058"},
+      "zones":[{"type":"rug","x":310,"y":290,"w":230,"h":82,"color":"#514c55"}],
+      "furniture":[{"type":"crate","x":110,"y":260,"w":42,"h":38},{"type":"crate","x":158,"y":270,"w":34,"h":31},{"type":"bench","x":620,"y":315,"w":100,"h":22}],
+      "decorations":[{"id":"belfry_gear_rack","x":310,"y":125,"w":190,"h":75,"color":"#a18756","layer":"wall"},{"id":"roof_reflector","x":665,"y":120,"w":82,"h":74,"color":"#b7c7bd","layer":"wall"},{"id":"blue_lantern_belfry","x":230,"y":135,"w":20,"h":45}],
+      "landmarks":[{"id":"seventh_hammer","type":"bell","label":"独立的第七锤","description":"它不与六锤机构相连，底座只有一枚音叉形的校准槽。","interactive":true,"x":320,"y":190,"w":190,"h":110,"layer":"object","collision":true},{"id":"chapel_install_log","type":"papers","label":"A.R. 安装记录","description":"屋顶反射器将灯塔光路引向中央广场。落款只有 A.R.。","interactive":true,"x":640,"y":285,"w":70,"h":28,"layer":"object"},{"id":"room7_tag_pickup","type":"keys","label":"地板缝里的七号房钥匙牌","description":"旧黄铜牌上仍能看见数字 7。","interactive":true,"x":548,"y":342,"w":34,"h":20,"layer":"object"}],
+      "portals":[{"id":"belfry_to_chapel","label":"下楼回钟厅","type":"stairs","x":62,"y":310,"w":72,"h":105,"targetRegionId":"town","targetPlaceId":"chapel-interior","spawn":{"x":660,"y":340}}]
     },
     {
-      "id": "snow-hermit", "regionId": "snow", "name": "伊米尔小屋", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#5c5862", "groundAlt": "#6e6874", "floorAlt": "#6e6874", "path": "#665374", "edge": "#34313d", "accent": "#a99ac5", "wall": "#817b82", "roof": "#56505e" },
-      "zones": [{ "type": "rug", "x": 390, "y": 250, "w": 180, "h": 300 }],
-      "furniture": [{ "type": "bed", "x": 80, "y": 88, "w": 190, "h": 78 }, { "type": "fireplace", "x": 736, "y": 72, "w": 100, "h": 82 }, { "type": "desk", "x": 340, "y": 260, "w": 280, "h": 80 }, { "type": "shelf", "x": 350, "y": 72, "w": 260, "h": 54 }, { "type": "chair", "x": 292, "y": 280, "w": 34, "h": 42 }, { "type": "crate", "x": 728, "y": 346, "w": 112, "h": 62 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "ice_memory", "name": "写进冰里的旧记忆", "type": "crystal", "x": 360, "y": 80, "w": 240, "h": 72, "interactive": true, "description": "冰层里能看见五个人围井立誓，其中一人的脸与你相同。", "flag": "read_ice_memory", "layer": "object" },
-        { "id": "hermit_oath_knots", "name": "五种系法的誓绳", "type": "shrine", "x": 88, "y": 218, "w": 166, "h": 70, "interactive": true, "description": "五段旧绳代表五地，王城那段不是绑在中央，而是与其余四段轮流相连。", "flag": "studied_oath_knots", "layer": "object" },
-        { "id": "hermit_meltwater_bowl", "name": "永不结冰的融水钵", "type": "well", "x": 740, "y": 216, "w": 96, "h": 68, "interactive": true, "description": "钵中水面缓慢指向农田，伊米尔在边缘刻下每次改道造成的收成与牺牲。", "flag": "read_meltwater_bowl", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "hermit_drying_herbs", "name": "雪线草药束", "type": "shrine", "x": 282, "y": 78, "w": 48, "h": 62, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "hermit_carved_stones", "name": "炉边刻字石", "type": "ruin", "x": 658, "y": 168, "w": 62, "h": 48, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "hermit_snow_cloak", "name": "补丁雪斗篷", "type": "board", "x": 100, "y": 390, "w": 86, "h": 82, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "hermit_iron_kettle", "name": "余温铁水壶", "type": "shrine", "x": 844, "y": 118, "w": 46, "h": 44, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "hermit-exit", "kind": "door", "label": "离开伊米尔小屋", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "snow", "placeId": "snow", "x": 1345, "y": 620, "facing": "down" } }]
+      "id":"photo-studio","regionId":"town","name":"银盐照相馆","subtitle":"玻璃、化学药水和不会主动解释自己的影像","kind":"interior","width":820,"height":500,"shell":"workshop","wallDepth":116,
+      "palette":{"ground":"#62564c","groundAlt":"#6e6054","path":"#8c7359","edge":"#302a2c","accent":"#bf8e68","wall":"#99836b","roof":"#554650"},
+      "zones":[{"type":"rug","x":286,"y":278,"w":235,"h":105,"color":"#69505d"}],
+      "furniture":[{"type":"desk","x":96,"y":175,"w":200,"h":52},{"type":"shelf","x":700,"y":130,"w":65,"h":155},{"type":"counter","x":500,"y":325,"w":170,"h":52},{"type":"chair","x":225,"y":240,"w":30,"h":38}],
+      "decorations":[{"id":"camera_tripod","x":350,"y":165,"w":70,"h":110,"color":"#6f6254"},{"id":"chemical_jars","x":105,"y":140,"w":180,"h":52,"color":"#6c8583","layer":"wall"},{"id":"studio_portrait_wall","x":520,"y":132,"w":54,"h":68,"color":"#84655e","layer":"wall"},{"id":"studio_blank_canvas","x":590,"y":132,"w":54,"h":68,"layer":"wall"},{"id":"red_safelamp","x":450,"y":140,"w":22,"h":44,"color":"#aa5148"}],
+      "landmarks":[{"id":"development_bench","type":"photo_bench","label":"三步显影台","description":"标牌依次写着：重影、反差、反射。","interactive":true,"x":105,"y":160,"w":178,"h":62,"layer":"object"},{"id":"studio_counterweight","type":"clockwork","label":"挤入西墙的主钟配重","description":"沉重配重把原本的墙体向内顶出整整半米。","interactive":true,"x":35,"y":158,"w":52,"h":210,"layer":"object","collision":true},{"id":"silver_salt_wall","type":"wall_mark","label":"西墙上的银盐结晶","description":"普通光下只是潮斑；也许直射光会让它显出别的轮廓。","interactive":true,"x":26,"y":145,"w":64,"h":225,"layer":"wall"}],
+      "portals":[{"id":"studio_to_lane","label":"走出照相馆","type":"door","x":384,"y":444,"w":52,"h":52,"targetRegionId":"town","targetPlaceId":"photo-lane","spawn":{"x":320,"y":405}},{"id":"studio_to_darkroom","label":"打开银盐暗门","type":"door","x":35,"y":190,"w":58,"h":120,"targetRegionId":"town","targetPlaceId":"hidden-darkroom","spawn":{"x":680,"y":320},"revealFlag":"hidden_darkroom_open"}]
     },
     {
-      "id": "desert-caravanserai", "regionId": "desert", "name": "赤帆驿站", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#8c684b", "groundAlt": "#9d7756", "floorAlt": "#9d7756", "path": "#a76448", "edge": "#4b3833", "accent": "#d5ad58", "wall": "#b18159", "roof": "#774d3f" },
-      "zones": [{ "type": "rug", "x": 372, "y": 240, "w": 216, "h": 310 }],
-      "furniture": [{ "type": "counter", "x": 260, "y": 190, "w": 440, "h": 76 }, { "type": "table", "x": 112, "y": 350, "w": 200, "h": 72 }, { "type": "table", "x": 648, "y": 350, "w": 200, "h": 72 }, { "type": "barrel", "x": 94, "y": 82, "w": 56, "h": 64 }, { "type": "crate", "x": 760, "y": 84, "w": 88, "h": 68 }, { "type": "shelf", "x": 728, "y": 276, "w": 166, "h": 54 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "water_contracts", "name": "各地水契墙", "type": "shrine", "x": 300, "y": 72, "w": 360, "h": 72, "interactive": true, "description": "最旧的水契没有价格，只写着‘雪融之时归还土地’。", "flag": "read_first_water_contract", "layer": "object" },
-        { "id": "caravan_arrival_board", "name": "赤帆迟到名册", "type": "board", "x": 84, "y": 208, "w": 180, "h": 72, "interactive": true, "description": "商队延误都按风暴、关卡或缺水分类，最近三次却只写着‘王城改口’。", "flag": "read_caravan_delays", "layer": "object" },
-        { "id": "caravan_weighed_water", "name": "按重量分水的铜秤", "type": "well", "x": 752, "y": 204, "w": 116, "h": 76, "interactive": true, "description": "秤砣一面刻钱币，一面刻姓名；扎赫拉把有孩子的旅人放在更重的一边。", "flag": "inspected_water_scale", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "caravan_hanging_rugs", "name": "赤帆织毯", "type": "board", "x": 168, "y": 72, "w": 84, "h": 92, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "caravan_oil_lamps", "name": "成排驿灯", "type": "shrine", "x": 694, "y": 88, "w": 44, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "caravan_water_skins", "name": "编号水囊", "type": "chest", "x": 90, "y": 438, "w": 116, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "caravan_cargo_seals", "name": "五地货印板", "type": "board", "x": 750, "y": 438, "w": 112, "h": 54, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "caravanserai-exit", "kind": "door", "label": "离开赤帆驿站", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "desert", "placeId": "desert", "x": 305, "y": 438, "facing": "down" } }]
+      "id":"archive-room","regionId":"town","name":"市政档案馆","subtitle":"每份结论都必须能在另一张纸上留下压力痕","kind":"interior","width":860,"height":520,"shell":"tower","wallDepth":116,
+      "palette":{"ground":"#5f5d55","groundAlt":"#6c6960","path":"#8f876f","edge":"#2e3230","accent":"#b9a06b","wall":"#929183","roof":"#4b585d"},
+      "zones":[{"type":"rug","x":285,"y":270,"w":290,"h":115,"color":"#575b62"}],
+      "furniture":[{"type":"desk","x":310,"y":165,"w":250,"h":58},{"type":"chair","x":418,"y":230,"w":32,"h":40},{"type":"shelf","x":60,"y":130,"w":75,"h":210},{"type":"shelf","x":145,"y":130,"w":75,"h":210},{"type":"shelf","x":640,"y":130,"w":75,"h":210},{"type":"shelf","x":725,"y":130,"w":75,"h":210}],
+      "decorations":[{"id":"archive_globe","x":560,"y":150,"w":65,"h":75},{"id":"index_cards","x":328,"y":143,"w":100,"h":38,"color":"#c6b17e","layer":"wall"},{"id":"archive_blue_lamp","x":452,"y":135,"w":24,"h":45,"color":"#79969b"},{"id":"sealed_archive_banner","x":250,"y":130,"w":42,"h":72,"fabricColor":"#58666f","layer":"wall"}],
+      "landmarks":[{"id":"cross_reference_desk","type":"papers","label":"交叉核验台","description":"三个夹位分别标着：主钟记录、礼拜堂记录、影像证据。","interactive":true,"x":328,"y":157,"w":212,"h":54,"layer":"object"},{"id":"tool_identification_cards","type":"tools","label":"维护工具索引卡","description":"必须把实物放在卡边比对，索引才有意义。","interactive":true,"x":565,"y":245,"w":60,"h":48,"layer":"object"},{"id":"return_exposure_file","type":"book","label":"封存的“回返曝光”词条","description":"索引号后的正文被另一份光路记录压住。","interactive":true,"x":235,"y":177,"w":50,"h":30,"layer":"object"}],
+      "portals":[{"id":"archive_room_to_lane","label":"离开档案馆","type":"door","x":404,"y":464,"w":52,"h":52,"targetRegionId":"town","targetPlaceId":"archive-lane","spawn":{"x":502,"y":395}}]
     },
     {
-      "id": "desert-dig-house", "regionId": "desert", "name": "遗迹工棚", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#82624d", "groundAlt": "#95735b", "floorAlt": "#95735b", "path": "#766054", "edge": "#443b37", "accent": "#b89470", "wall": "#a27a5d", "roof": "#6d5149" },
-      "zones": [{ "type": "rug", "x": 404, "y": 260, "w": 152, "h": 290 }],
-      "furniture": [{ "type": "desk", "x": 330, "y": 250, "w": 300, "h": 80 }, { "type": "shelf", "x": 74, "y": 72, "w": 250, "h": 54 }, { "type": "shelf", "x": 636, "y": 72, "w": 250, "h": 54 }, { "type": "bed", "x": 80, "y": 360, "w": 190, "h": 78 }, { "type": "crate", "x": 746, "y": 350, "w": 88, "h": 68 }, { "type": "table", "x": 678, "y": 256, "w": 176, "h": 70 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "ember_key_rubbing", "name": "五钥拓片", "type": "ruin", "x": 354, "y": 74, "w": 252, "h": 76, "interactive": true, "description": "五枚钥匙叠在一起才构成井口，而水滴位于钥匙的阴影里。", "flag": "studied_key_rubbing", "layer": "object" },
-        { "id": "dig_strata_samples", "name": "倒序摆放的沙层标本", "type": "crystal", "x": 84, "y": 202, "w": 178, "h": 78, "interactive": true, "description": "最年轻的沙层压在最下方，凯德标注：遗迹不是从地下升起，而是被某段时间倒着掩埋。", "flag": "studied_reversed_strata", "layer": "object" },
-        { "id": "dig_brush_register", "name": "遗物刷洗登记板", "type": "board", "x": 714, "y": 198, "w": 166, "h": 78, "interactive": true, "description": "几枚王城铸币在出土前就登记在册，登记人的签名来自九年后的档馆。", "flag": "read_future_excavation_log", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "dig_tool_rack", "name": "细柄掘具架", "type": "statue", "x": 278, "y": 80, "w": 48, "h": 98, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "dig_pottery_shards", "name": "编号陶片盘", "type": "ruin", "x": 86, "y": 286, "w": 118, "h": 48, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "dig_sand_sieve", "name": "铜网筛沙架", "type": "statue", "x": 748, "y": 434, "w": 92, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "dig_blue_lantern", "name": "显纹蓝灯", "type": "crystal", "x": 620, "y": 166, "w": 42, "h": 54, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "dig-house-exit", "kind": "door", "label": "离开遗迹工棚", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "desert", "placeId": "desert", "x": 755, "y": 414, "facing": "down" } }]
+      "id":"harbor-control","regionId":"town","name":"港务控制室","subtitle":"一条光路可以救人，也可以封死回程","kind":"interior","width":768,"height":480,"shell":"workshop","wallDepth":112,
+      "palette":{"ground":"#555c57","groundAlt":"#606963","path":"#81745e","edge":"#293334","accent":"#d2a65f","wall":"#889087","roof":"#40565f"},
+      "zones":[{"type":"rug","x":280,"y":280,"w":220,"h":100,"color":"#486068"}],
+      "furniture":[{"type":"desk","x":82,"y":160,"w":180,"h":52},{"type":"shelf","x":650,"y":130,"w":62,"h":140},{"type":"crate","x":560,"y":330,"w":38,"h":36},{"type":"barrel","x":605,"y":326,"w":28,"h":40}],
+      "decorations":[{"id":"harbor_route_cords","x":300,"y":130,"w":145,"h":80,"color":"#b89b60","layer":"wall"},{"id":"lighthouse_lens_rack","x":490,"y":130,"w":110,"h":78,"color":"#7b9699","layer":"wall"},{"id":"blue_harbor_lamp","x":270,"y":148,"w":22,"h":44,"color":"#74a2a7"}],
+      "landmarks":[{"id":"lighthouse_router","type":"console","label":"灯塔光路控制器","description":"主槽可指向礼拜堂；备用槽似乎能把光分到第二条维护路线。","interactive":true,"x":315,"y":215,"w":150,"h":82,"layer":"object","collision":true},{"id":"tide_test_console","type":"clockwork","label":"潮汐钟测试盘","description":"三枚刻度环分别对应港外三根系船柱。","interactive":true,"x":102,"y":160,"w":148,"h":60,"layer":"object"}],
+      "portals":[{"id":"control_to_harbor","label":"回到港口","type":"door","x":358,"y":425,"w":52,"h":52,"targetRegionId":"town","targetPlaceId":"harbor","spawn":{"x":305,"y":330}}]
     },
     {
-      "id": "desert-guide-tent", "regionId": "desert", "name": "绿洲向导帐篷", "kind": "interior", "width": 960, "height": 620, "spawn": { "x": 480, "y": 548 },
-      "palette": { "ground": "#866148", "groundAlt": "#9a7254", "floorAlt": "#9a7254", "path": "#8c4d5c", "edge": "#49383b", "accent": "#80ad91", "wall": "#a8755c", "roof": "#754d5b" },
-      "zones": [{ "type": "rug", "x": 300, "y": 210, "w": 360, "h": 340 }],
-      "furniture": [{ "type": "bed", "x": 82, "y": 90, "w": 190, "h": 78 }, { "type": "table", "x": 350, "y": 270, "w": 260, "h": 78 }, { "type": "shelf", "x": 350, "y": 72, "w": 260, "h": 54 }, { "type": "crate", "x": 740, "y": 330, "w": 90, "h": 70 }, { "type": "barrel", "x": 120, "y": 350, "w": 56, "h": 64 }, { "type": "chair", "x": 298, "y": 286, "w": 34, "h": 42 }],
-      "obstacles": [{ "x": 0, "y": 0, "w": 960, "h": 44 }, { "x": 0, "y": 0, "w": 40, "h": 620 }, { "x": 920, "y": 0, "w": 40, "h": 620 }],
-      "landmarks": [
-        { "id": "fox_route_map", "name": "沙狐商路图", "type": "shrine", "x": 360, "y": 78, "w": 240, "h": 72, "interactive": true, "description": "地图避开所有官道，却精确连接雪山、农田和每一口暗井。", "flag": "found_fox_route", "layer": "object" },
-        { "id": "guide_wind_compass", "name": "用沙声辨路的风盘", "type": "shrine", "x": 86, "y": 216, "w": 174, "h": 72, "interactive": true, "description": "转动风盘时，不同沙粒会发出五种音高；鲁说沉默的方向才是被官道抹去的路。", "flag": "heard_hidden_desert_route", "layer": "object" },
-        { "id": "guide_water_skin_marks", "name": "写满归还日期的旧水囊", "type": "board", "x": 720, "y": 212, "w": 156, "h": 76, "interactive": true, "description": "水囊上的名字跨越三代人，每个日期都比借水日多九分钟，像一份延续至今的口头契约。", "flag": "read_waterskin_promises", "layer": "object" }
-      ],
-      "decorations": [
-        { "id": "guide_route_cords", "name": "五色路线绳", "type": "map", "x": 276, "y": 78, "w": 64, "h": 64, "interactive": false, "collision": false, "layer": "wall" },
-        { "id": "guide_green_lantern", "name": "绿玻璃行路灯", "type": "crystal", "x": 620, "y": 86, "w": 44, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "guide_saddle_blankets", "name": "叠好的鞍毯", "type": "chest", "x": 742, "y": 430, "w": 106, "h": 54, "interactive": false, "collision": false, "layer": "object" },
-        { "id": "guide_dried_dates", "name": "路客椰枣篮", "type": "chest", "x": 92, "y": 430, "w": 96, "h": 52, "interactive": false, "collision": false, "layer": "object" }
-      ],
-      "portals": [{ "id": "guide-tent-exit", "kind": "door", "label": "离开向导帐篷", "x": 438, "y": 580, "w": 84, "h": 30, "target": { "regionId": "desert", "placeId": "desert", "x": 1285, "y": 444, "facing": "down" } }]
+      "id":"low-tide-cave","regionId":"town","name":"退潮维护洞穴","subtitle":"这里没有钟声，只有水滴替时间数错拍子","kind":"interior","width":920,"height":520,"shell":"cave","wallDepth":80,
+      "palette":{"ground":"#3c4b4b","groundAlt":"#465858","path":"#5f6861","edge":"#202a2d","accent":"#7ba5a2","wall":"#566463","roof":"#314247"},
+      "zones":[{"type":"pond","x":280,"y":340,"w":290,"h":110,"collision":true},{"type":"cliff","x":330,"y":86,"w":230,"h":80,"collision":true}],
+      "paths":[{"x":50,"y":250,"w":800,"h":70,"style":"ruin"}],
+      "furniture":[{"type":"crate","x":640,"y":230,"w":42,"h":38,"color":"#675a49"},{"type":"barrel","x":690,"y":228,"w":28,"h":40,"color":"#5c5144"}],
+      "decorations":[{"id":"cave_lantern_dead","x":190,"y":178,"w":22,"h":46,"color":"#557b7f"},{"id":"maintenance_tool_rack","x":620,"y":152,"w":110,"h":62,"color":"#77715e","layer":"wall"},{"id":"water_jars","x":760,"y":270,"w":70,"h":44,"color":"#526f70"}],
+      "landmarks":[{"id":"cave_negative_pickup","type":"photo","label":"岩缝里的受潮底片","description":"手电斜照时，乳剂里浮出一名站在主钟前的人。","interactive":true,"x":735,"y":190,"w":42,"h":28,"layer":"object"},{"id":"cave_inscription","type":"wall_mark","label":"被水磨平的维修刻字","description":"……不是倒转……让第七个位置重新……","interactive":true,"x":490,"y":155,"w":110,"h":45,"layer":"wall"}],
+      "portals":[{"id":"cave_to_harbor","label":"离开洞穴","type":"cave","x":45,"y":222,"w":80,"h":110,"targetRegionId":"town","targetPlaceId":"harbor","spawn":{"x":1130,"y":510}}]
+    },
+    {
+      "id":"clock-basement","regionId":"town","name":"主钟地下室","subtitle":"七个见证位置围绕一台只允许两种答案的机器","kind":"interior","width":900,"height":560,"shell":"tower","wallDepth":90,
+      "palette":{"ground":"#474743","groundAlt":"#51514b","path":"#756b58","edge":"#252726","accent":"#c89c55","wall":"#74766f","roof":"#3b4649"},
+      "zones":[{"type":"rug","x":220,"y":195,"w":460,"h":260,"color":"#4d4b4e"}],
+      "furniture":[{"type":"desk","x":335,"y":370,"w":230,"h":58},{"type":"crate","x":90,"y":360,"w":42,"h":38},{"type":"crate","x":768,"y":360,"w":42,"h":38}],
+      "decorations":[{"id":"witness_frame_1","x":215,"y":122,"w":48,"h":64,"color":"#536776","layer":"wall"},{"id":"witness_frame_2","x":285,"y":105,"w":48,"h":64,"color":"#665871","layer":"wall"},{"id":"witness_frame_3","x":355,"y":94,"w":48,"h":64,"color":"#486a70","layer":"wall"},{"id":"witness_frame_4","x":425,"y":90,"w":48,"h":64,"color":"#8d5551","layer":"wall"},{"id":"witness_frame_5","x":495,"y":94,"w":48,"h":64,"color":"#536d59","layer":"wall"},{"id":"witness_frame_6","x":565,"y":105,"w":48,"h":64,"color":"#50566d","layer":"wall"},{"id":"witness_frame_7_empty","x":635,"y":122,"w":48,"h":64,"color":"#222529","layer":"wall"},{"id":"basement_brazier","x":160,"y":240,"w":36,"h":65},{"id":"basement_brazier_2","x":704,"y":240,"w":36,"h":65}],
+      "landmarks":[{"id":"three_signal_lights","type":"console","label":"三枚外部信号灯","description":"灯塔、主钟、终钟。三枚灯都暗着。","interactive":true,"x":330,"y":208,"w":240,"h":72,"layer":"object"},{"id":"witness_slot_seven","type":"portrait_slot","label":"第七见证位","description":"尺寸恰好能放入一张定影肖像。","interactive":true,"x":635,"y":122,"w":48,"h":64,"layer":"wall"},{"id":"red_erase_lever","type":"lever","label":"红色删除杆","description":"协议写着：接受缺失记录，终止循环。","interactive":true,"x":300,"y":345,"w":44,"h":76,"layer":"object"},{"id":"white_continue_knob","type":"knob","label":"被面板遮住的白色旋钮","description":"只有第七见证位被恢复后，面板才可能解锁。","interactive":true,"x":570,"y":350,"w":45,"h":45,"layer":"object"},{"id":"brake_interface","type":"console","label":"主钟紧急制动接口","description":"一个三角形接口，形状与市政安装扳手柄端相同。","interactive":true,"x":125,"y":176,"w":70,"h":64,"layer":"object"}],
+      "portals":[{"id":"basement_to_cabin","label":"回到维修舱","type":"stairs","x":410,"y":486,"w":80,"h":70,"targetRegionId":"town","targetPlaceId":"clock-cabin","spawn":{"x":640,"y":370}}]
+    },
+    {
+      "id":"hidden-darkroom","regionId":"town","name":"消失的第二暗房","subtitle":"在这里，时间等一张照片把名字说完","kind":"interior","width":820,"height":500,"shell":"workshop","wallDepth":108,
+      "palette":{"ground":"#392f31","groundAlt":"#443639","path":"#5d4544","edge":"#211d20","accent":"#b9584e","wall":"#684f50","roof":"#362d34"},
+      "zones":[{"type":"rug","x":250,"y":275,"w":310,"h":110,"color":"#583e43"}],
+      "furniture":[{"type":"counter","x":140,"y":180,"w":220,"h":55},{"type":"desk","x":445,"y":180,"w":190,"h":52},{"type":"shelf","x":680,"y":125,"w":62,"h":155},{"type":"chair","x":510,"y":240,"w":30,"h":38}],
+      "decorations":[{"id":"darkroom_red_lamp","x":384,"y":125,"w":24,"h":48,"color":"#b64d46"},{"id":"chemical_jars_darkroom","x":155,"y":142,"w":188,"h":46,"color":"#77666d","layer":"wall"},{"id":"ada_blank_portrait","x":555,"y":122,"w":58,"h":74,"color":"#66747a","layer":"wall"},{"id":"darkroom_curtain","x":60,"y":120,"w":60,"h":150,"fabricColor":"#4d3037","layer":"wall"}],
+      "landmarks":[{"id":"identity_fixing_table","type":"photo_bench","label":"身份定影台","description":"四枚压片框依次标着：姓名、住处、职责、面孔。","interactive":true,"x":155,"y":165,"w":188,"h":62,"layer":"object"},{"id":"ada_voice","type":"portrait","label":"尚未定影的第七人","description":"红灯闪动时，空白相纸背后像有人正在等待。","interactive":true,"x":555,"y":122,"w":58,"h":74,"layer":"wall"}],
+      "portals":[{"id":"darkroom_to_studio","label":"推开银盐暗门","type":"door","x":735,"y":292,"w":55,"h":100,"targetRegionId":"town","targetPlaceId":"photo-studio","spawn":{"x":110,"y":300}}]
     }
   ]
 }

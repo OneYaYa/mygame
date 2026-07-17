@@ -1,836 +1,577 @@
-import { escapeHtml, formatStamp, formatTime } from "./utils.js";
-import { FACTION_META, METRIC_META } from "./simulation.js";
+import { escapeHtml, formatTime } from "./utils.js";
+import { describeMissingIdentityAnchors, repairCount, scenePausesTime } from "./simulation.js";
 
-const MAP_POSITIONS = {
-  capital: { left: "41%", top: "35%" },
-  farm: { left: "13%", top: "59%" },
-  mansion: { left: "17%", top: "12%" },
-  snow: { left: "62%", top: "6%" },
-  desert: { left: "68%", top: "61%" },
-};
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
 
-const MAP_VIEWBOX = { width: 960, height: 540 };
-const MAP_NODE_OFFSET = { x: 8.5, y: 11.5 };
-const MAP_ROUTE_KINDS = new Set(["road", "carriage", "lift", "caravan", "trail"]);
-const PORTRAIT_SKINS = {
-  aveline: "#edbd91", rowan: "#d99a72", taren: "#b87558", mira: "#efc39a", bo: "#c98963",
-  nia: "#a96850", celeste: "#e8b887", oswin: "#d8a179", lune: "#efc6a0", sora: "#c98563",
-  garrick: "#b77759", ymir: "#e4b58d", zahra: "#9d5e49", kade: "#d09369", ruu: "#efc39b",
-};
-
-function numericPercent(value, fallback = 50) {
-  const number = typeof value === "number" ? value : Number.parseFloat(String(value ?? ""));
-  return Number.isFinite(number) ? number : fallback;
+function itemName(content, id) {
+  return content.items.find((item) => item.id === id)?.name || id;
 }
 
-function clampMapPercent(value, margin) {
-  return Math.max(margin, Math.min(100 - margin, value));
+function evidenceName(content, id) {
+  return content.evidence.find((item) => item.id === id)?.name || id;
 }
 
 export class GameUI {
-  constructor(content, callbacks = {}) {
+  constructor(content) {
     this.content = content;
-    this.callbacks = callbacks;
-    this.state = null;
-    this.currentNpc = null;
-    this.startMode = "player";
-    this.lastLayoutMode = null;
-    this.cachedJournalHead = null;
-    this.transitionLocked = false;
-    this.elements = this.collectElements();
-    this.bindStaticEvents();
-    this.renderTimelineOptions();
+    this.modalCloseCallbacks = new Map();
+    this.titleAnimation = null;
+    this.puzzleKeyHandler = null;
+    this.lastBannerPlace = null;
+    this.bannerTimer = null;
+    this.onPrologueDone = null;
+    this.bindStaticUi();
   }
 
-  collectElements() {
-    const ids = [
-      "loading-screen", "title-screen", "game-shell", "new-game-button", "observe-game-button", "continue-button", "chronicles-button",
-      "timeline-label", "mode-chip", "day-label", "time-label", "weather-label", "sound-button", "save-button", "help-button",
-      "location-kicker", "location-label", "map-button", "journal-button", "sidebar-toggle-button", "wait-button", "metric-list", "faction-list", "nearby-heading", "nearby-card",
-      "people-list", "journal-list", "journal-full", "timeline-modal", "timeline-options", "map-modal", "world-map",
-      "timeline-title", "timeline-description", "map-note",
-      "conversation-modal", "conversation-portrait", "conversation-role", "conversation-name", "conversation-mood",
-      "conversation-history", "conversation-actions", "conversation-form", "conversation-input", "conversation-provider",
-      "observer-modal", "observer-portrait", "observer-role", "observer-name", "observer-status", "observer-goal",
-      "observer-reflection", "observer-memories", "observer-knowledge",
-      "ending-modal", "ending-glyph", "ending-title", "ending-subtitle", "ending-epilogue", "ending-summary",
-      "new-timeline-button", "keep-wandering-button", "chronicles-modal", "ending-gallery", "journal-modal", "help-modal",
-      "interaction-hint", "interaction-text", "observer-badge", "region-banner", "region-name", "region-subtitle", "fade-layer",
-      "ai-status-dot", "ai-status-label", "ai-status-detail", "llm-toggle", "thought-toggle", "toast-stack", "aria-status",
-      "help-title", "help-description",
-    ];
-    return Object.fromEntries(ids.map((id) => [id.replaceAll("-", "_"), document.getElementById(id)]));
+  bindStaticUi() {
+    $$('[data-close]').forEach((button) => button.addEventListener("click", () => this.closeModal(button.dataset.close)));
+    $$(".journal-tab").forEach((button) => button.addEventListener("click", () => {
+      $$(".journal-tab").forEach((item) => item.classList.toggle("active", item === button));
+      $$(".journal-pane").forEach((pane) => pane.classList.toggle("active", pane.id === `tab-${button.dataset.tab}`));
+    }));
   }
 
-  bindStaticEvents() {
-    const el = this.elements;
-    el.new_game_button.addEventListener("click", () => this.prepareTimelineSelection("player"));
-    el.observe_game_button.addEventListener("click", () => this.prepareTimelineSelection("observer"));
-    el.continue_button.addEventListener("click", () => this.callbacks.onContinue?.());
-    el.chronicles_button.addEventListener("click", () => this.showEndingGallery());
-    el.map_button.addEventListener("click", () => this.showMap());
-    el.journal_button.addEventListener("click", () => this.showJournal());
-    el.sidebar_toggle_button.addEventListener("click", () => this.toggleSidebar());
-    el.wait_button.addEventListener("click", () => this.callbacks.onWait?.());
-    el.save_button.addEventListener("click", () => this.callbacks.onSave?.());
-    el.sound_button.addEventListener("click", () => this.callbacks.onToggleSound?.());
-    el.help_button.addEventListener("click", () => this.openModal("help-modal"));
-    el.new_timeline_button.addEventListener("click", () => {
-      this.closeModal("ending-modal", true);
-      this.prepareTimelineSelection(this.state?.mode || this.startMode);
-    });
-    el.keep_wandering_button.addEventListener("click", () => {
-      this.closeModal("ending-modal", true);
-      this.callbacks.onKeepWandering?.();
-    });
-    el.conversation_form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const message = el.conversation_input.value.trim();
-      if (!message) return;
-      el.conversation_input.value = "";
-      this.callbacks.onTalk?.(message, "custom");
-    });
-    el.llm_toggle.addEventListener("change", () => this.callbacks.onToggleLlm?.(el.llm_toggle.checked));
-    el.thought_toggle.addEventListener("change", () => {
-      this.callbacks.onToggleThoughts?.(el.thought_toggle.checked);
-      if (this.state) this.renderJournal(this.state);
-    });
-    document.querySelectorAll("[data-close]").forEach((button) => {
-      button.addEventListener("click", () => this.closeModal(button.dataset.close));
-    });
-    document.querySelectorAll(".sidebar-tab").forEach((button) => {
-      button.addEventListener("click", () => this.selectTab(button.dataset.tab));
-    });
-    document.querySelectorAll("[data-speed]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-speed]").forEach((item) => item.classList.remove("active"));
-        button.classList.add("active");
-        this.callbacks.onSpeed?.(Number(button.dataset.speed));
-      });
-    });
+  bindGameActions(actions) {
+    $("#new-game-button").addEventListener("click", actions.newGame);
+    $("#continue-button").addEventListener("click", actions.continueGame);
+    $("#archive-button").addEventListener("click", actions.openArchive);
+    $("#journal-button").addEventListener("click", actions.openJournal);
+    $("#sound-button").addEventListener("click", actions.toggleSound);
+    $("#save-button").addEventListener("click", actions.save);
+    $("#help-button").addEventListener("click", () => this.openModal("help-modal"));
+    $("#ending-restart").addEventListener("click", actions.restartAfterEnding);
+    this.bindTitleKeyboard();
   }
 
-  finishLoading(hasSave, saveMode = "player") {
-    this.elements.loading_screen.classList.add("hidden");
-    this.elements.title_screen.classList.remove("hidden");
-    this.elements.continue_button.classList.toggle("hidden", !hasSave);
-    if (hasSave) this.elements.continue_button.textContent = saveMode === "observer" ? "Continue Watching" : "Continue Journey";
+  bindTitleKeyboard() {
+    const menu = () => $$(".title-actions .menu-button:not(.hidden)");
+    let index = 0;
+    const refresh = () => menu().forEach((button, buttonIndex) => button.classList.toggle("selected", buttonIndex === index));
+    document.addEventListener("keydown", (event) => {
+      if ($("#title-screen").classList.contains("hidden")) return;
+      const buttons = menu();
+      if (!buttons.length) return;
+      if (["ArrowDown", "s", "S"].includes(event.key)) {
+        event.preventDefault();
+        index = (index + 1) % buttons.length;
+        refresh();
+      } else if (["ArrowUp", "w", "W"].includes(event.key)) {
+        event.preventDefault();
+        index = (index - 1 + buttons.length) % buttons.length;
+        refresh();
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        buttons[index]?.click();
+      }
+    });
+    refresh();
+  }
+
+  finishLoading(hasSave) {
+    $("#loading-screen").classList.add("hidden");
+    $("#title-screen").classList.remove("hidden");
+    $("#continue-button").classList.toggle("hidden", !hasSave);
+    this.startTitleScene();
   }
 
   showTitle(hasSave = false) {
-    this.closeAllModals(true);
-    this.elements.game_shell.classList.add("hidden");
-    this.elements.title_screen.classList.remove("hidden");
-    this.elements.continue_button.classList.toggle("hidden", !hasSave);
+    $("#game-shell").classList.add("hidden");
+    $("#title-screen").classList.remove("hidden");
+    $("#continue-button").classList.toggle("hidden", !hasSave);
+    this.startTitleScene();
   }
 
   showGame() {
-    this.elements.title_screen.classList.add("hidden");
-    this.elements.game_shell.classList.remove("hidden");
-    this.closeModal("timeline-modal", true);
+    $("#title-screen").classList.add("hidden");
+    $("#game-shell").classList.remove("hidden");
+    if (this.titleAnimation) cancelAnimationFrame(this.titleAnimation);
+    this.titleAnimation = null;
+    $("#game-canvas").focus();
   }
 
-  prepareTimelineSelection(mode = "player") {
-    this.startMode = mode === "observer" ? "observer" : "player";
-    const observer = this.startMode === "observer";
-    this.elements.timeline_title.textContent = observer ? "选择要观察的世界线" : "选择要踏入的世界线";
-    this.elements.timeline_description.textContent = observer
-      ? "你不会出现在世界中。三条线从左到右由易到难，持续压力会影响居民如何走到第九日。"
-      : "三条线从左到右由易到难；差异会持续影响每日消耗与居民恢复，不只改变开局。";
-    this.openModal("timeline-modal");
-  }
-
-  renderTimelineOptions() {
-    this.elements.timeline_options.innerHTML = "";
-    (this.content.timelines || []).forEach((timeline, index) => {
-      const button = document.createElement("button");
-      button.className = "timeline-card";
-      button.style.setProperty("--thread-color", timeline.color || ["#d9a85c", "#72b798", "#9d83bd"][index % 3]);
-      const configuredDifficulty = timeline.difficulty || {};
-      const difficultyRank = Math.min(3, Math.max(1, Math.round(Number(configuredDifficulty.rank) || index + 1)));
-      const difficultyLabel = configuredDifficulty.label || ["简单", "普通", "困难"][difficultyRank - 1];
-      button.dataset.difficulty = String(difficultyRank);
-      button.setAttribute("aria-label", `${timeline.name}，难度 ${difficultyRank}/3，${difficultyLabel}`);
-      const hints = timeline.hints || timeline.features || Object.entries(timeline.modifiers?.metrics || {}).map(([key, value]) => `${METRIC_META[key]?.label || key} ${value >= 0 ? "+" : ""}${value}`);
-      button.innerHTML = `
-        <span class="timeline-difficulty"><span>难度 ${difficultyRank}/3</span><strong>${escapeHtml(difficultyLabel)}</strong><i aria-hidden="true">${"◆".repeat(difficultyRank)}${"◇".repeat(3 - difficultyRank)}</i></span>
-        <span class="thread-glyph">${escapeHtml(timeline.glyph || ["◇", "✦", "◈"][index % 3])}</span>
-        <h3>${escapeHtml(timeline.name)}</h3>
-        <p>${escapeHtml(timeline.description || timeline.subtitle || "一条尚未被见证的世界线。")}</p>
-        <ul>${hints.slice(0, 3).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}</ul>`;
-      button.addEventListener("click", () => this.callbacks.onNewGame?.(timeline.id, this.startMode));
-      this.elements.timeline_options.appendChild(button);
-    });
-  }
-
-  update(state, nearby = null) {
-    this.state = state;
-    const timeline = this.content.timelines.find((item) => item.id === state.timelineId);
-    const location = this.describeLocation(state.regionId, state.placeId);
-    this.configureMode(state);
-    this.elements.timeline_label.textContent = timeline?.name || state.timelineName;
-    this.elements.day_label.textContent = `第 ${state.day} 日`;
-    this.elements.time_label.textContent = formatTime(state.minute);
-    this.elements.weather_label.textContent = state.weather;
-    this.elements.location_label.textContent = location.title;
-    this.renderMetrics(state);
-    this.renderFactions(state);
-    this.renderNearby(nearby, state);
-    this.renderPeople(state);
-    if (this.cachedJournalHead !== state.journal[0]?.id) this.renderJournal(state);
-  }
-
-  places() {
-    if (Array.isArray(this.content.places)) return this.content.places;
-    if (this.content.places && typeof this.content.places === "object") return Object.values(this.content.places);
-    return [];
-  }
-
-  findPlace(placeId) {
-    if (!placeId) return null;
-    return this.places().find((item) => item.id === placeId) || null;
-  }
-
-  describeLocation(regionId, placeId) {
-    const region = this.content.regions.find((item) => item.id === regionId) || null;
-    const place = this.findPlace(placeId);
-    const regionName = region?.name || regionId || "未知地区";
-    const explicitPlaceName = place?.name || place?.label || "";
-    const rawPlaceName = !place && placeId && placeId !== regionId ? String(placeId) : "";
-    const placeName = explicitPlaceName || rawPlaceName;
-    const normalizedRegion = regionName.replace(/\s+/g, "").toLowerCase();
-    const normalizedPlace = placeName.replace(/\s+/g, "").toLowerCase();
-    const isOutdoor = !place
-      || placeId === regionId
-      || place.kind === "outdoor"
-      || place.outdoor === true
-      || place.isDefault === true
-      || (normalizedPlace && normalizedPlace === normalizedRegion);
-    return {
-      region,
-      place,
-      regionName,
-      placeName: isOutdoor ? "" : placeName,
-      title: !isOutdoor && placeName ? `${regionName} · ${placeName}` : regionName,
-      key: `${regionId || ""}::${placeId || regionId || ""}`,
-    };
-  }
-
-  sameLocation(left, right) {
-    if (!left || !right || left.regionId !== right.regionId) return false;
-    const leftPlace = left.placeId || left.regionId;
-    const rightPlace = right.placeId || right.regionId;
-    return leftPlace === rightPlace;
-  }
-
-  configureMode(state) {
-    const observer = state.mode === "observer";
-    if (this.lastLayoutMode !== state.mode) {
-      this.setSidebarCollapsed(!observer);
-      this.lastLayoutMode = state.mode;
-    }
-    document.body.classList.toggle("observer-mode", observer);
-    this.elements.mode_chip.textContent = observer ? "上帝观察" : "旅行者";
-    this.elements.mode_chip.classList.toggle("observer", observer);
-    this.elements.observer_badge.classList.toggle("hidden", !observer);
-    this.elements.location_kicker.textContent = observer ? "当前观察地点" : "当前位置";
-    this.elements.nearby_heading.textContent = observer ? "观察方式" : "眼前的人";
-    this.elements.wait_button.textContent = observer ? "推进 1 小时" : "等待 1 小时";
-    this.elements.help_title.textContent = observer ? "上帝观察手册" : "旅行者手册";
-    this.elements.help_description.textContent = observer
-      ? "世界中没有玩家。用 WASD 或方向键平移镜头，按 M 切换五地；公告、封路和灾后痕迹会随社会进程改变，人物志可查看居民如何形成自己的结果。"
-      : "用 WASD 或方向键移动，按住 Shift 疾跑；靠近人物、告示、门或交通点后按 E。公共事件不会弹出选择题：留意地图变化，与知情者建立信任，再把主张交给真正参与商议的人。错过消息时，世界仍会继续。";
-    this.elements.new_timeline_button.textContent = observer ? "观察另一条世界线" : "踏入另一条世界线";
-    this.elements.keep_wandering_button.textContent = observer ? "停在结局前夜继续观察" : "留在结局前夜";
-    if (observer) this.elements.interaction_hint.classList.add("hidden");
-  }
-
-  setSidebarCollapsed(collapsed) {
-    document.body.classList.toggle("sidebar-collapsed", collapsed);
-    this.elements.sidebar_toggle_button.setAttribute("aria-expanded", String(!collapsed));
-    this.elements.sidebar_toggle_button.textContent = collapsed ? "B 打开手账" : "B 收起手账";
-  }
-
-  toggleSidebar() {
-    if (this.transitionLocked) return;
-    this.setSidebarCollapsed(!document.body.classList.contains("sidebar-collapsed"));
-  }
-
-  setTransitionLocked(locked) {
-    this.transitionLocked = Boolean(locked);
-    this.elements.map_button.disabled = this.transitionLocked;
-    this.elements.journal_button.disabled = this.transitionLocked;
-    this.elements.sidebar_toggle_button.disabled = this.transitionLocked;
-  }
-
-  setSpeedIndicator(speed) {
-    document.querySelectorAll("[data-speed]").forEach((button) => button.classList.toggle("active", Number(button.dataset.speed) === Number(speed)));
-  }
-
-  renderMetrics(state) {
-    this.elements.metric_list.innerHTML = Object.entries(METRIC_META).map(([key, meta]) => {
-      const value = Math.round(state.metrics[key] ?? 0);
-      return `<div class="metric-row" title="${escapeHtml(meta.label)} ${value}/100">
-        <label>${escapeHtml(meta.label)}</label>
-        <div class="metric-track"><span class="metric-fill" style="width:${value}%;--metric-color:${meta.color}"></span></div>
-        <output>${value}</output>
-      </div>`;
-    }).join("");
-  }
-
-  renderFactions(state) {
-    this.elements.faction_list.innerHTML = Object.entries(FACTION_META).map(([key, meta]) => `
-      <div class="faction-card" style="border-top:3px solid ${meta.color}"><span>${escapeHtml(meta.label)}</span><strong>${Math.round(state.factions[key] ?? 0)}</strong></div>
-    `).join("");
-  }
-
-  portraitAttributes(npc, known = true) {
-    const npcColor = known ? npc.color || "#8b708e" : "#756c62";
-    const hairColor = known ? npc.hairColor || "#4d3632" : "#574f49";
-    const skinColor = known ? npc.skinColor || PORTRAIT_SKINS[npc.id] || "#efbf87" : "#a99a86";
-    return `data-portrait="${escapeHtml(known ? npc.id : "unknown")}" style="--npc-color:${escapeHtml(npcColor)};--hair-color:${escapeHtml(hairColor)};--skin-color:${escapeHtml(skinColor)}"`;
-  }
-
-  renderNearby(nearby, state = this.state) {
-    const card = this.elements.nearby_card;
-    if (state?.mode === "observer") {
-      const npcId = state.observer?.focusedNpcId;
-      const npc = this.content.npcs.find((item) => item.id === npcId);
-      const npcState = npc ? state.npcs[npc.id] : null;
-      if (!npc || !npcState) {
-        card.className = "nearby-card empty";
-        card.textContent = "世界中没有玩家。打开“人物”页，可以翻阅每位居民的目标、反思和近期记忆。";
-        return;
+  startTitleScene() {
+    if (this.titleAnimation) return;
+    const canvas = $("#title-canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    const draw = (now) => {
+      const t = now / 1000;
+      ctx.fillStyle = "#081315";
+      ctx.fillRect(0, 0, 480, 270);
+      // Tall sky with a faint wrong dawn far below the horizon.
+      for (let y = 0; y < 174; y += 6) {
+        const amount = y / 174;
+        ctx.fillStyle = `rgb(${9 + amount * 13},${20 + amount * 19},${22 + amount * 21})`;
+        ctx.fillRect(0, y, 480, 6);
       }
-      const location = this.describeLocation(npcState.regionId, npcState.placeId);
-      const current = this.sameLocation(npcState, state);
-      card.className = "nearby-card";
-      card.innerHTML = `<div class="nearby-person">
-        <div class="mini-portrait" ${this.portraitAttributes(npc)}></div>
-        <div><strong>正在观察：${escapeHtml(npc.name)}</strong><small>${escapeHtml(location.title)} · ${escapeHtml(npcState.activity)}</small>
-        <div class="nearby-meta"><span class="tag">${current ? "◉ 当前镜头" : "◎ 其他地点"}</span><span class="tag">${escapeHtml(npcState.mood)}</span><span class="tag">记忆 ${npcState.memories.length}</span></div></div>
-      </div>`;
-      return;
+      for (let star = 0; star < 42; star += 1) {
+        const x = (star * 89 + 31) % 480;
+        const y = (star * 47 + 17) % 148;
+        const blink = Math.sin(t * 1.2 + star * 2.3) > .72;
+        ctx.fillStyle = blink ? "#b9c8b8" : "#586e6b";
+        ctx.fillRect(x, y, blink ? 2 : 1, blink ? 2 : 1);
+      }
+      // Dark hills and an original lakeside silhouette.
+      ctx.fillStyle = "#122529";
+      ctx.beginPath(); ctx.moveTo(0, 168); ctx.lineTo(58, 128); ctx.lineTo(108, 159); ctx.lineTo(174, 112); ctx.lineTo(230, 164); ctx.lineTo(292, 132); ctx.lineTo(350, 166); ctx.lineTo(422, 118); ctx.lineTo(480, 151); ctx.lineTo(480, 205); ctx.lineTo(0, 205); ctx.fill();
+      ctx.fillStyle = "#0d1d20";
+      ctx.fillRect(0, 184, 480, 33);
+      // Clock tower, inn, chapel and lighthouse read as handmade landmarks rather than generic blocks.
+      const building = (x, y, w, h, roof) => {
+        ctx.fillStyle = "#162427"; ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = roof; ctx.beginPath(); ctx.moveTo(x - 3, y); ctx.lineTo(x + w / 2, y - 15); ctx.lineTo(x + w + 3, y); ctx.fill();
+        ctx.fillStyle = "#c69a52"; ctx.fillRect(x + 6, y + h - 15, 3, 4); ctx.fillRect(x + w - 9, y + h - 15, 3, 4);
+      };
+      building(318, 148, 64, 37, "#263237");
+      building(392, 158, 41, 27, "#432f30");
+      building(248, 158, 47, 27, "#30323c");
+      ctx.fillStyle = "#172629"; ctx.fillRect(344, 102, 13, 63); ctx.fillRect(337, 122, 27, 45);
+      ctx.fillStyle = "#82533b"; ctx.beginPath(); ctx.moveTo(334, 122); ctx.lineTo(350, 91); ctx.lineTo(367, 122); ctx.fill();
+      ctx.fillStyle = "#d2ae64"; ctx.fillRect(347, 113, 7, 7); ctx.fillStyle = "#303536"; ctx.fillRect(349, 114, 2, 5);
+      ctx.fillStyle = "#a9aa90"; ctx.fillRect(448, 116, 10, 70); ctx.fillStyle = "#783f36"; ctx.fillRect(445, 110, 16, 9);
+      const beam = 18 + Math.sin(t * .32) * 10;
+      ctx.fillStyle = "rgba(208,205,150,.08)"; ctx.beginPath(); ctx.moveTo(450, 119); ctx.lineTo(300 - beam, 155); ctx.lineTo(300 + beam, 166); ctx.fill();
+      // Lake reflections and the thin white line that does not belong to the lighthouse.
+      ctx.fillStyle = "#17383e"; ctx.fillRect(0, 200, 480, 70);
+      for (let y = 204; y < 270; y += 6) {
+        for (let x = (y % 12); x < 480; x += 31) {
+          const wave = Math.sin(t * 1.3 + x * .06 + y) * 6;
+          ctx.fillStyle = y < 224 ? "#285057" : "#1b4147";
+          ctx.fillRect(x + wave, y, 14 + (x % 13), 2);
+        }
+      }
+      const white = 0.18 + (Math.sin(t * .7) + 1) * .08;
+      ctx.fillStyle = `rgba(217,230,215,${white})`;
+      ctx.fillRect(278, 216, 160, 1);
+      ctx.fillRect(320, 219, 95, 1);
+      // A small ferry tied up but not moving.
+      ctx.fillStyle = "#101c1e"; ctx.fillRect(410, 226, 38, 7); ctx.fillRect(419, 218, 18, 8); ctx.fillStyle = "#8d5a3e"; ctx.fillRect(414, 225, 31, 2);
+      this.titleAnimation = requestAnimationFrame(draw);
+    };
+    this.titleAnimation = requestAnimationFrame(draw);
+  }
+
+  openPrologue(onDone) {
+    this.onPrologueDone = onDone;
+    this.openModal("prologue-modal");
+    const text = $("#prologue-text");
+    const actions = $("#prologue-actions");
+    const renderStep = (step) => {
+      actions.innerHTML = "";
+      if (step === 0) {
+        text.innerHTML = "湖镇同时坏了三座钟：广场主钟、礼拜堂钟、港口潮汐钟。你今晚住湖畔旅店，明早六点开始。<br><br>当地人知道的比委托单多。别只找零件，先让他们把顾虑说完整。";
+        this.addChoice(actions, "为什么不派一个维修队？", () => renderStep(1));
+        this.addChoice(actions, "先告诉我与居民交谈的规则。", () => renderStep(1));
+      } else if (step === 1) {
+        text.innerHTML = "你可以自由输入问题，他们会用自己的性格和当前所知回答；下面的固定选项则代表可核验的行动。<br><br><strong>重要：</strong>提前说出一个正确名字，不等于那个人本轮也知道你从哪里得知。证据必须在你们之间真实发生。";
+        this.addChoice(actions, "所以对话提供可能性，证据决定行动。", () => renderStep(2));
+        this.addChoice(actions, "我会把知识和本轮证据分开。", () => renderStep(2));
+      } else {
+        text.innerHTML = "很好。第一班返程渡船是星期日早上六点。维修完就回来——十二分钟足够你先看清一轮发生了什么。";
+        this.addChoice(actions, "带上工具，前往湖镇", () => {
+          this.closeModal("prologue-modal", false);
+          this.onPrologueDone?.();
+        });
+      }
+    };
+    renderStep(0);
+  }
+
+  addChoice(container, label, callback) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.addEventListener("click", callback);
+    container.append(button);
+  }
+
+  openModal(id, onClose = null) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    if (onClose) this.modalCloseCallbacks.set(id, onClose);
+  }
+
+  closeModal(id, notify = true) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.add("hidden");
+    if (id === "puzzle-modal" && this.puzzleKeyHandler) {
+      document.removeEventListener("keydown", this.puzzleKeyHandler);
+      this.puzzleKeyHandler = null;
     }
-    if (!nearby) {
-      card.className = "nearby-card empty";
-      card.textContent = "靠近居民后，可以看看他正在做什么。";
-      return;
-    }
-    const { profile: npc, state: npcState } = nearby;
-    card.className = "nearby-card";
-    card.innerHTML = `<div class="nearby-person">
-      <div class="mini-portrait" ${this.portraitAttributes(npc)}></div>
-      <div><strong>${escapeHtml(npc.name)} · ${escapeHtml(npc.role)}</strong><small>${escapeHtml(npcState.activity)} · ${escapeHtml(npcState.mood)}</small>
-      <div class="nearby-meta"><span class="tag">关系 ${Math.round(npcState.relationship)}</span><span class="tag">记忆 ${npcState.memories.length}</span></div></div>
-    </div>`;
+    const callback = this.modalCloseCallbacks.get(id);
+    this.modalCloseCallbacks.delete(id);
+    if (notify) callback?.();
+    $("#game-canvas")?.focus();
+  }
+
+  hasBlockingModal() {
+    return $$(".modal-layer:not(.hidden), .ending-layer:not(.hidden), .reset-cinematic:not(.hidden)").length > 0;
+  }
+
+  update(state) {
+    $("#day-label").textContent = state.dayLabel;
+    $("#time-label").textContent = formatTime(state.minute);
+    $("#loop-label").textContent = `LOOP ${String(state.loopCount + 1).padStart(2, "0")}`;
+    const scene = this.content.regions.concat(this.content.places).find((item) => item.id === state.placeId) || this.content.regions[0];
+    $("#location-label").textContent = scene?.name || "湖镇";
+    $("#location-kicker").textContent = scene?.kind === "interior" ? "INTERIOR" : "LAKESIDE TOWN";
+    $("#pause-ribbon").classList.toggle("hidden", !scenePausesTime(state));
+    this.renderRepairs(state);
+    this.renderEvidence(state);
+    this.renderPeople(state);
+    this.renderNextClue(state);
+    const progress = Math.max(0, Math.min(100, state.loopElapsed / 1440 * 100));
+    $("#time-thread-fill").style.width = `${progress}%`;
+  }
+
+  renderRepairs(state) {
+    const repairs = [
+      ["master", "主钟", "广场维修舱 · 三枚齿轮"],
+      ["chapel", "六声礼钟", "礼拜堂 · 缺失擒纵销"],
+      ["tide", "潮汐钟", "港口 · 三根系船柱"],
+    ];
+    $("#repair-list").innerHTML = repairs.map(([id, name, note]) => `<div class="repair-card ${state.repairs[id] ? "done" : ""}"><i></i><div><strong>${name}</strong><span>${state.repairs[id] ? "维修完成" : note}</span></div></div>`).join("");
+  }
+
+  renderEvidence(state) {
+    const knownEvidence = this.content.evidence.filter((entry) => state.knowledge[entry.id]);
+    const inventory = Object.keys(state.inventory).filter((id) => state.inventory[id] > 0);
+    const evidenceHtml = knownEvidence.map((entry) => `<div class="evidence-card ${state.evidence[entry.id] ? "" : "faint"}"><strong>${escapeHtml(entry.name)}</strong><span>${state.evidence[entry.id] ? "本轮持有共同证据" : "只存在于你的跨轮日志中"}<br>${escapeHtml(entry.text)}</span></div>`);
+    const itemHtml = inventory.map((id) => `<div class="evidence-card"><strong>${escapeHtml(itemName(this.content, id))}</strong><span>当前随身物品</span></div>`);
+    $("#evidence-list").innerHTML = [...evidenceHtml, ...itemHtml].join("") || '<div class="evidence-card faint"><strong>空白页</strong><span>检查登记簿、钟表机构和现场实物。</span></div>';
   }
 
   renderPeople(state) {
-    const observer = state.mode === "observer";
-    const sorted = [...this.content.npcs].sort((a, b) => {
-      const aState = state.npcs[a.id];
-      const bState = state.npcs[b.id];
-      if (observer) {
-        return Number(this.sameLocation(bState, state)) - Number(this.sameLocation(aState, state))
-          || Number(bState?.regionId === state.regionId) - Number(aState?.regionId === state.regionId)
-          || a.name.localeCompare(b.name, "zh-CN");
-      }
-      return Number(Boolean(bState?.knownToPlayer)) - Number(Boolean(aState?.knownToPlayer)) || (bState?.relationship || 0) - (aState?.relationship || 0);
-    });
-    this.elements.people_list.innerHTML = sorted.map((npc) => {
-      const npcState = state.npcs[npc.id];
-      const known = observer || npcState?.knownToPlayer;
-      const location = this.describeLocation(npcState?.regionId, npcState?.placeId);
-      const current = this.sameLocation(npcState, state);
-      return `<button class="person-entry" data-npc-id="${escapeHtml(npc.id)}">
-        <div class="mini-portrait" ${this.portraitAttributes(npc, known)}></div>
-        <span><strong>${known ? escapeHtml(npc.name) : "尚未结识"}</strong><small>${known ? `${escapeHtml(npc.role)} · ${escapeHtml(location.title)}` : escapeHtml(location.title)}</small></span>
-        <span class="relation-value">${observer ? (current ? "◉" : "◎") : known ? Math.round(npcState.relationship) : "?"}</span>
-      </button>`;
+    $("#people-list").innerHTML = this.content.npcs.filter((npc) => npc.id !== "ada" || state.knowledge.ada_identity).map((npc) => {
+      const place = this.content.places.concat(this.content.regions).find((item) => item.id === npc.placeId)?.name || "湖镇";
+      return `<div class="person-card"><strong>${escapeHtml(npc.name)}</strong><span>${escapeHtml(npc.role)}<br>通常工作地点：${escapeHtml(place)}</span></div>`;
     }).join("");
-    this.elements.people_list.querySelectorAll("[data-npc-id]").forEach((button) => {
-      button.addEventListener("click", () => this.callbacks.onInspectNpc?.(button.dataset.npcId));
-    });
+  }
+
+  renderNextClue(state) {
+    let clue = "先读床边的三份维修委托，再去楼下见旅店主人。";
+    if (state.flags.repair_orders_read && repairCount(state) < 3) clue = `已有 ${repairCount(state)}/3 座钟恢复。每次修复都会让一份被封住的现场记录重新可读。`;
+    if (repairCount(state) === 3 && !state.evidence.brake_interface) clue = "三座钟同时运转后，主钟舱通往地下的门已经解锁。先看清机器要求谁做什么。";
+    if (state.evidence.brake_interface && !state.photos.unfinished_portrait) clue = "地下协议解释了表层终止法。真正缺少的是第七张肖像；最低潮在 SUNDAY 02:00–03:00。";
+    if (state.photos.unfinished_portrait && !state.knowledge.ada_identity) clue = "一张脸还不是身份。把残缺肖像与两个独立地点的 A.R. 记录交给档案员。";
+    if (state.knowledge.ada_identity && !state.flags.hidden_darkroom_open) clue = "暗房需要三把“锁”：升起西侧配重、照亮银盐门、拿到属于七号房的钥匙。";
+    if (state.flags.hidden_darkroom_open && !state.photos.fixed_portrait) clue = "第二暗房的时间不会前进。把姓名、住处、职责和面孔四个锚点一起固定。";
+    if (state.photos.fixed_portrait && !state.flags.slot_seven_filled) clue = "定影肖像的尺寸与主钟地下室第七见证位完全一致。";
+    if (state.flags.slot_seven_filled) clue = "红色删除杆已经失去作用。白色旋钮允许七名见证人一起进入星期日。";
+    $("#next-clue").textContent = clue;
+  }
+
+  showBanner(scene) {
+    if (!scene || scene.id === this.lastBannerPlace) return;
+    this.lastBannerPlace = scene.id;
+    clearTimeout(this.bannerTimer);
+    $("#region-name").textContent = scene.name;
+    $("#region-subtitle").textContent = scene.subtitle || "";
+    $("#region-banner").classList.remove("hidden");
+    this.bannerTimer = setTimeout(() => $("#region-banner").classList.add("hidden"), 2600);
+  }
+
+  setInteraction(target) {
+    const hint = $("#interaction-hint");
+    if (!target) {
+      hint.classList.add("hidden");
+      return;
+    }
+    $("#interaction-text").textContent = target.label;
+    hint.classList.remove("hidden");
+  }
+
+  fade(active) { $("#fade-layer").classList.toggle("active", active); }
+
+  inspect(title, text, extra = "") {
+    $("#inspect-title").textContent = title;
+    $("#inspect-text").textContent = text;
+    $("#inspect-extra").innerHTML = extra;
+    this.openModal("inspect-modal");
+  }
+
+  openConversation(npc, state, actions, handlers) {
+    $("#conversation-name").textContent = npc.name;
+    $("#conversation-role").textContent = npc.role;
+    $("#conversation-state").textContent = npc.concern;
+    this.drawNpcPortrait($("#conversation-portrait"), npc);
+    $("#conversation-history").innerHTML = `<div class="message"><small>${escapeHtml(npc.displayName)}</small>${escapeHtml(this.greetingFor(npc.id, state))}</div>`;
+    this.renderConversationActions(actions, handlers.onAction);
+    $("#conversation-provider").textContent = "固定选项改变可验证状态；自由对话不会绕过证据锁。";
+    const form = $("#conversation-form");
+    const input = $("#conversation-input");
+    form.onsubmit = (event) => {
+      event.preventDefault();
+      const message = input.value.trim();
+      if (!message) return;
+      input.value = "";
+      this.appendMessage("你", message, true);
+      handlers.onSubmit(message);
+    };
+    this.openModal("conversation-modal", handlers.onClose);
+    setTimeout(() => input.focus(), 50);
+  }
+
+  drawNpcPortrait(canvas, npc) {
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    const appearance = npc.appearance || {};
+    const skin = appearance.skin || "#dfaa7f";
+    const hair = appearance.hair || "#4d3834";
+    const body = appearance.body || "#526a69";
+    const trim = appearance.trim || "#d5ad63";
+    const rect = (x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(x, y, w, h); };
+    ctx.clearRect(0, 0, 58, 66);
+    rect(0, 0, 58, 66, "#31494b");
+    rect(3, 3, 52, 60, "#496164");
+    // Back hair, shoulders and a high-contrast collar give every portrait a
+    // readable silhouette at 58×66 without importing character-sheet assets.
+    if (["long", "bob", "braid"].includes(appearance.hairStyle)) rect(14, 18, 30, 36, hair);
+    rect(8, 48, 42, 15, "#302d31");
+    rect(11, 45, 36, 18, body);
+    rect(13, 47, 32, 4, trim);
+    rect(25, 40, 8, 11, skin);
+    rect(15, 13, 28, 28, "#382f31");
+    rect(17, 15, 24, 27, skin);
+    rect(14, 22, 5, 13, skin);
+    rect(40, 22, 5, 13, skin);
+    // Each hairstyle is drawn as a small deliberate shape, not a recolored cap.
+    if (appearance.hairStyle === "bun") {
+      rect(14, 10, 30, 11, hair); rect(11, 14, 8, 19, hair); rect(39, 14, 7, 15, hair); rect(35, 5, 11, 11, hair); rect(38, 7, 5, 4, trim);
+    } else if (appearance.hairStyle === "long") {
+      rect(13, 9, 32, 13, hair); rect(12, 15, 8, 34, hair); rect(39, 15, 8, 34, hair); rect(18, 12, 12, 4, trim);
+    } else if (appearance.hairStyle === "braid") {
+      rect(13, 10, 32, 12, hair); rect(12, 16, 8, 19, hair); rect(39, 16, 7, 14, hair); rect(42, 29, 6, 8, hair); rect(43, 37, 5, 8, hair); rect(44, 45, 4, 5, trim);
+    } else if (appearance.hairStyle === "bob") {
+      rect(13, 10, 32, 12, hair); rect(12, 15, 8, 26, hair); rect(39, 15, 8, 26, hair); rect(19, 12, 11, 4, trim);
+    } else {
+      rect(13, 10, 32, 12, hair); rect(12, 16, 8, 18, hair); rect(38, 13, 8, 16, hair); rect(18, 12, 10, 4, trim);
+    }
+    rect(21, 26, 4, 4, "#3b3436"); rect(34, 26, 4, 4, "#3b3436");
+    rect(23, 27, 2, 2, "#d8e1cd"); rect(34, 27, 2, 2, "#d8e1cd");
+    rect(28, 31, 3, 3, "#b77e61"); rect(25, 36, 9, 2, "#8a574f");
+    if (appearance.accessory === "glasses") {
+      rect(18, 24, 10, 8, "#403e3e"); rect(31, 24, 10, 8, "#403e3e"); rect(28, 27, 3, 2, "#403e3e");
+      rect(20, 26, 6, 4, "#78979a"); rect(33, 26, 6, 4, "#78979a");
+    }
+    if (appearance.accessory === "kerchief" || appearance.accessory === "headband") rect(14, 15, 30, 4, trim);
+    rect(4, 4, 16, 2, "rgba(235,223,183,.28)");
+  }
+
+  greetingFor(id, state) {
+    const repeat = state.loopCount > 0;
+    const lines = {
+      arthur: repeat ? "你看我的眼神像是我们已经谈过。可对我而言，这是今天第一次见面。请从本轮证据开始。" : "维修工？主机构在里面。先让钟重新转起来，我们再谈那些不该出现在图纸上的部分。",
+      beatrice: "进来时别碰最右边那根绳。它不属于六声报时。",
+      conrad: "湖今天在说两套时间。修好潮汐盘之前，我哪套都不信。",
+      dorothea: "八号房睡得还好吗？早餐在炉边，工具和登记簿都在柜台上。",
+      elias: "如果你带来的是传闻，我只能请你喝茶；如果是底片，我有显影液。",
+      florence: "先告诉我你带来了原件、抄本，还是仅仅记得一个结论。三者不能混写。",
+      ada: "这一次，你终于让我的脸、名字、房间和工作属于同一个人。",
+    };
+    return lines[id] || "他停下手里的工作，等你先开口。";
+  }
+
+  renderConversationActions(actions, onAction) {
+    const container = $("#conversation-actions");
+    container.innerHTML = "";
+    actions.forEach((action) => this.addChoice(container, action.label, () => onAction(action)));
+  }
+
+  appendMessage(speaker, text, player = false) {
+    const history = $("#conversation-history");
+    const element = document.createElement("div");
+    element.className = `message${player ? " player" : ""}`;
+    element.innerHTML = `<small>${escapeHtml(speaker)}</small>${escapeHtml(text)}`;
+    history.append(element);
+    history.scrollTop = history.scrollHeight;
+  }
+
+  setConversationPending(pending) {
+    const input = $("#conversation-input");
+    const button = $("#conversation-form button");
+    input.disabled = pending;
+    button.disabled = pending;
+    button.textContent = pending ? "思考…" : "交谈";
+  }
+
+  setConversationProvider(text) { $("#conversation-provider").textContent = text; }
+
+  openPuzzle(type, state, onComplete) {
+    const title = $("#puzzle-title");
+    const instruction = $("#puzzle-instruction");
+    const board = $("#puzzle-board");
+    const feedback = $("#puzzle-feedback");
+    board.innerHTML = "";
+    feedback.textContent = "";
+    const complete = () => {
+      feedback.textContent = "机构发出一声干净的咬合声。";
+      onComplete?.();
+      setTimeout(() => this.closeModal("puzzle-modal"), 650);
+    };
+    if (type === "master") {
+      $("#puzzle-kicker").textContent = "MASTER CLOCK / GEAR TRAIN";
+      title.textContent = "让三道红线一起朝上";
+      instruction.textContent = "拖动齿轮交换槽位；点击一个槽选中它，再按 Q / E 旋转。齿轮尺寸和校准线必须同时正确。";
+      const gears = ["small", "large", "medium"];
+      const rotations = [1, 2, 3];
+      let selected = 0;
+      let dragging = null;
+      const labels = { small: "小", medium: "中", large: "大" };
+      const render = () => {
+        board.innerHTML = `<div class="gear-grid">${gears.map((gear, index) => `<div class="gear-slot ${selected === index ? "selected" : ""}" data-index="${index}"><div class="gear" draggable="true" style="transform:rotate(${rotations[index] * 90}deg)" data-index="${index}">↑</div><small>${index + 1} 号槽 · ${labels[gear]}齿轮</small></div>`).join("")}</div><button class="puzzle-submit" id="test-master">试运行</button>`;
+        $$(".gear-slot").forEach((slot) => {
+          slot.addEventListener("click", () => { selected = Number(slot.dataset.index); render(); });
+          slot.addEventListener("dragover", (event) => event.preventDefault());
+          slot.addEventListener("drop", () => {
+            const target = Number(slot.dataset.index);
+            if (dragging === null || target === dragging) return;
+            [gears[dragging], gears[target]] = [gears[target], gears[dragging]];
+            [rotations[dragging], rotations[target]] = [rotations[target], rotations[dragging]];
+            selected = target; dragging = null; render();
+          });
+        });
+        $$(".gear").forEach((gear) => gear.addEventListener("dragstart", () => { dragging = Number(gear.dataset.index); }));
+        $("#test-master").addEventListener("click", () => {
+          if (gears.join(",") === "medium,large,small" && rotations.every((value) => value % 4 === 0)) complete();
+          else feedback.textContent = "齿轮能转，但红线没有同时经过上方的基准刻痕。";
+        });
+      };
+      this.puzzleKeyHandler = (event) => {
+        if ($("#puzzle-modal").classList.contains("hidden") || !["q", "Q", "e", "E"].includes(event.key)) return;
+        event.preventDefault();
+        rotations[selected] = (rotations[selected] + (event.key.toLowerCase() === "q" ? 3 : 1)) % 4;
+        render();
+      };
+      document.addEventListener("keydown", this.puzzleKeyHandler);
+      render();
+    } else if (type === "chapel") {
+      $("#puzzle-kicker").textContent = "CHAPEL / SIX-HAMMER ESCAPEMENT";
+      title.textContent = "找回缺失的第四拍";
+      instruction.textContent = "六锤机构少了一枚普通擒纵销。安装实物后拉绳测试；第七锤不属于这次维修。";
+      const hasPin = Boolean(state.inventory.chapel_pin);
+      board.innerHTML = `<div class="sequence-grid">${[1,2,3,4,5,6].map((n) => `<button disabled>${n === 4 ? "空槽" : `第 ${n} 锤`}</button>`).join("")}</div><button class="puzzle-submit" id="install-pin">${hasPin ? "安装擒纵销并拉绳" : "缺少擒纵销"}</button>`;
+      $("#install-pin").disabled = !hasPin;
+      $("#install-pin").addEventListener("click", complete);
+      if (!hasPin) feedback.textContent = "长椅下面似乎有一件黄铜小零件。";
+    } else if (type === "tide") {
+      $("#puzzle-kicker").textContent = "HARBOR / TIDE CLOCK";
+      title.textContent = "让刻度记住真实的水线";
+      instruction.textContent = "港外三根系船柱的新水线依次是低、中、高。点击三枚刻度环切换读数。";
+      const values = [2, 0, 1];
+      const labels = ["低", "中", "高"];
+      const render = () => {
+        board.innerHTML = `<div class="tide-grid">${values.map((value, index) => `<button class="dial-button" data-index="${index}">第 ${index + 1} 环<strong>${labels[value]}</strong></button>`).join("")}</div><button class="puzzle-submit" id="test-tide">对照三根系船柱</button>`;
+        $$(".dial-button").forEach((button) => button.addEventListener("click", () => { const i = Number(button.dataset.index); values[i] = (values[i] + 1) % 3; render(); }));
+        $("#test-tide").addEventListener("click", () => {
+          if (values.join(",") === "0,1,2") complete();
+          else feedback.textContent = "测试浮标撞上了错误的水位限位。回到港外重新读三条水线。";
+        });
+      };
+      render();
+    } else if (type === "photo") {
+      $("#puzzle-kicker").textContent = "SILVER-SALT DEVELOPMENT";
+      title.textContent = "不要让想象替乳剂作证";
+      instruction.textContent = "按伊莱亚斯给出的检查顺序处理底片：先排除重影，再建立反差，最后校正湖面反射。";
+      const correct = ["重影检查", "反差拉伸", "反射校正"];
+      const available = ["反射校正", "重影检查", "反差拉伸"];
+      const chosen = [];
+      const render = () => {
+        board.innerHTML = `<div class="sequence-grid">${available.map((label) => `<button data-label="${label}" class="${chosen.includes(label) ? "done" : ""}">${label}</button>`).join("")}</div><p>当前顺序：${chosen.join(" → ") || "尚未开始"}</p>`;
+        $$(".sequence-grid button").forEach((button) => button.addEventListener("click", () => {
+          const label = button.dataset.label;
+          if (chosen.includes(label)) return;
+          if (label !== correct[chosen.length]) {
+            chosen.splice(0);
+            feedback.textContent = "乳剂开始朝主观轮廓聚集。伊莱亚斯立刻冲掉试片：顺序错了，重新来。";
+          } else {
+            chosen.push(label);
+            feedback.textContent = chosen.length < 3 ? "这一层影像稳定了。" : "脸部与 A.R. 缩写从湖面重影下显现。";
+            if (chosen.length === 3) { render(); setTimeout(complete, 350); return; }
+          }
+          render();
+        }));
+      };
+      render();
+    } else if (type === "identity") {
+      $("#puzzle-kicker").textContent = "RETURN EXPOSURE / IDENTITY FIXING";
+      title.textContent = "让四个锚点属于同一个人";
+      instruction.textContent = "暗房不会替你补全身份。每个锚点都必须来自本轮可核验的实物或记录。";
+      const missing = describeMissingIdentityAnchors(state);
+      const all = ["姓名与职责", "住处", "面孔"];
+      board.innerHTML = `<div class="sequence-grid">${all.map((label) => `<button disabled class="${missing.some((item) => item.startsWith(label)) ? "" : "done"}">${label}<br>${missing.some((item) => item.startsWith(label)) ? "未固定" : "已固定"}</button>`).join("")}</div><button class="puzzle-submit" id="fix-identity">完成定影</button>`;
+      $("#fix-identity").disabled = missing.length > 0;
+      $("#fix-identity").addEventListener("click", complete);
+      feedback.textContent = missing.length ? `仍缺：${missing.join("；")}` : "四种来源互不替代，但现在它们指向同一个人。";
+    }
+    this.openModal("puzzle-modal");
   }
 
   renderJournal(state) {
-    const showThoughts = this.elements.thought_toggle.checked;
-    const entries = state.journal.filter((entry) => showThoughts || entry.type !== "thought");
-    const render = (entry) => `<article class="journal-entry ${escapeHtml(entry.type || "world")}"><time>${escapeHtml(formatStamp(entry.day, entry.minute))}</time><p>${escapeHtml(entry.text)}</p></article>`;
-    this.elements.journal_list.innerHTML = entries.slice(0, 18).map(render).join("") || '<div class="nearby-card empty">故事还没有开始。</div>';
-    this.elements.journal_full.innerHTML = entries.map(render).join("");
-    this.cachedJournalHead = state.journal[0]?.id;
-  }
-
-  selectTab(name) {
-    document.querySelectorAll(".sidebar-tab").forEach((button) => button.classList.toggle("active", button.dataset.tab === name));
-    document.querySelectorAll(".tab-pane").forEach((pane) => pane.classList.toggle("active", pane.id === `tab-${name}`));
-  }
-
-  regionConnections(regionId) {
-    const regionIds = new Set(this.content.regions.map((region) => region.id));
-    const region = this.content.regions.find((item) => item.id === regionId);
-    return (region?.portals || [])
-      .filter((portal) => !portal.disabled
-        && portal.target?.regionId
-        && portal.target.regionId !== regionId
-        && regionIds.has(portal.target.regionId))
-      .map((portal) => ({ regionId: portal.target.regionId, portal }));
-  }
-
-  findRegionRoute(fromRegionId, targetRegionId) {
-    if (!fromRegionId || !targetRegionId || fromRegionId === targetRegionId) return [];
-    const queue = [{ regionId: fromRegionId, legs: [] }];
-    const visited = new Set([fromRegionId]);
-    while (queue.length) {
-      const current = queue.shift();
-      for (const connection of this.regionConnections(current.regionId)) {
-        if (visited.has(connection.regionId)) continue;
-        const legs = [...current.legs, { fromRegionId: current.regionId, ...connection }];
-        if (connection.regionId === targetRegionId) return legs;
-        visited.add(connection.regionId);
-        queue.push({ regionId: connection.regionId, legs });
-      }
-    }
-    return null;
-  }
-
-  describeMapRoute(fromRegionId, targetRegionId) {
-    const direct = this.regionConnections(fromRegionId).filter((connection) => connection.regionId === targetRegionId);
-    if (direct.length) {
-      return direct.map(({ portal }) => {
-        const minutes = Math.max(0, Number(portal.minutes || 0));
-        return `${portal.label || "实际交通点"}${minutes > 0 ? ` · ${minutes} 分钟` : ""}`;
-      }).join(" / ");
-    }
-    const route = this.findRegionRoute(fromRegionId, targetRegionId);
-    if (!route?.length) return "无直达交通，当前路线未连通";
-    const intermediateIds = route.slice(0, -1).map((leg) => leg.regionId);
-    const intermediateNames = intermediateIds.map((regionId) => this.content.regions.find((region) => region.id === regionId)?.name || regionId);
-    const totalMinutes = route.reduce((sum, leg) => sum + Math.max(0, Number(leg.portal.minutes || 0)), 0);
-    return `无直达交通，需经${intermediateNames.join("、")}中转${totalMinutes > 0 ? ` · 约 ${totalMinutes} 分钟` : ""}`;
-  }
-
-  mapPoint(region, index) {
-    const fallback = { left: `${8 + (index % 3) * 31}%`, top: `${10 + Math.floor(index / 3) * 48}%` };
-    const position = region.mapPosition || MAP_POSITIONS[region.id] || fallback;
-    // Existing mapPosition values described the top-left corner of the old cards.
-    // Keep those authored coordinates useful by shifting them to the illustrated icon centre.
-    const centered = position.anchor === "center";
-    const rawX = numericPercent(position.x ?? position.left, numericPercent(fallback.left));
-    const rawY = numericPercent(position.y ?? position.top, numericPercent(fallback.top));
-    const x = clampMapPercent(rawX + (centered ? 0 : MAP_NODE_OFFSET.x), 8);
-    const y = clampMapPercent(rawY + (centered ? 0 : MAP_NODE_OFFSET.y), 12);
-    return {
-      x,
-      y,
-      svgX: x / 100 * MAP_VIEWBOX.width,
-      svgY: y / 100 * MAP_VIEWBOX.height,
-    };
-  }
-
-  mapRouteEdges() {
-    const edges = new Map();
-    this.content.regions.forEach((region) => {
-      this.regionConnections(region.id).forEach(({ regionId, portal }) => {
-        const ends = [region.id, regionId].sort();
-        const key = ends.join("--");
-        if (edges.has(key)) return;
-        const rawKind = String(portal.kind || "road").toLowerCase();
-        edges.set(key, {
-          key,
-          from: region.id,
-          to: regionId,
-          kind: MAP_ROUTE_KINDS.has(rawKind) ? rawKind : "road",
-          label: portal.label || "地区道路",
-        });
-      });
-    });
-    return [...edges.values()].sort((left, right) => left.key.localeCompare(right.key));
-  }
-
-  renderWorldMapArtwork(points) {
-    const routeMarkup = this.mapRouteEdges().map((edge, index) => {
-      const from = points.get(edge.from);
-      const to = points.get(edge.to);
-      if (!from || !to) return "";
-      const dx = to.svgX - from.svgX;
-      const dy = to.svgY - from.svgY;
-      const length = Math.max(1, Math.hypot(dx, dy));
-      const bend = (index % 2 === 0 ? 1 : -1) * Math.min(18, length * .055);
-      const controlX = (from.svgX + to.svgX) / 2 - dy / length * bend;
-      const controlY = (from.svgY + to.svgY) / 2 + dx / length * bend;
-      const path = `M ${from.svgX.toFixed(1)} ${from.svgY.toFixed(1)} Q ${controlX.toFixed(1)} ${controlY.toFixed(1)} ${to.svgX.toFixed(1)} ${to.svgY.toFixed(1)}`;
-      return `<path class="world-route__shadow" d="${path}"></path><path class="world-route world-route--${edge.kind}" d="${path}" data-route="${escapeHtml(edge.key)}"><title>${escapeHtml(edge.label)}</title></path>`;
-    }).join("");
-
-    return `<svg class="world-map-art" viewBox="0 0 ${MAP_VIEWBOX.width} ${MAP_VIEWBOX.height}" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <defs>
-        <pattern id="map-water-ripples" width="48" height="28" patternUnits="userSpaceOnUse">
-          <path d="M4 14h18m8 7h12" class="map-art__ripple"></path>
-        </pattern>
-        <pattern id="map-land-speckles" width="32" height="32" patternUnits="userSpaceOnUse">
-          <rect x="7" y="8" width="3" height="3" class="map-art__speck"></rect>
-          <rect x="24" y="23" width="2" height="2" class="map-art__speck"></rect>
-        </pattern>
-      </defs>
-      <rect width="960" height="540" class="map-art__water"></rect>
-      <rect width="960" height="540" fill="url(#map-water-ripples)" opacity=".55"></rect>
-      <path class="map-art__land-shadow" d="M66 124L92 90l88-30 130 9 75 35 96-13 75-56 118-9 104 35 52 73 79 42 30 84-17 82-79 55-69 65-131 27-121-17-99 25-116-4-99-42-93-22-46-71 13-77-29-75z"></path>
-      <path class="map-art__land" d="M58 112L91 78l88-27 129 10 78 34 94-12 72-53 119-8 103 34 49 70 82 42 27 82-17 78-81 52-64 63-130 25-120-17-100 24-112-5-98-39-94-22-42-67 13-76-31-72z"></path>
-      <path class="map-art__coast" d="M58 112L91 78l88-27 129 10 78 34 94-12 72-53 119-8 103 34 49 70 82 42 27 82-17 78-81 52-64 63-130 25-120-17-100 24-112-5-98-39-94-22-42-67 13-76-31-72z"></path>
-      <path class="map-art__river-shadow" d="M695 42c-22 65-91 88-96 145-5 54 48 74 8 119-45 51-150 18-205 67-32 28-52 61-85 96"></path>
-      <path class="map-art__river" d="M695 42c-22 65-91 88-96 145-5 54 48 74 8 119-45 51-150 18-205 67-32 28-52 61-85 96"></path>
-
-      <g class="map-art__mansion" transform="translate(132 55)">
-        <path d="M4 45h222v91H4z" class="map-art__garden"></path>
-        <path d="M10 54h60v12H10zm148 0h60v12h-60zM10 112h72v12H10zm136 0h72v12h-72z" class="map-art__hedge"></path>
-        <ellipse cx="38" cy="91" rx="25" ry="12" class="map-art__pond"></ellipse>
-        <path d="M90 40h49v80H90zM72 78h86v12H72z" class="map-art__garden-path"></path>
-      </g>
-      <g class="map-art__snow" transform="translate(555 17)">
-        <path d="M0 142L69 23l31 50 47-70 91 139z" class="map-art__mountain-back"></path>
-        <path d="M45 142L112 40l32 47 29-48 65 103z" class="map-art__mountain"></path>
-        <path d="M69 23l31 50-22-8-13 18-10-21zm78-20l35 55-21-12-16 18-14-21z" class="map-art__snowcap"></path>
-        <path d="M18 134h203" class="map-art__ice-line"></path>
-      </g>
-      <g class="map-art__capital" transform="translate(355 171)">
-        <path d="M12 31h221v142H12z" class="map-art__capital-ground"></path>
-        <path d="M12 82h221M112 31v142" class="map-art__capital-road"></path>
-        <path d="M2 44h242v9H2zm0 110h242v9H2z" class="map-art__capital-wall"></path>
-        <path d="M10 121h225" class="map-art__capital-canal"></path>
-      </g>
-      <g class="map-art__farm" transform="translate(68 298)">
-        <path d="M3 10h275v159H3z" class="map-art__farm-ground"></path>
-        <path d="M16 23h103v54H16z" class="map-art__field map-art__field--wheat"></path>
-        <path d="M151 23h108v54H151z" class="map-art__field map-art__field--green"></path>
-        <path d="M16 101h103v50H16z" class="map-art__field map-art__field--earth"></path>
-        <path d="M151 101h108v50H151z" class="map-art__field map-art__field--gold"></path>
-        <path d="M134 8v153M4 88h273" class="map-art__farm-road"></path>
-      </g>
-      <g class="map-art__desert" transform="translate(606 310)">
-        <path d="M0 51q54-68 110-3 55-71 142 6v111H0z" class="map-art__sand"></path>
-        <path d="M14 93q38-28 81 0m71 24q34-29 73 0" class="map-art__dune"></path>
-        <ellipse cx="79" cy="132" rx="47" ry="19" class="map-art__oasis"></ellipse>
-        <path d="M180 57h37v67h-37zm-12 13h61" class="map-art__ruin"></path>
-      </g>
-
-      <g class="world-route-layer">${routeMarkup}</g>
-      <rect width="960" height="540" fill="url(#map-land-speckles)" opacity=".3"></rect>
-      <g class="map-art__compass" transform="translate(876 68)">
-        <path d="M0-31L8-8 31 0 8 8 0 31-8 8-31 0-8-8z"></path>
-        <path d="M0-23L5-5 0 0-5-5z" class="map-art__compass-north"></path>
-        <text x="0" y="-38">N</text>
-      </g>
-    </svg>
-    <div class="map-route-key" aria-label="地图线路图例">
-      <span><i class="route-swatch route-swatch--road"></i>步行</span>
-      <span><i class="route-swatch route-swatch--carriage"></i>马车</span>
-      <span><i class="route-swatch route-swatch--lift"></i>缆车</span>
-      <span><i class="route-swatch route-swatch--caravan"></i>商队</span>
-      <span><i class="route-swatch route-swatch--trail"></i>古道</span>
-    </div>`;
-  }
-
-  mapRegionIcon(regionId) {
-    if (regionId === "capital") return `<svg viewBox="0 0 96 76" aria-hidden="true">
-      <path class="map-icon__shadow" d="M7 62h82v8H7z"></path><path class="map-icon__wall" d="M10 31h76v34H10z"></path>
-      <path class="map-icon__roof" d="M7 31L20 14l13 17zm56 0l13-17 13 17zM29 28L48 7l19 21z"></path>
-      <path class="map-icon__tower" d="M12 29h17v34H12zm55 0h17v34H67zM33 25h30v38H33z"></path>
-      <path class="map-icon__door" d="M42 48h12v15H42z"></path><path class="map-icon__water" d="M4 67h88v5H4z"></path>
-    </svg>`;
-    if (regionId === "farm") return `<svg viewBox="0 0 96 76" aria-hidden="true">
-      <path class="map-icon__shadow" d="M4 64h88v7H4z"></path><path class="map-icon__field" d="M4 41h88v25H4z"></path>
-      <path class="map-icon__furrow" d="M7 48h84M7 56h84M7 64h84"></path><path class="map-icon__barn" d="M13 31h31v31H13z"></path>
-      <path class="map-icon__roof" d="M8 32l20-17 21 17z"></path><path class="map-icon__door" d="M22 46h13v16H22z"></path>
-      <path class="map-icon__mill" d="M67 25v39M53 38h29M58 18l18 39M78 18L57 57"></path><circle class="map-icon__hub" cx="67" cy="38" r="4"></circle>
-    </svg>`;
-    if (regionId === "mansion") return `<svg viewBox="0 0 96 76" aria-hidden="true">
-      <path class="map-icon__shadow" d="M5 64h86v7H5z"></path><path class="map-icon__hedge" d="M3 52h21v14H3zm69 0h21v14H72z"></path>
-      <path class="map-icon__wall" d="M20 28h57v37H20z"></path><path class="map-icon__roof" d="M14 30L48 8l35 22z"></path>
-      <path class="map-icon__window" d="M28 36h10v11H28zm30 0h10v11H58z"></path><path class="map-icon__door" d="M43 46h12v19H43z"></path>
-      <ellipse class="map-icon__water" cx="13" cy="66" rx="11" ry="4"></ellipse>
-    </svg>`;
-    if (regionId === "snow") return `<svg viewBox="0 0 96 76" aria-hidden="true">
-      <path class="map-icon__shadow" d="M4 65h88v6H4z"></path><path class="map-icon__mountain-back" d="M3 62L31 17l20 45z"></path>
-      <path class="map-icon__mountain" d="M26 64L59 7l34 57z"></path><path class="map-icon__snow" d="M31 17l8 13-9-3-7 7zm28-10l13 23-12-6-9 10-6-4z"></path>
-      <path class="map-icon__cable" d="M6 22l82 20"></path><path class="map-icon__lift" d="M21 25h14v10H21zm43 11h14v10H64z"></path>
-    </svg>`;
-    if (regionId === "desert") return `<svg viewBox="0 0 96 76" aria-hidden="true">
-      <path class="map-icon__shadow" d="M3 65h90v7H3z"></path><path class="map-icon__sand" d="M3 49q19-23 42 0 25-25 48 0v18H3z"></path>
-      <ellipse class="map-icon__water" cx="31" cy="59" rx="20" ry="7"></ellipse><path class="map-icon__palm" d="M27 55l7-32m0 2l-15-5m15 5l13-9m-13 9L23 12m11 13l17 4"></path>
-      <path class="map-icon__ruin" d="M61 24h23v40H61zM57 24h31v7H57zM66 31v33m13-33v33"></path>
-    </svg>`;
-    return `<svg viewBox="0 0 96 76" aria-hidden="true"><path class="map-icon__wall" d="M15 20h66v45H15z"></path></svg>`;
-  }
-
-  showMap() {
-    if (!this.state || this.transitionLocked) return;
-    const observer = this.state.mode === "observer";
-    const map = this.elements.world_map;
-    const points = new Map(this.content.regions.map((region, index) => [region.id, this.mapPoint(region, index)]));
-    map.innerHTML = this.renderWorldMapArtwork(points);
-    this.content.regions.forEach((region, index) => {
-      const point = points.get(region.id) || this.mapPoint(region, index);
-      const current = region.id === this.state.regionId;
-      const currentPlaceId = this.state.placeId || this.state.regionId;
-      const currentInterior = current && currentPlaceId !== this.state.regionId;
-      const entry = document.createElement(observer ? "button" : "article");
-      entry.className = `map-region map-region--${region.id}${current ? " current" : ""}${observer ? "" : " read-only"}${point.y > 58 ? " map-region--south" : ""}`;
-      entry.style.left = `${point.x}%`;
-      entry.style.top = `${point.y}%`;
-      entry.style.setProperty("--region-color", region.mapColor || region.palette?.accent || "#66596a");
-      if (current) entry.setAttribute("aria-current", "location");
-      if (observer) {
-        entry.type = "button";
-        entry.disabled = current && !currentInterior;
-      } else {
-        entry.tabIndex = 0;
-        entry.setAttribute("role", "group");
-      }
-      const population = Object.values(this.state.npcs || {}).filter((npcState) => npcState?.regionId === region.id).length;
-      const currentLocation = current ? this.describeLocation(this.state.regionId, this.state.placeId) : null;
-      const routeHint = this.describeMapRoute(this.state.regionId, region.id);
-      const stateLabel = observer
-        ? current
-          ? currentInterior
-            ? `正在观察${currentLocation?.placeName || "室内"}；点击返回地区室外`
-            : "当前观察镜头"
-          : "点击切换观察镜头"
-        : current
-          ? `当前所在${currentLocation?.placeName ? `：${currentLocation.placeName}` : ""}`
-          : routeHint;
-      const subtitle = region.subtitle || region.description || "";
-      entry.setAttribute("aria-label", `${region.name}，${subtitle}，${population} 位居民，${stateLabel}`);
-      entry.innerHTML = `<span class="map-region__icon">${this.mapRegionIcon(region.id)}</span>
-        <span class="map-region__label"><strong>${escapeHtml(region.name)}</strong><span>${escapeHtml(subtitle)}</span></span>
-        <span class="map-region__population" aria-hidden="true">${population}</span>
-        <small class="map-region__detail">${population} 位居民<br>${escapeHtml(stateLabel)}</small>`;
-      if (observer && (!current || currentInterior)) entry.addEventListener("click", () => this.callbacks.onTravel?.(region.id));
-      map.appendChild(entry);
-    });
-    this.elements.map_note.textContent = observer
-      ? "点击地图地标可切换观察镜头；在室内时点击当前地区可返回室外。切换不消耗游戏时间，也不会被居民察觉。"
-      : "M 只用于查看路线，不能直接传送。将指针移到地点上或用 Tab 聚焦，即可查看从当前位置出发的交通方式与时间。";
-    this.openModal("map-modal");
-  }
-
-  showJournal() {
-    if (this.transitionLocked) return;
-    if (this.state) this.renderJournal(this.state);
+    $("#journal-full").innerHTML = [...state.journal].reverse().map((entry) => `<article class="journal-entry"><time>${escapeHtml(entry.stamp)}<br>LOOP ${String(entry.loop).padStart(2, "0")}</time><p>${escapeHtml(entry.text)}</p></article>`).join("") || "还没有留下记录。";
     this.openModal("journal-modal");
   }
 
-  showLocation(region, place = null) {
-    if (!region) return;
-    const resolvedPlace = typeof place === "string" ? this.findPlace(place) : place;
-    const location = this.describeLocation(region.id, resolvedPlace?.id);
-    this.elements.region_name.textContent = location.title;
-    this.elements.region_subtitle.textContent = resolvedPlace?.subtitle || resolvedPlace?.description || region.subtitle || region.description || "";
-    const banner = this.elements.region_banner;
-    banner.classList.remove("hidden");
-    banner.style.animation = "none";
-    requestAnimationFrame(() => { banner.style.animation = ""; });
-    window.setTimeout(() => banner.classList.add("hidden"), 2900);
+  renderArchive(savedState) {
+    const endings = JSON.parse(localStorage.getItem("time-echo-endings") || "[]");
+    const loops = Number(savedState?.loopCount || 0) + (savedState ? 1 : 0);
+    $("#archive-content").innerHTML = `<article class="journal-entry"><time>LOOPS</time><p>已经进入 ${loops} 个星期六清晨。</p></article>${endings.length ? endings.map((ending) => `<article class="journal-entry"><time>${escapeHtml(ending.stamp)}</time><p>${ending.id === "true" ? "七人继续：正确的星期日" : "六人终止：失去第七人的星期日"}</p></article>`).join("") : '<article class="journal-entry"><time>ENDING</time><p>还没有任何星期日被完整见证。</p></article>'}`;
+    this.openModal("archive-modal");
   }
 
-  showRegion(region) {
-    this.showLocation(region, null);
+  playReset(loopCount, onDone) {
+    const layer = $("#reset-cinematic");
+    const canvas = $("#reset-canvas");
+    const ctx = canvas.getContext("2d");
+    layer.classList.remove("hidden");
+    layer.classList.add("flash");
+    $("#reset-line-a").textContent = "THE BELL ATTEMPTS A SEVENTH STRIKE";
+    $("#reset-line-b").textContent = "SATURDAY · 06:00";
+    const start = performance.now();
+    let raf = 0;
+    const draw = (now) => {
+      const t = (now - start) / 1000;
+      ctx.fillStyle = "#071315"; ctx.fillRect(0, 0, 768, 480);
+      ctx.fillStyle = "#10272b"; ctx.fillRect(0, 250, 768, 230);
+      ctx.fillStyle = "#142326"; ctx.beginPath(); ctx.moveTo(0,250); ctx.lineTo(130,120); ctx.lineTo(260,246); ctx.lineTo(390,145); ctx.lineTo(530,248); ctx.lineTo(650,112); ctx.lineTo(768,240); ctx.fill();
+      const lineWidth = Math.min(768, Math.max(0, (t - .5) * 260));
+      ctx.fillStyle = `rgba(226,237,221,${Math.min(.9, Math.max(0, t - .4) * .32)})`;
+      ctx.fillRect((768 - lineWidth) / 2, 286, lineWidth, Math.max(2, (t - 1.4) * 120));
+      if (t < 4) raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      cancelAnimationFrame(raf);
+      layer.classList.add("hidden");
+      layer.classList.remove("flash");
+      document.removeEventListener("keydown", skip);
+      onDone?.();
+    };
+    const skip = (event) => { if (event.key === "Enter" && loopCount > 0) finish(); };
+    document.addEventListener("keydown", skip);
+    setTimeout(finish, loopCount > 0 ? 4200 : 5600);
   }
 
-  setInteraction(interaction = null) {
-    if (this.state?.mode === "observer") {
-      this.elements.interaction_hint.classList.add("hidden");
-      return;
-    }
-    const visible = Boolean(interaction);
-    this.elements.interaction_hint.classList.toggle("hidden", !visible);
-    if (!interaction) {
-      this.elements.interaction_hint.removeAttribute("data-kind");
-      return;
-    }
-    const target = interaction.name || interaction.label || interaction.profile?.name || "这里";
-    const fallback = {
-      npc: `与 ${target} 交谈`,
-      landmark: `调查 ${target}`,
-      door: `进入 ${target}`,
-      portal: `前往 ${target}`,
-      transport: `乘坐 ${target}`,
-    }[interaction.kind] || `查看 ${target}`;
-    this.elements.interaction_text.textContent = interaction.prompt || fallback;
-    this.elements.interaction_hint.dataset.kind = interaction.kind || "interaction";
+  showEnding(id) {
+    const trueEnding = id === "true";
+    $("#ending-modal").classList.toggle("true", trueEnding);
+    $("#ending-kicker").textContent = "SUNDAY · 06:01";
+    $("#ending-title").textContent = trueEnding ? "七声之后，仍有七个人" : "一个少了名字的星期日";
+    $("#ending-text").innerHTML = trueEnding
+      ? "金色晨光从正确的方向越过山脊，房屋的影子第一次背向湖面。<br>礼拜堂传来七声完整钟响。渡船抵岸时，艾达站在六位居民之间；没有人需要被删除，时间也没有倒退。它只是继续。"
+      : "渡船真的抵达了。六位居民在码头向你告别，没有人记得还应有第七个人。<br>你的日志仍写着 Ada Rowan，但定影照片已经变成空白。地下室第七格熄灭，用一个人的缺席换来了星期日。";
+    $("#ending-modal").classList.remove("hidden");
   }
 
-  openConversation(npc, npcState, greeting, storyTopics = []) {
-    this.currentNpc = { profile: npc, state: npcState };
-    this.elements.conversation_portrait.style.setProperty("--npc-color", npc.color || "#8b708e");
-    this.elements.conversation_portrait.style.setProperty("--hair-color", npc.hairColor || "#4d3632");
-    this.elements.conversation_portrait.style.setProperty("--skin-color", npc.skinColor || PORTRAIT_SKINS[npc.id] || "#efbf87");
-    this.elements.conversation_portrait.dataset.portrait = npc.id;
-    this.elements.conversation_role.textContent = `${npc.role} · ${npc.traits?.slice(0, 2).join(" / ") || "旅人"}`;
-    this.elements.conversation_name.textContent = npc.name;
-    this.elements.conversation_mood.textContent = `${npcState.mood} · 关系 ${Math.round(npcState.relationship)}`;
-    this.elements.conversation_history.innerHTML = "";
-    this.addSpeech(greeting || npc.intro || `“你是刚来的旅行者吧？我是${npc.name}。”`, "npc");
-    const intents = [
-      ["greet", "聊聊近况"], ["help", "我能帮什么？"], ["rumor", "询问传闻"], ["secret", "追问秘密"], ["challenge", "追问他的理由"],
-    ];
-    const topics = Array.isArray(storyTopics)
-      ? storyTopics.filter((topic) => topic?.label && topic?.message)
-      : [];
-    this.elements.conversation_actions.innerHTML = [
-      ...intents.map(([id, label]) => `<button type="button" data-intent="${id}">${label}</button>`),
-      ...topics.map((topic, index) => `<button type="button" data-story-topic="${index}">${escapeHtml(topic.label)}</button>`),
-    ].join("");
-    this.elements.conversation_actions.querySelectorAll("[data-intent]").forEach((button) => {
-      button.addEventListener("click", () => this.callbacks.onTalk?.(button.textContent, button.dataset.intent));
-    });
-    this.elements.conversation_actions.querySelectorAll("[data-story-topic]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const topic = topics[Number(button.dataset.storyTopic)];
-        if (topic) this.callbacks.onTalk?.(topic.message, topic.intent || "custom");
-      });
-    });
-    this.elements.conversation_provider.textContent = "他会根据性格与最近发生的事回应。";
-    this.openModal("conversation-modal");
-    window.setTimeout(() => this.elements.conversation_input.focus(), 80);
-  }
-
-  showNpcObservation(npc, npcState) {
-    const location = this.describeLocation(npcState.regionId, npcState.placeId);
-    const current = this.sameLocation(npcState, this.state);
-    this.elements.observer_portrait.style.setProperty("--npc-color", npc.color || "#8b708e");
-    this.elements.observer_portrait.style.setProperty("--hair-color", npc.hairColor || "#4d3632");
-    this.elements.observer_portrait.style.setProperty("--skin-color", npc.skinColor || PORTRAIT_SKINS[npc.id] || "#efbf87");
-    this.elements.observer_portrait.dataset.portrait = npc.id;
-    this.elements.observer_role.textContent = `${npc.role} · ${npc.traits?.slice(0, 3).join(" / ") || "居民"}`;
-    this.elements.observer_name.textContent = npc.name;
-    this.elements.observer_status.textContent = `${current ? "◉ 当前镜头 · " : "◎ 其他地点 · "}${location.title} · ${npcState.activity} · ${npcState.mood}`;
-    this.elements.observer_goal.textContent = npc.goal || "平安度过坠星之前的日子。";
-    this.elements.observer_reflection.textContent = npcState.reflection || "尚未形成明确反思。";
-    const memories = [...(npcState.coreMemories || []), ...(npcState.memories || [])]
-      .filter((memory, index, list) => list.findIndex((item) => (item.text || item) === (memory.text || memory)) === index)
-      .slice(0, 16);
-    this.elements.observer_memories.innerHTML = memories.length
-      ? memories.map((memory) => `<article class="observer-memory"><time>${escapeHtml(formatStamp(memory.day || this.state.day, memory.minute || 0))} · ${escapeHtml(memory.type || "记忆")}</time><p>${escapeHtml(memory.text || memory)}</p></article>`).join("")
-      : '<div class="nearby-card empty">还没有形成近期记忆。</div>';
-    const knowledge = Array.isArray(npc.knowledge) ? npc.knowledge : Object.values(npc.knowledge || {});
-    this.elements.observer_knowledge.innerHTML = knowledge.map((fact) => `<span>${escapeHtml(typeof fact === "string" ? fact : fact?.text || JSON.stringify(fact))}</span>`).join("") || "<span>没有公开知识</span>";
-    this.openModal("observer-modal");
-  }
-
-  addSpeech(text, speaker = "npc") {
-    const bubble = document.createElement("div");
-    bubble.className = `speech ${speaker}`;
-    bubble.textContent = text;
-    this.elements.conversation_history.appendChild(bubble);
-    this.elements.conversation_history.scrollTop = this.elements.conversation_history.scrollHeight;
-    return bubble;
-  }
-
-  setConversationBusy(busy) {
-    this.elements.conversation_input.disabled = busy;
-    this.elements.conversation_form.querySelector("button").disabled = busy;
-    this.elements.conversation_actions.querySelectorAll("button").forEach((button) => { button.disabled = busy; });
-    const existing = this.elements.conversation_history.querySelector("[data-thinking]");
-    if (busy && !existing) {
-      const bubble = this.addSpeech("正在从记忆中组织想法……", "system");
-      bubble.dataset.thinking = "true";
-    } else if (!busy) existing?.remove();
-  }
-
-  setConversationProvider(provider, detail = "") {
-    const remote = provider && !["local", "local-rules", "rules"].includes(provider);
-    this.elements.conversation_provider.textContent = remote ? `深度思考已启用${detail ? ` · ${detail}` : ""}` : `本地心智${detail ? ` · ${detail}` : ""}`;
-  }
-
-  showEnding(ending, state) {
-    this.elements.ending_glyph.textContent = ending.glyph || "✦";
-    this.elements.ending_title.textContent = ending.title;
-    this.elements.ending_subtitle.textContent = ending.subtitle || "一条世界线就此被记住。";
-    const epilogue = Array.isArray(ending.epilogue) ? ending.epilogue.join("\n\n") : ending.epilogue;
-    this.elements.ending_epilogue.innerHTML = escapeHtml(epilogue || "").replaceAll("\n", "<br>");
-    const topMetrics = Object.entries(state.metrics).sort((a, b) => b[1] - a[1]).slice(0, 3);
-    const observerSummary = [
-      `<span>社会进程结算 ${state.statistics.observedChoices || 0} 次</span>`,
-      `<span>居民日常行动 ${state.statistics.npcActions || 0} 次</span>`,
-      `<span>观察切换 ${state.statistics.observerSwitches || 0} 次</span>`,
-    ];
-    const playerSummary = [
-      `<span>交谈 ${state.statistics.conversations} 次</span>`,
-      `<span>影响 ${state.statistics.influences || 0} 次</span>`,
-    ];
-    this.elements.ending_summary.innerHTML = [
-      ...topMetrics.map(([key, value]) => `<span>${METRIC_META[key]?.label || key} ${Math.round(value)}</span>`),
-      ...(state.mode === "observer" ? observerSummary : playerSummary),
-    ].join("");
-    this.openModal("ending-modal");
-  }
-
-  showEndingGallery() {
-    const unlocked = this.callbacks.getUnlockedEndings?.() || [];
-    this.elements.ending_gallery.innerHTML = (this.content.endings || []).map((ending) => {
-      const found = unlocked.includes(ending.id);
-      return `<article class="ending-card ${found ? "" : "locked"}"><span class="gallery-glyph">${found ? escapeHtml(ending.glyph || "✦") : "?"}</span><h3>${found ? escapeHtml(ending.title) : "尚未见证"}</h3><p>${found ? escapeHtml(ending.subtitle || ending.hint || "这条世界线已被记录。") : escapeHtml(ending.hint || "尝试让世界走向不同的平衡。")}</p></article>`;
-    }).join("");
-    this.openModal("chronicles-modal");
-  }
-
-  updateAiStatus(status) {
-    const configured = Boolean(status?.configured);
-    this.elements.ai_status_dot.className = `status-dot ${configured ? "online" : "offline"}`;
-    this.elements.ai_status_label.textContent = configured ? "深度思考可以使用" : "本地心智正在运行";
-    this.elements.ai_status_detail.textContent = configured ? "对话与每日计划会更加细致" : "居民会按照性格、记忆与局势生活";
-    this.elements.llm_toggle.disabled = !configured;
-    if (!configured) this.elements.llm_toggle.checked = false;
-  }
-
-  setLlmEnabled(enabled) { this.elements.llm_toggle.checked = Boolean(enabled) && !this.elements.llm_toggle.disabled; }
-
-  setSoundEnabled(enabled) {
-    this.elements.sound_button.textContent = enabled ? "♪" : "×";
-    this.elements.sound_button.title = enabled ? "关闭声音" : "开启声音";
-  }
-
-  flashTravel(callback) {
-    this.elements.fade_layer.classList.add("active");
-    window.setTimeout(() => {
-      callback?.();
-      window.setTimeout(() => this.elements.fade_layer.classList.remove("active"), 80);
-    }, 260);
-  }
-
-  toast(message, type = "info") {
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.style.setProperty("--toast-color", type === "error" ? "#d66d6d" : type === "success" ? "#7fc79a" : "#e0ae60");
-    toast.textContent = message;
-    this.elements.toast_stack.appendChild(toast);
-    this.elements.aria_status.textContent = message;
-    window.setTimeout(() => toast.remove(), 4300);
-  }
-
-  openModal(id) {
-    document.getElementById(id)?.classList.remove("hidden");
-    this.callbacks.onModalChange?.(true, id);
-  }
-
-  closeModal(id, force = false) {
-    document.getElementById(id)?.classList.add("hidden");
-    const anyOpen = [...document.querySelectorAll(".modal-layer")].some((modal) => !modal.classList.contains("hidden"));
-    this.callbacks.onModalChange?.(anyOpen, id);
-  }
-
-  closeAllModals(force = false) {
-    document.querySelectorAll(".modal-layer").forEach((modal) => {
-      modal.classList.add("hidden");
-    });
-    this.callbacks.onModalChange?.(false, "all");
-  }
-
-  closeTopModal() {
-    const open = [...document.querySelectorAll(".modal-layer:not(.hidden)")].pop();
-    if (open) this.closeModal(open.id);
+  notify(text) {
+    this.inspect("维修日志更新", text);
   }
 }
+
+export default GameUI;

@@ -5,6 +5,7 @@ const SUPPORTED_INTENTS = new Set([
   "secret",
   "challenge",
   "story",
+  "guardian_vow",
   "custom",
 ]);
 
@@ -393,8 +394,11 @@ function publicNpcProfile(npc, npcState, context) {
     home: npc?.home ?? npc?.area ?? npc?.map,
     traits: npc?.traits ?? npc?.personality,
     goal: npc?.goal,
+    voice: npc?.voice,
+    concern: npc?.concern,
     knowledge: npc?.knowledge,
     allowed_actions: npc?.allowedActions,
+    guardian_vow: context.guardianVow,
     secretTrust: context.secretThreshold,
     relationship: context.relationship,
     conversation_intent: context.intent,
@@ -402,14 +406,16 @@ function publicNpcProfile(npc, npcState, context) {
     current_state: {
       mood: npcState?.mood,
       status: npcState?.status,
-      location: npcState?.location ?? npcState?.area,
-      action: npcState?.action ?? npcState?.currentAction,
+      region_id: npcState?.regionId,
+      place_id: npcState?.placeId,
+      activity: npcState?.activity,
+      action_id: npcState?.actionId,
     },
   };
   if (includeSecrets) {
     profile.secret = npc?.secret ?? npc?.secrets ?? context.secret;
   }
-  return safeTransport(profile, { includeSecrets });
+  return safeTransport(profile, { includeSecrets, maxDepth: 7, maxArray: 40, maxKeys: 80 });
 }
 
 function publicWorldState(worldState, context) {
@@ -421,6 +427,9 @@ function publicWorldState(worldState, context) {
       relationship: context.relationship,
       lowest_metric: context.lowestMetric,
       active_flags: context.flags,
+      epistemic_mode: context.guardianVow?.dialogueMode || null,
+      shared_current_loop_evidence: context.guardianVow?.sharedCurrentLoopEvidence || [],
+      player_remembered_only: Boolean(context.guardianVow?.rememberedByPlayerOnly),
     },
   };
 }
@@ -550,6 +559,9 @@ export class AIService {
       memories,
       lowestMetric: lowestWorldMetric(worldState),
       flags: collectEventFlags(worldState),
+      guardianVow: npc?.guardianVow && typeof npc.guardianVow === "object"
+        ? safeTransport(npc.guardianVow, { includeSecrets: false, maxDepth: 6, maxArray: 40 })
+        : null,
     };
   }
 
@@ -578,6 +590,130 @@ export class AIService {
     const fact = relevantFact(facts, context.playerMessage, seed);
     const anchor = flagClause || metricClause || fact || `我还在设法${goal}`;
     const playerRequestsHelp = /帮帮我|帮我|救我|请你|能不能帮|需要你|help me/i.test(context.playerMessage);
+
+    // Time Echo has a deliberately narrow epistemic boundary. The local fallback
+    // should sound like a working resident answering at their bench, not like a
+    // generic fantasy narrator. Only `facts` above are visible to this branch;
+    // persistent player knowledge and engine flags are never smuggled into speech.
+    if (["arthur", "beatrice", "conrad", "dorothea", "elias", "florence", "ada"].includes(String(npc?.id))) {
+      const message = context.playerMessage;
+      const asksIdentity = /你是谁|叫什么|身份|工作|做什么|who are you/i.test(message);
+      const claimsForeknowledge = /上一轮|上次|循环|重置|艾达|ada|七号房|第七个人/i.test(message)
+        && !facts.some((item) => /艾达|ada|七号房|第七个人/i.test(item));
+      const asksProof = /证据|证明|为什么相信|依据|怎么知道|proof|evidence/i.test(message);
+      const specific = {
+        arthur: {
+          identity: "亚瑟·默瑟，市政管理员。广场主钟和它造成的后果都由我签字负责。",
+          foreknowledge: "你说得很具体，但具体不等于发生过。把本轮能检查的记录或接口带来，我们再谈。",
+          proof: "程序不是为了挡住你，是为了让决定有责任人。先修钟、读原始记录，再确认该由谁动手。",
+          default: "先说你实际检查了哪一部分。齿轮、记录和地下接口是三件不同的事，别混在一句话里。",
+        },
+        beatrice: {
+          identity: "比阿特丽斯·黑尔。我照管礼拜堂的六声钟，也负责阻止不该落下的钟锤。",
+          foreknowledge: "你像是听过那一声，可今天它还没有响。若你要我承认第七锤，请带来它在本轮留下的记录。",
+          proof: "一声钟落下就收不回来。我要看到终止记录和真正的校准器，不会凭你的确信替别人作决定。",
+          default: "六声报时，第七声结束一项记录。你现在问的是哪一声？",
+        },
+        conrad: {
+          identity: "康拉德·沃斯。渡船、灯塔和退潮维护线都归我看。",
+          foreknowledge: "你可以知道潮会怎么走，但不能假装我们已经一起测过。去看水线，带着本轮的读数回来。",
+          proof: "航路要能复走。镜片、安装图和实际视线三样对得上，我才会扳光路控制器。",
+          default: "别问湖想要什么。看风、看水线，再告诉我你要把光送到哪里。",
+        },
+        dorothea: {
+          identity: "多萝西娅·维尔，湖畔旅店的主人。早餐、钥匙和每晚有没有人回来，都是我的事。",
+          foreknowledge: "这个名字让我不舒服，但不舒服不是记忆。若真有那间房，请带一件属于它的东西给我看。",
+          proof: "柜台上的登记簿可以先看。纸被挖走和我想不起一个人，是两种证据，也可能是同一件事。",
+          default: "先坐一会儿也行。你若是问客房，就把房号和手里的东西一起说清楚。",
+        },
+        elias: {
+          identity: "伊莱亚斯·奎因，摄影师。我修不了记忆，但我能检查乳剂有没有撒谎。",
+          foreknowledge: "一个名字会让人主动在噪点里找脸。我不这么显影。给我底片，我们按重影、反差、反射一步步来。",
+          proof: "照片也会骗人，只是它撒谎的方式可以复现。原片、试片和处理顺序都在，结论才算数。",
+          default: "说得再像一张照片也不是照片。你带来胶片了吗？",
+        },
+        florence: {
+          identity: "弗洛伦斯·雷恩，市政档案管理员。我保管来源，不替来源补写它没说过的话。",
+          foreknowledge: "你给了结论，没有给出处。请把它标成‘玩家跨轮记忆’，不要标成我们本轮共同核验的事实。",
+          proof: "至少两个独立来源，最好再有一件实物或影像。原件、抄本和推断必须分栏。",
+          default: "先告诉我这是原件、抄本、推断，还是你自己的记忆。分类正确，我们才有下一步。",
+        },
+        ada: {
+          identity: "艾达·罗文，中央校准员，第七见证人。你把四个身份锚点放在一起之后，这句话才完整。",
+          foreknowledge: "你能提前记住我，不代表镇里的人也能。让他们在本轮看见证据，别用你的记忆替他们同意。",
+          proof: "姓名、住处、职责、面孔。少一个都可能只是在给空白相纸讲故事。",
+          default: "我不是暗房制造出的幽灵。我有房间、有工作，也曾每天和他们一起吃早餐。",
+        },
+      }[npc.id];
+      let reply = specific.default;
+      if (asksIdentity) reply = specific.identity;
+      else if (claimsForeknowledge) reply = specific.foreknowledge;
+      else if (asksProof) reply = specific.proof;
+      else if (fact) reply = `${fact}。${specific.default}`;
+      return {
+        reply: ensureSentence(reply).slice(0, 1200),
+        action: "continue_conversation",
+        reason: `${npcName}只使用本轮可访问的事实，并依照其职业判断回答。`,
+        memory: `${npcName}记得玩家在本轮问过：“${String(message).slice(0, 100)}”`,
+        provider: "local-rules",
+      };
+    }
+
+    if (context.intent === "guardian_vow" && context.guardianVow) {
+      const guardian = context.guardianVow;
+      const allowedIds = new Set((npc?.allowedActions || []).map((item) => String(item?.id || "")));
+      const pickAction = (...ids) => ids.find((id) => allowedIds.has(id)) || "continue_conversation";
+      const id = guardian.id;
+      const missing = (guardian.missingEvidence || []).map((item) => item.label).filter(Boolean);
+      let action = "continue_conversation";
+      let reply = "";
+      if (guardian.dialogueMode === "foreknowledge") {
+        action = pickAction(`guardian:acknowledge_foreknowledge:${id}`, `guardian:request_verification:${id}`);
+        reply = `${guardian.foreknowledgeReaction || "你说中了本轮尚未发生在我们之间的事。"}${guardian.verificationPrompt ? ` ${guardian.verificationPrompt}` : "但我不会把另一轮的记忆当作本轮证据。"}`;
+      } else if (guardian.dialogueMode === "first_contact") {
+        action = pickAction(`guardian:reveal_concern:${id}`, `guardian:refuse:${id}`);
+        reply = guardian.concernReveal || `我不能轻率答应。${guardian.concern || "先让我看见这件事不会让别人承担代价。"}`;
+      } else if (guardian.dialogueMode === "missed") {
+        action = "continue_conversation";
+        reply = "停跳前的路程已经开始，而我没有作出这一轮的承诺。现在补说一句愿意，只会把缺席伪装成履约；这条世界线已经错过了我。";
+      } else if (["fulfilled", "promised"].includes(guardian.dialogueMode)) {
+        action = pickAction(`guardian:reaffirm:${id}`);
+        reply = guardian.dialogueMode === "fulfilled"
+          ? `那一息已经过去，我没有占据中央，也没有忘记自己答应守住的水面。`
+          : guardian.formalVow || "我已经答应，会在停跳时刻亲自到场。";
+      } else if (guardian.dialogueMode === "conditional") {
+        action = pickAction(`guardian:reaffirm:${id}`);
+        reply = `我的话没有变。等这一轮真正出现${missing.join("、") || "我提出的证据"}，我会亲自去水面，而不是等你回来交任务。`;
+      } else if (guardian.dialogueMode === "ready") {
+        if (guardian.persuasion?.enoughForLocalRules) {
+          action = pickAction(`guardian:commit:${id}`);
+          reply = `你回应的不是我的好感，而是我真正担心的后果。${guardian.formalVow || "我答应亲自守水。"}`;
+        } else {
+          action = pickAction(`guardian:request_clarification:${id}`, `guardian:refuse:${id}`);
+          const points = (guardian.persuasion?.points || []).map((point) => point.label).filter(Boolean).slice(0, 3);
+          reply = `证据已经在这里，可你的办法还没有回答：${points.join("；")}。别只请我相信你。`;
+        }
+      } else if (guardian.persuasion?.enoughForLocalRules) {
+        action = pickAction(`guardian:conditional:${id}`, `guardian:request_verification:${id}`);
+        reply = `你至少听懂了我在担心什么。我可以先把话留在这里：等本轮出现${missing.join("、") || "可以共同检查的证据"}，这份约定就由我自己兑现。`;
+      } else {
+        action = pickAction(`guardian:request_verification:${id}`, `guardian:refuse:${id}`);
+        reply = `${guardian.concern || "我不能用好感替代后果。"}${missing.length ? ` 这一轮还缺少：${missing.join("、")}。` : " 先把你的办法说具体。"}`;
+      }
+      const reason = compactReason([
+        guardian.personalityDirective,
+        `认识来源：${guardian.dialogueMode}`,
+        guardian.rememberedByPlayerOnly ? "玩家记得，但本轮尚未形成共同证据" : "只读取本轮可共同核验的证据",
+        missing.length ? `缺少本轮证据：${missing.join("、")}` : "硬证据已经齐全",
+      ]);
+      return {
+        reply: ensureSentence(reply).slice(0, 1200),
+        action,
+        reason,
+        memory: `${npcName}记得玩家在本轮谈过守水；关键事实与承诺是否成立仍由世界状态验证。`,
+        provider: "local-rules",
+      };
+    }
 
     let reply = "";
     let action = "continue_conversation";
@@ -666,20 +802,12 @@ export class AIService {
           `先别急着让我答应。告诉我谁该做什么、又由谁承担代价。`,
         ], seed);
       } else {
-        const suffix = String(best.item.id).slice("endorse:".length);
-        const refusal = allowed.find((item) => item.id === `refuse:${suffix}`);
-        const guardedRefusal = tone === "guarded" && context.relationship < 38 && hashString(`${seed}:refuse`) % 3 === 0;
-        action = guardedRefusal && refusal ? refusal.id : best.item.id;
-        reply = action.startsWith("refuse:")
-          ? choose([
-            `我明白你的主张，但现在不能替它背书。${fact || anchor}，这份代价还没有说清。`,
-            `你的理由我会记住，可我不会把它带进商议。至少今天不会。`,
-          ], seed)
-          : choose([
-            `${fact || anchor}。你的话我会带进之后的商议，但最后会答应的不是我一个人。`,
-            `我听见你的理由了。${fact || anchor}；我能承诺的是把它说给在场的人听。`,
-            `这不是一句话就能定下的事。${fact || anchor}，不过你的主张值得被摆到桌面上。`,
-          ], seed);
+        action = best.item.id;
+        reply = choose([
+          `${fact || anchor}。你的话我会带进之后的商议，但最后会答应的不是我一个人。`,
+          `我听见你的理由了。${fact || anchor}；我能承诺的是把它说给在场的人听。`,
+          `这不是一句话就能定下的事。${fact || anchor}，不过你的主张值得被摆到桌面上。`,
+        ], seed);
       }
     } else if (context.intent === "challenge") {
       const cautious = tone === "guarded" || /寡言|戒备|害怕失控/.test(traits.join(" "));
@@ -780,7 +908,7 @@ export class AIService {
       const decision = body?.decision && typeof body.decision === "object" ? body.decision : body;
       const reply = text(decision?.reply, "", 4000);
       if (!reply) throw new Error("decision_missing_reply");
-      const action = text(decision?.action, localDecision.action, 1000);
+      const action = text(decision?.action, localDecision.action, 120);
       const allowedIds = (npc?.allowedActions || []).map((item) => String(item?.id || "")).filter(Boolean);
       if (allowedIds.length && !allowedIds.includes(action)) throw new Error("decision_action_not_allowed");
       this._backendRetryAt = 0;

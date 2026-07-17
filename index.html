@@ -3,242 +3,168 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#071018">
-  <meta name="description" content="Ember Echoes — a nine-day pixel world where fifteen residents remember, decide, and live on.">
-  <title>EMBER ECHOES</title>
+  <meta name="theme-color" content="#10181a">
+  <meta name="description" content="Time Echo — a hand-crafted pixel mystery about a lakeside town, seven witnesses, and a Sunday that never arrives.">
+  <title>TIME ECHO</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <noscript>JavaScript is required to enter this world.</noscript>
+  <noscript>这个世界需要 JavaScript 才能运转。</noscript>
 
-  <div id="loading-screen" class="screen screen--loading">
-    <div class="loading-rune" aria-hidden="true"></div>
-    <p>WEAVING THE WORLDLINE...</p>
+  <div id="loading-screen" class="screen loading-screen">
+    <div class="loading-clock" aria-hidden="true"><i></i></div>
+    <p>WINDING THE CLOCK...</p>
   </div>
 
-  <section id="title-screen" class="screen screen--title hidden" aria-labelledby="game-title">
-    <canvas id="title-canvas" class="title-canvas" width="480" height="270" aria-hidden="true"></canvas>
-    <div class="title-menu">
-      <p class="title-prologue">ON THE NINTH DAY, THE STAR WILL FALL.</p>
-      <h1 id="game-title"><span>EMBER</span><span>ECHOES</span></h1>
-      <nav class="title-actions" aria-label="Main menu">
-        <button id="continue-button" class="pixel-button hidden">Continue Journey</button>
-        <button id="new-game-button" class="pixel-button pixel-button--primary">Begin Journey</button>
-        <button id="observe-game-button" class="pixel-button pixel-button--observer">Observe the World</button>
-        <button id="chronicles-button" class="pixel-button">Ending Archive</button>
+  <section id="title-screen" class="screen title-screen hidden" aria-labelledby="game-title">
+    <canvas id="title-canvas" width="480" height="270" aria-hidden="true"></canvas>
+    <div class="title-copy">
+      <p class="title-kicker">A LAKESIDE MYSTERY</p>
+      <h1 id="game-title">TIME <span>ECHO</span></h1>
+      <p class="title-line">THE FERRY LEAVES ON SUNDAY.<br>THE TOWN NEVER GETS THERE.</p>
+      <nav class="title-actions" aria-label="主菜单">
+        <button id="continue-button" class="menu-button hidden"><i></i>Continue</button>
+        <button id="new-game-button" class="menu-button"><i></i>Begin</button>
+        <button id="archive-button" class="menu-button"><i></i>Loop Archive</button>
       </nav>
-      <p class="title-controls" aria-hidden="true"><span>W S</span> SELECT　<span>ENTER</span> CONFIRM</p>
+      <p class="title-controls">W S / ↑ ↓ &nbsp; SELECT &nbsp;&nbsp; ENTER &nbsp; CONFIRM</p>
     </div>
   </section>
 
   <main id="game-shell" class="game-shell hidden">
-    <header class="topbar pixel-panel">
-      <div class="brand-block">
-        <span class="brand-mark" aria-hidden="true">✦</span>
-        <div><strong>余烬回响</strong><small id="timeline-label">未选择世界线</small></div>
-        <span id="mode-chip" class="mode-chip">旅行者</span>
+    <header class="hud-top">
+      <div class="location-plaque">
+        <span id="location-kicker">LAKESIDE TOWN</span>
+        <strong id="location-label">湖畔旅店 · 八号房</strong>
       </div>
-      <div class="clock-block" aria-label="游戏时间">
-        <span id="day-label">第 1 日</span>
-        <strong id="time-label">07:00</strong>
-        <span id="weather-label" class="weather-chip">晴</span>
+      <div class="clock-plaque">
+        <span id="day-label">SATURDAY</span>
+        <strong id="time-label">06:00</strong>
+        <small id="loop-label">LOOP 01</small>
       </div>
-      <div class="topbar-actions">
-        <div class="speed-controls" aria-label="时间速度">
-          <button data-speed="0" title="暂停">Ⅱ</button>
-          <button data-speed="1" class="active">1×</button>
-          <button data-speed="2">2×</button>
-          <button data-speed="4">4×</button>
-          <button data-speed="8">8×</button>
-        </div>
-        <button id="sound-button" class="icon-button" title="切换声音" aria-label="切换声音">♪</button>
-        <button id="save-button" class="icon-button" title="保存" aria-label="保存游戏">▣</button>
-        <button id="help-button" class="icon-button" title="帮助" aria-label="打开帮助">?</button>
+      <div class="hud-actions">
+        <button id="journal-button" title="维修日志 (J)">J</button>
+        <button id="sound-button" title="声音">♪</button>
+        <button id="save-button" title="保存">▣</button>
+        <button id="help-button" title="操作说明">?</button>
       </div>
     </header>
 
-    <section class="play-layout">
-      <div class="viewport-column">
-        <div class="canvas-frame pixel-panel">
-          <canvas id="game-canvas" width="768" height="480" tabindex="0" aria-label="游戏世界画面"></canvas>
-          <div id="region-banner" class="region-banner hidden">
-            <strong id="region-name"></strong><span id="region-subtitle"></span>
-          </div>
-          <div id="interaction-hint" class="interaction-hint hidden">
-            <kbd>E</kbd><span id="interaction-text">交谈</span>
-          </div>
-          <div id="observer-badge" class="observer-badge hidden"><span>◉</span> 上帝视角 · 世界中没有玩家</div>
-          <div id="fade-layer" class="fade-layer"></div>
-        </div>
-
-        <div class="under-canvas pixel-panel">
-          <div class="location-copy">
-            <span id="location-kicker" class="section-kicker">当前位置</span>
-            <strong id="location-label">王城 · 晨星广场</strong>
-          </div>
-          <div class="quick-actions">
-            <button id="map-button" class="pixel-button pixel-button--small">M 世界地图</button>
-            <button id="journal-button" class="pixel-button pixel-button--small">J 纪事录</button>
-            <button id="sidebar-toggle-button" class="pixel-button pixel-button--small" aria-expanded="true">B 收起手账</button>
-            <button id="wait-button" class="pixel-button pixel-button--small">等待 1 小时</button>
-          </div>
-        </div>
+    <section class="play-area">
+      <div class="viewport-wrap">
+        <canvas id="game-canvas" width="768" height="480" tabindex="0" aria-label="游戏世界"></canvas>
+        <div id="region-banner" class="region-banner hidden"><span id="region-subtitle"></span><strong id="region-name"></strong></div>
+        <div id="interaction-hint" class="interaction-hint hidden"><kbd>E</kbd><span id="interaction-text"></span></div>
+        <div id="pause-ribbon" class="pause-ribbon hidden">THE CLOCK CANNOT REACH THIS ROOM</div>
+        <div id="fade-layer" class="fade-layer"></div>
       </div>
 
-      <aside class="sidebar pixel-panel">
-        <nav class="sidebar-tabs" aria-label="信息面板">
-          <button class="sidebar-tab active" data-tab="world">世界</button>
-          <button class="sidebar-tab" data-tab="people">人物</button>
-          <button class="sidebar-tab" data-tab="journal">纪事</button>
-          <button class="sidebar-tab" data-tab="ai">偏好</button>
-        </nav>
-
-        <section id="tab-world" class="tab-pane active">
-          <div class="panel-heading"><span>世界脉搏</span><small>居民每天的行动都会留下变化</small></div>
-          <div id="metric-list" class="metric-list"></div>
-          <div class="divider"></div>
-          <div class="panel-heading"><span>势力倾向</span><small>决定第九日由谁书写历史</small></div>
-          <div id="faction-list" class="faction-list"></div>
-          <div class="divider"></div>
-          <div class="panel-heading"><span id="nearby-heading">眼前的人</span></div>
-          <div id="nearby-card" class="nearby-card empty">靠近居民后可看看他正在做什么。</div>
+      <aside class="field-journal">
+        <div class="journal-tabs">
+          <button class="journal-tab active" data-tab="orders">委托</button>
+          <button class="journal-tab" data-tab="evidence">证据</button>
+          <button class="journal-tab" data-tab="people">居民</button>
+        </div>
+        <section id="tab-orders" class="journal-pane active">
+          <p class="pencil-note">THREE CLOCKS / ONE MORNING</p>
+          <div id="repair-list" class="repair-list"></div>
+          <div class="time-thread"><span>06:00</span><i id="time-thread-fill"></i><span>06:00</span></div>
+          <p id="next-clue" class="next-clue"></p>
         </section>
-
-        <section id="tab-people" class="tab-pane">
-          <div class="panel-heading"><span>人物志</span><small>关系与记忆跨越这一条时间线</small></div>
+        <section id="tab-evidence" class="journal-pane">
+          <p class="pencil-note">只记录你亲眼检查过的东西。</p>
+          <div id="evidence-list" class="evidence-list"></div>
+        </section>
+        <section id="tab-people" class="journal-pane">
+          <p class="pencil-note">他们只会承认本轮能共同核验的事实。</p>
           <div id="people-list" class="people-list"></div>
         </section>
-
-        <section id="tab-journal" class="tab-pane">
-          <div class="panel-heading"><span>世界纪事</span><small>最近发生的行动与抉择</small></div>
-          <div id="journal-list" class="journal-list" aria-live="polite"></div>
-        </section>
-
-        <section id="tab-ai" class="tab-pane">
-          <div class="panel-heading"><span>游玩偏好</span><small>世界始终可以自行运转</small></div>
-          <div id="ai-status-card" class="ai-status-card">
-            <span id="ai-status-dot" class="status-dot"></span>
-            <div><strong id="ai-status-label">检测中</strong><small id="ai-status-detail">正在连接本地服务……</small></div>
-          </div>
-          <label class="toggle-row">
-            <span><strong>深度思考</strong><small>增强对话与每日计划；不可用时自动回到本地模式</small></span>
-            <input id="llm-toggle" type="checkbox" disabled>
-          </label>
-          <label class="toggle-row">
-            <span><strong>显示人物心声</strong><small>在纪事中读到居民作出决定时的念头</small></span>
-            <input id="thought-toggle" type="checkbox">
-          </label>
-          <div class="ai-explainer">
-            <h3>关于这里的居民</h3>
-            <p>他们会记住相遇与争执，也会因为天气、关系和眼前的困境改变当天的打算。即使你只是旁观，日子也不会停下。</p>
-          </div>
-        </section>
+        <footer class="journal-footer"><span>WASD 移动</span><span>SHIFT 疾跑</span><span>E 互动</span></footer>
       </aside>
     </section>
   </main>
 
-  <div id="timeline-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="timeline-title">
-    <div class="modal pixel-panel modal--wide">
-      <p class="eyebrow">选择一封来信</p>
-      <h2 id="timeline-title">选择要踏入的世界线</h2>
-      <p id="timeline-description">同一组人物、同一个第九日，不同的起点会让他们作出完全不同的决定。</p>
-      <div class="timeline-difficulty-flow" aria-label="世界线难度从左到右递增">
-        <span>难度</span><strong>简单</strong><i aria-hidden="true"></i><strong>困难</strong><span class="flow-arrow" aria-hidden="true">→</span>
-      </div>
-      <div id="timeline-options" class="timeline-grid"></div>
-      <button class="modal-close pixel-button" data-close="timeline-modal">返回</button>
-    </div>
-  </div>
-
-  <div id="map-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="map-title">
-    <div class="modal pixel-panel modal--wide map-modal">
-      <div class="modal-heading"><div><p class="eyebrow">五地行路图</p><h2 id="map-title">世界地图</h2></div><button class="icon-button" data-close="map-modal" aria-label="关闭">×</button></div>
-      <div id="world-map" class="world-map"></div>
-      <p id="map-note" class="map-note">地图会标出真实交通连接；旅行者仍需从场景中的道路、马车、缆车或商队出发。</p>
+  <div id="prologue-modal" class="modal-layer hidden" role="dialog" aria-modal="true">
+    <div class="letter-modal">
+      <p class="eyebrow">FRIDAY · 17:40 / CITY WORKSHOP</p>
+      <div class="speaker-row"><div class="portrait portrait--employer">M</div><div><strong>玛拉 · 工坊主管</strong><span>你的雇主</span></div></div>
+      <div id="prologue-text" class="dialogue-copy"></div>
+      <div id="prologue-actions" class="choice-stack"></div>
     </div>
   </div>
 
   <div id="conversation-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="conversation-name">
-    <div class="modal pixel-panel conversation-modal">
-      <div class="conversation-header">
-        <div id="conversation-portrait" class="portrait"></div>
-        <div><p id="conversation-role" class="eyebrow"></p><h2 id="conversation-name"></h2><p id="conversation-mood"></p></div>
-        <button class="icon-button" data-close="conversation-modal" aria-label="结束交谈">×</button>
-      </div>
+    <div class="conversation-modal paper-panel">
+      <header class="conversation-header">
+        <canvas id="conversation-portrait" class="portrait" width="58" height="66" aria-hidden="true"></canvas>
+        <div><p id="conversation-role" class="eyebrow"></p><h2 id="conversation-name"></h2><p id="conversation-state"></p></div>
+        <button class="close-button" data-close="conversation-modal" aria-label="结束交谈">×</button>
+      </header>
       <div id="conversation-history" class="conversation-history" aria-live="polite"></div>
-      <div id="conversation-actions" class="conversation-actions"></div>
+      <div id="conversation-actions" class="choice-stack choice-stack--compact"></div>
       <form id="conversation-form" class="conversation-form">
-        <input id="conversation-input" maxlength="240" autocomplete="off" placeholder="输入你想说的话……">
-        <button class="pixel-button pixel-button--primary" type="submit">发送</button>
+        <input id="conversation-input" maxlength="260" autocomplete="off" placeholder="也可以用自己的话问……">
+        <button type="submit">交谈</button>
       </form>
       <p id="conversation-provider" class="provider-note"></p>
     </div>
   </div>
 
-  <div id="observer-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="observer-name">
-    <div class="modal pixel-panel observer-modal">
-      <div class="conversation-header">
-        <div id="observer-portrait" class="portrait"></div>
-        <div><p id="observer-role" class="eyebrow">人物小传</p><h2 id="observer-name"></h2><p id="observer-status"></p></div>
-        <button class="icon-button" data-close="observer-modal" aria-label="结束观察">×</button>
-      </div>
-      <div class="observer-grid">
-        <section><span class="section-kicker">长期目标</span><p id="observer-goal"></p></section>
-        <section><span class="section-kicker">当前反思</span><p id="observer-reflection"></p></section>
-      </div>
-      <div class="panel-heading"><span>近期记忆</span><small>只是翻阅，不会惊动任何人</small></div>
-      <div id="observer-memories" class="observer-memories"></div>
-      <div class="panel-heading observer-knowledge-heading"><span>公开知识</span></div>
-      <div id="observer-knowledge" class="observer-knowledge"></div>
-      <p class="provider-note">你只能观看。这里没有旅行者，也不会因查看档案改变任何关系或事件。</p>
+  <div id="inspect-modal" class="modal-layer hidden" role="dialog" aria-modal="true">
+    <div class="inspect-card paper-panel">
+      <p class="eyebrow">FIELD NOTE</p>
+      <h2 id="inspect-title"></h2>
+      <p id="inspect-text"></p>
+      <div id="inspect-extra"></div>
+      <button class="text-button" data-close="inspect-modal">收起记录</button>
     </div>
   </div>
 
-  <div id="journal-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="journal-title">
-    <div class="modal pixel-panel modal--wide">
-      <div class="modal-heading"><div><p class="eyebrow">九日见闻</p><h2 id="journal-title">完整纪事录</h2></div><button class="icon-button" data-close="journal-modal" aria-label="关闭">×</button></div>
+  <div id="puzzle-modal" class="modal-layer hidden" role="dialog" aria-modal="true">
+    <div class="puzzle-modal paper-panel">
+      <p id="puzzle-kicker" class="eyebrow">CLOCKWORK</p>
+      <h2 id="puzzle-title"></h2>
+      <p id="puzzle-instruction"></p>
+      <div id="puzzle-board" class="puzzle-board"></div>
+      <p id="puzzle-feedback" class="puzzle-feedback"></p>
+      <button class="text-button" data-close="puzzle-modal">暂时离开</button>
+    </div>
+  </div>
+
+  <div id="journal-modal" class="modal-layer hidden" role="dialog" aria-modal="true">
+    <div class="journal-modal paper-panel">
+      <header><div><p class="eyebrow">PERSISTENT FIELD JOURNAL</p><h2>维修工的循环日志</h2></div><button class="close-button" data-close="journal-modal">×</button></header>
       <div id="journal-full" class="journal-full"></div>
     </div>
   </div>
 
-  <div id="ending-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="ending-title">
-    <div class="modal pixel-panel ending-modal">
-      <p class="eyebrow">这一段故事已经写完</p>
-      <div id="ending-glyph" class="ending-glyph">✦</div>
+  <div id="help-modal" class="modal-layer hidden" role="dialog" aria-modal="true">
+    <div class="inspect-card paper-panel">
+      <p class="eyebrow">CONTROLS</p><h2>别和钟赛跑，先学会读它</h2>
+      <p><kbd>WASD / 方向键</kbd> 移动，<kbd>Shift</kbd> 疾跑，<kbd>E</kbd> 与人、物件或道路互动，<kbd>J</kbd> 打开完整日志。</p>
+      <p>一轮现实时间约 12 分钟。自由对话时世界以四分之一速度继续；退潮洞穴和隐藏暗房里时间完全停止。</p>
+      <p>说出正确名词不会自动解锁真相。NPC 只会根据本轮已经共同看见的证据采取行动。</p>
+      <button class="text-button" data-close="help-modal">明白了</button>
+    </div>
+  </div>
+
+  <div id="archive-modal" class="modal-layer hidden" role="dialog" aria-modal="true">
+    <div class="journal-modal paper-panel"><header><div><p class="eyebrow">LOOP ARCHIVE</p><h2>已经留下的清晨</h2></div><button class="close-button" data-close="archive-modal">×</button></header><div id="archive-content" class="journal-full"></div></div>
+  </div>
+
+  <div id="reset-cinematic" class="reset-cinematic hidden" aria-live="assertive">
+    <canvas id="reset-canvas" width="768" height="480"></canvas>
+    <div class="reset-copy"><p id="reset-line-a"></p><strong id="reset-line-b"></strong><small>HOLD ENTER TO SKIP</small></div>
+  </div>
+
+  <div id="ending-modal" class="ending-layer hidden" role="dialog" aria-modal="true">
+    <div class="ending-copy">
+      <p id="ending-kicker">SUNDAY · 06:01</p>
       <h2 id="ending-title"></h2>
-      <p id="ending-subtitle" class="ending-subtitle"></p>
-      <div id="ending-epilogue" class="ending-epilogue"></div>
-      <div id="ending-summary" class="ending-summary"></div>
-      <div class="ending-actions">
-        <button id="new-timeline-button" class="pixel-button pixel-button--primary">踏入另一条世界线</button>
-        <button id="keep-wandering-button" class="pixel-button">留在结局前夜</button>
-      </div>
+      <div id="ending-text"></div>
+      <button id="ending-restart" class="menu-button"><i></i>Return to Saturday</button>
     </div>
   </div>
-
-  <div id="chronicles-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="chronicles-title">
-    <div class="modal pixel-panel modal--wide">
-      <div class="modal-heading"><div><p class="eyebrow">旧日故事</p><h2 id="chronicles-title">世界线图鉴</h2></div><button class="icon-button" data-close="chronicles-modal" aria-label="关闭">×</button></div>
-      <div id="ending-gallery" class="ending-gallery"></div>
-    </div>
-  </div>
-
-  <div id="help-modal" class="modal-layer hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
-    <div class="modal pixel-panel help-modal">
-      <div class="modal-heading"><h2 id="help-title">旅行者手册</h2><button class="icon-button" data-close="help-modal" aria-label="关闭">×</button></div>
-      <div class="help-grid">
-        <div><kbd>WASD</kbd><span>移动</span></div><div><kbd>Shift</kbd><span>按住疾跑</span></div>
-        <div><kbd>E</kbd><span>交谈 / 调查</span></div>
-        <div><kbd>M</kbd><span>世界地图</span></div><div><kbd>J</kbd><span>纪事录</span></div>
-        <div><kbd>B</kbd><span>展开 / 收起手账</span></div><div><kbd>Esc</kbd><span>关闭窗口</span></div>
-        <div><kbd>1–5</kbd><span>暂停 / 1× / 2× / 4× / 8×</span></div>
-      </div>
-      <p id="help-description">目标不是“赢过”世界，而是选择、观察并见证一个结局。第 2–8 日会发生固定事件；居民在你不在场时也会生活、结盟、争执并留下记忆。</p>
-    </div>
-  </div>
-
-  <div id="toast-stack" class="toast-stack" aria-live="polite"></div>
-  <div id="aria-status" class="sr-only" aria-live="polite"></div>
 
   <script type="module" src="./js/main.js"></script>
 </body>

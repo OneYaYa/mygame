@@ -1,1203 +1,160 @@
 {
+  "schemaVersion": 1,
   "game": {
-    "title": "余烬回响",
-    "contentVersion": 3,
-    "startRegion": "capital",
-    "startMinute": 420,
-    "totalDays": 9,
-    "endingDay": 9,
-    "endingHour": 21,
-    "initialMetrics": {
-      "food": 54,
-      "water": 52,
-      "order": 58,
-      "hope": 48,
-      "aether": 35
-    },
-    "initialFactions": {
-      "crown": 50,
-      "commons": 45,
-      "keepers": 35,
-      "caravan": 40
-    }
+    "id": "time-echo",
+    "title": "TIME ECHO",
+    "subtitle": "A lake remembers what the town forgets.",
+    "loopRealSeconds": 720,
+    "loopGameMinutes": 1440,
+    "startClockMinute": 360,
+    "resetWarningMinute": 1435,
+    "saveKey": "time-echo-save-v1"
   },
-  "timelines": [
-    {
-      "id": "drought-embers",
-      "name": "余火",
-      "subtitle": "土地先于人心开裂",
-      "description": "三个月没有像样的雨。农田与赤沙漠都在等待王城打开仅存的水库。",
-      "glyph": "◇",
-      "color": "#d29a57",
-      "hints": ["干旱开局，但居民恢复效率较高", "每日粮水与民心消耗较缓", "农田居民更愿意信任你"],
-      "difficulty": { "rank": 1, "label": "简单", "dailyDrain": 0.8, "npcRecovery": 1.15 },
-      "seed": 1103,
-      "startRegion": "farm",
-      "weather": ["晴", "热风", "薄云", "沙尘"],
-      "modifiers": {
-        "metrics": { "food": -4, "water": -8, "hope": 4 },
-        "factions": { "caravan": 8, "commons": 4 },
-        "relationships": { "mira": 6, "zahra": 4 },
-        "flags": { "drought_opening": true }
-      }
-    },
-    {
-      "id": "iron-court",
-      "name": "律法",
-      "subtitle": "安稳的代价写在每一道门闩上",
-      "description": "宵禁已持续四十天。王冠议会声称只有绝对秩序才能让五地熬过坠星。",
-      "glyph": "♜",
-      "color": "#ce6f68",
-      "hints": ["高秩序与低希望同时存在", "每日压力与居民恢复保持标准", "守卫更容易接纳你"],
-      "difficulty": { "rank": 2, "label": "普通", "dailyDrain": 1, "npcRecovery": 1 },
-      "seed": 2407,
-      "startRegion": "capital",
-      "weather": ["阴", "薄雾", "冷风", "晴"],
-      "modifiers": {
-        "metrics": { "order": 10, "hope": -7, "aether": -3 },
-        "factions": { "crown": 14, "commons": -6 },
-        "relationships": { "taren": 7, "aveline": 4 },
-        "flags": { "royal_curfew": true }
-      }
-    },
-    {
-      "id": "broken-oath",
-      "name": "回响",
-      "subtitle": "古井正在梦里呼唤所有人",
-      "description": "雪山封印出现裂缝，失落的余烬井重新发光。知识与灾祸只隔着一次选择。",
-      "glyph": "✦",
-      "color": "#6f968e",
-      "hints": ["低秩序与活跃星辉并存", "每日消耗更高，居民恢复更慢", "秘密更容易浮出水面"],
-      "difficulty": { "rank": 3, "label": "困难", "dailyDrain": 1.25, "npcRecovery": 0.85 },
-      "seed": 3911,
-      "startRegion": "snow",
-      "weather": ["星尘", "极光", "薄雪", "晴"],
-      "modifiers": {
-        "metrics": { "food": -3, "water": -3, "aether": 22, "order": -10, "hope": -5 },
-        "factions": { "keepers": 12, "crown": -4 },
-        "relationships": { "ymir": 6, "kade": 5 },
-        "flags": { "seal_cracked": true }
-      }
-    }
-  ],
-  "regions": [
-    {
-      "id": "capital",
-      "name": "晨星王城",
-      "subtitle": "钟声、石墙与尚未宣读的法令",
-      "description": "五地的权力中心，所有道路最终都通向议政厅。",
-      "mapPosition": { "x": 42, "y": 35 },
-      "mapColor": "#ad7255",
-      "spawn": { "x": 384, "y": 426 },
-      "palette": {
-        "ground": "#73796d", "groundAlt": "#7f8477", "path": "#9a9184", "edge": "#454c48",
-        "accent": "#d0a562", "water": "#5c9cad", "wall": "#b49a7d", "roof": "#8a4f3f"
-      },
-      "paths": [
-        { "x": 340, "y": 0, "w": 88, "h": 480 },
-        { "x": 0, "y": 315, "w": 768, "h": 72 }
-      ],
-      "buildings": [
-        { "id": "palace", "label": "议政厅", "x": 264, "y": 16, "w": 240, "h": 116, "roofColor": "#633f51" },
-        { "id": "archive", "label": "旧档馆", "x": 50, "y": 70, "w": 146, "h": 96, "roofColor": "#654f5e" },
-        { "id": "barracks", "label": "巡卫所", "x": 574, "y": 76, "w": 134, "h": 92, "roofColor": "#5b4a4c" }
-      ],
-      "obstacles": [
-        { "x": 70, "y": 248, "w": 100, "h": 18 },
-        { "x": 598, "y": 248, "w": 100, "h": 18 }
-      ],
-      "landmarks": [
-        {
-          "id": "star_fountain", "name": "星盘喷泉", "type": "fountain", "x": 345, "y": 224, "w": 78, "h": 58,
-          "interactive": true, "description": "喷泉底部刻着五条水路，它们都曾连接同一口井。", "flag": "found_five_channels", "layer": "ground"
-        },
-        {
-          "id": "oath_statue", "name": "初王誓像", "type": "statue", "x": 214, "y": 250, "w": 34, "h": 58,
-          "interactive": true, "description": "石座背面被人新刻了一句：王冠应当记得土地。", "flag": "read_first_oath", "layer": "object"
-        }
-      ]
-    },
-    {
-      "id": "farm",
-      "name": "风穗农田",
-      "subtitle": "泥土记得每一次雨和每一笔税",
-      "description": "供养五地的谷仓与蜂场围绕古老水渠生长。",
-      "mapPosition": { "x": 13, "y": 60 },
-      "mapColor": "#718653",
-      "spawn": { "x": 384, "y": 426 },
-      "palette": {
-        "ground": "#708954", "groundAlt": "#7c965b", "path": "#ae9667", "edge": "#425d43",
-        "accent": "#d6b158", "water": "#57969e", "wall": "#b88756", "roof": "#8a4b3d"
-      },
-      "paths": [
-        { "x": 0, "y": 326, "w": 768, "h": 62 },
-        { "x": 355, "y": 0, "w": 58, "h": 480 }
-      ],
-      "buildings": [
-        { "id": "farmhouse", "label": "米拉农舍", "x": 55, "y": 20, "w": 150, "h": 88 },
-        { "id": "mill", "label": "风穗磨坊", "x": 308, "y": 18, "w": 152, "h": 92, "roofColor": "#765049" },
-        { "id": "apiary", "label": "蜂语棚", "x": 585, "y": 28, "w": 125, "h": 80, "roofColor": "#9a6c3d" }
-      ],
-      "obstacles": [
-        { "x": 20, "y": 284, "w": 270, "h": 10 },
-        { "x": 478, "y": 282, "w": 270, "h": 10 }
-      ],
-      "landmarks": [
-        {
-          "id": "dry_canal", "name": "干涸水渠", "type": "ruin", "x": 332, "y": 222, "w": 104, "h": 34,
-          "interactive": true, "description": "渠底露出带星形孔洞的铜闸，似乎能接入被遗忘的地下水路。", "flag": "inspected_dry_canal", "layer": "ground"
-        },
-        {
-          "id": "seed_stone", "name": "种子碑", "type": "shrine", "x": 238, "y": 300, "w": 32, "h": 42,
-          "interactive": true, "description": "农人把每次歉收的年份刻在石上，却从未刻下任何人的名字。", "flag": "read_seed_stone", "layer": "object"
-        }
-      ]
-    },
-    {
-      "id": "mansion",
-      "name": "白棘豪宅",
-      "subtitle": "花墙之内，秘密总比客人早到",
-      "description": "贵族、账簿与艺术品共同维持着体面的沉默。",
-      "mapPosition": { "x": 17, "y": 12 },
-      "mapColor": "#aa746d",
-      "spawn": { "x": 384, "y": 430 },
-      "palette": {
-        "ground": "#517257", "groundAlt": "#5b7d5d", "path": "#b6ad91", "edge": "#344940",
-        "accent": "#cb8c96", "water": "#5a8e9d", "wall": "#c0aa9e", "roof": "#55445f"
-      },
-      "paths": [
-        { "x": 337, "y": 156, "w": 94, "h": 324 },
-        { "x": 110, "y": 327, "w": 548, "h": 54 }
-      ],
-      "buildings": [
-        { "id": "white_thorn_house", "label": "白棘主宅", "x": 238, "y": 20, "w": 292, "h": 144, "roofColor": "#4d3c5a" },
-        { "id": "studio", "label": "玻璃画室", "x": 56, "y": 94, "w": 132, "h": 88, "roofColor": "#52616a" },
-        { "id": "servants_house", "label": "管家房", "x": 586, "y": 100, "w": 126, "h": 82, "roofColor": "#4f4b55" }
-      ],
-      "obstacles": [
-        { "x": 70, "y": 222, "w": 210, "h": 14 },
-        { "x": 488, "y": 222, "w": 210, "h": 14 },
-        { "x": 112, "y": 390, "w": 185, "h": 12 },
-        { "x": 471, "y": 390, "w": 185, "h": 12 }
-      ],
-      "landmarks": [
-        {
-          "id": "mirror_pond", "name": "镜池", "type": "pond", "x": 74, "y": 248, "w": 142, "h": 62,
-          "interactive": true, "description": "池底压着一页防水账簿，记着豪宅多年来买下的王城水债。", "flag": "found_water_ledger", "layer": "ground"
-        },
-        {
-          "id": "thorn_clock", "name": "白棘花钟", "type": "shrine", "x": 548, "y": 267, "w": 56, "h": 56,
-          "interactive": true, "description": "花钟每天慢九分钟，仿佛有一段时间被这座宅邸藏了起来。", "flag": "noticed_missing_minutes", "layer": "object"
-        }
-      ]
-    },
-    {
-      "id": "snow",
-      "name": "霜脊雪山",
-      "subtitle": "冰层之下仍有水在寻找出口",
-      "description": "守望者看护冰川，也看护关于余烬井的古老誓言。",
-      "mapPosition": { "x": 63, "y": 7 },
-      "mapColor": "#789aa7",
-      "spawn": { "x": 384, "y": 430 },
-      "palette": {
-        "ground": "#c9d5d5", "groundAlt": "#dbe2de", "path": "#a9b8bc", "edge": "#63737d",
-        "accent": "#84b6c6", "water": "#6e9eaf", "wall": "#87969b", "roof": "#4e6471"
-      },
-      "paths": [
-        { "x": 0, "y": 347, "w": 768, "h": 58 },
-        { "x": 350, "y": 150, "w": 64, "h": 330 }
-      ],
-      "buildings": [
-        { "id": "hearth_lodge", "label": "暖炉医舍", "x": 62, "y": 48, "w": 158, "h": 96, "roofColor": "#556c75" },
-        { "id": "watchtower", "label": "北境哨所", "x": 300, "y": 28, "w": 168, "h": 110, "roofColor": "#445865" },
-        { "id": "hermit_hut", "label": "伊米尔小屋", "x": 582, "y": 72, "w": 128, "h": 84, "roofColor": "#5c6470" }
-      ],
-      "obstacles": [
-        { "x": 34, "y": 245, "w": 176, "h": 18 },
-        { "x": 552, "y": 238, "w": 176, "h": 18 }
-      ],
-      "landmarks": [
-        {
-          "id": "glacier_seal", "name": "冰川封印", "type": "crystal", "x": 342, "y": 198, "w": 84, "h": 92,
-          "interactive": true, "description": "冰晶内部有火光逆着裂缝流动。封印不是在阻止火焰出去，而是在阻止某物进来。", "flag": "understood_glacier_seal", "layer": "object"
-        },
-        {
-          "id": "meltwater_cairn", "name": "融水石堆", "type": "shrine", "x": 248, "y": 310, "w": 38, "h": 42,
-          "interactive": true, "description": "石块间夹着通往风穗农田的旧水路图。", "flag": "found_meltwater_map", "layer": "object"
-        }
-      ]
-    },
-    {
-      "id": "desert",
-      "name": "赤沙漠",
-      "subtitle": "风会埋掉道路，却埋不掉交易",
-      "description": "远途商队与遗迹学者在绿洲旁分享同一口水和不同的真相。",
-      "mapPosition": { "x": 68, "y": 62 },
-      "mapColor": "#b57d4f",
-      "spawn": { "x": 384, "y": 430 },
-      "palette": {
-        "ground": "#c89a5e", "groundAlt": "#d4a969", "path": "#b47f4d", "edge": "#79543d",
-        "accent": "#75a58c", "water": "#4f9793", "wall": "#aa714c", "roof": "#6b4d48"
-      },
-      "paths": [
-        { "x": 0, "y": 326, "w": 768, "h": 60 },
-        { "x": 366, "y": 70, "w": 54, "h": 410 }
-      ],
-      "buildings": [
-        { "id": "caravanserai", "label": "赤帆驿站", "x": 48, "y": 48, "w": 174, "h": 98, "roofColor": "#865340" },
-        { "id": "dig_house", "label": "遗迹工棚", "x": 302, "y": 30, "w": 164, "h": 92, "roofColor": "#735148" },
-        { "id": "guide_tent", "label": "向导帐篷", "x": 574, "y": 58, "w": 142, "h": 86, "roofColor": "#79505b" }
-      ],
-      "obstacles": [
-        { "x": 30, "y": 236, "w": 150, "h": 16 },
-        { "x": 596, "y": 232, "w": 142, "h": 16 }
-      ],
-      "landmarks": [
-        {
-          "id": "ember_ruins", "name": "余烬遗迹", "type": "ruin", "x": 322, "y": 176, "w": 126, "h": 106,
-          "interactive": true, "description": "墙上的五地浮雕可以拼成一把钥匙，中心缺少的恰是一滴水。", "flag": "decoded_ember_key", "layer": "object"
-        },
-        {
-          "id": "blue_oasis", "name": "蓝镜绿洲", "type": "oasis", "x": 92, "y": 270, "w": 142, "h": 68,
-          "interactive": true, "description": "水面在没有风时仍向北荡漾，似乎与雪山融水相连。", "flag": "tested_oasis_current", "layer": "ground"
-        }
-      ]
-    }
-  ],
+  "storyContext": {
+    "publicFacts": [
+      "今天是星期六，第一班渡船将在星期日早上六点离开湖镇。",
+      "镇上的主钟、礼拜堂钟和潮汐钟同时发生了故障。",
+      "旅店登记簿有一行被整齐地挖去，却仍保留着八号客房。"
+    ]
+  },
   "npcs": [
     {
-      "id": "aveline", "name": "艾芙琳", "role": "摄政官", "regionId": "capital", "x": 384, "y": 178,
-      "color": "#9b5968", "hairColor": "#ece0c2", "traits": ["克制", "责任感强", "害怕失控"], "values": ["秩序", "延续", "王室承诺"],
-      "goal": "在坠星前让五地接受一份共同法令", "knowledge": ["王城水库只够五地使用六天", "议政厅保留着初王与农人的互助誓约", "豪宅持有三分之一的王城水债"],
-      "secret": "她早已知道王位继承书是伪造的；她维持摄政只是为了等五地议会成立。", "secretTrust": 62, "initialRelationship": 8,
-      "dialogue": { "greetings": ["旅行者，王城不缺预言，缺的是愿意承担后果的人。", "钟声还准时，至少今天如此。你从哪一地回来？", "我听说有些人会记得不存在的明天。你也是吗？"] },
-      "actionWeights": { "patrol": 1.1, "petition": 0.7, "archive": 0.9 },
-      "schedule": [
-        { "start": "06:00", "end": "10:00", "regionId": "capital", "placeId": "capital-palace", "x": 576, "y": 190, "activity": "在晨星宫审阅五地晨报" },
-        { "start": "10:00", "end": "15:00", "regionId": "capital", "placeId": "capital-palace", "x": 576, "y": 440, "activity": "在议政长厅接见请愿者" },
-        { "start": "15:00", "end": "20:00", "regionId": "capital", "placeId": "capital", "x": 590, "y": 550, "activity": "巡视星盘喷泉与市集" },
-        { "start": "20:00", "end": "06:00", "regionId": "capital", "placeId": "capital-palace", "x": 670, "y": 230, "activity": "独自在晨星宫批阅法令" }
-      ]
+      "id": "arthur",
+      "name": "亚瑟·默瑟",
+      "displayName": "Arthur Mercer",
+      "role": "市政管理员 · 主钟维护人",
+      "initial": "A",
+      "regionId": "town",
+      "placeId": "clock-cabin",
+      "x": 380,
+      "y": 270,
+      "goal": "让全镇继续服从同一套时间，并避免承认这套秩序可能从一开始就错了",
+      "traits": ["克制", "程序化", "害怕失序"],
+      "voice": "句子短、用词精确，先确认程序与责任边界；不在证据不足时承认异常。",
+      "concern": "如果统一时间本身就是错误，自己多年的维护究竟保护了什么。",
+      "appearance": {"skin":"#d9a77d","hair":"#3b302d","body":"#4c6670","trim":"#c29a5d","hairStyle":"side","outfit":"vest","accessory":"glasses"},
+      "knowledge": {"public":["主钟由市政厅负责，维修舱在广场钟塔背面。"],"suggestive":["主钟下方还有一套不在公开图纸里的制动机构。"],"forbidden":["只有安装扳手能启动紧急制动；自己必须亲手停钟。"]}
     },
     {
-      "id": "rowan", "name": "洛文", "role": "旧档馆员", "regionId": "capital", "x": 222, "y": 205,
-      "color": "#6f7296", "hairColor": "#544451", "traits": ["好奇", "温和", "爱绕弯子"], "values": ["真相", "记忆", "选择权"],
-      "goal": "找出九分钟失踪时间在史书中的来源", "knowledge": ["初王誓约原本有五个签名而非一个", "每次坠星前九日，档案都会多出一页空白", "白棘花钟与旧档馆的地下钟使用同一枚齿轮"],
-      "secret": "他来自上一条失败的世界线，并偷偷保留了一页只有玩家笔迹的纪事。", "secretTrust": 58, "initialRelationship": 12,
-      "dialogue": { "greetings": ["请轻声些，旧纸比活人更容易受惊。", "你有没有梦见过已经发生、却没人记得的事？", "今天的档案又多了一页空白。我开始觉得那不是疏漏。"] },
-      "actionWeights": { "archive": 1.8, "petition": 0.4, "observe": 0.8 },
-      "schedule": [
-        { "start": "07:00", "end": "12:00", "regionId": "capital", "placeId": "capital-archive", "x": 480, "y": 220, "activity": "在旧档馆整理坠星旧卷" },
-        { "start": "12:00", "end": "16:00", "regionId": "capital", "placeId": "capital", "x": 620, "y": 480, "activity": "在喷泉旁比对铭文" },
-        { "start": "16:00", "end": "21:00", "regionId": "capital", "placeId": "capital", "x": 350, "y": 560, "activity": "在钟下集市收集传闻" },
-        { "start": "21:00", "end": "07:00", "regionId": "capital", "placeId": "capital-archive", "x": 480, "y": 400, "activity": "在失时书库誊写纪事" }
-      ]
+      "id": "beatrice",
+      "name": "比阿特丽斯·黑尔",
+      "displayName": "Beatrice Hale",
+      "role": "礼拜堂司钟人",
+      "initial": "B",
+      "regionId": "town",
+      "placeId": "chapel-interior",
+      "x": 368,
+      "y": 300,
+      "goal": "守住六声礼钟的传统，不让那枚被封死的第七锤再次落下",
+      "traits": ["庄重", "敏锐", "敬畏后果"],
+      "voice": "说话像祷文但不玄虚，会用钟声、承诺和不可逆的后果作比喻。",
+      "concern": "第七声不是多敲一下，而是宣告某个记录已经结束。",
+      "appearance": {"skin":"#efbd91","hair":"#6f5a45","body":"#67526d","trim":"#d6bd83","hairStyle":"bun","outfit":"dress"},
+      "knowledge": {"public":["礼拜堂钟正常只敲六声。"],"suggestive":["钟楼上有一枚独立的第七锤。"],"forbidden":["银色音叉校准后，第七锤可以完成终止协议。"]}
     },
     {
-      "id": "taren", "name": "塔伦", "role": "巡卫队长", "regionId": "capital", "x": 548, "y": 282,
-      "color": "#647f86", "hairColor": "#3c3439", "traits": ["直接", "忠诚", "同情弱者"], "values": ["安全", "公平", "同袍"],
-      "goal": "避免面包短缺演变为流血冲突", "knowledge": ["巡卫仓库的粮食只能支撑两日", "摄政官命令守卫不得先拔剑", "农田的北渠被人为锁死而非自然干涸"],
-      "secret": "他把一半王城军械藏到了农田谷仓，准备在王冠伤害平民时拒绝命令。", "secretTrust": 55, "initialRelationship": 7,
-      "dialogue": { "greetings": ["别挡路——除非你有比巡逻更重要的消息。", "城里绷得像弓弦，我只希望没人松手。", "若你去过农田，告诉我那里的水渠究竟怎样了。"] },
-      "actionWeights": { "patrol": 1.7, "petition": 0.8, "talk": 0.5 },
-      "schedule": [
-        { "start": "06:00", "end": "11:00", "regionId": "capital", "placeId": "capital", "x": 770, "y": 820, "activity": "在南门检查粮车" },
-        { "start": "11:00", "end": "16:00", "regionId": "capital", "placeId": "capital", "x": 980, "y": 540, "activity": "维持钟下集市秩序" },
-        { "start": "16:00", "end": "23:00", "regionId": "capital", "placeId": "capital", "x": 1280, "y": 480, "activity": "沿东墙带队巡逻" },
-        { "start": "23:00", "end": "06:00", "regionId": "capital", "placeId": "capital-barracks", "x": 286, "y": 176, "activity": "在巡卫所短暂休息" }
-      ]
+      "id": "conrad",
+      "name": "康拉德·沃斯",
+      "displayName": "Conrad Voss",
+      "role": "摆渡人与灯塔看守",
+      "initial": "C",
+      "regionId": "town",
+      "placeId": "harbor",
+      "x": 770,
+      "y": 430,
+      "goal": "保证每一条航路都允许人回来，而不是把单程选择伪装成救援",
+      "traits": ["务实", "寡言", "重视安全"],
+      "voice": "说话直接，以风、潮、航路和实际风险判断一件事。",
+      "concern": "一条看似正确的光路可能让镇里的人再也没有回头路。",
+      "appearance": {"skin":"#b97b5d","hair":"#31393b","body":"#355f68","trim":"#d29b5b","hairStyle":"short","outfit":"coat","accessory":"beanie"},
+      "knowledge": {"public":["星期日六点有渡船；凌晨两点到三点是最低潮。"],"suggestive":["湖面升起的白光并不来自灯塔。"],"forbidden":["双路维护镜片可让灯塔光依次经过礼拜堂、广场与旅店屋顶。"]}
     },
     {
-      "id": "mira", "name": "米拉", "role": "渠首农人", "regionId": "farm", "x": 300, "y": 310,
-      "color": "#b16e52", "hairColor": "#5d3c37", "traits": ["务实", "坚韧", "不轻易原谅"], "values": ["土地", "邻里", "诚实劳动"],
-      "goal": "让北渠在第三日前重新流动", "knowledge": ["干渠铜闸只有王城和豪宅各持一半钥匙", "雪山融水比往年早了十二天", "去年的税粮足够王城再吃一个月，却没有入库记录"],
-      "secret": "她私藏了能在贫瘠土壤生长的星种，但害怕它会把农田变成无法控制的森林。", "secretTrust": 50, "initialRelationship": 15,
-      "dialogue": { "greetings": ["鞋会脏，手也会。若你不介意，就来帮忙。", "渠底不是没有水，是有人不肯开闸。", "田不会听演说。它只认水、太阳和肯弯腰的人。"] },
-      "actionWeights": { "cultivate": 1.7, "irrigate": 1.5, "share": 0.4 },
-      "schedule": [
-        { "start": "05:00", "end": "10:00", "regionId": "farm", "placeId": "farm", "x": 360, "y": 620, "activity": "在西田查看作物与土壤" },
-        { "start": "10:00", "end": "15:00", "regionId": "farm", "placeId": "farm", "x": 780, "y": 420, "activity": "修理北渠铜闸" },
-        { "start": "15:00", "end": "20:00", "regionId": "farm", "placeId": "farm", "x": 500, "y": 750, "activity": "在谷场分配当日收成" },
-        { "start": "20:00", "end": "05:00", "regionId": "farm", "placeId": "farm-farmhouse", "x": 480, "y": 350, "activity": "在农舍记录种子余量" }
-      ]
+      "id": "dorothea",
+      "name": "多萝西娅·维尔",
+      "displayName": "Dorothea Vale",
+      "role": "湖畔旅店主人",
+      "initial": "D",
+      "regionId": "town",
+      "placeId": "inn-lobby",
+      "x": 420,
+      "y": 275,
+      "goal": "维持旅店温暖可靠的日常，同时不去触碰那间所有人都假装不存在的客房",
+      "traits": ["温和", "周到", "回避缺口"],
+      "voice": "先关心吃住与身体，再慢慢谈正事；提到七号房时会出现不自然的停顿。",
+      "concern": "承认七号房存在，就等于承认自己忘记过一位长期住客。",
+      "appearance": {"skin":"#dca47b","hair":"#9a5842","body":"#8c5351","trim":"#e3c278","hairStyle":"braid","outfit":"apron","accessory":"kerchief"},
+      "knowledge": {"public":["维修工住在八号房，三份委托单放在前台。"],"suggestive":["柜台后那把没有编号的钥匙似乎一直都在。"],"forbidden":["只有拿出写有七号房的旧钥匙牌，她才愿意交出无编号钥匙。"]}
     },
     {
-      "id": "bo", "name": "博恩", "role": "蜂语人", "regionId": "farm", "x": 530, "y": 300,
-      "color": "#c1984d", "hairColor": "#6a4934", "traits": ["乐观", "敏锐", "迷信蜜蜂"], "values": ["互助", "季节", "小小的好消息"],
-      "goal": "跟随蜂群找到地下水气的出口", "knowledge": ["蜂群连续三夜飞向白棘豪宅", "星辉过强时蜂蜜会发出蓝光", "农田最老的蜂箱由雪山松木制成"],
-      "secret": "他能听懂蜂群携带的模糊记忆；蜜蜂说玩家已经来过许多次。", "secretTrust": 46, "initialRelationship": 18,
-      "dialogue": { "greetings": ["别挥手，它们只是想知道你从哪里来。", "蜜蜂今天朝北飞。北边通常带来水，或者麻烦。", "它们记得你的气味，可我确定这是第一次见你。奇怪吧？"] },
-      "actionWeights": { "share": 1.2, "irrigate": 0.9, "talk": 1.1 },
-      "schedule": [
-        { "start": "06:00", "end": "11:00", "regionId": "farm", "placeId": "farm", "x": 1120, "y": 440, "activity": "在蜂棚外检查蜂群方向" },
-        { "start": "11:00", "end": "16:00", "regionId": "farm", "placeId": "farm", "x": 1040, "y": 420, "activity": "沿东渠寻找水气" },
-        { "start": "16:00", "end": "21:00", "regionId": "farm", "placeId": "farm", "x": 1050, "y": 730, "activity": "在东田把蜂蜜分给孩子" },
-        { "start": "21:00", "end": "06:00", "regionId": "farm", "placeId": "farm-apiary", "x": 480, "y": 366, "activity": "在蜂语棚记录蜂群的梦" }
-      ]
+      "id": "elias",
+      "name": "伊莱亚斯·奎因",
+      "displayName": "Elias Quinn",
+      "role": "摄影师",
+      "initial": "E",
+      "regionId": "town",
+      "placeId": "photo-studio",
+      "x": 365,
+      "y": 285,
+      "goal": "证明乳剂和光线留下的证据比人的记忆更可靠",
+      "traits": ["好奇", "技术派", "对记忆不信任"],
+      "voice": "用曝光、银盐、反差和重影解释问题；看到实物才下结论。",
+      "concern": "如果照片比记忆更真实，那自己每天相信的生活可能只是冲洗失败的底片。",
+      "appearance": {"skin":"#e9b788","hair":"#5b4034","body":"#526c58","trim":"#d2aa62","hairStyle":"messy","outfit":"artist","accessory":"glasses"},
+      "knowledge": {"public":["工作室能冲洗旧胶片，完成三步显影检查。"],"suggestive":["西墙后本来还有第二间暗房。"],"forbidden":["银盐门只有被稳定直射光照亮时才显形。"]}
     },
     {
-      "id": "nia", "name": "妮娅", "role": "磨坊主", "regionId": "farm", "x": 426, "y": 188,
-      "color": "#8a6f7e", "hairColor": "#352f38", "traits": ["精明", "公正", "嘴硬心软"], "values": ["交换", "账目", "不浪费"],
-      "goal": "建立不经过王城税吏的五地粮食交换网", "knowledge": ["白棘豪宅的夜宴每天浪费十二袋面粉", "商队愿意用沙漠盐换粮", "磨坊暗仓能藏下王城三日口粮"],
-      "secret": "她就是匿名的众民同盟联络人，一直通过面粉袋缝线传递消息。", "secretTrust": 57, "initialRelationship": 5,
-      "dialogue": { "greetings": ["要磨粉、买面包，还是只来打听别人的账？", "风不会为王冠转，磨坊也不该。", "若你真想帮忙，就先告诉我谁值得收到下一袋面粉。"] },
-      "actionWeights": { "cultivate": 0.8, "share": 1.5, "trade": 0.7 },
-      "schedule": [
-        { "start": "05:00", "end": "12:00", "regionId": "farm", "placeId": "farm-mill", "x": 480, "y": 250, "activity": "在磨坊磨制当天谷物" },
-        { "start": "12:00", "end": "16:00", "regionId": "farm", "placeId": "farm", "x": 820, "y": 460, "activity": "在渠桥核对粮袋与欠账" },
-        { "start": "16:00", "end": "22:00", "regionId": "farm", "placeId": "farm", "x": 720, "y": 760, "activity": "在谷场安排秘密粮路" },
-        { "start": "22:00", "end": "05:00", "regionId": "farm", "placeId": "farm-mill", "x": 520, "y": 420, "activity": "守着磨坊暗仓" }
-      ]
+      "id": "florence",
+      "name": "弗洛伦斯·雷恩",
+      "displayName": "Florence Raine",
+      "role": "档案管理员",
+      "initial": "F",
+      "regionId": "town",
+      "placeId": "archive-room",
+      "x": 390,
+      "y": 270,
+      "goal": "只接受可以交叉核验的来源，同时确认档案是否也参与了制造遗忘",
+      "traits": ["严谨", "耐心", "怀疑权威文本"],
+      "voice": "总会区分原件、抄本、推断和结论；不会凭关键词补全姓名。",
+      "concern": "档案看似保存事实，也可能用整齐的空白制造一个不存在的人。",
+      "appearance": {"skin":"#a86e55","hair":"#29282d","body":"#4c526b","trim":"#b8a7cf","hairStyle":"bob","outfit":"coat","accessory":"glasses"},
+      "knowledge": {"public":["档案馆可以鉴定工具，并交叉核对维修记录。"],"suggestive":["旅店屋顶曾安装一面维护反射镜。"],"forbidden":["两份 A.R. 记录和一张残缺肖像能恢复 Ada Rowan 的姓名与职位。"]}
     },
     {
-      "id": "celeste", "name": "瑟莱斯特", "role": "白棘女主人", "regionId": "mansion", "x": 384, "y": 212,
-      "color": "#9c668f", "hairColor": "#e6d0b3", "traits": ["优雅", "善于试探", "厌恶欠债"], "values": ["家族", "美", "可控的改变"],
-      "goal": "在夜宴上交换掉家族水债并保住豪宅居民", "knowledge": ["家族水债来自一次秘密资助雪山封印的交易", "议政厅继承书上的蜡印出自豪宅", "镜池账簿能证明税粮被前任摄政挪用"],
-      "secret": "她伪造了王位继承书，但原意是阻止一位残暴继承人登基；她没料到摄政会持续这么多年。", "secretTrust": 68, "initialRelationship": 0,
-      "dialogue": { "greetings": ["白棘欢迎客人，也很擅长记住客人的鞋印。", "你看起来不像来赴宴的人。这通常更有趣。", "债务和承诺都不会消失，只会换一个名字。"] },
-      "actionWeights": { "negotiate": 1.7, "patronage": 0.5, "scheme": 1.0 },
-      "schedule": [
-        { "start": "08:00", "end": "12:00", "regionId": "mansion", "placeId": "mansion-house", "x": 576, "y": 214, "activity": "在主宅处理家族来信" },
-        { "start": "12:00", "end": "17:00", "regionId": "mansion", "placeId": "mansion", "x": 520, "y": 700, "activity": "巡视花园与镜池" },
-        { "start": "17:00", "end": "23:00", "regionId": "mansion", "placeId": "mansion-house", "x": 576, "y": 440, "activity": "在夜宴长廊筹备谈判" },
-        { "start": "23:00", "end": "08:00", "regionId": "mansion", "placeId": "mansion-house", "x": 700, "y": 240, "activity": "在火盆边焚毁旧信" }
-      ]
-    },
-    {
-      "id": "oswin", "name": "奥斯温", "role": "老管家", "regionId": "mansion", "x": 548, "y": 300,
-      "color": "#66767a", "hairColor": "#c7c2b5", "traits": ["严谨", "寡言", "记忆惊人"], "values": ["职责", "宅中所有人的安全", "证据"],
-      "goal": "让真正的账簿在夜宴前落到可信的人手里", "knowledge": ["豪宅有一条通往王城旧档馆的钟表隧道", "镜池每逢月升会露出账簿石盒", "女主人从未从水债中获利"],
-      "secret": "他曾是初王誓约守秘人的最后一名书记员，并清楚开启余烬井需要五地各自同意。", "secretTrust": 60, "initialRelationship": 9,
-      "dialogue": { "greetings": ["请勿踩过白线。那不是礼仪，是机关。", "宅子会说话，只是大多数客人忙着听自己。", "若你捡到不属于你的账簿，先问它想去哪里。"] },
-      "actionWeights": { "scheme": 1.4, "negotiate": 0.8, "archive": 0.9 },
-      "schedule": [
-        { "start": "06:00", "end": "11:00", "regionId": "mansion", "placeId": "mansion-house", "x": 850, "y": 440, "activity": "检查主宅暗门与机关" },
-        { "start": "11:00", "end": "16:00", "regionId": "mansion", "placeId": "mansion-house", "x": 350, "y": 440, "activity": "清点夜宴物资" },
-        { "start": "16:00", "end": "22:00", "regionId": "mansion", "placeId": "mansion", "x": 768, "y": 590, "activity": "在主道迎接夜宴客人" },
-        { "start": "22:00", "end": "06:00", "regionId": "mansion", "placeId": "mansion-servants", "x": 480, "y": 354, "activity": "巡视偏厅后的钟表隧道" }
-      ]
-    },
-    {
-      "id": "lune", "name": "露恩", "role": "驻宅画师", "regionId": "mansion", "x": 214, "y": 286,
-      "color": "#6b8d92", "hairColor": "#4b3d50", "traits": ["敏感", "坦率", "容易被异象吸引"], "values": ["表达", "普通人的脸", "不被删改的历史"],
-      "goal": "在坠星前画完一幅包含五地所有人的长卷", "knowledge": ["画布上的星光每天会自行移动九格", "女主人的画像下藏着被涂去的第五位誓约者", "白棘花钟停摆时能听见旧档馆的翻页声"],
-      "secret": "她画出的并非想象，而是其他世界线的瞬间；其中一幅画里玩家站在燃烧的王城前。", "secretTrust": 44, "initialRelationship": 14,
-      "dialogue": { "greetings": ["别动——你身后的光和昨天不一样。", "我见过你的轮廓，在一张还没开始画的画里。", "如果结局必须发生，我至少想把每个人画进去。"] },
-      "actionWeights": { "patronage": 1.0, "observe": 1.4, "scheme": 0.4 },
-      "schedule": [
-        { "start": "07:00", "end": "13:00", "regionId": "mansion", "placeId": "mansion-studio", "x": 480, "y": 344, "activity": "在玻璃画室作画" },
-        { "start": "13:00", "end": "18:00", "regionId": "mansion", "placeId": "mansion", "x": 430, "y": 620, "activity": "在花园为访客画速写" },
-        { "start": "18:00", "end": "23:00", "regionId": "mansion", "placeId": "mansion", "x": 1040, "y": 680, "activity": "观察白棘花钟的阴影" },
-        { "start": "23:00", "end": "07:00", "regionId": "mansion", "placeId": "mansion-studio", "x": 480, "y": 420, "activity": "在画室梦见另一幅长卷" }
-      ]
-    },
-    {
-      "id": "sora", "name": "索拉", "role": "融雪医师", "regionId": "snow", "x": 266, "y": 300,
-      "color": "#6997a2", "hairColor": "#e7edf0", "traits": ["温柔", "果断", "不敬畏权威"], "values": ["生命", "清水", "可验证的事实"],
-      "goal": "把融雪安全引向农田并救治所有雪崩伤员", "knowledge": ["冰川裂缝正以每天九寸的速度扩张", "少量星辉能净化污染的水", "过量星辉会让饮水者共享梦境"],
-      "secret": "她自己已饮下星辉融水，因此能听见余烬井的心跳；第九日它会停止一次。", "secretTrust": 52, "initialRelationship": 16,
-      "dialogue": { "greetings": ["手给我。不是占卜，我只是看你有没有冻伤。", "水会记住经过的石头，也许人同样如此。", "山里没有奇迹，只有尚未理解的代价。"] },
-      "actionWeights": { "meltwater": 1.5, "rescue": 1.7, "ward": 0.3 },
-      "schedule": [
-        { "start": "05:00", "end": "11:00", "regionId": "snow", "placeId": "snow", "x": 450, "y": 760, "activity": "在融水坡采集药草" },
-        { "start": "11:00", "end": "17:00", "regionId": "snow", "placeId": "snow-lodge", "x": 480, "y": 382, "activity": "在暖炉医舍照看伤员" },
-        { "start": "17:00", "end": "22:00", "regionId": "snow", "placeId": "snow", "x": 700, "y": 560, "activity": "在冰川下测量水质" },
-        { "start": "22:00", "end": "05:00", "regionId": "snow", "placeId": "snow-lodge", "x": 520, "y": 430, "activity": "在医舍记录共享梦境" }
-      ]
-    },
-    {
-      "id": "garrick", "name": "加里克", "role": "北境哨兵", "regionId": "snow", "x": 486, "y": 300,
-      "color": "#536b7a", "hairColor": "#5d4b42", "traits": ["警惕", "耐心", "守诺"], "values": ["边境", "同伴", "旧誓"],
-      "goal": "在雪崩前撤离山道上的所有商旅", "knowledge": ["雪崩并非自然形成，封印热流正在融化山腹", "王城要求哨所隐瞒真实裂缝规模", "沙漠商队仍有两队人在北坡"],
-      "secret": "他收到过摄政官的密令：若封印彻底破裂，就摧毁山道，让雪山与五地隔绝。", "secretTrust": 63, "initialRelationship": 4,
-      "dialogue": { "greetings": ["站在我看得见的地方。山今天不喜欢意外。", "听见那声闷响了吗？不是雷，是冰层在移动。", "誓言很容易在暖屋里说出口，在雪里却很重。"] },
-      "actionWeights": { "rescue": 1.2, "ward": 1.4, "patrol": 0.8 },
-      "schedule": [
-        { "start": "04:00", "end": "10:00", "regionId": "snow", "placeId": "snow", "x": 1040, "y": 550, "activity": "巡查霜脊北坡山道" },
-        { "start": "10:00", "end": "16:00", "regionId": "snow", "placeId": "snow-watchtower", "x": 480, "y": 280, "activity": "在瞭望塔观察裂缝" },
-        { "start": "16:00", "end": "22:00", "regionId": "snow", "placeId": "snow", "x": 1200, "y": 560, "activity": "护送迟归旅人" },
-        { "start": "22:00", "end": "04:00", "regionId": "snow", "placeId": "snow-watchtower", "x": 520, "y": 420, "activity": "在塔顶轮值守夜" }
-      ]
-    },
-    {
-      "id": "ymir", "name": "伊米尔", "role": "封印守秘人", "regionId": "snow", "x": 548, "y": 292,
-      "color": "#7d7291", "hairColor": "#c8c9c2", "traits": ["古怪", "博学", "把危险当作老师"], "values": ["平衡", "长久记忆", "自愿的誓约"],
-      "goal": "确认五地是否仍配得上共同决定余烬井的命运", "knowledge": ["余烬井不是武器，而是放大集体意愿的古老装置", "封印需要五地代表自愿续誓", "坠星会在第九日二十一时穿过井口上空"],
-      "secret": "他不是人类，而是上一次启用余烬井后留下的记忆集合；当新誓成立，他会消失。", "secretTrust": 72, "initialRelationship": -2,
-      "dialogue": { "greetings": ["别叫我先知。先知只负责说，守秘人还得收拾残局。", "又是你。或者说，另一次你。", "五地总问井能给什么，很少问井会记住什么。"] },
-      "actionWeights": { "ward": 1.7, "observe": 1.3, "meltwater": 0.2 },
-      "schedule": [
-        { "start": "06:00", "end": "12:00", "regionId": "snow", "placeId": "snow", "x": 940, "y": 450, "activity": "在冰川封印旁倾听裂响" },
-        { "start": "12:00", "end": "18:00", "regionId": "snow", "placeId": "snow", "x": 1100, "y": 580, "activity": "在雪地重绘五地誓环" },
-        { "start": "18:00", "end": "02:00", "regionId": "snow", "placeId": "snow", "x": 1160, "y": 330, "activity": "在高坡观察坠星轨迹" },
-        { "start": "02:00", "end": "06:00", "regionId": "snow", "placeId": "snow-hermit", "x": 480, "y": 370, "activity": "在小屋把旧记忆写进冰里" }
-      ]
-    },
-    {
-      "id": "zahra", "name": "扎赫拉", "role": "赤帆商队长", "regionId": "desert", "x": 260, "y": 300,
-      "color": "#b2664f", "hairColor": "#2f2932", "traits": ["豪爽", "精于权衡", "信守口头承诺"], "values": ["自由通行", "公平交易", "队伍"],
-      "goal": "让五地签下不由王城垄断的新商路约", "knowledge": ["绿洲与雪山地下水脉相通", "商队仓中有足够五地两日的应急粮", "豪宅愿用水债换沙漠遗迹所有权"],
-      "secret": "她曾从遗迹带走一枚余烬钥匙碎片，并藏在商队旗杆顶端。", "secretTrust": 54, "initialRelationship": 12,
-      "dialogue": { "greetings": ["水先给客人，价钱之后再谈。这是赤帆的规矩。", "道路属于走在上面的人，不属于画地图的人。", "你若带来消息，我用消息付钱；若带来麻烦，价钱另算。"] },
-      "actionWeights": { "trade": 1.8, "guide": 1.0, "excavate": 0.3 },
-      "schedule": [
-        { "start": "05:00", "end": "11:00", "regionId": "desert", "placeId": "desert", "x": 380, "y": 460, "activity": "在驿站外清点商队水粮" },
-        { "start": "11:00", "end": "17:00", "regionId": "desert", "placeId": "desert", "x": 550, "y": 550, "activity": "在沙市与各地商人议价" },
-        { "start": "17:00", "end": "23:00", "regionId": "desert", "placeId": "desert", "x": 250, "y": 520, "activity": "在西路安排夜间商队" },
-        { "start": "23:00", "end": "05:00", "regionId": "desert", "placeId": "desert-caravanserai", "x": 480, "y": 380, "activity": "在赤帆驿站守夜" }
-      ]
-    },
-    {
-      "id": "kade", "name": "凯德", "role": "遗迹学者", "regionId": "desert", "x": 482, "y": 286,
-      "color": "#8a7561", "hairColor": "#5b4638", "traits": ["执着", "理性", "会为发现忘记吃饭"], "values": ["证据", "古代技术", "公开知识"],
-      "goal": "在王冠封锁前完整翻译余烬井操作铭文", "knowledge": ["余烬钥匙由五种材料组成而非一把实体钥匙", "遗迹浮雕描述的是共识而非献祭", "星辉数值过高会让井把最强烈的恐惧变成现实"],
-      "secret": "他已经翻译出关闭井的方式，却隐瞒此事，因为关闭会永远毁掉所有世界线记忆。", "secretTrust": 61, "initialRelationship": 6,
-      "dialogue": { "greetings": ["小心脚下，那块石头比王城现行法律还重要。", "不是魔法，是我们还没学会负责的技术。", "铭文反复出现一个词：共同。古人似乎很担心后来者忘记。"] },
-      "actionWeights": { "excavate": 1.9, "observe": 1.0, "trade": 0.2 },
-      "schedule": [
-        { "start": "06:00", "end": "13:00", "regionId": "desert", "placeId": "desert", "x": 760, "y": 600, "activity": "在余烬遗迹拓印铭文" },
-        { "start": "13:00", "end": "18:00", "regionId": "desert", "placeId": "desert", "x": 870, "y": 520, "activity": "在遗迹阴影里整理笔记" },
-        { "start": "18:00", "end": "01:00", "regionId": "desert", "placeId": "desert", "x": 800, "y": 460, "activity": "观察遗迹的星辉投影" },
-        { "start": "01:00", "end": "06:00", "regionId": "desert", "placeId": "desert-dig-house", "x": 480, "y": 420, "activity": "趴在工棚里睡觉" }
-      ]
-    },
-    {
-      "id": "ruu", "name": "露露", "role": "绿洲向导", "regionId": "desert", "x": 548, "y": 300,
-      "color": "#5d9585", "hairColor": "#3f3437", "traits": ["勇敢", "爱提问", "方向感惊人"], "values": ["朋友", "水", "每个人都能回家"],
-      "goal": "找出一条能让绿洲水送到所有地图的地下路", "knowledge": ["蓝镜绿洲的水流会回应雪山钟声", "沙狐能找到没有标在地图上的通风井", "余烬遗迹墙后有五条不同颜色的通道"],
-      "secret": "她不是商队孤儿；她是余烬井在上一条世界线中为自己创造的引路人。", "secretTrust": 48, "initialRelationship": 20,
-      "dialogue": { "greetings": ["你迷路了吗？没有也没关系，我可以带你绕远路。", "绿洲今天在唱北方的歌，你听不见吗？", "大人总把门锁起来，然后夸钥匙很珍贵。真奇怪。"] },
-      "actionWeights": { "guide": 1.8, "excavate": 0.7, "talk": 1.1 },
-      "schedule": [
-        { "start": "06:00", "end": "11:00", "regionId": "desert", "placeId": "desert", "x": 1180, "y": 500, "activity": "在东路给旅人带路" },
-        { "start": "11:00", "end": "16:00", "regionId": "desert", "placeId": "desert", "x": 390, "y": 638, "activity": "在蓝镜绿洲北岸测量水流" },
-        { "start": "16:00", "end": "22:00", "regionId": "desert", "placeId": "desert", "x": 1100, "y": 620, "activity": "追踪沙狐脚印" },
-        { "start": "22:00", "end": "06:00", "regionId": "desert", "placeId": "desert-guide-tent", "x": 480, "y": 372, "activity": "在帐篷里绘制星路" }
-      ]
+      "id": "ada",
+      "name": "艾达·罗文",
+      "displayName": "Ada Rowan",
+      "role": "中央校准员 · 第七见证人",
+      "initial": "A.R.",
+      "regionId": "town",
+      "placeId": "hidden-darkroom",
+      "x": 384,
+      "y": 255,
+      "goal": "让七个见证位置都保留下来，使时间继续而不是靠删除一个人结束",
+      "traits": ["清醒", "温柔", "被世界遗忘"],
+      "voice": "只在身份被固定后出现；像从一张照片背后说话，具体、平静、不煽情。",
+      "concern": "镇民为了得到一个星期日，已经无数次同意抹去她。",
+      "appearance": {"skin":"#edb88c","hair":"#8d4e3f","body":"#576b7a","trim":"#e0bd67","hairStyle":"long","outfit":"uniform","accessory":"headband"},
+      "knowledge": {"public":[],"suggestive":[],"forbidden":["回返曝光不是倒转时间，而是让被删去的第七记录以完整身份重新进入见证链。"]}
     }
   ],
-  "events": [
-    {
-      "id": "broken-canal", "day": 2, "hour": "12:00", "regionId": "farm", "title": "断渠之日", "playerSelectable": false,
-      "description": "北渠彻底停流。米拉带着农人堵在铜闸前，王城使者则带来一份只允许开闸半日的法令。",
-      "context": "若今日没有水，第一批冬麦会死去；强行破闸可能让王城水库失去控制。", "npcIds": ["mira", "bo", "nia", "taren"],
-      "colors": ["#80643f", "#be8a50"],
-      "story": {
-        "starts": { "day": 1, "hour": "08:00" },
-        "rumors": [
-          {
-            "id": "mira-locked-canal", "npcId": "mira", "minRelationship": 15,
-            "clue": "canal-locked-by-hands", "text": "渠不是旱死的。铜闸上有两道新锁，一道王城纹，一道白棘纹。",
-            "memory": "米拉告诉我，北渠不是自然干涸，而是被王城与白棘豪宅共同锁住。"
-          },
-          {
-            "id": "bo-cold-air", "npcId": "bo", "minRelationship": 18,
-            "requirements": [{ "path": "flags.tasted_memory_honey", "op": "==", "value": true, "label": "需要尝过蓝光蜂蜜" }],
-            "clue": "bees-found-cold-water", "text": "蜂群整夜伏在渠底那枚星形孔边。那里吹出的气，比雪水还冷。",
-            "memory": "博恩把蜂群的异常告诉了我：干渠星孔下方仍有冷水流动。"
-          },
-          {
-            "id": "taren-half-day-order", "npcId": "taren", "minRelationship": 12,
-            "requirements": [{ "path": "flags.heard_gate_bell", "op": "==", "value": true, "label": "需要听过南门铜钟" }],
-            "clue": "royal-release-limited", "text": "明日只开半日不是传闻。近田能活，远田会被排在钟声后面。",
-            "memory": "塔伦承认王令只准备放水半日，远田从一开始就不在救济名单里。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "canal-release-notice", "sceneId": "farm", "name": "半日放水告示", "type": "board",
-            "x": 870, "y": 510, "w": 100, "h": 58,
-            "description": "王城水务署告示：第二日正午启闸，半日后重新落锁。纸角沾着尚未干透的泥。",
-            "clue": "royal-half-day-order"
-          }
-        ],
-        "aftermath": {
-          "royal-release": [
-            {
-              "id": "crown-canal-marker", "sceneId": "farm", "name": "王令水位牌", "type": "board",
-              "x": 700, "y": 560, "w": 104, "h": 66,
-              "description": "水位刻线按王城钟声分成两段；远田农户的名字被写在最低一格。",
-              "clue": "aftermath-canal-under-crown"
-            }
-          ],
-          "people-channel": [
-            {
-              "id": "shared-canal-marker", "sceneId": "farm", "name": "共渠分水牌", "type": "map",
-              "x": 700, "y": 560, "w": 104, "h": 66,
-              "description": "泥板画着农人新挖的支渠，每一户旁都留着可以继续修改的刻痕。",
-              "clue": "aftermath-canal-shared"
-            }
-          ],
-          "hidden-channel": [
-            {
-              "id": "ancient-canal-heart", "sceneId": "farm", "name": "蓝脉闸心", "type": "crystal",
-              "x": 700, "y": 560, "w": 104, "h": 66,
-              "description": "冰蓝水光从星形闸孔下稳定涌出，水面每九分钟传来一次遥远心跳。",
-              "clue": "aftermath-ancient-channel-open"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "royal-release", "label": "执行王令，限时开闸", "description": "让巡卫控制水量，先救最靠近主渠的田。",
-          "social": {
-            "npcIds": ["taren", "aveline"], "minRelationship": 12, "topic": "限时放水能否避免水库失控",
-            "playerLine": "先把水稳稳送到田里，再让每一段水位都留下可追查的记录。",
-            "keywords": ["限时", "水位", "记录", "失控"], "acceptText": "塔伦低头看过闸表：至少这份命令必须留下谁先得水、谁被排在后面的名字。"
-          },
-          "effects": { "metrics": { "water": 9, "food": 7, "order": 5, "hope": -2 }, "factions": { "crown": 7, "commons": -2 }, "relationships": { "taren": 5, "mira": -3 }, "flags": ["canal_under_crown"] },
-          "outcome": "水流按钟声开闭，近田得救，远田的人记住了自己被排在后面。", "memory": "断渠之日，我们接受王城限时放水，秩序保住了部分收成。"
-        },
-        {
-          "id": "people-channel", "label": "拆开铜闸，共挖支渠", "description": "让农人自行分配水，并承担水库压力失衡的风险。",
-          "social": {
-            "npcIds": ["mira", "nia"], "minRelationship": 16, "topic": "由农户共同开挖并公开分水",
-            "playerLine": "让每户都派人来挖，也让每户都看得见水怎样分，渠就不属于一枚印章。",
-            "keywords": ["每户", "共同", "公开", "支渠"], "acceptText": "米拉把铁锹插进泥里：愿意一起挖的人，也该一起决定水往哪里走。"
-          },
-          "effects": { "metrics": { "water": 8, "food": 10, "order": -5, "hope": 8 }, "factions": { "commons": 9, "crown": -5 }, "relationships": { "mira": 8, "nia": 5 }, "flags": ["canal_shared"] },
-          "outcome": "泥水漫过所有人的靴子，新的支渠第一次绕开了王城印章。", "memory": "断渠之日，旅行者与农人拆开铜闸，共同挖出不属于任何人的水路。"
-        },
-        {
-          "id": "hidden-channel", "label": "接通星形地下水路", "description": "按渠底纹路启动古代通道，让雪山融水直接进入农田。",
-          "social": {
-            "npcIds": ["bo", "mira"], "minRelationship": 20, "topic": "蜂群发现的星形地下冷水道",
-            "playerLine": "别先砸闸。蜂群守着的星孔下还有冷水，我们可以顺着旧纹路把它接回来。",
-            "keywords": ["蜂群", "星孔", "冷水", "旧纹路"], "acceptText": "博恩贴近铜闸听了很久：下面确实有水声，米拉，我们先沿纹路挖。"
-          },
-            "requirementsScope": "player-evidence",
-            "requirements": [{ "path": "flags.inspected_dry_canal", "op": "==", "value": true, "label": "需要先调查干涸水渠" }],
-          "effects": { "metrics": { "water": 12, "food": 6, "aether": 9, "order": -2 }, "factions": { "keepers": 8, "commons": 4 }, "relationships": { "mira": 6, "ymir": -2 }, "flags": ["ancient_channel_open"] },
-          "outcome": "冰冷的蓝水从铜闸下涌出，所有人都听见了一声遥远心跳。", "memory": "旅行者开启了星形地下水路，融水与余烬井的力量一起进入农田。"
-        }
-      ]
-    },
-    {
-      "id": "ledger-banquet", "day": 3, "hour": "19:00", "regionId": "mansion", "title": "夜宴账簿", "playerSelectable": false,
-      "description": "白棘夜宴上，一本记录失踪税粮与水债的账簿被放在长桌中央。王城、农人和商队都要求带走它。",
-      "context": "账簿能推翻现有权力，也能证明女主人背负的债务曾用于维护雪山封印。", "npcIds": ["celeste", "oswin", "lune", "aveline", "nia"],
-      "colors": ["#76564f", "#c98270"],
-      "story": {
-        "starts": { "day": 2, "hour": "13:00" },
-        "rumors": [
-          {
-            "id": "oswin-clock-route", "npcId": "oswin", "minRelationship": 18,
-            "requirements": [{ "path": "flags.found_water_ledger", "op": "==", "value": true, "label": "需要发现镜池账簿" }],
-            "clue": "ledger-can-reach-archive", "text": "长桌不是账簿唯一的去处。偏厅后的齿轮门直通旧档馆，只是它不会为陌生人转动。",
-            "memory": "奥斯温告诉我，账簿可以经管家偏厅的钟表隧道送入旧档馆。"
-          },
-          {
-            "id": "lune-vanishing-pages", "npcId": "lune", "minRelationship": 16,
-            "requirements": [{ "path": "flags.noticed_missing_minutes", "op": "==", "value": true, "label": "需要注意到白棘花钟少走九分钟" }],
-            "clue": "ledger-history-erased", "text": "花钟少走的九分钟里，画上的账页会变白。今夜若没人读出它们，明早也许只剩空纸。",
-            "memory": "露恩警告我，夜宴之后账页可能像失去的九分钟一样从历史中消失。"
-          },
-          {
-            "id": "nia-missing-grain", "npcId": "nia", "minRelationship": 14,
-            "requirements": [{ "path": "flags.found_mill_cache", "op": "==", "value": true, "label": "需要发现磨坊暗仓" }],
-            "clue": "ledger-matches-grain-bags", "text": "我藏粮，是因为账上的税粮从没进过王城仓。袋数和镜池那本账一页不差。",
-            "memory": "妮娅用磨坊粮袋印记证明，镜池账簿记录的失踪税粮确实存在。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "banquet-guest-list", "sceneId": "mansion", "name": "白棘夜宴宾客牌", "type": "board",
-            "x": 690, "y": 380, "w": 156, "h": 62,
-            "description": "夜宴名单新添了王城、农田与商队代表，妮娅的名字却被墨线反复划去。",
-            "clue": "banquet-attendance-disputed"
-          }
-        ],
-        "aftermath": {
-          "publish-ledger": [
-            {
-              "id": "ledger-copy-board", "sceneId": "mansion", "name": "公开账页抄本", "type": "board",
-              "x": 700, "y": 590, "w": 136, "h": 72,
-              "description": "被朗读的水债与税粮账页钉在花墙外，墨迹旁留下许多不同笔迹的批注。",
-              "clue": "aftermath-ledger-public"
-            }
-          ],
-          "debt-bargain": [
-            {
-              "id": "forgiven-debt-chest", "sceneId": "mansion", "name": "作废水契匣", "type": "chest",
-              "x": 700, "y": 590, "w": 136, "h": 72,
-              "description": "旧水契被盖上作废印，匣盖敞开着，旁边是豪宅开放仓库的新钥匙。",
-              "clue": "aftermath-debts-forgiven"
-            }
-          ],
-          "send-to-archive": [
-            {
-              "id": "empty-ledger-casket", "sceneId": "mansion", "name": "镜池空石匣", "type": "ruin",
-              "x": 700, "y": 590, "w": 136, "h": 72,
-              "description": "账簿原件已经离开白棘宅邸，石匣边沿留着通向管家偏厅的湿脚印。",
-              "clue": "aftermath-ledger-archived"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "publish-ledger", "label": "公开全部账页", "description": "让露恩当众读出每一笔失踪税粮，不替任何人删节。",
-          "social": {
-            "npcIds": ["lune", "nia"], "minRelationship": 18, "topic": "让失踪税粮的账页被所有人听见",
-            "playerLine": "先把每一页读完，再谈谁该负责；沉默只会让账目再次消失。",
-            "keywords": ["每一页", "读完", "公开", "消失"], "acceptText": "露恩把账本转向烛光：那就不替任何人留白，也不替任何人添罪。"
-          },
-          "effects": { "metrics": { "order": -7, "hope": 10 }, "factions": { "commons": 9, "crown": -8 }, "relationships": { "lune": 7, "celeste": -5, "nia": 6 }, "flags": ["ledger_public"] },
-          "outcome": "宴会在沉默中结束，但账页的抄本已经越过花墙。", "memory": "白棘夜宴上，旅行者公开水债与失踪税粮，体面的沉默被打破。"
-        },
-        {
-          "id": "debt-bargain", "label": "以账簿换五地债务清零", "description": "保留部分秘密，换取豪宅开放仓库并取消农田水债。",
-          "social": {
-            "npcIds": ["celeste", "aveline"], "minRelationship": 18, "topic": "用可核验的账簿换取免债与开放仓库",
-            "playerLine": "真相不能被烧掉，但可以先让它换回被债压住的水和粮，再交给所有人核验。",
-            "keywords": ["免债", "仓库", "核验", "保留原件"], "acceptText": "瑟莱斯特按住封蜡：债可以今晚作废，账簿原件也必须完整留下。"
-          },
-          "effects": { "metrics": { "food": 8, "water": 5, "order": 5, "hope": 3 }, "factions": { "crown": 3, "caravan": 5 }, "relationships": { "celeste": 8, "oswin": 4, "nia": -2 }, "flags": ["debts_forgiven"] },
-          "outcome": "旧账没有被朗读，却在众目睽睽下被盖上作废印。", "memory": "旅行者用夜宴账簿换来五地债务清零，真相暂时留在匣中。"
-        },
-        {
-          "id": "send-to-archive", "label": "经钟表隧道送往旧档馆", "description": "把原件交给洛文，让证据与初王誓约一同保存。",
-          "social": {
-            "npcIds": ["oswin", "rowan"], "minRelationship": 18, "topic": "先保存不可替换的原件与证据链",
-            "playerLine": "抄本可以争论，原件只有一本。让齿轮门把它送到不会被宴席改写的地方。",
-            "keywords": ["原件", "齿轮门", "旧档馆", "证据"], "acceptText": "奥斯温收起隧道钥匙：午夜前，洛文会在空白页旁收到它。"
-          },
-            "requirementsScope": "player-evidence",
-            "requirements": [{ "path": "flags.found_water_ledger", "op": "==", "value": true, "label": "需要先调查镜池账簿" }],
-          "effects": { "metrics": { "order": 2, "hope": 5, "aether": 6 }, "factions": { "keepers": 9 }, "relationships": { "oswin": 8, "rowan": 7 }, "flags": ["ledger_archived", "clock_tunnel_known"] },
-          "outcome": "午夜前，账簿出现在旧档馆那页本应空白的位置。", "memory": "旅行者通过钟表隧道保存了账簿，旧档第一次补全一段被删除的历史。"
-        }
-      ]
-    },
-    {
-      "id": "avalanche", "day": 4, "hour": "11:00", "regionId": "snow", "title": "雪崩前的钟声", "playerSelectable": false,
-      "description": "北坡裂开，雪墙正向两支商队和山下水路倾覆。哨所只有时间完成一项大规模行动。",
-      "context": "救人、保水与加固封印无法同时做到；每一项放弃都会被幸存者记住。", "npcIds": ["sora", "garrick", "ymir", "zahra"],
-      "colors": ["#6d8f9f", "#d5e2e2"],
-      "story": {
-        "starts": { "day": 3, "hour": "06:00" },
-        "rumors": [
-          {
-            "id": "sora-waterway-risk", "npcId": "sora", "minRelationship": 16,
-            "clue": "avalanche-crosses-waterway", "text": "伤员说北坡在发热。雪墙一旦落下，山道和通往农田的融水管会一起被埋。",
-            "memory": "索拉告诉我，雪崩路径同时威胁北坡商队与通往农田的融水道。"
-          },
-          {
-            "id": "garrick-hidden-crack", "npcId": "garrick", "minRelationship": 18,
-            "requirements": [{ "path": "flags.saw_reverse_star", "op": "==", "value": true, "label": "需要看过逆轨星镜" }],
-            "clue": "avalanche-not-natural", "text": "你在星镜里看见了吧？热流从封印下往山腹钻。这不是一场能靠天气解释的雪崩。",
-            "memory": "加里克在确认我看过逆轨星镜后，承认雪崩来自封印热流而非天气。"
-          },
-          {
-            "id": "ymir-renew-ring", "npcId": "ymir", "minRelationship": 20,
-            "requirements": [{ "path": "flags.found_meltwater_map", "op": "==", "value": true, "label": "需要找到融水旧路图" }],
-            "clue": "old-map-can-redraw-seal", "text": "旧水路不是地图上的线，而是誓环缺失的一笔。若有人还记得五地，它能让雪自己分流。",
-            "memory": "伊米尔说融水旧路图可以补全誓环，引导雪墙避开人群与水道。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "north-slope-warning", "sceneId": "snow", "name": "北坡封路钟", "type": "shrine",
-            "x": 430, "y": 742, "w": 92, "h": 58,
-            "description": "警钟下挂着红绳：第四日上午封闭北坡。钟腹内侧不断落下温热冰屑。",
-            "clue": "north-slope-closes-before-eleven"
-          }
-        ],
-        "aftermath": {
-          "rescue-caravans": [
-            {
-              "id": "avalanche-rescue-hearth", "sceneId": "snow", "name": "获救者暖火", "type": "shrine",
-              "x": 680, "y": 520, "w": 110, "h": 82,
-              "description": "商队的湿披风围着火堆晾干，每一块木牌都写着被救回者的名字。",
-              "clue": "aftermath-caravans-rescued"
-            }
-          ],
-          "save-waterway": [
-            {
-              "id": "buried-watch-marker", "sceneId": "snow", "name": "覆雪哨所碑", "type": "ruin",
-              "x": 680, "y": 520, "w": 110, "h": 82,
-              "description": "北坡哨所只剩一截旗杆露在雪外，碑下仍能听见融水向南流动。",
-              "clue": "aftermath-meltwater-saved"
-            }
-          ],
-          "renew-ice-seal": [
-            {
-              "id": "renewed-oath-ring", "sceneId": "snow", "name": "五地新誓环", "type": "crystal",
-              "x": 680, "y": 520, "w": 110, "h": 82,
-              "description": "五种细光围成没有中心的环，雪流留下的两道白痕从它左右分开。",
-              "clue": "aftermath-ice-seal-renewed"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "rescue-caravans", "label": "全员搜救山道商队", "description": "让索拉和加里克带队，把生命放在水路与封印之前。",
-          "social": {
-            "npcIds": ["sora", "zahra"], "minRelationship": 20, "topic": "先把仍在北坡的人全部带回来",
-            "playerLine": "道路和封印还能重建，雪墙下的人不能。先让每支绳队都知道还有谁没回来。",
-            "keywords": ["救人", "绳队", "名单", "回来"], "acceptText": "索拉把伤员名单折好：先点清每一个名字，再让最后一支绳队撤下山。"
-          },
-          "effects": { "metrics": { "hope": 11, "water": -6, "order": 2 }, "factions": { "caravan": 9, "commons": 4 }, "relationships": { "sora": 8, "garrick": 6, "zahra": 7 }, "flags": ["caravans_rescued"] },
-          "outcome": "最后一名旅人在雪墙落下前被拉过绳桥，旧水路则被冰石掩埋。", "memory": "雪崩时，我们首先救下山道商队，所有人活着回来了。"
-        },
-        {
-          "id": "save-waterway", "label": "炸开侧坡，保住融水通道", "description": "牺牲北坡哨所，让雪崩避开通往农田的地下水路。",
-          "social": {
-            "npcIds": ["sora", "mira"], "minRelationship": 20, "topic": "保住供养农田的融水通道",
-            "playerLine": "山下不只是一条管道，是所有等水的田。把侧坡引爆时，给哨所留下最后一次撤离钟。",
-            "keywords": ["融水", "农田", "侧坡", "撤离钟"], "acceptText": "索拉在水路图上圈出侧坡：若钟声先响，至少没人会在不知情时被留下。"
-          },
-          "effects": { "metrics": { "water": 13, "food": 5, "order": -3, "hope": -4 }, "factions": { "commons": 5, "crown": -2 }, "relationships": { "sora": 3, "garrick": -5, "mira": 5 }, "flags": ["meltwater_saved"] },
-          "outcome": "融水继续南流，哨所和无人来得及带走的名字一同消失。", "memory": "雪崩时，我们保住五地融水，却失去了北坡哨所。"
-        },
-        {
-          "id": "renew-ice-seal", "label": "用五地线索重绘封印", "description": "把发现的旧水路图与誓文结合，引导雪崩绕过山道。",
-          "social": {
-            "npcIds": ["ymir", "garrick"], "minRelationship": 24, "topic": "用融水旧图补全五地誓环",
-            "playerLine": "旧图缺的不是水路，是誓环的一笔。让五地的线一起亮起，雪就不必在两条路里选一条。",
-            "keywords": ["旧图", "誓环", "五地", "分流"], "acceptText": "伊米尔把冰针递给加里克：若这张图是真的，我们还有一次不牺牲任何道路的机会。"
-          },
-            "requirementsScope": "player-evidence",
-            "requirements": [{ "path": "flags.found_meltwater_map", "op": "==", "value": true, "label": "需要调查融水石堆" }],
-          "effects": { "metrics": { "water": 7, "order": 5, "hope": 5, "aether": -10 }, "factions": { "keepers": 9 }, "relationships": { "ymir": 9, "garrick": 4 }, "flags": ["ice_seal_renewed"] },
-          "outcome": "新的誓环亮起，雪墙像被看不见的手分成两股，从山道两侧奔过。", "memory": "旅行者用五地旧图重绘冰川封印，让雪崩绕开了人群与水路。"
-        }
-      ]
-    },
-    {
-      "id": "ruins-awaken", "day": 5, "hour": "16:00", "regionId": "desert", "title": "沙暴中的余烬井", "playerSelectable": false,
-      "description": "沙暴掀开遗迹中央的井口。井中没有火，只有无数条可能世界线的倒影。",
-      "context": "开启井能带来资源与记忆，也会放大五地此刻最强烈的愿望或恐惧。", "npcIds": ["zahra", "kade", "ruu", "ymir"],
-      "colors": ["#a26945", "#c7a25c"],
-      "story": {
-        "starts": { "day": 4, "hour": "12:00" },
-        "rumors": [
-          {
-            "id": "kade-consensus-device", "npcId": "kade", "minRelationship": 16,
-            "requirements": [{ "path": "flags.studied_key_rubbing", "op": "==", "value": true, "label": "需要研究五钥拓片" }],
-            "clue": "well-amplifies-consensus", "text": "拓片里的跪姿翻错了。那些人不是献祭，他们在轮流发言；井放大的是共识。",
-            "memory": "凯德纠正了拓片译文：余烬井不是祭坛，而是会放大集体意愿的装置。"
-          },
-          {
-            "id": "ruu-five-passages", "npcId": "ruu", "minRelationship": 20,
-            "requirements": [{ "path": "flags.found_fox_route", "op": "==", "value": true, "label": "需要找到沙狐商路图" }],
-            "clue": "ruins-have-five-water-passages", "text": "沙狐每次从不同颜色的洞里回来，爪子却都湿着。墙后不是五条路，是同一股水。",
-            "memory": "露露告诉我，遗迹墙后的五色通道最终连向同一股地下水。"
-          },
-          {
-            "id": "zahra-hidden-key-shard", "npcId": "zahra", "minRelationship": 20,
-            "requirements": [{ "path": "flags.tested_oasis_current", "op": "==", "value": true, "label": "需要测试蓝镜绿洲水流" }],
-            "clue": "caravan-holds-key-shard", "text": "既然你知道绿洲向北流，我也不瞒了。赤帆顶端那块旧铜，是余烬钥匙的一角。",
-            "memory": "扎赫拉承认商队旗杆顶端藏着一枚余烬钥匙碎片。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "uncovered-well-mouth", "sceneId": "desert", "name": "新露出的井阶", "type": "ruin",
-            "x": 520, "y": 555, "w": 100, "h": 58,
-            "description": "沙暴刮走地表后露出一道向下的石阶，五种矿粉在阶边汇成同一个旋纹。",
-            "clue": "ember-well-about-to-open"
-          }
-        ],
-        "aftermath": {
-          "open-for-all": [
-            {
-              "id": "five-wishes-ring", "sceneId": "desert", "name": "五愿井环", "type": "shrine",
-              "x": 900, "y": 540, "w": 70, "h": 70,
-              "description": "五色微光沿井环缓慢追逐，靠近时能听到彼此不同却相互回应的愿望。",
-              "clue": "aftermath-shared-wishes"
-            }
-          ],
-          "seal-ruins": [
-            {
-              "id": "sealed-well-stone", "sceneId": "desert", "name": "封井石板", "type": "ruin",
-              "x": 900, "y": 540, "w": 70, "h": 70,
-              "description": "厚石板和赤帆沙袋封住井阶，最上方留着一行尚未决定何时拆除的日期。",
-              "clue": "aftermath-ember-well-sealed"
-            }
-          ],
-          "complete-key": [
-            {
-              "id": "five-water-key", "sceneId": "desert", "name": "五路水纹盘", "type": "crystal",
-              "x": 900, "y": 540, "w": 70, "h": 70,
-              "description": "一滴绿洲水悬在石盘中央，五道水纹同时伸向看不见的远方。",
-              "clue": "aftermath-five-lands-key"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "open-for-all", "label": "让所有人共同触碰井沿", "description": "拒绝任何势力独占，让在场者各自说出一个愿望。",
-          "social": {
-            "npcIds": ["ruu", "zahra"], "minRelationship": 24, "topic": "让不同的人先说出愿望再共同开井",
-            "playerLine": "先别让任何旗帜围住井口。让每个人各说一个愿望，也听完别人的愿望。",
-            "keywords": ["每个人", "愿望", "听完", "不独占"], "acceptText": "露露在井沿分出五个位置：谁都不站中间，也没人替别人开口。"
-          },
-          "effects": { "metrics": { "aether": 16, "hope": 8, "order": -5 }, "factions": { "commons": 5, "keepers": 5, "caravan": 5 }, "relationships": { "ruu": 9, "kade": 4 }, "flags": ["ember_well_open", "shared_wishes"] },
-          "outcome": "井中升起五色微光，每个人都看见一个不同却彼此相连的明天。", "memory": "旅行者让所有人共同开启余烬井，五地愿望被井一并记住。"
-        },
-        {
-          "id": "seal-ruins", "label": "重新埋葬井口", "description": "让商队用沙袋和石板封住遗迹，拒绝以风险换取奇迹。",
-          "social": {
-            "npcIds": ["kade", "zahra"], "minRelationship": 20, "topic": "在无人理解代价前暂时封住余烬井",
-            "playerLine": "不知道井会放大谁的恐惧时，封住它不是放弃答案，而是不给恐惧先回答。",
-            "keywords": ["恐惧", "代价", "暂时", "封住"], "acceptText": "凯德合上拓本：先把关闭方式写在石板外，再让商队落下最后一袋沙。"
-          },
-          "effects": { "metrics": { "aether": -14, "order": 8, "hope": -2, "water": 3 }, "factions": { "crown": 4, "caravan": 6 }, "relationships": { "zahra": 6, "kade": -6 }, "flags": ["ember_well_sealed"] },
-          "outcome": "井光被最后一块石板遮住，沙暴随即减弱，没人知道这是巧合还是回答。", "memory": "我们选择重新埋葬余烬井，以确定的今天拒绝危险的奇迹。"
-        },
-        {
-          "id": "complete-key", "label": "以绿洲水完成五地钥匙", "description": "按照浮雕，把一滴与雪山相连的绿洲水放入钥匙中心。",
-          "social": {
-            "npcIds": ["kade", "ruu"], "minRelationship": 22, "topic": "用与雪山相连的绿洲水补全五地钥匙",
-            "playerLine": "浮雕缺的不是宝石，是一滴能证明五条水路相连的水。把绿洲水放进中心。",
-            "keywords": ["绿洲水", "五条水路", "中心", "相连"], "acceptText": "凯德重新对齐拓片，露露捧起一滴水：原来钥匙要证明的不是所有权，是联系。"
-          },
-            "requirementsScope": "player-evidence",
-            "requirements": [{ "path": "flags.decoded_ember_key", "op": "==", "value": true, "label": "需要先解读余烬遗迹" }],
-          "effects": { "metrics": { "aether": 9, "water": 8, "hope": 5 }, "factions": { "keepers": 7, "caravan": 7 }, "relationships": { "kade": 8, "ruu": 8 }, "flags": ["five_lands_key", "well_understood"] },
-          "outcome": "钥匙没有打开一扇门，而是让所有地下水路同时发出回声。", "memory": "旅行者用绿洲水完成五地钥匙，证明余烬井与所有水路本为一体。"
-        }
-      ]
-    },
-    {
-      "id": "five-lands-council", "day": 6, "hour": "18:00", "regionId": "capital", "title": "五地议会", "playerSelectable": false,
-      "description": "五地代表第一次坐在没有王座的圆桌旁。摄政官要求决定坠星之夜由谁掌管余烬井。",
-      "context": "议会的形式本身就是答案：权力可以集中、分散，或被一份可撤回的共同誓约约束。", "npcIds": ["aveline", "mira", "celeste", "garrick", "zahra"],
-      "colors": ["#795844", "#d0a45f"],
-      "story": {
-        "starts": { "day": 5, "hour": "18:00" },
-        "rumors": [
-          {
-            "id": "rowan-five-signatures", "npcId": "rowan", "minRelationship": 20,
-            "requirements": [{ "path": "flags.read_first_oath", "op": "==", "value": true, "label": "需要读过初王誓像背文" }],
-            "clue": "first-oath-had-five-signatures", "text": "誓像只刻了一位初王，旧卷却留着五种墨。最初的誓约从来不是王冠独自颁下的。",
-            "memory": "洛文让我看见初王誓约上的五种墨迹，证明最初共有五位签署者。"
-          },
-          {
-            "id": "aveline-draft-law", "npcId": "aveline", "minRelationship": 22,
-              "clue": "council-draft-can-change", "text": "广场贴的是草案，不是判决。若五地代表带着同一条可执行的约束进来，我会让书记改字。议会那天，向宫卫报我的名字。",
-              "grantsFlags": ["palace_invitation"],
-            "memory": "艾芙琳承认《余烬井临时管理法》仍是草案，代表的共同约束可以改写它。"
-          },
-          {
-            "id": "taren-palace-entry", "npcId": "taren", "minRelationship": 18,
-            "clue": "council-needs-sponsors", "text": "宫门今天认摄政官的口信，也认巡卫亲自担保的人。声量大不算通行证；若我要为你开口，得先确信你不会把长厅当戏台。",
-            "memory": "塔伦告诉我，摄政官口信或熟识巡卫的亲自担保可以进入五地议会。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "well-law-draft", "sceneId": "capital", "name": "余烬井管理法草案", "type": "board",
-            "x": 1000, "y": 570, "w": 100, "h": 60,
-            "description": "草案把井的监管权留给王冠，页边却挤满了来自五地的不同笔迹和删改线。",
-            "clue": "five-lands-council-announced"
-          }
-        ],
-        "aftermath": {
-          "crown-stewardship": [
-            {
-              "id": "crown-well-edict", "sceneId": "capital", "name": "王冠井令碑", "type": "statue",
-              "x": 892, "y": 610, "w": 100, "h": 65,
-              "description": "新碑规定危机期间所有井令由王冠统一签发，归还权力的日期只刻了一个空框。",
-              "clue": "aftermath-crown-stewardship"
-            }
-          ],
-          "people-charter": [
-            {
-              "id": "recallable-delegate-board", "sceneId": "capital", "name": "五地代表公示板", "type": "board",
-              "x": 892, "y": 610, "w": 100, "h": 65,
-              "description": "每地代表、公开账目与下一次撤换日期写在同一块板上，没有名字被放在最上方。",
-              "clue": "aftermath-peoples-charter"
-            }
-          ],
-          "renew-first-oath": [
-            {
-              "id": "renewed-five-seal-table", "sceneId": "capital", "name": "五印誓约桌", "type": "table",
-              "x": 892, "y": 610, "w": 100, "h": 65,
-              "description": "五枚不同印记围成一圈，桌面中心保持空白，任何井令都要从五个方向落印。",
-              "clue": "aftermath-first-oath-renewed"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "crown-stewardship", "label": "由王冠暂时监管", "description": "让摄政官统一调配资源，承诺危机结束后再归还权力。",
-          "social": {
-            "npcIds": ["aveline", "garrick"], "minRelationship": 22, "topic": "危机期间由可追责的统一指挥调配余烬井",
-            "requiredPlaces": { "aveline": "capital-palace" },
-            "playerLine": "若要暂交王冠，就把期限、账目和归还条件同时写进法令，不能只留下一个承诺。",
-            "keywords": ["期限", "账目", "归还", "统一调配"], "acceptText": "艾芙琳示意书记添上空缺的条款：临时权力若没有归还日期，就不该被称作临时。"
-          },
-          "effects": { "metrics": { "order": 12, "hope": -5 }, "factions": { "crown": 12, "commons": -5 }, "relationships": { "aveline": 8, "taren": 4, "mira": -4 }, "flags": ["crown_stewardship"] },
-          "outcome": "印玺落下，决定变得迅速，圆桌也第一次出现了主位。", "memory": "五地议会把余烬井暂交王冠监管，以统一秩序面对坠星。"
-        },
-        {
-          "id": "people-charter", "label": "成立可罢免的众民议会", "description": "每地一票，公开账目，任何代表都能被本地居民撤换。",
-          "social": {
-            "npcIds": ["mira", "zahra", "aveline"], "minRelationship": 25, "topic": "让每地代表都能被本地居民撤换",
-            "requiredPlaces": { "aveline": "capital-palace" },
-            "playerLine": "每地一票还不够；名字、账目和撤换日期都要贴到人们看得见的地方。",
-            "keywords": ["每地一票", "公开账目", "撤换", "日期"], "acceptText": "米拉把草案翻到背面：那就先写代表怎样回去面对选他的人。"
-          },
-          "effects": { "metrics": { "hope": 12, "order": -4 }, "factions": { "commons": 13, "crown": -8 }, "relationships": { "mira": 7, "nia": 7, "aveline": -2 }, "flags": ["peoples_charter"] },
-          "outcome": "圆桌外的人群开始推选名字，权力第一次有了明确的归还日期。", "memory": "五地议会通过众民宪章，让每地代表都能被居民撤换。"
-        },
-        {
-          "id": "renew-first-oath", "label": "续写初王的共同誓约", "description": "承认五地彼此依存，并规定任何井令必须得到五地同意。",
-          "social": {
-            "npcIds": ["rowan", "oswin", "ymir", "aveline"], "minRelationship": 26, "topic": "恢复初王誓约原本的五地共同签署",
-            "requiredPlaces": { "aveline": "capital-palace" },
-            "playerLine": "旧卷上的五种墨不是装饰。让任何井令都必须得到五地同意，才算把誓约写完整。",
-            "keywords": ["五种墨", "五地同意", "旧誓", "写完整"], "acceptText": "洛文把旧卷摊在圆桌上：这不是创造新制度，只是把被删去的四个签名还回来。"
-          },
-          "requirementsScope": "player-evidence",
-          "requirements": [{ "path": "flags.read_first_oath", "op": "==", "value": true, "label": "需要读过初王誓像背文" }],
-          "effects": { "metrics": { "order": 7, "hope": 9, "aether": -3 }, "factions": { "crown": 3, "commons": 4, "keepers": 6, "caravan": 3 }, "relationships": { "aveline": 7, "ymir": 8, "oswin": 5 }, "flags": ["first_oath_renewed"] },
-          "outcome": "五枚不同的印记围成一圈，没有任何一枚盖在中心。", "memory": "五地代表续写初王誓约，约定余烬井只能由五地共同决定。"
-        }
-      ]
-    },
-    {
-      "id": "bread-unrest", "day": 7, "hour": "13:00", "regionId": "capital", "title": "面包与钟声", "playerSelectable": false,
-      "description": "王城面包房前排起长队，传言巡卫私藏粮食。第一块石头击中钟楼，塔伦命令士兵收剑。",
-      "context": "粮食短缺是真实的，但恐慌来自没人相信分配过程；公开与效率可能无法兼得。", "npcIds": ["taren", "nia", "mira", "aveline", "rowan"],
-      "colors": ["#775044", "#d5a45e"],
-      "story": {
-        "starts": { "day": 6, "hour": "20:00" },
-        "rumors": [
-          {
-            "id": "taren-two-day-rations", "npcId": "taren", "minRelationship": 18,
-            "requirements": [{ "path": "flags.read_guard_rations", "op": "==", "value": true, "label": "需要读过被涂改的军粮板" }],
-            "clue": "guard-grain-lasts-two-days", "text": "你看过那块板，就知道巡卫没藏下一座粮山。剩下的粮只够两天，我怕的是没人再信数字。",
-            "memory": "塔伦承认巡卫粮仓只够两日，真正引燃骚乱的是分配过程无人相信。"
-          },
-          {
-            "id": "nia-kitchen-network", "npcId": "nia", "minRelationship": 22,
-            "requirements": [{ "path": "flags.found_mill_cache", "op": "==", "value": true, "label": "需要发现磨坊暗仓" }],
-            "clue": "three-suppliers-can-feed-square", "text": "我的暗仓只能撑一顿。若米拉出粮、白棘开仓、赤帆运货，广场能一直开火。",
-            "memory": "妮娅算出公共厨房需要农田供粮、豪宅开仓与赤帆运输形成承诺链。"
-          },
-          {
-            "id": "rowan-rumor-ledger", "npcId": "rowan", "minRelationship": 20,
-            "clue": "bread-rumor-needs-public-tally", "text": "传言每换一张嘴就多一座秘密粮仓。与其辩解，不如把每袋粮的去向钉在长桌旁。",
-            "memory": "洛文提醒我，压下粮食谣言靠的不是更响的命令，而是任何人都能核对的公开账目。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "rising-bread-price", "sceneId": "capital", "name": "面包涨价板", "type": "board",
-            "x": 420, "y": 570, "w": 100, "h": 60,
-            "description": "面包价格一天内改了三次，最后一行旁有人写下：仓里究竟还剩多少？",
-            "clue": "bread-line-about-to-break"
-          }
-        ],
-        "aftermath": {
-          "open-granaries": [
-            {
-              "id": "open-grain-shelf", "sceneId": "capital", "name": "公开粮架", "type": "chest",
-              "x": 480, "y": 620, "w": 100, "h": 65,
-              "description": "打开的粮箱旁逐袋写着库存与领取数，任何排队者都能算出明日还剩多少。",
-              "clue": "aftermath-granaries-opened"
-            }
-          ],
-          "ration-cards": [
-            {
-              "id": "ration-card-board", "sceneId": "capital", "name": "家庭配给牌", "type": "board",
-              "x": 480, "y": 620, "w": 100, "h": 65,
-              "description": "家庭人数和领粮时刻排列得十分整齐，牌边却挤满关于漏登者的申诉。",
-              "clue": "aftermath-ration-cards"
-            }
-          ],
-          "five-lands-kitchen": [
-            {
-              "id": "five-lands-kitchen-table", "sceneId": "capital", "name": "五地公共长桌", "type": "table",
-              "x": 480, "y": 620, "w": 100, "h": 65,
-              "description": "农田面粉、白棘储粮与赤帆香料在同一口锅里煮着，每袋来路都写在桌边。",
-              "clue": "aftermath-public-kitchens"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "open-granaries", "label": "打开所有粮仓，按人数分粮", "description": "包括巡卫暗仓和豪宅库存，先让每个人拿到今天的面包。",
-          "social": {
-            "npcIds": ["nia", "taren"], "minRelationship": 22, "topic": "公开所有粮仓和当天分粮数字",
-            "playerLine": "先让所有仓门和账目一起打开。人们看见今天怎样分，才会相信明天还有面包。",
-            "keywords": ["仓门", "账目", "今天", "公开分粮"], "acceptText": "塔伦让士兵收起门闩，妮娅把粉笔递过去：每搬出一袋，就当众减去一袋。"
-          },
-          "effects": { "metrics": { "food": -10, "hope": 13, "order": 3 }, "factions": { "commons": 9 }, "relationships": { "nia": 8, "taren": 7, "celeste": -2 }, "flags": ["granaries_opened"] },
-          "outcome": "粮食储备骤降，但长队第一次知道明天还能领到多少。", "memory": "面包骚乱中，我们打开所有粮仓公开分配，恐慌在面包香气里平息。"
-        },
-        {
-          "id": "ration-cards", "label": "建立巡卫配给票", "description": "严格登记家庭人数，让有限粮食撑到坠星之后。",
-          "social": {
-            "npcIds": ["aveline", "taren"], "minRelationship": 18, "topic": "按家庭登记让有限粮食撑过坠星",
-            "playerLine": "如果必须配给，就把漏登申诉和复核时限写在票上，别让一张纸决定谁不存在。",
-            "keywords": ["家庭登记", "申诉", "复核", "时限"], "acceptText": "艾芙琳在配给票背面添上申诉栏：秩序若不能纠错，只是在把饥饿排整齐。"
-          },
-          "effects": { "metrics": { "food": 6, "order": 10, "hope": -6 }, "factions": { "crown": 8 }, "relationships": { "taren": 4, "aveline": 5, "nia": -5 }, "flags": ["ration_cards"] },
-          "outcome": "队伍安静下来，每张配给票却像一张关于谁更重要的判决。", "memory": "面包骚乱后，王城实行严格配给，粮食保住了，怀疑也留下了。"
-        },
-        {
-          "id": "five-lands-kitchen", "label": "把商队、农田与豪宅连成公共厨房", "description": "用新商路和免债承诺换取各地库存，现场公开每一袋粮。",
-          "social": {
-            "npcIds": ["nia", "mira", "celeste", "zahra"], "minRelationship": 26, "topic": "让三地承诺汇成持续运作的公共厨房",
-            "playerLine": "米拉供粮、白棘开仓、赤帆运输；把三份承诺和每袋来路都钉在同一张长桌旁。",
-            "keywords": ["米拉", "白棘", "赤帆", "三份承诺"], "acceptText": "妮娅逐一念过三方答复：只要货箱真的到场，磨坊今晚就不熄火。"
-          },
-          "requirements": [{ "path": "metrics.hope", "op": ">=", "value": 45, "label": "需要希望至少达到 45" }],
-          "effects": { "metrics": { "food": 10, "hope": 9, "order": 4 }, "factions": { "commons": 6, "caravan": 7 }, "relationships": { "zahra": 6, "nia": 6, "celeste": 4 }, "flags": ["public_kitchens"] },
-          "outcome": "五地食材在同一口锅里沸腾，账目被钉在每张长桌旁。", "memory": "旅行者促成五地公共厨房，粮食与账目一同公开。"
-        }
-      ]
-    },
-    {
-      "id": "ember-key", "day": 8, "hour": "20:00", "regionId": "desert", "title": "余烬钥匙", "playerSelectable": false,
-      "description": "坠星前夜，五道光从各地汇入余烬井。井要求的最后钥匙不是器物，而是一句所有人愿意记住的承诺。",
-      "context": "这项选择会决定第九日的判定方向；世界现有指标仍可能让承诺以意想不到的方式实现。", "npcIds": ["aveline", "mira", "celeste", "ymir", "zahra", "ruu"],
-      "colors": ["#596f62", "#d3945e"],
-      "story": {
-        "starts": { "day": 7, "hour": "20:00" },
-        "rumors": [
-          {
-            "id": "aveline-last-question", "npcId": "aveline", "minRelationship": 28,
-            "clue": "final-promise-is-remembered-speech", "text": "井要的不是一句漂亮口号。它会记住我们在危机里反复对彼此说过什么。",
-            "memory": "艾芙琳告诉我，余烬井最终回应的是五地在危机中反复坚持的承诺。"
-          },
-          {
-            "id": "ymir-last-heartbeat", "npcId": "ymir", "minRelationship": 28,
-            "requirements": [{ "path": "flags.read_ice_memory", "op": "==", "value": true, "label": "需要读过写进冰里的旧记忆" }],
-            "clue": "well-stops-once-at-nine", "text": "第九日前，井的心跳会停一次。那一息里，人们说出的不是愿望，而是愿意共同承担的边界。",
-            "memory": "伊米尔说井会在第九日前停跳一息，只有共同承担的承诺能成为最后钥匙。"
-          },
-          {
-            "id": "ruu-five-lights-route", "npcId": "ruu", "minRelationship": 24,
-            "requirements": [{ "path": "flags.decoded_ember_key", "op": "==", "value": true, "label": "需要解读五钥余烬遗迹" }],
-            "clue": "five-lights-meet-at-well", "text": "今晚五处水面会一起亮。跟着最后熄灭的那一道，就能在沙暴合拢前到井边。",
-            "memory": "露露告诉我，五地水光会标出通往井口的最后路线。"
-          }
-        ],
-        "signs": [
-          {
-            "id": "converging-five-lights", "sceneId": "desert", "name": "汇流星脉", "type": "crystal",
-            "x": 1240, "y": 620, "w": 120, "h": 60,
-            "description": "五道颜色不同的微光越过沙面，在余烬井方向交汇；每道光都带着一处水域的声音。",
-            "clue": "final-gathering-before-twenty"
-          }
-        ],
-        "aftermath": {
-          "promise-safety": [
-            {
-              "id": "refuge-ember-lamp", "sceneId": "desert", "name": "不灭避难灯", "type": "shrine",
-              "x": 1260, "y": 720, "w": 110, "h": 80,
-              "description": "灯下放着水、干粮和六块空白姓名牌，提醒后来者先清点还有谁没有抵达。",
-              "clue": "aftermath-final-promise-safety"
-            }
-          ],
-          "promise-truth": [
-            {
-              "id": "remembered-names-stone", "sceneId": "desert", "name": "显字纪事碑", "type": "statue",
-              "x": 1260, "y": 720, "w": 110, "h": 80,
-              "description": "原本空白的碑面不断浮出被删去的名字与账页，没有一行能再被完全磨去。",
-              "clue": "aftermath-final-promise-truth"
-            }
-          ],
-          "promise-consent": [
-            {
-              "id": "five-consent-braziers", "sceneId": "desert", "name": "五地应答火盆", "type": "shrine",
-              "x": 1260, "y": 720, "w": 110, "h": 80,
-              "description": "五座小火盆彼此靠近却没有主火；只有五处火光同时回应，井环才会亮起。",
-              "clue": "aftermath-final-promise-consent"
-            }
-          ]
-        }
-      },
-      "choices": [
-        {
-          "id": "promise-safety", "label": "承诺：没有人会被留在灾难之后", "description": "让井优先保存生命、粮水和可继续生活的秩序。",
-          "social": {
-            "npcIds": ["aveline", "sora", "garrick"], "minRelationship": 28, "topic": "先确认每个人都能活着抵达明日",
-            "playerLine": "不论井保存什么，先数清每一个还没回来的人；没有人的安全该被写成必要代价。",
-            "keywords": ["每一个人", "安全", "回来", "不留在后面"], "acceptText": "艾芙琳没有立刻回答，只把这句话写进最后一份晨报：先清点名字，再谈世界。"
-          },
-          "effects": { "metrics": { "food": 5, "water": 5, "order": 8, "hope": 5, "aether": -5 }, "factions": { "crown": 3, "commons": 3, "caravan": 3 }, "relationships": { "sora": 6, "garrick": 6 }, "flags": ["final_promise_safety"] },
-          "outcome": "井光变得温暖而稳定，像一间在暴雪中仍亮着灯的屋子。", "memory": "坠星前夜，五地向余烬井承诺不把任何人留在灾难之后。"
-        },
-        {
-          "id": "promise-truth", "label": "承诺：任何繁荣都不能以遗忘为代价", "description": "让被删去的账页、誓言与失败世界线重新被所有人记住。",
-          "social": {
-            "npcIds": ["rowan", "lune", "ymir", "ruu"], "minRelationship": 30, "topic": "让被删除的名字和失败仍留在共同历史中",
-            "playerLine": "若繁荣要求我们忘掉账页、名字和失败过的世界，那只是把灾难藏进空白里。",
-            "keywords": ["账页", "名字", "失败世界", "不能遗忘"], "acceptText": "洛文把空白页翻到最前面：这一次，结局不能再替活下来的人删去代价。"
-          },
-          "effects": { "metrics": { "hope": 8, "aether": 12, "order": -5 }, "factions": { "keepers": 10, "commons": 4 }, "relationships": { "rowan": 9, "lune": 7, "kade": 5 }, "flags": ["final_promise_truth"] },
-          "outcome": "每个人都短暂看见了自己曾遗忘的选择，没人能再声称历史只有一个版本。", "memory": "坠星前夜，五地承诺繁荣不能以遗忘真相为代价。"
-        },
-        {
-          "id": "promise-consent", "label": "承诺：未来只能由五地共同同意", "description": "把井的控制权拆成五份，任何一地都拥有说不的权利。",
-          "social": {
-            "npcIds": ["mira", "zahra", "ymir"], "minRelationship": 30, "topic": "任何未来都必须保留五地说不的权利",
-            "playerLine": "让五地各自握住一份应答。少任何一地的同意，井都不能替所有人决定未来。",
-            "keywords": ["五地", "同意", "说不", "共同决定"], "acceptText": "米拉把手从井沿收回：若土地也有一句话，那句话首先应该是它可以拒绝。"
-          },
-          "requirements": [{ "path": "factions.commons", "op": ">=", "value": 45, "label": "需要众民同盟影响至少 45" }],
-          "effects": { "metrics": { "order": 5, "hope": 10, "aether": -2 }, "factions": { "crown": -5, "commons": 7, "keepers": 4, "caravan": 4 }, "relationships": { "mira": 5, "zahra": 5, "ymir": 6 }, "flags": ["final_promise_consent"] },
-          "outcome": "一道井光分成五枚微小火种，彼此靠近，却再也无法被一只手握住。", "memory": "坠星前夜，五地承诺任何未来都必须得到共同同意。"
-        }
-      ]
-    }
+  "items": [
+    {"id":"installation_wrench","name":"安装扳手","description":"沉重的市政制式扳手，柄端有一个不常见的三角缺口。"},
+    {"id":"silver_tuning_fork","name":"银色音叉","description":"一枚音色很高的音叉，侧面刻着 VII。"},
+    {"id":"room7_tag","name":"七号房钥匙牌","description":"从钟楼地板缝里捡到的旧黄铜牌，数字 7 仍清晰可见。"},
+    {"id":"unnumbered_key","name":"无编号钥匙","description":"旅店柜台后的旧钥匙，齿形与普通客房钥匙完全不同。"},
+    {"id":"spare_lens","name":"双槽备用镜片","description":"海滩上捡到的厚玻璃镜片，边框上有两道导轨。"},
+    {"id":"flashlight","name":"防水手电","description":"康拉德保养得很好的手电，足够照亮退潮后的洞穴。"},
+    {"id":"cave_negative","name":"受潮的旧底片","description":"洞穴深处找到的胶片，依稀能看见一名站在钟前的人。"},
+    {"id":"unfinished_portrait","name":"未完成的第七人肖像","description":"显影后只有脸部和 A.R. 缩写清晰，其余身份仍在乳剂里漂移。"},
+    {"id":"fixed_portrait","name":"艾达·罗文的定影肖像","description":"姓名、住处、职责与面孔都已固定的第七位见证人肖像。"}
   ],
-  "endings": [
-    {
-      "id": "living-constellation", "title": "群星仍有姓名", "subtitle": "所有失败的世界线都成为可选择的记忆", "glyph": "✦", "hint": "让星辉、希望与真相同时抵达高处。", "priority": 120,
-      "epilogue": ["坠星穿过井口时没有落下，而是碎成无数不会灼伤人的光。洛文空白的档案一页页显出字迹，每个人都记起那些曾经失败、却教会他们如何走到这里的世界。", "伊米尔在晨光中化为一圈融水。人们没有为他立像，而是把每一个曾被删去的名字写进新纪事。你仍能选择离开，因为被记住的未来不再需要被重复。"],
-      "condition": { "all": [{ "path": "metrics.aether", "op": ">=", "value": 68 }, { "path": "metrics.hope", "op": ">=", "value": 64 }], "any": [{ "path": "factions.keepers", "op": ">=", "value": 52 }, { "path": "statistics.conversations", "op": ">=", "value": 8 }], "flags": ["final_promise_truth"] }
-    },
-    {
-      "id": "dawn-covenant", "title": "五地黎明", "subtitle": "没有王座的圆桌迎来第一束光", "glyph": "☼", "hint": "在充足资源与共同承诺之间建立平衡。", "priority": 110,
-      "epilogue": ["坠星之夜，五地代表围在余烬井边，每个人都能听见另四地的呼吸。井没有选出统治者，只把星辉化作一场温柔的雨。", "王城拆掉圆桌前最后一级台阶，农田的新渠穿过豪宅花园，雪山融水在赤沙漠汇成第二片绿洲。历史第一次不是由获胜者书写，而是由仍愿意坐下来的人共同续写。"],
-      "condition": { "all": [{ "path": "metrics.food", "op": ">=", "value": 60 }, { "path": "metrics.water", "op": ">=", "value": 60 }, { "path": "metrics.order", "op": ">=", "value": 58 }, { "path": "metrics.hope", "op": ">=", "value": 65 }], "any": [], "flags": ["final_promise_consent"] }
-    },
-    {
-      "id": "peoples-spring", "title": "众民之春", "subtitle": "王冠成为博物馆里一件需要解释的旧物", "glyph": "❖", "hint": "让众民同盟与希望主导第九日。", "priority": 100,
-      "epilogue": ["坠星照亮王城时，广场上没有军队，只有从五地赶来的代表与长长的面包桌。艾芙琳亲手把印玺放进旧档馆，并要求洛文记录：权力在没有归还日期时就是债务。", "新的议会争吵很多、效率不总是高，却没人再需要翻墙才能看见账目。你离开时，米拉正在教王城孩子如何判断一粒种子是否还活着。"],
-      "condition": { "all": [{ "path": "factions.commons", "op": ">=", "value": 62 }, { "path": "metrics.hope", "op": ">=", "value": 58 }], "any": [], "flags": ["peoples_charter"] }
-    },
-    {
-      "id": "iron-star", "title": "铁星王冠", "subtitle": "世界得救了，门锁也从此没有打开", "glyph": "♜", "hint": "让王冠与秩序压过所有异议。", "priority": 95,
-      "epilogue": ["王冠议会用余烬井固定了每一条水路、粮路与命令。坠星没有造成伤亡，第二天的钟声也一分不差。", "人们得到安全、配给与明确的工作，却渐渐不再谈论其他可能。洛文把最后一页空白档案藏进墙里，等待某个仍会问为什么的旅行者。"],
-      "condition": { "all": [{ "path": "factions.crown", "op": ">=", "value": 67 }, { "path": "metrics.order", "op": ">=", "value": 72 }], "any": [{ "path": "metrics.hope", "op": "<", "value": 58 }], "flags": [] }
-    },
-    {
-      "id": "green-veins", "title": "大地的绿色血脉", "subtitle": "水路取代城墙，五地成为一座花园", "glyph": "❧", "hint": "保护粮水，并让星辉保持克制。", "priority": 90,
-      "epilogue": ["坠星的热量被导入旧水路，沉睡的种子在一夜之间沿五地边界发芽。新渠不再承认地图上的领地线，只按地势与需要流动。", "米拉最终种下星种，却只让每户保存一粒。人们学会把奇迹当作需要照料的作物，而不是永不枯竭的奖赏。"],
-      "condition": { "all": [{ "path": "metrics.food", "op": ">=", "value": 70 }, { "path": "metrics.water", "op": ">=", "value": 70 }, { "path": "metrics.aether", "op": "<=", "value": 62 }], "any": [{ "path": "factions.commons", "op": ">=", "value": 50 }, { "path": "factions.caravan", "op": ">=", "value": 50 }], "flags": [] }
-    },
-    {
-      "id": "open-road", "title": "没有尽头的赤帆", "subtitle": "五地不再是边界，而是沿途五处灯火", "glyph": "➶", "hint": "让商队与公共交换改变世界。", "priority": 85,
-      "epilogue": ["扎赫拉把余烬钥匙碎片熔成五枚路标。坠星之后，商路第一次全年开放，粮食、水、药与故事沿道路双向流动。", "露露画的地图没有国界，只有每处能喝水、避雪和得到帮助的地方。多年后，旅人们仍把这种地图称作余烬回响。"],
-      "condition": { "all": [{ "path": "factions.caravan", "op": ">=", "value": 62 }, { "path": "metrics.food", "op": ">=", "value": 52 }, { "path": "metrics.water", "op": ">=", "value": 52 }], "any": [], "flags": ["public_kitchens"] }
-    },
-    {
-      "id": "dreaming-well", "title": "井中长夜", "subtitle": "愿望太响，现实再也无法叫醒所有人", "glyph": "◉", "hint": "过强的星辉会把愿望与恐惧一同变成世界。", "priority": 105,
-      "epilogue": ["坠星落入余烬井，井把五地最强烈的愿望全部实现，却没有人事先约定愿望能否彼此共存。王城永远安全、农田永远丰收、豪宅永远停在最美的夜宴——每个人都活在自己的完美世界里。", "只有你还能在这些梦境之间行走。NPC 会微笑着重复最幸福的一天，再也无法记住你下一次到来。"],
-      "condition": { "all": [{ "path": "metrics.aether", "op": ">=", "value": 82 }], "any": [{ "path": "metrics.hope", "op": "<", "value": 58 }, { "path": "metrics.order", "op": "<", "value": 45 }], "flags": ["ember_well_open"] }
-    },
-    {
-      "id": "ash-famine", "title": "无火之灰", "subtitle": "坠星到来以前，世界已经耗尽了明天", "glyph": "▽", "hint": "长期忽视粮、水或秩序会留下最沉重的结局。", "priority": 115,
-      "epilogue": ["第九日没有人抬头看坠星。粮仓空着，水渠结着泥壳，钟楼只为失踪者报时。余烬井回应了世界最强烈的念头：让这一切快些结束。", "你在空旷的五地间仍能找到十五个人留下的记忆。它们证明结局并非突然降临，而是许多次无人回应的小事堆积而成。"],
-      "condition": { "all": [], "any": [{ "path": "metrics.food", "op": "<", "value": 24 }, { "path": "metrics.water", "op": "<", "value": 22 }, { "path": "metrics.order", "op": "<", "value": 20 }], "flags": [] }
-    },
-    {
-      "id": "quiet-ember", "title": "寻常的余烬", "subtitle": "没有完美答案，人们仍决定一起迎接明早", "glyph": "·", "hint": "每一条未命名的路也值得被见证。", "priority": 0, "fallback": true,
-      "epilogue": ["坠星掠过五地，没有带来预言中的奇迹，也没有结束所有争执。有人在井边和解，有人带着不满离开，更多人忙着确认明天的水和面包。", "你见证的不是一座完成的乌托邦，而是一群记得彼此选择的人。余烬井安静下来，把这个并不完美的世界交还给他们自己。"],
-      "condition": { "all": [], "any": [], "flags": [] }
-    }
+  "evidence": [
+    {"id":"master_ar_record","name":"主钟终止记录","source":"广场主钟","text":"A.R.：七次连续击发确认终止。"},
+    {"id":"chapel_ar_log","name":"礼拜堂安装记录","source":"礼拜堂钟楼","text":"A.R.：屋顶反射器将灯塔光路引向中央广场。"},
+    {"id":"ledger_gap","name":"登记簿缺失行","source":"湖畔旅店","text":"六号房与八号房之间有一整行被精确挖去。"},
+    {"id":"brake_interface","name":"主钟紧急制动接口","source":"主钟地下室","text":"三角接口与安装扳手柄端完全吻合。"},
+    {"id":"inn_roof_reflector","name":"旅店屋顶反射器记录","source":"档案馆","text":"旧维护图标出一面可转向摄影工作室西墙的屋顶镜。"},
+    {"id":"return_exposure","name":"回返曝光定义","source":"档案馆","text":"并非倒转时间；让被删除的记录以完整身份重新进入见证链。"}
   ]
 }

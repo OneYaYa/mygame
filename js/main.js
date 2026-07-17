@@ -1,115 +1,70 @@
 import AIService from "./ai.js";
-import { Game } from "./game.js";
-import { initTitleScene } from "./title-scene.js";
+import Game from "./game.js";
 
-function validateContent(content) {
-  const requiredArrays = ["timelines", "regions", "npcs", "events", "endings"];
-  if (!content || typeof content !== "object") throw new Error("世界数据不是有效对象");
-  requiredArrays.forEach((key) => {
-    if (!Array.isArray(content[key]) || !content[key].length) throw new Error(`世界数据缺少 ${key}`);
+function validateContent(world, maps) {
+  if (!world?.game || !Array.isArray(world.npcs) || world.npcs.length !== 7) throw new Error("world.json 必须包含游戏配置与七名居民");
+  if (!Array.isArray(maps?.regions) || maps.regions.length < 1 || !Array.isArray(maps?.places)) throw new Error("maps.json 缺少 regions 或 places");
+  const ids = new Set([...maps.regions, ...maps.places].map((scene) => scene.id));
+  ["town", "inn-yard", "chapel-hill", "photo-lane", "archive-lane", "harbor", "clock-basement", "hidden-darkroom", "low-tide-cave"].forEach((id) => {
+    if (!ids.has(id)) throw new Error(`地图缺少关键场景：${id}`);
   });
-  const regionIds = new Set(content.regions.map((region) => region.id));
-  if (regionIds.size !== content.regions.length) throw new Error("地图 ID 存在重复");
-  const places = Array.isArray(content.places) ? content.places : [];
-  const placeIds = new Set(places.map((place) => place.id));
-  if (placeIds.size !== places.length) throw new Error("室内地点 ID 存在重复");
-  places.forEach((place) => {
-    if (!place.id || !regionIds.has(place.regionId)) throw new Error(`地点 ${place.id || "(未命名)"} 指向未知地区 ${place.regionId}`);
-    if (Number(place.width || 0) < 768 || Number(place.height || 0) < 480) throw new Error(`地点 ${place.id} 小于游戏视口`);
+  const npcIds = new Set(world.npcs.map((npc) => npc.id));
+  ["arthur", "beatrice", "conrad", "dorothea", "elias", "florence", "ada"].forEach((id) => {
+    if (!npcIds.has(id)) throw new Error(`剧情缺少居民：${id}`);
   });
-  const validPlaceIds = new Set([...regionIds, ...placeIds]);
-  [...content.regions, ...places].forEach((scene) => {
-    if (Number(scene.width || 768) < 768 || Number(scene.height || 480) < 480) throw new Error(`地图 ${scene.id} 小于游戏视口`);
-    (scene.portals || []).forEach((portal) => {
-      const target = portal.target || {};
-      if (!regionIds.has(target.regionId)) throw new Error(`出口 ${scene.id}/${portal.id} 指向未知地区 ${target.regionId}`);
-      if (!validPlaceIds.has(target.placeId || target.regionId)) throw new Error(`出口 ${scene.id}/${portal.id} 指向未知地点 ${target.placeId}`);
-    });
-  });
-  content.npcs.forEach((npc) => {
-    const regionId = npc.regionId || npc.region;
-    if (!regionIds.has(regionId)) throw new Error(`NPC ${npc.id} 指向未知地图 ${regionId}`);
-    (npc.schedule || []).forEach((slot) => {
-      const slotPlaceId = slot.placeId || slot.regionId || regionId;
-      if (!validPlaceIds.has(slotPlaceId)) throw new Error(`NPC ${npc.id} 的日程指向未知地点 ${slotPlaceId}`);
-    });
-  });
-  const npcIds = new Set(content.npcs.map((npc) => npc.id));
-  content.events.forEach((event) => {
-    if (!event.story?.starts || !Array.isArray(event.story?.rumors) || !Array.isArray(event.story?.signs)) {
-      throw new Error(`社会事件 ${event.id} 缺少 starts、rumors 或 signs`);
-    }
-    const choiceIds = new Set((event.choices || []).map((choice) => choice.id));
-    if (!choiceIds.size) throw new Error(`社会事件 ${event.id} 没有可形成的结果`);
-    (event.story.rumors || []).forEach((rumor) => {
-      if (!npcIds.has(rumor.npcId)) throw new Error(`社会事件 ${event.id} 的消息指向未知 NPC ${rumor.npcId}`);
-      if (!rumor.text || !rumor.clue) throw new Error(`社会事件 ${event.id} 的 NPC 消息缺少文本或线索 ID`);
-    });
-    (event.story.signs || []).forEach((sign) => {
-      if (!validPlaceIds.has(sign.sceneId)) throw new Error(`社会事件 ${event.id} 的地图征兆指向未知场景 ${sign.sceneId}`);
-    });
-    (event.choices || []).forEach((choice) => {
-      if (!choice.social?.npcIds?.length || !choice.social?.playerLine) throw new Error(`社会事件 ${event.id}/${choice.id} 缺少谈话影响入口`);
-      choice.social.npcIds.forEach((npcId) => {
-        if (!npcIds.has(npcId)) throw new Error(`社会事件 ${event.id}/${choice.id} 指向未知 NPC ${npcId}`);
-      });
-      const aftermath = event.story.aftermath?.[choice.id];
-      if (!Array.isArray(aftermath) || !aftermath.length) throw new Error(`社会事件 ${event.id}/${choice.id} 缺少事后地图痕迹`);
-      aftermath.forEach((item) => {
-        if (!validPlaceIds.has(item.sceneId)) throw new Error(`社会事件 ${event.id}/${choice.id} 的事后痕迹指向未知场景 ${item.sceneId}`);
-      });
-    });
-  });
-  return content;
+  return {
+    ...world,
+    regions: maps.regions,
+    places: maps.places,
+    story_context: world.storyContext,
+  };
 }
 
-function mergeMapData(world, maps) {
-  if (!maps || typeof maps !== "object" || !maps.regions || !Array.isArray(maps.places)) {
-    throw new Error("地图数据不是有效对象");
-  }
-  const layouts = maps.regions;
-  world.regions = world.regions.map((region) => {
-    const layout = layouts[region.id];
-    if (!layout) throw new Error(`地图数据缺少 ${region.id}`);
-    return { ...region, ...layout, palette: { ...(region.palette || {}), ...(layout.palette || {}) } };
-  });
-  world.places = maps.places;
-  world.mapSchemaVersion = Number(maps.schemaVersion || 1);
-  return world;
-}
-
-function showFatalError(error) {
+function showFatal(error) {
   console.error(error);
-  document.getElementById("loading-screen").innerHTML = `
-    <div style="max-width:620px;padding:2rem;text-align:center">
-      <h1 style="color:#f0bd62">世界线编织失败</h1>
-      <p style="line-height:1.8">${String(error.message || error)}</p>
-      <p style="color:#a99fab;font-size:.8rem">请确认通过 <code>python server.py</code> 启动，并检查 <code>data/world.json</code> 与 <code>data/maps.json</code>。</p>
-    </div>`;
+  const loading = document.getElementById("loading-screen");
+  loading.innerHTML = `<div style="max-width:620px;padding:32px;text-align:center;color:#d9c89f"><h1 style="font-family:Georgia,serif;font-weight:400">THE CLOCK FAILED TO START</h1><p style="line-height:1.8;color:#a99f88">${String(error?.message || error)}</p><p style="font-size:11px;color:#687875">请在 mygame_new 目录运行 <code>python server.py</code>，不要直接双击 index.html。</p></div>`;
 }
 
 async function boot() {
   try {
-    initTitleScene();
     const [worldResponse, mapsResponse] = await Promise.all([
       fetch("./data/world.json", { cache: "no-store" }),
       fetch("./data/maps.json", { cache: "no-store" }),
     ]);
-    if (!worldResponse.ok) throw new Error(`无法读取世界数据（HTTP ${worldResponse.status}）`);
-    if (!mapsResponse.ok) throw new Error(`无法读取地图数据（HTTP ${mapsResponse.status}）`);
-    const content = validateContent(mergeMapData(await worldResponse.json(), await mapsResponse.json()));
+    if (!worldResponse.ok) throw new Error(`world.json 读取失败：HTTP ${worldResponse.status}`);
+    if (!mapsResponse.ok) throw new Error(`maps.json 读取失败：HTTP ${mapsResponse.status}`);
+    const content = validateContent(await worldResponse.json(), await mapsResponse.json());
     const ai = new AIService({ timeoutMs: 12000 });
     const game = new Game(content, ai);
-    window.__EMBER_ECHOES__ = { game, content, ai };
-    await game.initialize();
+    window.__TIME_ECHO__ = { game, content, ai };
+    game.initialize();
+    // Local visual QA shortcut: useful for checking any large scene with a
+    // headless browser without adding debug buttons to the actual title menu.
     const params = new URLSearchParams(window.location.search);
-    const requestedTimeline = params.get("timeline");
-    const requestedMode = params.get("mode") === "observer" ? "observer" : "player";
-    if (requestedTimeline && content.timelines.some((timeline) => timeline.id === requestedTimeline)) {
-      game.startNewGame(requestedTimeline, requestedMode);
+    if (["scene", "puzzle", "dialogue", "ending"].includes(params.get("qa"))) {
+      game.newGame();
+      game.ui.closeModal("prologue-modal", false);
+      const requested = params.get("place");
+      const scene = content.regions.concat(content.places).find((item) => item.id === requested);
+      if (scene) {
+        game.state.placeId = scene.id;
+        game.state.regionId = scene.regionId || scene.id;
+        game.state.player.x = Number(scene.spawn?.x ?? scene.width / 2 ?? 384);
+        game.state.player.y = Number(scene.spawn?.y ?? scene.height * .72 ?? 340);
+        game.ui.update(game.state);
+        game.ui.showBanner(scene);
+      }
+      if (params.get("qa") === "puzzle") game.ui.openPuzzle(params.get("type") || "master", game.state, () => {});
+      if (params.get("qa") === "dialogue") {
+        const npc = content.npcs.find((item) => item.id === (params.get("npc") || "arthur"));
+        if (npc) game.openConversation(npc);
+      }
+      if (params.get("qa") === "ending") game.ui.showEnding(params.get("id") === "surface" ? "surface" : "true");
     }
+    ai.checkBackend().catch(() => {});
   } catch (error) {
-    showFatalError(error);
+    showFatal(error);
   }
 }
 
