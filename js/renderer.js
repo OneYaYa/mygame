@@ -63,6 +63,60 @@ const NPC_STYLE = {
   ruu: { hair: "braid", accessory: "headband", trim: "#9bd19a", outfit: "guide" },
 };
 
+const BUILDING_ASSETS = {
+  master_clock_tower: 'env_master_clock_tower',
+  bakery: 'env_bakery',
+  bookbinder: 'env_bookbinder',
+  lakeside_inn: 'env_lakeside_inn',
+  inn_shed: 'env_inn_shed',
+  chapel_tower: 'env_chapel_tower',
+  silver_salt_studio: 'env_silver_salt_studio',
+  frame_shop: 'env_frame_shop',
+  town_archive: 'env_town_archive',
+  harbor_control: 'env_harbor_control',
+  lighthouse_watchtower: 'env_lighthouse_watchtower',
+};
+
+const FURNITURE_ASSETS = {
+  barrel: 'prop_barrel',
+  bed: 'prop_bed',
+  bench: 'prop_bench',
+  counter: 'prop_counter',
+  crate: 'prop_crate',
+  desk: 'prop_desk',
+  fireplace: 'prop_fireplace',
+  shelf: 'prop_shelf',
+  table: 'prop_desk',
+};
+
+const RUNTIME_ASSET_NAMES = [...new Set([
+  ...Object.values(BUILDING_ASSETS),
+  ...Object.values(FURNITURE_ASSETS),
+  'lm_boat', 'lm_ferry', 'prop_banner', 'prop_buckets', 'prop_bush', 'prop_cart',
+  'prop_cratestack', 'prop_flowers', 'prop_frame', 'prop_grasstuft', 'prop_lantern',
+  'prop_net', 'prop_pebbles', 'prop_rack', 'prop_rope', 'prop_sign', 'prop_tree',
+])];
+
+function decorationAssetFor(id) {
+  if (/lantern|lamp/.test(id)) return 'prop_lantern';
+  if (/banner|flag|quilt|curtain|cloak|rug|blanket|linen|uniform|veil/.test(id)) return 'prop_banner';
+  if (/flower|planter/.test(id)) return 'prop_flowers';
+  if (/bucket|pail/.test(id)) return 'prop_buckets';
+  if (/bush|hedge|shrub/.test(id)) return 'prop_bush';
+  if (/grass|reed/.test(id)) return 'prop_grasstuft';
+  if (/pebble|stone_pile/.test(id)) return 'prop_pebbles';
+  if (/tree|willow|pine/.test(id)) return 'prop_tree';
+  if (/net/.test(id)) return 'prop_net';
+  if (/rope/.test(id)) return 'prop_rope';
+  if (/cart|wheelbarrow/.test(id)) return 'prop_cart';
+  if (/crate_stack|cratestack/.test(id)) return 'prop_cratestack';
+  if (/crate/.test(id)) return 'prop_crate';
+  if (/portrait|frame|canvas/.test(id)) return 'prop_frame';
+  if (/rack|hook|crank|drying_frame/.test(id)) return 'prop_rack';
+  if (/sign|notice|placard/.test(id)) return 'prop_sign';
+  return null;
+}
+
 function shade(color, amount = 0) {
   const match = /^#([\da-f]{6})$/i.exec(color || "");
   if (!match) return color || "#777777";
@@ -523,12 +577,50 @@ export class WorldRenderer {
     this.actorMotion = new Map();
     this.motionSceneId = null;
     this.camera = { x: 0, y: 0, offsetX: 0, offsetY: 0, sceneId: null };
+    this.assets = new Map();
+    this.preloadRuntimeAssets();
     this.particles = Array.from({ length: 46 }, (_, index) => ({
       x: (index * 83) % WIDTH,
       y: (index * 47) % HEIGHT,
       speed: 7 + (index % 7) * 3,
       phase: index * .73,
     }));
+  }
+
+  preloadRuntimeAssets() {
+    if (typeof Image === 'undefined') return;
+    RUNTIME_ASSET_NAMES.forEach((name) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = `./art/runtime/${name}.webp`;
+      this.assets.set(name, image);
+    });
+  }
+
+  drawRuntimeAsset(ctx, name, rect, options = {}) {
+    const image = this.assets.get(name);
+    if (!image?.complete || !image.naturalWidth) return false;
+    const widthLimit = Math.max(8, rect.w * (options.widthScale || 1.15));
+    const heightLimit = Math.max(8, rect.h * (options.heightScale || 1.8));
+    const scale = Math.min(widthLimit / image.naturalWidth, heightLimit / image.naturalHeight);
+    const drawW = Math.max(4, image.naturalWidth * scale);
+    const drawH = Math.max(4, image.naturalHeight * scale);
+    const drawX = rect.x + rect.w / 2 - drawW / 2;
+    const drawY = rect.y + rect.h - drawH;
+    if (options.shadow !== false) {
+      ctx.save();
+      ctx.globalAlpha = .2;
+      ctx.fillStyle = '#18211d';
+      ctx.beginPath();
+      ctx.ellipse(rect.x + rect.w / 2, rect.y + rect.h - 2, Math.min(drawW * .38, rect.w * .55), Math.max(2, rect.h * .08), 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.globalAlpha = options.alpha ?? .98;
+    ctx.drawImage(image, Math.round(drawX), Math.round(drawY), Math.round(drawW), Math.round(drawH));
+    ctx.restore();
+    return true;
   }
 
   setMoving(moving, running = false) { this.playerRunning = Boolean(moving && running); }
@@ -790,6 +882,24 @@ export class WorldRenderer {
             const sx = horizontal ? rect.x + step : rect.x + short / 2 - 1;
             const sy = horizontal ? rect.y + short / 2 - 1 : rect.y + step;
             pixelRect(ctx, sx, sy, 3, 3, lightColor);
+          }
+          if (rect.w > 180 && rect.h > 180) {
+            ctx.save();
+            ctx.strokeStyle = shade(pathColor, -24);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(rect.x + 12, rect.y + 12, rect.w - 24, rect.h - 24);
+            ctx.strokeStyle = lightColor;
+            ctx.globalAlpha = .7;
+            ctx.strokeRect(rect.x + 17, rect.y + 17, rect.w - 34, rect.h - 34);
+            ctx.restore();
+            for (let ornamentY = rect.y + 44; ornamentY < rect.y + rect.h - 28; ornamentY += 72) {
+              [rect.x + rect.w * .24, rect.x + rect.w * .76].forEach((ornamentX, index) => {
+                const tone = index % 2 ? shade(pathColor, -22) : lightColor;
+                pixelRect(ctx, ornamentX - 4, ornamentY, 9, 2, tone);
+                pixelRect(ctx, ornamentX - 2, ornamentY - 3, 5, 8, tone);
+                pixelRect(ctx, ornamentX, ornamentY - 5, 2, 12, shade(pathColor, -12));
+              });
+            }
           }
         } else {
           for (let step = 17; step < long - 5; step += 47) {
@@ -1438,6 +1548,12 @@ export class WorldRenderer {
     const roof = building.roofColor || palette.roof;
     const id = building.id || "";
 
+    const buildingAsset = BUILDING_ASSETS[id];
+    if (buildingAsset && this.drawRuntimeAsset(ctx, buildingAsset, { x, y, w, h }, { widthScale: 1.24, heightScale: 1.64 })) {
+      this.drawBuildingLabel(ctx, building, x, y, w, h);
+      return;
+    }
+
     if (/tent/.test(id)) {
       pixelRect(ctx, x + 7, y + h - 9, w, 9, "rgba(55,35,30,.26)");
       ctx.fillStyle = shade(roof, -30);
@@ -1676,6 +1792,11 @@ export class WorldRenderer {
     const wood = item.color || "#875c3c";
     const dark = shade(wood, -35);
     const light = shade(wood, 24);
+    const furnitureAsset = FURNITURE_ASSETS[type];
+    if (furnitureAsset && this.drawRuntimeAsset(ctx, furnitureAsset, { x, y, w, h }, {
+      widthScale: 1.12,
+      heightScale: type === 'bench' ? 2.5 : 1.85,
+    })) return;
     if (type === "bench") {
       pixelRect(ctx, x + 4, y + h - 4, w - 8, 4, "rgba(46,31,27,.25)");
       pixelRect(ctx, x + 3, y + 2, w - 6, 7, dark);
@@ -1824,6 +1945,12 @@ export class WorldRenderer {
     const accent = item.color || palette.accent;
     const wood = item.woodColor || "#7b543b";
     const darkWood = shade(wood, -31);
+    const decorationAsset = decorationAssetFor(id);
+    if (decorationAsset && this.drawRuntimeAsset(ctx, decorationAsset, { x, y, w, h }, {
+      widthScale: 1.18,
+      heightScale: /lantern|lamp/.test(id) ? 1.45 : 1.8,
+      shadow: !/banner|flag|portrait|frame|canvas|curtain/.test(id),
+    })) return;
     if (/portrait|canvas/.test(id)) {
       pixelRect(ctx, x + 4, y + 5, w, h, "rgba(45,30,29,.22)");
       pixelRect(ctx, x, y, w, h, darkWood);
@@ -2001,6 +2128,8 @@ export class WorldRenderer {
       return;
     }
     if (/boat|ferry|skiff/.test(`${id} ${type}`)) {
+      const vesselAsset = /ferry/.test(`${id} ${type}`) ? 'lm_ferry' : 'lm_boat';
+      if (this.drawRuntimeAsset(ctx, vesselAsset, { x, y, w, h }, { widthScale: 1.2, heightScale: 1.45 })) return;
       const hull = item.color || "#81503b";
       pixelRect(ctx, x + 8, y + h - 10, w - 16, 7, "rgba(24,37,39,.25)");
       pixelRect(ctx, x + 5, y + h - 19, w - 10, 11, shade(hull, -25));

@@ -20,6 +20,10 @@ class ContentContractTests(unittest.TestCase):
             npc_ids,
             {"arthur", "beatrice", "conrad", "dorothea", "elias", "florence", "ada"},
         )
+        npc_names = {npc["id"]: npc["name"] for npc in self.world["npcs"]}
+        self.assertEqual("阿瑟·默瑟", npc_names["arthur"])
+        self.assertEqual("贝娅特丽斯·黑尔", npc_names["beatrice"])
+        self.assertEqual("埃利亚斯·奎因", npc_names["elias"])
 
     def test_public_maps_are_larger_than_one_canvas(self):
         for scene_id in {"town", "inn-yard", "chapel-hill", "photo-lane", "archive-lane", "harbor"}:
@@ -74,6 +78,22 @@ class ContentContractTests(unittest.TestCase):
         self.assertEqual(secret_portals["enter_low_tide_cave"], "low_tide")
         self.assertEqual(secret_portals["studio_to_darkroom"], "hidden_darkroom_open")
         self.assertEqual(secret_portals["cabin_to_basement"], "basement_open")
+
+    def test_world_interactions_do_not_bypass_npc_evidence_handoffs(self):
+        game_js = (ROOT / "js" / "game.js").read_text(encoding="utf-8")
+        self.assertNotIn("identifyPossessedTools", game_js)
+        self.assertIn("索引卡不能自己检查你的背包", game_js)
+        self.assertIn("把实物交给埃利亚斯并明确请求显影", game_js)
+
+    def test_browser_npc_rules_keep_script_knowledge_boundaries(self):
+        game_js = (ROOT / "js" / "game.js").read_text(encoding="utf-8")
+        simulation_js = (ROOT / "js" / "simulation.js").read_text(encoding="utf-8")
+        ai_js = (ROOT / "js" / "ai.js").read_text(encoding="utf-8")
+        self.assertIn("isAssertiveTurn(turn)", game_js)
+        self.assertIn("id: adaDutyUnknown ? 'hidden_figure' : npc.id", game_js)
+        self.assertIn("主航道光保持不变；维修副光", simulation_js)
+        self.assertNotIn("六声报时，第七声结束一项记录", ai_js)
+        self.assertIn("collectFacts(npc?.knowledge?.public", ai_js)
 
 
 if __name__ == "__main__":

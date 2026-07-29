@@ -1,0 +1,23 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Godot generated import/editor cache
+godot/.godot/
+
+# Local art-processing intermediates
+tmp/
+
+# Visual-regression drafts; keep only the final maps_v2 gallery
+godot/tests/render/town_square_v*
+godot/tests/render/maps_v1/
+
+# Local logs and editor files
+*.log
+.DS_Store
+Thumbs.db

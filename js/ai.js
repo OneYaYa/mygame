@@ -573,7 +573,7 @@ export class AIService {
     const goal = text(npc?.goal, "守住眼前的生活", 220);
     const facts = [
       ...collectFacts(worldState?.story_context, { includeSecrets: false }),
-      ...collectFacts(npc?.knowledge, { includeSecrets: false }),
+      ...collectFacts(npc?.knowledge?.public, { includeSecrets: false }),
     ];
     const flag = context.flags[0] ?? "";
     const flagClause = describeFlag(flag);
@@ -601,18 +601,22 @@ export class AIService {
       const claimsForeknowledge = /上一轮|上次|循环|重置|艾达|ada|七号房|第七个人/i.test(message)
         && !facts.some((item) => /艾达|ada|七号房|第七个人/i.test(item));
       const asksProof = /证据|证明|为什么相信|依据|怎么知道|proof|evidence/i.test(message);
+      const asksUnnumberedKeyOrDoor = npc?.id === "dorothea"
+        && /(?:无编号|没有编号|没有号码).{0,10}(?:钥匙|门)|(?:钥匙|门).{0,10}(?:无编号|没有编号|没有号码)/i.test(message);
+      const asksSeventhBell = npc?.id === "beatrice"
+        && /第七声|第七锤|敲七声/i.test(message);
       const specific = {
         arthur: {
-          identity: "亚瑟·默瑟，市政管理员。广场主钟和它造成的后果都由我签字负责。",
+          identity: "阿瑟·默瑟，市政管理员。广场主钟和它造成的后果都由我签字负责。",
           foreknowledge: "你说得很具体，但具体不等于发生过。把本轮能检查的记录或接口带来，我们再谈。",
           proof: "程序不是为了挡住你，是为了让决定有责任人。先修钟、读原始记录，再确认该由谁动手。",
           default: "先说你实际检查了哪一部分。齿轮、记录和地下接口是三件不同的事，别混在一句话里。",
         },
         beatrice: {
-          identity: "比阿特丽斯·黑尔。我照管礼拜堂的六声钟，也负责阻止不该落下的钟锤。",
+          identity: "贝娅特丽斯·黑尔。我照管礼拜堂的六声钟，也负责阻止不该落下的钟锤。",
           foreknowledge: "你像是听过那一声，可今天它还没有响。若你要我承认第七锤，请带来它在本轮留下的记录。",
           proof: "一声钟落下就收不回来。我要看到终止记录和真正的校准器，不会凭你的确信替别人作决定。",
-          default: "六声报时，第七声结束一项记录。你现在问的是哪一声？",
+          default: "六声用于日常报时，第七锤不参与普通报时。旧规只说不能随便碰它。",
         },
         conrad: {
           identity: "康拉德·沃斯。渡船、灯塔和退潮维护线都归我看。",
@@ -623,14 +627,14 @@ export class AIService {
         dorothea: {
           identity: "多萝西娅·维尔，湖畔旅店的主人。早餐、钥匙和每晚有没有人回来，都是我的事。",
           foreknowledge: "这个名字让我不舒服，但不舒服不是记忆。若真有那间房，请带一件属于它的东西给我看。",
-          proof: "柜台上的登记簿可以先看。纸被挖走和我想不起一个人，是两种证据，也可能是同一件事。",
-          default: "先坐一会儿也行。你若是问客房，就把房号和手里的东西一起说清楚。",
+          proof: "柜台上的登记簿可以先看。纸被挖走是事实；缺的是房号还是住客，必须用属于那一行的实物核对。",
+          default: "登记簿、钥匙和客房我可以逐项说明。你问哪一件，我就回答哪一件。",
         },
         elias: {
-          identity: "伊莱亚斯·奎因，摄影师。我修不了记忆，但我能检查乳剂有没有撒谎。",
+          identity: "埃利亚斯·奎因，摄影师。我修不了记忆，但我能检查乳剂有没有撒谎。",
           foreknowledge: "一个名字会让人主动在噪点里找脸。我不这么显影。给我底片，我们按重影、反差、反射一步步来。",
           proof: "照片也会骗人，只是它撒谎的方式可以复现。原片、试片和处理顺序都在，结论才算数。",
-          default: "说得再像一张照片也不是照片。你带来胶片了吗？",
+          default: "说得再像一张照片也不是照片。带来胶片，我再按乳剂实际留下的东西说话。",
         },
         florence: {
           identity: "弗洛伦斯·雷恩，市政档案管理员。我保管来源，不替来源补写它没说过的话。",
@@ -646,7 +650,11 @@ export class AIService {
         },
       }[npc.id];
       let reply = specific.default;
-      if (asksIdentity) reply = specific.identity;
+      if (asksUnnumberedKeyOrDoor) {
+        reply = "我不知道这把钥匙如今能打开哪里。旅店里没有无编号的门；二楼六号与八号之间只有一段没有门的空墙。";
+      } else if (asksSeventhBell) {
+        reply = "我不能只凭一句请求答应。先让我看过 A.R. 终止记录和鉴定过的银音叉，再说明为什么第七声是机械终止确认。";
+      } else if (asksIdentity) reply = specific.identity;
       else if (claimsForeknowledge) reply = specific.foreknowledge;
       else if (asksProof) reply = specific.proof;
       else if (fact) reply = `${fact}。${specific.default}`;

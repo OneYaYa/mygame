@@ -1,0 +1,195 @@
+{
+  "godot": {
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "hex": 263683,
+    "status": "stable",
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "timestamp": 0,
+    "string": "4.6.3-stable (official)"
+  },
+  "maps": [
+    {
+      "index": 1,
+      "id": "town",
+      "name": "钟影广场",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 768,
+      "time": "10:00",
+      "file": "01_town.png"
+    },
+    {
+      "index": 2,
+      "id": "inn-yard",
+      "name": "湖畔旅店前庭",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 720,
+      "time": "10:00",
+      "file": "02_inn-yard.png"
+    },
+    {
+      "index": 3,
+      "id": "chapel-hill",
+      "name": "六声礼拜堂",
+      "kind": "outdoor",
+      "width": 1120,
+      "height": 744,
+      "time": "10:00",
+      "file": "03_chapel-hill.png"
+    },
+    {
+      "index": 4,
+      "id": "photo-lane",
+      "name": "银盐巷",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 720,
+      "time": "10:00",
+      "file": "04_photo-lane.png"
+    },
+    {
+      "index": 5,
+      "id": "archive-lane",
+      "name": "档案坡道",
+      "kind": "outdoor",
+      "width": 1100,
+      "height": 720,
+      "time": "10:00",
+      "file": "05_archive-lane.png"
+    },
+    {
+      "index": 6,
+      "id": "harbor",
+      "name": "回潮港",
+      "kind": "outdoor",
+      "width": 1280,
+      "height": 768,
+      "time": "10:00",
+      "file": "06_harbor.png"
+    },
+    {
+      "index": 7,
+      "id": "player-room",
+      "name": "湖畔旅店 · 八号房",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "07_player-room.png"
+    },
+    {
+      "index": 8,
+      "id": "inn-lobby",
+      "name": "湖畔旅店 · 大堂",
+      "kind": "interior",
+      "width": 840,
+      "height": 520,
+      "time": "10:00",
+      "file": "08_inn-lobby.png"
+    },
+    {
+      "index": 9,
+      "id": "inn-upstairs",
+      "name": "湖畔旅店 · 二楼走廊",
+      "kind": "interior",
+      "width": 960,
+      "height": 430,
+      "time": "00:00",
+      "file": "09_inn-upstairs.png"
+    },
+    {
+      "index": 10,
+      "id": "clock-cabin",
+      "name": "主钟维修舱",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "10_clock-cabin.png"
+    },
+    {
+      "index": 11,
+      "id": "chapel-interior",
+      "name": "六声礼拜堂 · 钟厅",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "11_chapel-interior.png"
+    },
+    {
+      "index": 12,
+      "id": "chapel-belfry",
+      "name": "六声礼拜堂 · 钟楼",
+      "kind": "interior",
+      "width": 850,
+      "height": 460,
+      "time": "10:00",
+      "file": "12_chapel-belfry.png"
+    },
+    {
+      "index": 13,
+      "id": "photo-studio",
+      "name": "银盐照相馆",
+      "kind": "interior",
+      "width": 820,
+      "height": 500,
+      "time": "10:00",
+      "file": "13_photo-studio.png"
+    },
+    {
+      "index": 14,
+      "id": "archive-room",
+      "name": "市政档案馆",
+      "kind": "interior",
+      "width": 860,
+      "height": 520,
+      "time": "10:00",
+      "file": "14_archive-room.png"
+    },
+    {
+      "index": 15,
+      "id": "harbor-control",
+      "name": "港务控制室",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "15_harbor-control.png"
+    },
+    {
+      "index": 16,
+      "id": "low-tide-cave",
+      "name": "退潮维护洞穴",
+      "kind": "interior",
+      "width": 920,
+      "height": 520,
+      "time": "02:30",
+      "file": "16_low-tide-cave.png"
+    },
+    {
+      "index": 17,
+      "id": "clock-basement",
+      "name": "主钟地下室",
+      "kind": "interior",
+      "width": 900,
+      "height": 560,
+      "time": "10:00",
+      "file": "17_clock-basement.png"
+    },
+    {
+      "index": 18,
+      "id": "hidden-darkroom",
+      "name": "消失的第二暗房",
+      "kind": "interior",
+      "width": 820,
+      "height": 500,
+      "time": "02:30",
+      "file": "18_hidden-darkroom.png"
+    }
+  ]
+}

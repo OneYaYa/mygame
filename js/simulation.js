@@ -4,7 +4,8 @@ export const LOOP_START_MINUTE = 6 * 60;
 export const LOOP_GAME_MINUTES = 24 * 60;
 export const LOOP_REAL_SECONDS = 12 * 60;
 export const GAME_MINUTES_PER_REAL_SECOND = LOOP_GAME_MINUTES / LOOP_REAL_SECONDS;
-export const RESET_WARNING_AT = 23 * 60 + 55;
+// 循环第 1435 分钟触发逆向白线 = 起点 06:00 + 23h55m → HUD 时钟显示 05:55（次日）
+export const RESET_WARNING_AT = LOOP_GAME_MINUTES - 5;
 
 const REPAIR_IDS = ["master", "chapel", "tide"];
 const PHOTO_ITEMS = new Set(["unfinished_portrait", "fixed_portrait"]);
@@ -190,6 +191,12 @@ export function resetLoop(state, content) {
 }
 
 function moveNpc(state, npcId, placeId, x, y, facing = "down") {
+  if (npcId === 'ada' && placeId === 'erased-space' && state.flags.hidden_darkroom_open) {
+    placeId = 'hidden-darkroom';
+    x = 560;
+    y = 280;
+    facing = 'left';
+  }
   const npc = state.npcs[npcId];
   if (!npc) return;
   const changedPlace = npc.placeId !== placeId;
@@ -269,7 +276,7 @@ export function markRepair(state, repairId) {
 export function identifyPossessedTools(state) {
   const identified = [];
   const mapping = {
-    installation_wrench: ["wrench_identified", "安装扳手：可操作主钟地下室的紧急制动接口。"],
+    installation_wrench: ["wrench_identified", "安装扳手：母钟原设计的紧急制动扳手，可安全断开主擒纵，而不是锁死主轮。"],
     silver_tuning_fork: ["fork_identified", "银色音叉：第七锤的专用校准器。"],
     spare_lens: ["lens_identified", "双槽备用镜片：灯塔的双路维护镜，可同时建立主、备用光路。"],
     flashlight: ["flashlight_identified", "防水手电：普通洞穴照明工具，没有协议用途。"],
@@ -285,49 +292,103 @@ export function identifyPossessedTools(state) {
 }
 
 export function getNpcActions(npcId, state) {
+  if (npcId === 'ada') {
+    const actions = [{ id: 'ask_work', label: '问她现在能记住什么' }];
+    const recordReady = state.knowledge.ada_identity && state.evidence.master_ar_record && state.evidence.chapel_ar_log;
+    const residenceReady = state.knowledge.ada_residence_anchor && hasItem(state, 'unnumbered_key');
+    const faceReady = state.knowledge.portrait_face_anchor && hasItem(state, 'unfinished_portrait');
+    if (recordReady && !state.flags.ada_name_anchored) actions.push({ id: 'anchor_ada_name', label: '用两份 A.R. 记录确认她的姓名' });
+    if (residenceReady && !state.flags.ada_residence_anchored) actions.push({ id: 'anchor_ada_residence', label: '用七号房钥匙确认她的住处' });
+    if (recordReady && !state.flags.ada_duty_anchored) actions.push({ id: 'anchor_ada_duty', label: '用中央校准记录确认她的职责' });
+    if (faceReady && !state.flags.ada_face_anchored) actions.push({ id: 'anchor_ada_face', label: '让她认领底片中的面孔' });
+    actions.push({ id: 'ask_ada_truth', label: '问她镇子为什么需要第七位见证人' });
+    return actions;
+  }
   const actions = [{ id: "ask_work", label: "问他今天在做什么" }];
   if (npcId === "dorothea") {
     actions.push({ id: "ask_rooms", label: "问登记簿为什么跳过七号房" });
-    if (hasItem(state, "room7_tag") && !hasItem(state, "unnumbered_key")) actions.push({ id: "exchange_room7_key", label: "把七号房钥匙牌放在柜台上" });
+    if (hasItem(state, "room7_tag") && state.evidence.ledger_gap && !hasItem(state, "unnumbered_key")) actions.push({ id: "exchange_room7_key", label: "把七号房钥匙牌放在柜台上" });
   }
   if (npcId === "arthur") {
-    if (state.repairs.master) actions.push({ id: "ask_master_record", label: "请他解释七信号控制台" });
-    if (state.evidence.brake_interface && state.flags.wrench_identified && hasItem(state, "installation_wrench") && !state.flags.arthur_stops_clock) {
+    if (state.repairs.master && !state.evidence.master_ar_record) actions.push({ id: "ask_master_record", label: "请他解释七信号控制台" });
+    if (state.repairs.master && state.evidence.brake_interface && state.flags.wrench_identified && hasItem(state, "installation_wrench") && !state.flags.arthur_stops_clock) {
       actions.push({ id: "commit_stop_clock", label: "用接口和扳手证明：必须由他亲手停钟" });
     }
   }
   if (npcId === "beatrice") {
     if (state.repairs.chapel) actions.push({ id: "ask_six_bells", label: "问第七锤为什么独立存在" });
     if (state.repairs.chapel && state.evidence.master_ar_record && state.flags.fork_identified && hasItem(state, "silver_tuning_fork") && !state.flags.beatrice_rings_seventh) {
-      actions.push({ id: "commit_seventh_bell", label: "出示终止记录与音叉，请她完成第七声" });
+      actions.push({ id: "commit_seventh_bell", label: "出示记录与音叉，说明七声是机械终止确认，请她执行" });
     }
   }
   if (npcId === "conrad") {
     if (state.repairs.tide && !hasItem(state, "flashlight")) actions.push({ id: "receive_flashlight", label: "问最低潮时露出的维护洞穴" });
-    if (state.flags.lens_identified && state.evidence.chapel_ar_log) {
-      if (!state.flags.light_route_chapel_square) actions.push({ id: "route_surface_light", label: "按安装记录把光导向礼拜堂与广场" });
-      if (state.evidence.inn_roof_reflector && hasItem(state, "spare_lens") && !state.flags.light_route_inn_studio) actions.push({ id: "route_darkroom_light", label: "用双路镜把备用光导向旅店屋顶和照相馆" });
+    if (state.flags.lens_identified && state.evidence.chapel_ar_log && hasItem(state, "spare_lens")) {
+      if (!state.flags.light_route_chapel_square) actions.push({ id: "route_surface_light", label: "出示双路镜与安装记录，说明副光不熄主航道，请他导向礼拜堂与广场" });
+      if (state.evidence.inn_roof_reflector && hasItem(state, "spare_lens") && !state.flags.light_route_inn_studio) actions.push({ id: "route_darkroom_light", label: "出示双路镜与屋顶光路图，说明副光不熄主航道，请他导向照相馆西墙" });
     }
   }
   if (npcId === "elias" && hasItem(state, "cave_negative") && !state.photos.unfinished_portrait) {
     actions.push({ id: "develop_cave_negative", label: "请他显影洞穴里找到的底片" });
   }
   if (npcId === "florence") {
-    actions.push({ id: "identify_tools", label: "请她逐件鉴定你带来的工具" });
+    const toolActions = [
+      ["identify_wrench", "installation_wrench", "wrench_identified", "把安装扳手放到索引卡旁鉴定"],
+      ["identify_fork", "silver_tuning_fork", "fork_identified", "把银色音叉放到索引卡旁鉴定"],
+      ["identify_lens", "spare_lens", "lens_identified", "把双槽备用镜放到索引卡旁鉴定"],
+      ["identify_flashlight", "flashlight", "flashlight_identified", "把防水手电放到索引卡旁鉴定"],
+    ];
+    toolActions.forEach(([actionId, itemId, flagId, label]) => {
+      if (hasItem(state, itemId) && !state.flags[flagId]) actions.push({ id: actionId, label });
+    });
+    if (state.evidence.master_ar_record && state.evidence.chapel_ar_log && !state.flags.ar_records_compared && !state.knowledge.ada_identity) {
+      actions.push({ id: "compare_ar_records", label: "把两份 A.R. 原件放在桌上核验" });
+    }
     if (state.evidence.master_ar_record && state.evidence.chapel_ar_log && state.photos.unfinished_portrait && !state.knowledge.ada_identity) {
       actions.push({ id: "cross_reference_ada", label: "把两份 A.R. 记录和残缺肖像并排核验" });
     }
-    if (state.knowledge.ada_identity && !state.evidence.inn_roof_reflector) actions.push({ id: "research_return_exposure", label: "查找“回返曝光”和旅店屋顶光路" });
+    if (!state.evidence.inn_roof_reflector || !state.knowledge.return_exposure) actions.push({ id: "research_return_exposure", label: "查找“回返曝光”和旅店屋顶光路" });
   }
   if (npcId === "ada") actions.push({ id: "ask_ada_truth", label: "问她镇子为什么需要第七位见证人" });
   return actions;
 }
 
 export function applyNpcAction(npcId, actionId, state) {
+  if (npcId === 'ada') {
+    const answer = { speaker: 'ada', text: '', puzzle: null };
+    if (actionId === 'ask_work') {
+      answer.text = state.flags.ada_duty_anchored
+        ? '我是中央校准员，负责让光、节拍和钟声共同确认一天结束。我的记录被删除后，这项确认就再也无法完整发生。'
+        : '我记得自己在这里工作过，也记得母钟、礼拜堂和灯塔，可职位和具体职责都断开了。现在我不能替缺失的记录补答案。';
+    }
+    else if (actionId === 'anchor_ada_name' && state.knowledge.ada_identity && state.evidence.master_ar_record && state.evidence.chapel_ar_log) {
+      state.flags.ada_name_anchored = true;
+      answer.text = 'Ada Rowan。不是缩写，也不是档案员补出的猜测。那是我在两份独立维修记录上写下的名字。';
+      addJournal(state, 'identity', '身份锚点 1/4：两份独立 A.R. 记录共同确认 Ada Rowan 的姓名。');
+    } else if (actionId === 'anchor_ada_residence' && state.knowledge.ada_residence_anchor && hasItem(state, 'unnumbered_key')) {
+      state.flags.ada_residence_anchored = true;
+      answer.text = '七号房。窗框朝湖，夜里主钟的影子会落到床尾。钥匙磨损的位置，是我每天握住它留下的。';
+      addJournal(state, 'identity', '身份锚点 2/4：七号房缺失登记、钥匙牌与无编号钥匙共同确认 Ada 的住处。');
+    } else if (actionId === 'anchor_ada_duty' && state.knowledge.ada_identity && state.evidence.master_ar_record && state.evidence.chapel_ar_log) {
+      state.flags.ada_duty_anchored = true;
+      answer.text = '中央校准员，第七见证人。我不负责让时间倒退；我负责确认七个人都能一起继续。';
+      addJournal(state, 'identity', '身份锚点 3/4：主钟与礼拜堂记录共同确认 Ada 的职责。');
+    } else if (actionId === 'anchor_ada_face' && state.knowledge.portrait_face_anchor && hasItem(state, 'unfinished_portrait')) {
+      state.flags.ada_face_anchored = true;
+      answer.text = '底片里站在主钟前的人是我。请保留重影——那不是瑕疵，是每一次被删除后仍然留下的边缘。';
+      addJournal(state, 'identity', '身份锚点 4/4：洞穴底片与 Ada 的亲自认领共同确认她的面孔。');
+    } else if (actionId === 'ask_ada_truth') {
+      const anchored = ['ada_name_anchored', 'ada_residence_anchored', 'ada_duty_anchored', 'ada_face_anchored'].every((flag) => state.flags[flag]);
+      answer.text = anchored
+        ? '地下协议没有坏。镇子每次都选择更容易的星期日：让六个人继续，让第七个人从共同记忆里消失。白色旋钮保留的是七个人都在场的时间。'
+        : '我能解释协议，但现在每句话都会从不完整的身份旁边滑过去。先用你真正带来的证据，让名字、住处、职责和面孔都指向我。';
+    } else answer.text = '这段记忆还没有足够的本轮证据固定。不要替我猜；把能共同核验的东西带来。';
+    return answer;
+  }
   const response = { speaker: npcId, text: "", puzzle: null };
   if (actionId === "ask_work") {
     const lines = {
-      arthur: "三份故障同时出现，不像磨损。先把主钟修到能读取记录，我才会讨论地下结构。",
+      arthur: "母钟里有三枚错位齿轮，三条红色标记全部朝上才算修复。维修舱下方还有旧校准设施，但入口要等三座钟都恢复才会解锁。",
       beatrice: "礼钟本应有六声。现在第四枚擒纵销不见了，而第七锤仍锁在楼上。",
       conrad: "先读三根系船柱的水线，再调潮汐盘。别拿猜测和湖面赌。",
       dorothea: "早餐在炉边。三份维修单都送到了八号房——是的，一直都是八号房。",
@@ -340,52 +401,70 @@ export function applyNpcAction(npcId, actionId, state) {
     response.text = state.evidence.ledger_gap
       ? "我看见那道缺口。可若真有七号房，为什么我会连铺床的习惯都想不起来？拿一件属于那间房的东西给我。"
       : "登记簿在柜台上。请先亲眼看那一页；我不想用你的说法替代它。";
-  } else if (npcId === "dorothea" && actionId === "exchange_room7_key" && hasItem(state, "room7_tag")) {
+  } else if (npcId === "dorothea" && actionId === "exchange_room7_key" && hasItem(state, "room7_tag") && state.evidence.ledger_gap) {
     addItem(state, "unnumbered_key");
     state.flags.room7_key_verified = true;
     learn(state, "ada_residence_anchor", "七号钥匙牌与旅店缺失登记行共同证明：被删去的人住在七号房。多萝西娅交出了无编号钥匙。");
     response.text = "这块铜牌的磨损……我记得每天擦过它。柜台后的钥匙不是‘没有房间’，是我们把号码忘了。你拿去吧。";
   } else if (npcId === "arthur" && actionId === "ask_master_record") {
     addEvidence(state, "master_ar_record", "从修复后的主钟控制台抄下 A.R. 记录：七次连续击发确认终止。");
-    response.text = "这不是普通停机。‘七次连续击发’意味着七名见证人都确认终止。记录人只留下 A.R.，我不认识这个缩写。";
-  } else if (npcId === "arthur" && actionId === "commit_stop_clock" && state.evidence.brake_interface && state.flags.wrench_identified) {
+    response.text = "记录写的是“A.R.：七次连续击发确认终止”。它能证明七声是机械终止信号；A.R. 是谁、七路接口对应什么，这份记录本身不能确认。";
+  } else if (npcId === "arthur" && actionId === "commit_stop_clock" && state.repairs.master && state.evidence.brake_interface && state.flags.wrench_identified && hasItem(state, "installation_wrench")) {
     state.flags.arthur_stops_clock = true;
     state.flags.counterweight_raised = true;
-    addJournal(state, "commitment", "亚瑟确认紧急制动接口并亲手停下主钟；西侧配重随之升起。");
-    response.text = "接口、工具和责任人都对得上。到时候由我停钟——不是听你的猜测，是执行一项已经核验的紧急程序。西侧配重现在会保持升起。";
+    addJournal(state, "commitment", "阿瑟确认紧急制动接口并亲手停下主钟；西侧配重随之升起。");
+    response.text = "接口、档案型号和扳手都对得上。它会断开主擒纵，不是锁死主轮；安全操作由我负责。到时候由我停钟。西侧配重现在会保持升起。";
   } else if (npcId === "beatrice" && actionId === "ask_six_bells") {
-    response.text = "六声用于报时。第七锤不报时，它只在某项记录被宣告结束时落下。若你要我碰它，先证明记录、校准器和后果。";
-  } else if (npcId === "beatrice" && actionId === "commit_seventh_bell" && state.evidence.master_ar_record && state.flags.fork_identified) {
+    response.text = "六声用于日常报时。第七锤不参与普通报时，旧规只把它当作送终禁忌；我没有证据证明它真正用于什么。";
+  } else if (npcId === "beatrice" && actionId === "commit_seventh_bell" && state.repairs.chapel && state.evidence.master_ar_record && state.flags.fork_identified && hasItem(state, "silver_tuning_fork")) {
     state.flags.beatrice_rings_seventh = true;
-    addJournal(state, "commitment", "比阿特丽斯核验终止记录与银音叉，答应在协议启动时敲响第七声。");
+    addJournal(state, "commitment", "贝娅特丽斯核验终止记录与银音叉，答应在协议启动时敲响第七声。");
     response.text = "终止记录与校准器相符。我不喜欢这个答案，但我会亲手完成第七声，确保没有别人替我承担这项不可逆的决定。";
   } else if (npcId === "conrad" && actionId === "receive_flashlight" && state.repairs.tide) {
     addItem(state, "flashlight");
     learn(state, "low_tide_cave_known", "潮汐钟修复后，康拉德确认凌晨 02:00–03:00 港口东侧露出维护洞穴，并交出防水手电。");
     response.text = "潮汐盘现在可信了。02:00 到 03:00，灯塔脚下会露出旧维护洞。带上这支手电，潮回来前别在入口磨蹭。";
-  } else if (npcId === "conrad" && actionId === "route_surface_light" && state.flags.lens_identified && state.evidence.chapel_ar_log) {
+  } else if (npcId === "conrad" && actionId === "route_surface_light" && state.flags.lens_identified && state.evidence.chapel_ar_log && hasItem(state, "spare_lens")) {
     state.flags.light_route_chapel_square = true;
+    state.flags.light_route_inn_studio = false;
     state.flags.conrad_routes_light = true;
     addJournal(state, "commitment", "康拉德按 A.R. 安装记录建立灯塔→礼拜堂→广场的主光路。");
-    response.text = "记录、镜片和视线都吻合。我会把主光束送过礼拜堂反射器，再落到广场。那条路没有回程，但它确实能启动地下协议。";
-  } else if (npcId === "conrad" && actionId === "route_darkroom_light" && state.flags.lens_identified && state.evidence.inn_roof_reflector) {
+    response.text = "记录、镜片和视线都吻合。主航道光保持不变；维修副光会经过礼拜堂反射器，再落到广场。";
+  } else if (npcId === "conrad" && actionId === "route_darkroom_light" && state.flags.lens_identified && state.evidence.inn_roof_reflector && hasItem(state, "spare_lens")) {
     state.flags.light_route_inn_studio = true;
+    state.flags.light_route_chapel_square = false;
+    state.flags.conrad_routes_light = false;
     addJournal(state, "commitment", "康拉德用双路镜建立灯塔→旅店屋顶→照相馆西墙的备用光路。");
-    response.text = "这才像维护路线：主光不动，备用光经过旅店屋顶落到照相馆西墙。两边都保留回程。我现在把镜片锁进副槽。";
+    response.text = "主光不动，维修副光经过旅店屋顶落到照相馆西墙。我现在把镜片锁进副槽。";
     syncWorldFlags(state);
   } else if (npcId === "elias" && actionId === "develop_cave_negative" && hasItem(state, "cave_negative")) {
     response.puzzle = "photo";
     response.text = "可以显影。但别急着猜人名：先查重影，再拉反差，最后确认湖面反射。三步次序错了，乳剂只会变成你想看见的样子。";
-  } else if (npcId === "florence" && actionId === "identify_tools") {
-    const found = identifyPossessedTools(state);
-    response.text = found.length ? found.join(" ") : "你目前没有带来新的可鉴定实物。记住：说出工具的名字，不等于把工具带到了档案桌上。";
+  } else if (npcId === "florence" && actionId.startsWith("identify_")) {
+    const toolActions = {
+      identify_wrench: ["installation_wrench", "wrench_identified", "安装扳手：母钟原设计的紧急制动扳手，可安全断开主擒纵，而不是锁死主轮。"],
+      identify_fork: ["silver_tuning_fork", "fork_identified", "银色音叉：第七锤的专用校准器。"],
+      identify_lens: ["spare_lens", "lens_identified", "双槽备用镜片：灯塔的双路维护镜，可分离维修副光。"],
+      identify_flashlight: ["flashlight", "flashlight_identified", "防水手电：普通洞穴照明工具，没有协议用途。"],
+    };
+    const [itemId, flagId, text] = toolActions[actionId] || [];
+    if (itemId && hasItem(state, itemId) && !state.flags[flagId]) {
+      state.flags[flagId] = true;
+      learn(state, flagId, text);
+      response.text = text;
+    }
+  } else if (npcId === "florence" && actionId === "compare_ar_records" && state.evidence.master_ar_record && state.evidence.chapel_ar_log) {
+    state.flags.ar_records_compared = true;
+    addJournal(state, "evidence", "弗洛伦斯核验两份本轮 A.R. 原件：来源彼此独立，签署者相同；交叉核验仍缺一件影像证据。");
+    response.text = "两份都是本轮原件，纸张来源和登记位置彼此独立，签名栏却都是 A.R.。这足以确认同一个人参与了主钟和礼拜堂安装，但还不足以补全姓名；交叉核验台还缺一件影像证据。";
   } else if (npcId === "florence" && actionId === "cross_reference_ada" && state.evidence.master_ar_record && state.evidence.chapel_ar_log && state.photos.unfinished_portrait) {
+    state.flags.ar_records_compared = true;
     learn(state, "ada_identity", "两份 A.R. 维修记录与残缺肖像交叉核验：Ada Rowan，中央校准员，第七见证人。");
     response.text = "两个独立地点都由 A.R. 签字，肖像背面残留的字母位置一致。旧雇员索引补全为 Ada Rowan——中央校准员，第七席。现在这是结论，不是猜测。";
-  } else if (npcId === "florence" && actionId === "research_return_exposure" && state.knowledge.ada_identity) {
+  } else if (npcId === "florence" && actionId === "research_return_exposure") {
     addEvidence(state, "inn_roof_reflector", "档案图纸证明旅店屋顶反射器可把备用光导向照相馆西墙。");
-    learn(state, "return_exposure", "回返曝光不是倒转时间，而是让被删除的记录以完整身份重新进入见证链。");
-    response.text = "‘回返曝光’不是回到过去，而是把删除记录作为完整身份重新送回见证链。附图还标出旅店屋顶的维护反射器，它能照到照相馆西墙。";
+    learn(state, "return_exposure", "档案称回返曝光会重新投射最后一次有效记录，但没有说明记录的范围。");
+    response.text = "档案把那种白光称为“回返曝光”：它会重新投射最后一次有效记录。这里没有说明“记录”指钟表读数、人员名单，还是整个镇子的状态。附图还标出旅店屋顶的维护反射器，它能照到照相馆西墙。";
   } else if (npcId === "ada" && actionId === "ask_ada_truth") {
     response.text = "地下协议不是坏掉了。镇子每次都按设计选择一个更容易的星期日：让六个人继续，让第七个人从所有共同记忆里消失。白色旋钮保留的是七个人都在场的时间。";
   }
@@ -401,6 +480,8 @@ export function completePhotoDevelopment(state) {
 }
 
 export function completeIdentityFixing(state) {
+  const dialogueAnchorsReady = ['ada_name_anchored', 'ada_residence_anchored', 'ada_duty_anchored', 'ada_face_anchored'].every((flag) => state.flags[flag]);
+  if (!dialogueAnchorsReady) return false;
   const ready = Boolean(
     state.knowledge.ada_identity
     && state.knowledge.ada_residence_anchor
@@ -432,6 +513,12 @@ export function surfaceProtocolReady(state) {
 }
 
 export function describeMissingIdentityAnchors(state) {
+  return [
+    [state.flags.ada_name_anchored, '姓名：让 Ada 核验两份独立 A.R. 记录'],
+    [state.flags.ada_residence_anchored, '住处：让 Ada 核验七号房登记链与无编号钥匙'],
+    [state.flags.ada_duty_anchored, '职责：让 Ada 核验中央校准员与第七见证职责'],
+    [state.flags.ada_face_anchored, '面孔：让 Ada 亲自认领显影底片中的面孔'],
+  ].filter(([ok]) => !ok).map(([, label]) => label);
   const anchors = [
     [state.knowledge.ada_identity && state.evidence.master_ar_record && state.evidence.chapel_ar_log, "姓名与职责：两份本轮 A.R. 记录 + 档案交叉核验"],
     [state.knowledge.ada_residence_anchor && hasItem(state, "unnumbered_key"), "住处：七号钥匙牌 + 登记簿缺失行 + 无编号钥匙"],

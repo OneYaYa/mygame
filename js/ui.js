@@ -245,10 +245,11 @@ export class GameUI {
   }
 
   renderPeople(state) {
-    $("#people-list").innerHTML = this.content.npcs.filter((npc) => npc.id !== "ada" || state.knowledge.ada_identity).map((npc) => {
-      const place = this.content.places.concat(this.content.regions).find((item) => item.id === npc.placeId)?.name || "湖镇";
-      return `<div class="person-card"><strong>${escapeHtml(npc.name)}</strong><span>${escapeHtml(npc.role)}<br>通常工作地点：${escapeHtml(place)}</span></div>`;
-    }).join("");
+    const visible = this.content.npcs.filter((npc) => npc.id !== 'ada' || state.knowledge.ada_identity);
+    $('#people-list').innerHTML = visible.map((npc) => {
+      const place = this.content.places.concat(this.content.regions).find((item) => item.id === npc.placeId)?.name || '湖镇';
+      return `<div class='person-card'><img src='./art/runtime/spr_${npc.id}.webp' alt='' loading='lazy'><div><strong>${escapeHtml(npc.name)}</strong><span>${escapeHtml(npc.role)}<br>通常工作地点：${escapeHtml(place)}</span></div></div>`;
+    }).join('');
   }
 
   renderNextClue(state) {
@@ -258,7 +259,7 @@ export class GameUI {
     if (state.evidence.brake_interface && !state.photos.unfinished_portrait) clue = "地下协议解释了表层终止法。真正缺少的是第七张肖像；最低潮在 SUNDAY 02:00–03:00。";
     if (state.photos.unfinished_portrait && !state.knowledge.ada_identity) clue = "一张脸还不是身份。把残缺肖像与两个独立地点的 A.R. 记录交给档案员。";
     if (state.knowledge.ada_identity && !state.flags.hidden_darkroom_open) clue = "暗房需要三把“锁”：升起西侧配重、照亮银盐门、拿到属于七号房的钥匙。";
-    if (state.flags.hidden_darkroom_open && !state.photos.fixed_portrait) clue = "第二暗房的时间不会前进。把姓名、住处、职责和面孔四个锚点一起固定。";
+    if (state.flags.hidden_darkroom_open && !state.photos.fixed_portrait) clue = "第二暗房的时间不会前进。先与艾达本人逐一核验姓名、住处、职责和面孔，再到定影台固定肖像。";
     if (state.photos.fixed_portrait && !state.flags.slot_seven_filled) clue = "定影肖像的尺寸与主钟地下室第七见证位完全一致。";
     if (state.flags.slot_seven_filled) clue = "红色删除杆已经失去作用。白色旋钮允许七名见证人一起进入星期日。";
     $("#next-clue").textContent = clue;
@@ -316,6 +317,29 @@ export class GameUI {
   }
 
   drawNpcPortrait(canvas, npc) {
+    {
+      const portraitCtx = canvas.getContext('2d');
+      this.portraitAssets ||= new Map();
+      let portrait = this.portraitAssets.get(npc.id);
+      if (!portrait) {
+        portrait = new Image();
+        portrait.decoding = 'async';
+        portrait.onload = () => this.drawNpcPortrait(canvas, npc);
+        portrait.src = `./art/runtime/spr_${npc.id}.webp`;
+        this.portraitAssets.set(npc.id, portrait);
+      }
+      if (portrait.complete && portrait.naturalWidth) {
+        portraitCtx.imageSmoothingEnabled = false;
+        portraitCtx.clearRect(0, 0, canvas.width, canvas.height);
+        portraitCtx.fillStyle = '#263f42';
+        portraitCtx.fillRect(0, 0, canvas.width, canvas.height);
+        const scale = Math.min((canvas.width - 5) / portrait.naturalWidth, (canvas.height - 3) / portrait.naturalHeight);
+        const width = portrait.naturalWidth * scale;
+        const height = portrait.naturalHeight * scale;
+        portraitCtx.drawImage(portrait, Math.round((canvas.width - width) / 2), Math.round(canvas.height - height), Math.round(width), Math.round(height));
+        return;
+      }
+    }
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
     const appearance = npc.appearance || {};
@@ -362,6 +386,11 @@ export class GameUI {
   }
 
   greetingFor(id, state) {
+    if (id === 'ada') {
+      const anchors = ['ada_name_anchored', 'ada_residence_anchored', 'ada_duty_anchored', 'ada_face_anchored'].filter((flag) => state.flags[flag]).length;
+      if (anchors < 4) return `你看得见我，还是只看见玻璃上的一层影子？先别替我回答。现在只有 ${anchors}/4 个身份锚点稳定。`;
+      return '这一次，你终于让我的脸、名字、房间和工作属于同一个人。';
+    }
     const repeat = state.loopCount > 0;
     const lines = {
       arthur: repeat ? "你看我的眼神像是我们已经谈过。可对我而言，这是今天第一次见面。请从本轮证据开始。" : "维修工？主机构在里面。先让钟重新转起来，我们再谈那些不该出现在图纸上的部分。",
@@ -475,7 +504,7 @@ export class GameUI {
     } else if (type === "photo") {
       $("#puzzle-kicker").textContent = "SILVER-SALT DEVELOPMENT";
       title.textContent = "不要让想象替乳剂作证";
-      instruction.textContent = "按伊莱亚斯给出的检查顺序处理底片：先排除重影，再建立反差，最后校正湖面反射。";
+      instruction.textContent = "按埃利亚斯给出的检查顺序处理底片：先排除重影，再建立反差，最后校正湖面反射。";
       const correct = ["重影检查", "反差拉伸", "反射校正"];
       const available = ["反射校正", "重影检查", "反差拉伸"];
       const chosen = [];
@@ -486,7 +515,7 @@ export class GameUI {
           if (chosen.includes(label)) return;
           if (label !== correct[chosen.length]) {
             chosen.splice(0);
-            feedback.textContent = "乳剂开始朝主观轮廓聚集。伊莱亚斯立刻冲掉试片：顺序错了，重新来。";
+            feedback.textContent = "乳剂开始朝主观轮廓聚集。埃利亚斯立刻冲掉试片：顺序错了，重新来。";
           } else {
             chosen.push(label);
             feedback.textContent = chosen.length < 3 ? "这一层影像稳定了。" : "脸部与 A.R. 缩写从湖面重影下显现。";
@@ -501,7 +530,7 @@ export class GameUI {
       title.textContent = "让四个锚点属于同一个人";
       instruction.textContent = "暗房不会替你补全身份。每个锚点都必须来自本轮可核验的实物或记录。";
       const missing = describeMissingIdentityAnchors(state);
-      const all = ["姓名与职责", "住处", "面孔"];
+      const all = ["姓名", "住处", "职责", "面孔"];
       board.innerHTML = `<div class="sequence-grid">${all.map((label) => `<button disabled class="${missing.some((item) => item.startsWith(label)) ? "" : "done"}">${label}<br>${missing.some((item) => item.startsWith(label)) ? "未固定" : "已固定"}</button>`).join("")}</div><button class="puzzle-submit" id="fix-identity">完成定影</button>`;
       $("#fix-identity").disabled = missing.length > 0;
       $("#fix-identity").addEventListener("click", complete);
