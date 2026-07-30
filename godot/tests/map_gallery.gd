@@ -1,6 +1,6 @@
 extends Node
 
-const OUTPUT_RELATIVE: String = "tests/render/maps_v2"
+const DEFAULT_OUTPUT_RELATIVE: String = "tests/render/maps_v2"
 const DAYTIME_ELAPSED: float = 4.0 * 60.0
 const NIGHT_ELAPSED: float = 18.0 * 60.0
 const LOW_TIDE_ELAPSED: float = 20.5 * 60.0
@@ -9,6 +9,8 @@ const LOW_TIDE_ELAPSED: float = 20.5 * 60.0
 
 var _captures: Array[Dictionary] = []
 var _failures: int = 0
+var _suffix: String = ""
+var _time_of_day: String = ""
 
 
 func _ready() -> void:
@@ -17,7 +19,14 @@ func _ready() -> void:
 
 func _generate_gallery() -> void:
 	await get_tree().process_frame
-	var output_absolute: String = ProjectSettings.globalize_path("res://%s" % OUTPUT_RELATIVE)
+	var output_relative: String = _read_output_relative()
+	_suffix = _safe_suffix(_read_option("--suffix"))
+	_time_of_day = _read_option("--time-of-day").to_lower()
+	if _time_of_day not in ["", "day", "dusk", "night"]:
+		push_error("Invalid --time-of-day: %s" % _time_of_day)
+		get_tree().quit(2)
+		return
+	var output_absolute: String = ProjectSettings.globalize_path("res://%s" % output_relative)
 	var directory_error: Error = DirAccess.make_dir_recursive_absolute(output_absolute)
 	if directory_error != OK and directory_error != ERR_ALREADY_EXISTS:
 		push_error("无法创建地图截图目录：%s" % output_absolute)
@@ -29,12 +38,17 @@ func _generate_gallery() -> void:
 	main.ui.show_game()
 	main.ui.journal_panel.visible = false
 	main.flow.transition(GameFlowStateMachine.State.PLAYING)
+	main.world.set_art_debug("--art-debug" in OS.get_cmdline_user_args())
+	main.world.set_time_of_day_override(_time_of_day)
 
 	var scenes: Array = []
 	scenes.append_array(DataManager.maps.get("regions", []) as Array)
 	scenes.append_array(DataManager.maps.get("places", []) as Array)
+	var map_filter: PackedStringArray = _read_repeated_option("--map-id")
 	for index: int in range(scenes.size()):
 		var scene: Dictionary = scenes[index] as Dictionary
+		if not map_filter.is_empty() and str(scene.get("id", "")) not in map_filter:
+			continue
 		await _capture_scene(index, scene, state, output_absolute)
 
 	_write_manifest(output_absolute)
@@ -43,6 +57,43 @@ func _generate_gallery() -> void:
 	await get_tree().process_frame
 	print("TIME ECHO map gallery: %d maps, %d failures, %s" % [_captures.size(), _failures, output_absolute])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+func _read_output_relative() -> String:
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	for index: int in range(args.size()):
+		var argument: String = args[index]
+		if argument.begins_with("--output-dir="):
+			return argument.trim_prefix("--output-dir=").trim_prefix("res://").trim_suffix("/")
+		if argument == "--output-dir" and index + 1 < args.size():
+			return args[index + 1].trim_prefix("res://").trim_suffix("/")
+	return DEFAULT_OUTPUT_RELATIVE
+
+
+func _read_repeated_option(option: String) -> PackedStringArray:
+	var result := PackedStringArray()
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	for index: int in range(args.size()):
+		if args[index].begins_with("%s=" % option):
+			result.append(args[index].trim_prefix("%s=" % option))
+		elif args[index] == option and index + 1 < args.size():
+			result.append(args[index + 1])
+	return result
+
+
+func _read_option(option: String) -> String:
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	for index: int in range(args.size()):
+		if args[index].begins_with("%s=" % option):
+			return args[index].trim_prefix("%s=" % option)
+		if args[index] == option and index + 1 < args.size():
+			return args[index + 1]
+	return ""
+
+
+func _safe_suffix(value: String) -> String:
+	var cleaned: String = value.strip_edges().replace("/", "-").replace("\\", "-").replace("..", "-")
+	return "" if cleaned.is_empty() else (cleaned if cleaned.begins_with("_") else "_%s" % cleaned)
 
 
 func _create_gallery_state() -> Dictionary:
@@ -66,7 +117,7 @@ func _create_gallery_state() -> Dictionary:
 
 func _capture_scene(index: int, scene: Dictionary, state: Dictionary, output_absolute: String) -> void:
 	var scene_id: String = str(scene.get("id", "scene_%02d" % (index + 1)))
-	var elapsed: float = _elapsed_for_scene(scene_id)
+	var elapsed: float = _elapsed_for_scene(scene_id, _time_of_day)
 	state["placeId"] = scene_id
 	state["loopElapsed"] = elapsed
 	state["speed"] = 0.0
@@ -83,14 +134,19 @@ func _capture_scene(index: int, scene: Dictionary, state: Dictionary, output_abs
 	main.ui.journal_panel.visible = false
 	for _frame: int in range(3):
 		await get_tree().process_frame
-	await RenderingServer.frame_post_draw
+	RenderingServer.force_draw(false, 0.0)
 	var image: Image = get_viewport().get_texture().get_image()
-	var filename: String = "%02d_%s.png" % [index + 1, scene_id]
+	if image == null or image.is_empty():
+		_failures += 1
+		push_error("Map capture has no rendered image: %s" % scene_id)
+		return
+	var filename: String = "%02d_%s%s.png" % [index + 1, scene_id, _suffix]
 	var save_error: Error = image.save_png(output_absolute.path_join(filename))
 	if save_error != OK:
 		_failures += 1
 		push_error("地图截图写入失败：%s (%s)" % [filename, error_string(save_error)])
 		return
+	var metrics: Dictionary = main.world.get_art_review_metrics()
 	_captures.append({
 		"index": index + 1,
 		"id": scene_id,
@@ -101,10 +157,17 @@ func _capture_scene(index: int, scene: Dictionary, state: Dictionary, output_abs
 		"time": TimeManager.format_time(int(state.get("minute", 0))),
 		"file": filename,
 		"image": image,
+		"art_metrics": metrics,
 	})
 
 
-func _elapsed_for_scene(scene_id: String) -> float:
+func _elapsed_for_scene(scene_id: String, time_of_day: String = "") -> float:
+	if time_of_day == "day":
+		return DAYTIME_ELAPSED
+	if time_of_day == "dusk":
+		return 12.5 * 60.0
+	if time_of_day == "night":
+		return NIGHT_ELAPSED
 	if scene_id == "inn-upstairs":
 		return NIGHT_ELAPSED
 	if scene_id in ["low-tide-cave", "hidden-darkroom"]:
@@ -119,8 +182,9 @@ func _write_manifest(output_absolute: String) -> void:
 			"index": capture["index"], "id": capture["id"], "name": capture["name"],
 			"kind": capture["kind"], "width": capture["width"], "height": capture["height"],
 			"time": capture["time"], "file": capture["file"],
+			"art_metrics": capture["art_metrics"],
 		})
-	var file: FileAccess = FileAccess.open(output_absolute.path_join("gallery_manifest.json"), FileAccess.WRITE)
+	var file: FileAccess = FileAccess.open(output_absolute.path_join("gallery_manifest%s.json" % _suffix), FileAccess.WRITE)
 	if file == null:
 		_failures += 1
 		push_error("无法写入地图截图索引")
@@ -141,9 +205,13 @@ func _capture_contact_pages(output_absolute: String) -> void:
 		await get_tree().process_frame
 		_build_contact_page(gallery_layer, page_index, page_count)
 		await get_tree().process_frame
-		await RenderingServer.frame_post_draw
+		RenderingServer.force_draw(false, 0.0)
 		var page_image: Image = get_viewport().get_texture().get_image()
-		var save_error: Error = page_image.save_png(output_absolute.path_join("gallery_page_%d.png" % (page_index + 1)))
+		if page_image == null or page_image.is_empty():
+			_failures += 1
+			push_error("Gallery contact page has no rendered image: %d" % (page_index + 1))
+			continue
+		var save_error: Error = page_image.save_png(output_absolute.path_join("gallery_page_%d%s.png" % [page_index + 1, _suffix]))
 		if save_error != OK:
 			_failures += 1
 			push_error("总览页写入失败：%s" % error_string(save_error))

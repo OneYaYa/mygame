@@ -6,15 +6,16 @@ signal interaction_requested(target: Dictionary)
 const NPC_SCENE: PackedScene = preload("res://scenes/characters/npc.tscn")
 
 @onready var world_view: TimeEchoWorldView = $WorldView
-@onready var collisions: Node2D = $Collisions
-@onready var actors: Node2D = $Actors
-@onready var player: TimeEchoPlayer = $Player
-@onready var canvas_modulate: CanvasModulate = $CanvasModulate
+@onready var collisions: Node2D = $WorldView/Collisions
+@onready var actors: Node2D = $WorldView/Characters
+@onready var player: TimeEchoPlayer = $WorldView/Characters/Player
+@onready var canvas_modulate: CanvasModulate = $WorldView/Lighting/CanvasModulate
 
 var current_scene: Dictionary = {}
 var state: Dictionary = {}
 var npc_actors: Dictionary = {}
 var _last_step_at: int = 0
+var _time_of_day_override: String = ""
 
 
 func _ready() -> void:
@@ -37,35 +38,104 @@ func set_input_enabled(value: bool) -> void:
 	player.active = value
 
 
+func set_time_of_day_override(value: String) -> void:
+	_time_of_day_override = value
+	_update_daylight()
+
+
+func set_art_debug(value: bool) -> void:
+	world_view.set_art_debug(value)
+
+
+func get_art_review_metrics() -> Dictionary:
+	var metrics: Dictionary = world_view.get_review_metrics()
+	metrics["player_spawn"] = [player.position.x, player.position.y]
+	var npc_points: Array[Dictionary] = []
+	for npc_id: Variant in npc_actors.keys():
+		var actor: TimeEchoNPCActor = npc_actors[npc_id] as TimeEchoNPCActor
+		npc_points.append({"npc_id": str(npc_id), "position": [actor.position.x, actor.position.y]})
+	metrics["npc_points"] = npc_points
+	metrics["portal_reachability"] = get_portal_reachability_report()
+	return metrics
+
+
+func get_portal_reachability_report() -> Array[Dictionary]:
+	var report: Array[Dictionary] = []
+	if current_scene.is_empty():
+		return report
+	const GRID: int = 16
+	var bounds := Rect2(0, 0, float(current_scene.get("width", 768)), float(current_scene.get("height", 480)))
+	var obstacles: Array[Rect2] = world_view.get_collision_rects()
+	var start: Vector2i = _nearest_open_cell(_world_to_cell(player.position, GRID), GRID, bounds, obstacles)
+	var visited: Dictionary = {start: true}
+	var frontier: Array[Vector2i] = [start]
+	var cursor: int = 0
+	var directions: Array[Vector2i] = [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]
+	while cursor < frontier.size():
+		var cell: Vector2i = frontier[cursor]
+		cursor += 1
+		for direction: Vector2i in directions:
+			var next: Vector2i = cell + direction
+			if visited.has(next) or _cell_is_blocked(next, GRID, bounds, obstacles):
+				continue
+			visited[next] = true
+			frontier.append(next)
+	for raw: Variant in current_scene.get("portals", []):
+		var portal: Dictionary = raw as Dictionary
+		var portal_id: String = str(portal.get("id", ""))
+		var trigger: Rect2 = world_view.get_gameplay_rect(portal_id, "trigger_rect", _rect(portal))
+		var reachable: bool = false
+		for cell_value: Variant in visited.keys():
+			var point: Vector2 = _cell_center(cell_value as Vector2i, GRID)
+			if trigger.grow(10.0).has_point(point):
+				reachable = true
+				break
+		report.append({
+			"portal_id": portal_id,
+			"target": str(portal.get("targetPlaceId", "")),
+			"revealed": SceneManager.can_reveal_portal(portal, state),
+			"reachable": reachable,
+			"trigger_rect": [trigger.position.x, trigger.position.y, trigger.size.x, trigger.size.y],
+		})
+	return report
+
+
 func get_nearest_interaction() -> Dictionary:
 	if current_scene.is_empty():
 		return {}
 	var point: Vector2 = player.position
 	var candidates: Array[Dictionary] = []
-	var npcs: Dictionary = state.get("npcs", {}) as Dictionary
 	for npc_id: Variant in npc_actors.keys():
-		var npc_state: Dictionary = npcs.get(npc_id, {}) as Dictionary
-		var distance: float = point.distance_to(Vector2(float(npc_state.get("x", 0.0)), float(npc_state.get("y", 0.0))))
+		var actor: TimeEchoNPCActor = npc_actors[npc_id] as TimeEchoNPCActor
+		var distance: float = point.distance_to(actor.position)
 		if distance <= 62.0:
 			var profile: Dictionary = DataManager.get_npc(str(npc_id))
-			candidates.append({"type": "npc", "value": profile, "distance": distance, "label": "与 %s 交谈" % profile.get("name", npc_id)})
+			candidates.append({"type": "npc", "value": profile, "distance": distance, "priority": 0, "label": "与 %s 交谈" % profile.get("name", npc_id)})
 	for raw: Variant in current_scene.get("landmarks", []):
 		var landmark: Dictionary = raw as Dictionary
 		if not bool(landmark.get("interactive", false)):
 			continue
-		var distance: float = _point_rect_distance(point, _rect(landmark))
-		if distance <= 52.0:
-			candidates.append({"type": "landmark", "value": landmark, "distance": distance, "label": str(landmark.get("label", "检查"))})
+		var fallback: Rect2 = _rect(landmark)
+		var interaction_rect: Rect2 = world_view.get_gameplay_rect(str(landmark.get("id", "")), "interaction_rect", fallback)
+		var distance: float = _point_rect_distance(point, interaction_rect)
+		if distance <= float(world_view.get_art_layout().get("interaction_distance", 52.0)):
+			candidates.append({"type": "landmark", "value": landmark, "distance": distance, "priority": 1, "label": str(landmark.get("label", "检查"))})
 	for raw: Variant in current_scene.get("portals", []):
 		var portal: Dictionary = raw as Dictionary
 		if not SceneManager.can_reveal_portal(portal, state):
 			continue
-		var distance: float = _point_rect_distance(point, _rect(portal))
+		var fallback: Rect2 = _rect(portal)
+		var trigger_rect: Rect2 = world_view.get_gameplay_rect(str(portal.get("id", "")), "trigger_rect", fallback)
+		var distance: float = _point_rect_distance(point, trigger_rect)
 		if distance <= 58.0:
-			candidates.append({"type": "portal", "value": portal, "distance": distance, "label": str(portal.get("label", "前往"))})
+			candidates.append({"type": "portal", "value": portal, "distance": distance, "priority": 2, "label": str(portal.get("label", "前往"))})
 	if candidates.is_empty():
 		return {}
-	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["distance"]) < float(b["distance"]))
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if absf(float(a["distance"]) - float(b["distance"])) <= 4.0:
+			return int(a["priority"]) < int(b["priority"])
+		return float(a["distance"]) < float(b["distance"])
+	)
 	return candidates[0]
 
 
@@ -92,7 +162,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _change_scene(place_id: String) -> void:
 	current_scene = DataManager.get_scene_data(place_id)
 	if current_scene.is_empty():
-		push_error("无法实例化地点：%s" % place_id)
+		push_error("Unable to instantiate location: %s" % place_id)
 		return
 	world_view.set_world(current_scene, state)
 	_rebuild_collisions()
@@ -110,7 +180,8 @@ func _change_scene(place_id: String) -> void:
 
 func _rebuild_npcs() -> void:
 	for child: Node in actors.get_children():
-		child.queue_free()
+		if child is TimeEchoNPCActor:
+			child.queue_free()
 	npc_actors.clear()
 	var npcs: Dictionary = state.get("npcs", {}) as Dictionary
 	for npc_id: Variant in npcs.keys():
@@ -133,9 +204,9 @@ func _update_npcs(delta: float) -> void:
 	if expected_ids.size() != npc_actors.size() or expected_ids.any(func(id: Variant) -> bool: return not npc_actors.has(id)):
 		_rebuild_npcs()
 	for npc_id: Variant in npc_actors.keys():
-		(npc_actors[npc_id] as TimeEchoNPCActor).update_from_state(npcs[npc_id] as Dictionary, delta)
 		var actor: TimeEchoNPCActor = npc_actors[npc_id] as TimeEchoNPCActor
 		var npc_state: Dictionary = npcs[npc_id] as Dictionary
+		actor.update_from_state(npc_state, delta)
 		npc_state["x"] = actor.position.x
 		npc_state["y"] = actor.position.y
 
@@ -149,24 +220,29 @@ func _rebuild_collisions() -> void:
 	_add_solid(Rect2(width - 8, 0, 16, height))
 	_add_solid(Rect2(0, -8, width, 16))
 	_add_solid(Rect2(0, height - 8, width, 16))
+	if world_view.has_art_layout():
+		for rect: Rect2 in world_view.get_collision_rects():
+			_add_solid(rect)
+		return
+	# Formal fallback for a missing art layout; it preserves old gameplay rather
+	# than crashing, but is reported by Art Debug.
 	for raw: Variant in current_scene.get("obstacles", []):
 		var item: Dictionary = raw as Dictionary
-		if item.get("collision", true) != false: _add_solid(_rect(item))
+		if item.get("collision", true) != false:
+			_add_solid(_rect(item))
 	for raw: Variant in current_scene.get("buildings", []):
 		var item: Dictionary = raw as Dictionary
-		if item.get("collision", true) == false: continue
+		if item.get("collision", true) == false:
+			continue
 		var rect: Rect2 = _rect(item)
 		_add_solid(Rect2(rect.position.x, rect.position.y + rect.size.y * 0.36, rect.size.x, rect.size.y * 0.64))
 	for raw: Variant in current_scene.get("furniture", []):
 		var item: Dictionary = raw as Dictionary
-		if item.get("collision", true) == false: continue
+		if item.get("collision", true) == false:
+			continue
 		var rect: Rect2 = _rect(item)
 		var inset: float = minf(4.0, rect.size.x * 0.12)
 		_add_solid(Rect2(rect.position.x + inset, rect.position.y + rect.size.y * 0.35, maxf(2.0, rect.size.x - inset * 2.0), maxf(2.0, rect.size.y * 0.65)))
-	for group: String in ["zones", "landmarks", "decorations"]:
-		for raw: Variant in current_scene.get(group, []):
-			var item: Dictionary = raw as Dictionary
-			if bool(item.get("collision", false)): _add_solid(_rect(item))
 
 
 func _add_solid(rect: Rect2) -> void:
@@ -203,11 +279,13 @@ func _request_nearest_interaction() -> void:
 func _target_at_point(point: Vector2) -> Dictionary:
 	for raw: Variant in current_scene.get("landmarks", []):
 		var item: Dictionary = raw as Dictionary
-		if bool(item.get("interactive", false)) and _rect(item).grow(8).has_point(point):
+		var hit_rect: Rect2 = world_view.get_gameplay_rect(str(item.get("id", "")), "interaction_rect", _rect(item))
+		if bool(item.get("interactive", false)) and hit_rect.grow(8).has_point(point):
 			return {"type": "landmark", "value": item, "label": str(item.get("label", "检查")), "distance": 0.0}
 	for raw: Variant in current_scene.get("portals", []):
 		var portal: Dictionary = raw as Dictionary
-		if SceneManager.can_reveal_portal(portal, state) and _rect(portal).grow(8).has_point(point):
+		var hit_rect: Rect2 = world_view.get_gameplay_rect(str(portal.get("id", "")), "trigger_rect", _rect(portal))
+		if SceneManager.can_reveal_portal(portal, state) and hit_rect.grow(8).has_point(point):
 			return {"type": "portal", "value": portal, "label": str(portal.get("label", "前往")), "distance": 0.0}
 	for npc_id: Variant in npc_actors.keys():
 		var actor: TimeEchoNPCActor = npc_actors[npc_id] as TimeEchoNPCActor
@@ -217,13 +295,21 @@ func _target_at_point(point: Vector2) -> Dictionary:
 
 
 func _update_daylight() -> void:
+	if current_scene.is_empty() or not is_instance_valid(canvas_modulate):
+		return
+	var canvas: Dictionary = world_view.get_art_layout().get("canvas", {}) as Dictionary
 	if str(current_scene.get("kind", "outdoor")) == "interior":
-		canvas_modulate.color = Color("d8cfae") if not TimeManager.scene_pauses_time(str(current_scene.get("id", ""))) else Color("b79a91")
+		var ambient: Color = Color.from_string(str(canvas.get("ambient_color", "#d7c8a9")), Color("d7c8a9"))
+		canvas_modulate.color = ambient
 		return
 	var minute: int = int(state.get("minute", 360))
+	if _time_of_day_override == "day": minute = 10 * 60
+	elif _time_of_day_override == "dusk": minute = 18 * 60 + 30
+	elif _time_of_day_override == "night": minute = 23 * 60
 	var hour: float = minute / 60.0
-	var brightness: float = clampf(0.55 + sin((hour - 6.0) / 24.0 * TAU) * 0.35, 0.28, 1.0)
-	canvas_modulate.color = Color(brightness, brightness * 0.98, brightness * 0.88 + 0.08)
+	var brightness: float = clampf(0.58 + sin((hour - 6.0) / 24.0 * TAU) * 0.34, 0.3, 1.0)
+	var tint: Color = Color.from_string(str(canvas.get("day_tint", "#fff7dc")), Color("fff7dc"))
+	canvas_modulate.color = Color(brightness * tint.r, brightness * tint.g, brightness * tint.b + 0.05)
 
 
 func _rect(item: Dictionary) -> Rect2:
@@ -234,3 +320,34 @@ func _point_rect_distance(point: Vector2, rect: Rect2) -> float:
 	var closest := Vector2(clampf(point.x, rect.position.x, rect.end.x), clampf(point.y, rect.position.y, rect.end.y))
 	return point.distance_to(closest)
 
+
+func _world_to_cell(point: Vector2, grid: int) -> Vector2i:
+	return Vector2i(floori(point.x / grid), floori(point.y / grid))
+
+
+func _cell_center(cell: Vector2i, grid: int) -> Vector2:
+	return Vector2((cell.x + 0.5) * grid, (cell.y + 0.5) * grid)
+
+
+func _cell_is_blocked(cell: Vector2i, grid: int, bounds: Rect2, obstacles: Array[Rect2]) -> bool:
+	var point: Vector2 = _cell_center(cell, grid)
+	if not bounds.grow(-8.0).has_point(point):
+		return true
+	for obstacle: Rect2 in obstacles:
+		if obstacle.grow(7.0).has_point(point):
+			return true
+	return false
+
+
+func _nearest_open_cell(origin: Vector2i, grid: int, bounds: Rect2, obstacles: Array[Rect2]) -> Vector2i:
+	if not _cell_is_blocked(origin, grid, bounds, obstacles):
+		return origin
+	for radius: int in range(1, 12):
+		for y: int in range(origin.y - radius, origin.y + radius + 1):
+			for x: int in range(origin.x - radius, origin.x + radius + 1):
+				if abs(x - origin.x) != radius and abs(y - origin.y) != radius:
+					continue
+				var candidate := Vector2i(x, y)
+				if not _cell_is_blocked(candidate, grid, bounds, obstacles):
+					return candidate
+	return origin

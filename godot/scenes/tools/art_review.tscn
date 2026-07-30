@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/tools/art_review.gd" id="1_review"]
+[ext_resource type="PackedScene" path="res://scenes/main/main.tscn" id="2_main"]
+
+[node name="ArtReview" type="Node"]
+script = ExtResource("1_review")
+
+[node name="Main" parent="." instance=ExtResource("2_main")]

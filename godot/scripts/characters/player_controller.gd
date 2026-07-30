@@ -13,6 +13,7 @@ var facing: String = "down"
 
 
 func _physics_process(_delta: float) -> void:
+	z_index = clampi(int(round(position.y)), 0, 4096)
 	if not active:
 		velocity = Vector2.ZERO
 		return
@@ -40,8 +41,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func configure(position_value: Vector2, facing_value: String, bounds: Rect2) -> void:
-	position = position_value
+	position = position_value.round()
 	facing = facing_value
 	world_bounds = bounds
+	z_index = clampi(int(round(position.y)), 0, 4096)
 	$Sprite2D.flip_h = facing == "left"
-

@@ -1,0 +1,176 @@
+{
+  "full_screenshots": [
+    "after/town.png",
+    "after/harbor.png",
+    "after/inn-lobby.png"
+  ],
+  "detail_screenshots": [
+    {
+      "file": "town_road_material_hierarchy.png",
+      "map_id": "town",
+      "crop": [
+        90,
+        160,
+        1080,
+        425
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "town_pond_fixed.png",
+      "map_id": "town",
+      "crop": [
+        25,
+        405,
+        300,
+        640
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "town_bakery_platform.png",
+      "map_id": "town",
+      "crop": [
+        80,
+        145,
+        290,
+        335
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "town_clock_platform.png",
+      "map_id": "town",
+      "crop": [
+        435,
+        160,
+        715,
+        370
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "harbor_shallow_deep_fixed.png",
+      "map_id": "harbor",
+      "crop": [
+        520,
+        45,
+        1000,
+        640
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "harbor_main_shore_fixed.png",
+      "map_id": "harbor",
+      "crop": [
+        515,
+        45,
+        710,
+        640
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "harbor_lighthouse_island_fixed.png",
+      "map_id": "harbor",
+      "crop": [
+        900,
+        45,
+        1150,
+        330
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "harbor_dock_entry_fixed.png",
+      "map_id": "harbor",
+      "crop": [
+        470,
+        270,
+        780,
+        465
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "harbor_logistics_fixed.png",
+      "map_id": "harbor",
+      "crop": [
+        35,
+        285,
+        525,
+        500
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "inn_reception_partition.png",
+      "map_id": "inn-lobby",
+      "crop": [
+        700,
+        175,
+        855,
+        370
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "inn_staircase.png",
+      "map_id": "inn-lobby",
+      "crop": [
+        790,
+        315,
+        925,
+        525
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "inn_main_door_fixed.png",
+      "map_id": "inn-lobby",
+      "crop": [
+        505,
+        420,
+        650,
+        585
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "inn_wall_decor.png",
+      "map_id": "inn-lobby",
+      "crop": [
+        550,
+        140,
+        825,
+        275
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "inn_table_chairs.png",
+      "map_id": "inn-lobby",
+      "crop": [
+        430,
+        265,
+        620,
+        445
+      ],
+      "nearest_scale": 2
+    },
+    {
+      "file": "inn_full_room.png",
+      "map_id": "inn-lobby",
+      "crop": [
+        155,
+        60,
+        1000,
+        585
+      ],
+      "nearest_scale": 2
+    }
+  ],
+  "detail_sampling": "nearest_neighbour_integer_2x",
+  "contact_sheet": "contact_sheet.png"
+}

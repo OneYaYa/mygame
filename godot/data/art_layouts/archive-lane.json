@@ -1,0 +1,37 @@
+{
+  "schema_version":1,"map_id":"archive-lane","theme_variant":"civic_archive_rise","interaction_distance":54,
+  "canvas":{"base_color":"#64775b","base_texture":"tile_grass_low_noise","texture_opacity":0.09,"detail_density":82,"path_color":"#8e887a","water_color":"#456d73","shore_color":"#7e8973","edge_color":"#354640","day_tint":"#ece9d8"},
+  "ground_shapes":[
+    {"object_id":"archive_lane_main","kind":"path","points":[[1100,390],[900,390],[720,398],[610,418],[560,400],[525,346]],"width":52,"color":"#938b7d"},
+    {"object_id":"archive_platform","kind":"platform","points":[[420,310],[583,310],[608,350],[398,350]],"color":"#8e897f"},
+    {"object_id":"archive_small_pond","kind":"water","points":[[814,540],[842,521],[893,518],[930,540],[936,577],[908,602],[858,604],[822,585]],"color":"#446b72","shore_color":"#7b8771"}
+  ],
+  "objects":[
+    {"object_id":"archive_building_art","gameplay_id":"town_archive","asset_id":"env_town_archive","position":[500,330],"display_size":[210,212],"anchor":[0.5,1.0],"sort_y":330,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[172,14]},
+    {"object_id":"archive_cart","asset_id":"prop_cart","position":[699,430],"display_size":[82,58],"anchor":[0.5,1.0],"sort_y":430,"layer":"WorldObjects","mirror_x":true,"contact_shadow":true},
+    {"object_id":"archive_crate_a","asset_id":"prop_crate","position":[752,462],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":462,"layer":"WorldObjects","contact_shadow":true},
+    {"object_id":"archive_cratestack","asset_id":"prop_cratestack","position":[792,452],"display_size":[60,61],"anchor":[0.5,1.0],"sort_y":452,"layer":"WorldObjects","contact_shadow":true},
+    {"object_id":"archive_notice","asset_id":"prop_sign","position":[349,433],"display_size":[40,62],"anchor":[0.5,1.0],"sort_y":433,"layer":"WorldObjects","contact_shadow":true},
+    {"object_id":"archive_lantern_left","asset_id":"prop_lantern","position":[392,384],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":384,"layer":"WorldObjects","contact_shadow":true},
+    {"object_id":"archive_lantern_right","asset_id":"prop_lantern","position":[613,392],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":392,"layer":"WorldObjects","contact_shadow":true},
+    {"object_id":"archive_pebbles_a","asset_id":"prop_pebbles","position":[255,511],"display_size":[48,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails"},
+    {"object_id":"archive_pebbles_b","asset_id":"prop_pebbles","position":[1004,532],"display_size":[48,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails","mirror_x":true},
+    {"object_id":"archive_bush_left","asset_id":"prop_bush","position":[167,388],"display_size":[60,62],"anchor":[0.5,1.0],"sort_y":388,"layer":"WorldObjects","contact_shadow":true},
+    {"object_id":"archive_bush_pond","asset_id":"prop_bush","position":[942,600],"display_size":[60,62],"anchor":[0.5,1.0],"sort_y":600,"layer":"WorldObjects","mirror_x":true,"contact_shadow":true},
+    {"object_id":"archive_index_stone","procedural_type":"rock","position":[274,406],"display_size":[40,32],"anchor":[0.5,1.0],"sort_y":406,"layer":"WorldObjects","color":"#555a55","accent":"#a09b86","contact_shadow":true,"shadow_size":[30,7]}
+  ],
+  "collision_rects":[
+    {"object_id":"col_archive_left","rect":[404,296,80,34]},{"object_id":"col_archive_right","rect":[516,296,80,34]},
+    {"object_id":"col_archive_freight","rect":[675,411,137,41]},{"object_id":"col_archive_pond","rect":[826,529,98,64]},
+    {"object_id":"col_archive_bush","rect":[158,371,18,18]}
+  ],
+  "gameplay_overrides":{
+    "weathered_index_stone":{"interaction_rect":[252,374,44,34]},
+    "archive_to_photo":{"trigger_rect":[1056,354,44,72]},
+    "enter_archive":{"trigger_rect":[486,296,30,44]}
+  },
+  "lights":[
+    {"object_id":"archive_left_light","position":[392,350],"color":"#e4bd75","energy":0.27,"radius":66},
+    {"object_id":"archive_right_light","position":[613,358],"color":"#e4bd75","energy":0.27,"radius":66}
+  ],"zones":[]
+}

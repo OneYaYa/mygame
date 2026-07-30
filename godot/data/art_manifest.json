@@ -1,0 +1,2371 @@
+{
+    "schema_version": 1,
+    "perspective": "top_down_three_quarter",
+    "processed_root": "res://assets/images/processed/",
+    "assets": [
+        {
+            "asset_id": "env_master_clock_tower",
+            "runtime_path": "res://assets/images/processed/env_master_clock_tower.png",
+            "source_path": "res://assets/images/source_art/runtime/env_master_clock_tower.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                215,
+                420
+            ],
+            "recommended_display_size": [
+                134,
+                260
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "town"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4e3b\u949f\u4f7f\u7528\u7eb5\u5411\u539f\u6bd4\u4f8b\uff0c\u95e8\u524d\u53e6\u8bbe\u57fa\u5ea7\u4e0e\u53f0\u9636\u3002"
+        },
+        {
+            "asset_id": "env_bakery",
+            "runtime_path": "res://assets/images/processed/env_bakery.png",
+            "source_path": "res://assets/images/source_art/runtime/env_bakery.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                371,
+                420
+            ],
+            "recommended_display_size": [
+                190,
+                215
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "town"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": true,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u62db\u724c\u542b\u6587\u5b57\uff0c\u4e0d\u955c\u50cf\u3002"
+        },
+        {
+            "asset_id": "env_bookbinder",
+            "runtime_path": "res://assets/images/processed/env_bookbinder.png",
+            "source_path": "res://assets/images/source_art/runtime/env_bookbinder.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                409,
+                420
+            ],
+            "recommended_display_size": [
+                205,
+                210
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "town"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": true,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4fa7\u5899\u62db\u724c\u542b\u6587\u5b57\uff0c\u4e0d\u955c\u50cf\u3002"
+        },
+        {
+            "asset_id": "env_lakeside_inn",
+            "runtime_path": "res://assets/images/processed/env_lakeside_inn.png",
+            "source_path": "res://assets/images/source_art/runtime/env_lakeside_inn.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                403,
+                420
+            ],
+            "recommended_display_size": [
+                242,
+                252
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "inn-yard"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4e3b\u5165\u53e3\u4f4d\u4e8e\u6b63\u9762\u4e2d\u8f74\u3002"
+        },
+        {
+            "asset_id": "env_inn_shed",
+            "runtime_path": "res://assets/images/processed/env_inn_shed.png",
+            "source_path": "res://assets/images/source_art/runtime/env_inn_shed.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                407,
+                420
+            ],
+            "recommended_display_size": [
+                136,
+                140
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "inn-yard"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u540e\u52e4\u6728\u5c4b\uff0c\u53ef\u955c\u50cf\u4f46\u672c\u8f6e\u4e0d\u955c\u50cf\u3002"
+        },
+        {
+            "asset_id": "env_chapel_tower",
+            "runtime_path": "res://assets/images/processed/env_chapel_tower.png",
+            "source_path": "res://assets/images/source_art/runtime/env_chapel_tower.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                290,
+                420
+            ],
+            "recommended_display_size": [
+                150,
+                218
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.95
+            ],
+            "contexts": [
+                "chapel-hill"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u793c\u62dc\u5802\u552f\u4e00\u4e3b\u5efa\u7b51\u3002"
+        },
+        {
+            "asset_id": "env_silver_salt_studio",
+            "runtime_path": "res://assets/images/processed/env_silver_salt_studio.png",
+            "source_path": "res://assets/images/source_art/runtime/env_silver_salt_studio.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                420,
+                420
+            ],
+            "recommended_display_size": [
+                210,
+                210
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "photo-lane"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": true,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6b63\u9762\u542b SILVER SALT STUDIO \u5b57\u6837\u3002"
+        },
+        {
+            "asset_id": "env_frame_shop",
+            "runtime_path": "res://assets/images/processed/env_frame_shop.png",
+            "source_path": "res://assets/images/source_art/runtime/env_frame_shop.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                420,
+                418
+            ],
+            "recommended_display_size": [
+                188,
+                188
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "photo-lane"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": true,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u5e97\u9762\u542b\u6587\u5b57\uff0c\u4e0d\u955c\u50cf\u3002"
+        },
+        {
+            "asset_id": "env_town_archive",
+            "runtime_path": "res://assets/images/processed/env_town_archive.png",
+            "source_path": "res://assets/images/source_art/runtime/env_town_archive.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                415,
+                420
+            ],
+            "recommended_display_size": [
+                210,
+                212
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "archive-lane"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u5165\u53e3\u524d\u914d\u72ec\u7acb\u5e73\u53f0\u548c\u5761\u9053\u3002"
+        },
+        {
+            "asset_id": "env_harbor_control",
+            "runtime_path": "res://assets/images/processed/env_harbor_control.png",
+            "source_path": "res://assets/images/source_art/runtime/env_harbor_control.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                373,
+                420
+            ],
+            "recommended_display_size": [
+                176,
+                198
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u9760\u8fd1\u9646\u4fa7\u540e\u52e4\u533a\u3002"
+        },
+        {
+            "asset_id": "env_lighthouse_watchtower",
+            "runtime_path": "res://assets/images/processed/env_lighthouse_watchtower.png",
+            "source_path": "res://assets/images/source_art/runtime/env_lighthouse_watchtower.webp",
+            "category": "building",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                180,
+                420
+            ],
+            "recommended_display_size": [
+                92,
+                216
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "building_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4f5c\u4e3a\u8fdc\u7aef\u7ad6\u5411\u951a\u70b9\uff0c\u5e95\u5ea7\u5fc5\u987b\u843d\u5728\u5cb8\u4e0a\u3002"
+        },
+        {
+            "asset_id": "lm_boat",
+            "runtime_path": "res://assets/images/processed/lm_boat.png",
+            "source_path": "res://assets/images/source_art/runtime/lm_boat.webp",
+            "category": "landmark",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                242,
+                256
+            ],
+            "recommended_display_size": [
+                112,
+                118
+            ],
+            "anchor": [
+                0.5,
+                0.82
+            ],
+            "sort_anchor": [
+                0.5,
+                0.82
+            ],
+            "contexts": [
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "boat_hull",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u8239\u5934\u65b9\u5411\u968f\u6cca\u4f4d\u5e03\u5c40\u51b3\u5b9a\u3002"
+        },
+        {
+            "asset_id": "lm_ferry",
+            "runtime_path": "res://assets/images/processed/lm_ferry.png",
+            "source_path": "res://assets/images/source_art/runtime/lm_ferry.webp",
+            "category": "landmark",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                230
+            ],
+            "recommended_display_size": [
+                160,
+                144
+            ],
+            "anchor": [
+                0.5,
+                0.82
+            ],
+            "sort_anchor": [
+                0.5,
+                0.82
+            ],
+            "contexts": [
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "boat_hull",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6e21\u8239\u9760\u5916\u4fa7\u6cca\u4f4d\u3002"
+        },
+        {
+            "asset_id": "prop_banner",
+            "runtime_path": "res://assets/images/processed/prop_banner.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_banner.webp",
+            "category": "decoration",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                120,
+                256
+            ],
+            "recommended_display_size": [
+                30,
+                64
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                1.0
+            ],
+            "contexts": [
+                "chapel-hill",
+                "chapel-interior"
+            ],
+            "forbidden_contexts": [
+                "rug",
+                "curtain",
+                "blanket"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u53ea\u4f5c\u72ec\u7acb\u65d7\u5e1c\uff0c\u4e0d\u66ff\u4ee3\u5730\u6bef\u3001\u7a97\u5e18\u6216\u6bef\u5b50\u3002"
+        },
+        {
+            "asset_id": "prop_barrel",
+            "runtime_path": "res://assets/images/processed/prop_barrel.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_barrel.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                185,
+                256
+            ],
+            "recommended_display_size": [
+                37,
+                51
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "inn-yard",
+                "photo-lane",
+                "harbor",
+                "inn-lobby",
+                "clock-cabin",
+                "harbor-control",
+                "low-tide-cave"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "small_round",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u9ad8\u5ea6\u660e\u663e\u4f4e\u4e8e\u89d2\u8272\u3002"
+        },
+        {
+            "asset_id": "prop_bed",
+            "runtime_path": "res://assets/images/processed/prop_bed.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_bed.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                243
+            ],
+            "recommended_display_size": [
+                80,
+                76
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "player-room"
+            ],
+            "forbidden_contexts": [
+                "outdoor"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u957f\u5ea6\u7ea6\u4e3a\u89d2\u8272\u9ad8\u5ea6 1.6 \u500d\u3002"
+        },
+        {
+            "asset_id": "prop_bench",
+            "runtime_path": "res://assets/images/processed/prop_bench.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_bench.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                244
+            ],
+            "recommended_display_size": [
+                76,
+                72
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "town",
+                "inn-yard",
+                "chapel-hill",
+                "photo-lane",
+                "archive-lane",
+                "harbor",
+                "chapel-interior",
+                "chapel-belfry"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6237\u5916\u516c\u5171\u7a7a\u95f4\u4e0e\u793c\u62dc\u5802\u5c11\u91cf\u4f7f\u7528\u3002"
+        },
+        {
+            "asset_id": "prop_buckets",
+            "runtime_path": "res://assets/images/processed/prop_buckets.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_buckets.webp",
+            "category": "concept_only",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                232,
+                256
+            ],
+            "recommended_display_size": [
+                58,
+                64
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "photo-studio"
+            ],
+            "forbidden_contexts": [
+                "bucket",
+                "pail"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": false,
+            "needs_review": true,
+            "notes": "\u6587\u4ef6\u540d\u4e0e\u753b\u9762\u4e0d\u7b26\uff0c\u5b9e\u9645\u662f\u7167\u7247\u667e\u6652\u67b6\uff1b\u7981\u7528\u76f4\u81f3\u91cd\u547d\u540d\u548c\u6765\u6e90\u590d\u6838\u3002"
+        },
+        {
+            "asset_id": "prop_bush",
+            "runtime_path": "res://assets/images/processed/prop_bush.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_bush.webp",
+            "category": "decoration",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                248,
+                256
+            ],
+            "recommended_display_size": [
+                60,
+                62
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "outdoor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "foliage_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u5730\u56fe\u8fb9\u7f18\u548c\u5cb8\u7ebf\u4f7f\u7528\uff0c\u95e8\u524d\u4e0d\u5bc6\u96c6\u653e\u7f6e\u3002"
+        },
+        {
+            "asset_id": "prop_cart",
+            "runtime_path": "res://assets/images/processed/prop_cart.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_cart.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                180
+            ],
+            "recommended_display_size": [
+                82,
+                58
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.88
+            ],
+            "contexts": [
+                "inn-yard",
+                "archive-lane",
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "living_room"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u53ea\u653e\u5728\u8fd0\u8f93\u548c\u540e\u52e4\u533a\u3002"
+        },
+        {
+            "asset_id": "prop_counter",
+            "runtime_path": "res://assets/images/processed/prop_counter.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_counter.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                235
+            ],
+            "recommended_display_size": [
+                86,
+                79
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "inn-lobby",
+                "archive-room",
+                "hidden-darkroom"
+            ],
+            "forbidden_contexts": [
+                "outdoor"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u524d\u53f0\u548c\u5de5\u4f5c\u67dc\u53f0\uff0c\u4e0d\u66ff\u4ee3\u6240\u6709\u684c\u5b50\u3002"
+        },
+        {
+            "asset_id": "prop_crate",
+            "runtime_path": "res://assets/images/processed/prop_crate.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_crate.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                252
+            ],
+            "recommended_display_size": [
+                48,
+                47
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "outdoor",
+                "interior"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "small_box",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u96c6\u4e2d\u5728\u50a8\u7269/\u540e\u52e4\u89d2\uff0c\u4e0d\u4f5c\u5747\u5300\u586b\u5145\u3002"
+        },
+        {
+            "asset_id": "prop_cratestack",
+            "runtime_path": "res://assets/images/processed/prop_cratestack.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_cratestack.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                253,
+                256
+            ],
+            "recommended_display_size": [
+                60,
+                61
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.92
+            ],
+            "contexts": [
+                "inn-yard",
+                "archive-lane",
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "primary_interaction_zone"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "small_box",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4ec5\u4f5c\u540e\u52e4\u7ec4\u56e2\u7126\u70b9\u3002"
+        },
+        {
+            "asset_id": "prop_desk",
+            "runtime_path": "res://assets/images/processed/prop_desk.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_desk.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                250
+            ],
+            "recommended_display_size": [
+                82,
+                80
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "player-room",
+                "clock-cabin",
+                "photo-studio",
+                "archive-room",
+                "harbor-control",
+                "hidden-darkroom"
+            ],
+            "forbidden_contexts": [
+                "generic_table"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u53ea\u7528\u4e8e\u4e66\u5199/\u7ef4\u4fee\u5de5\u4f5c\u53f0\uff0c\u666e\u901a\u684c\u4f7f\u7528\u7a0b\u5e8f\u5316\u7ed3\u6784\u4ef6\u3002"
+        },
+        {
+            "asset_id": "prop_fireplace",
+            "runtime_path": "res://assets/images/processed/prop_fireplace.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_fireplace.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                224,
+                256
+            ],
+            "recommended_display_size": [
+                62,
+                72
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "player-room",
+                "inn-lobby"
+            ],
+            "forbidden_contexts": [
+                "outdoor"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u914d\u6696\u6a59\u5c40\u90e8\u5149\u3002"
+        },
+        {
+            "asset_id": "prop_flowers",
+            "runtime_path": "res://assets/images/processed/prop_flowers.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_flowers.webp",
+            "category": "decoration",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                256,
+                252
+            ],
+            "recommended_display_size": [
+                58,
+                57
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.8
+            ],
+            "contexts": [
+                "town",
+                "inn-yard",
+                "chapel-hill",
+                "photo-lane"
+            ],
+            "forbidden_contexts": [
+                "cave",
+                "basement"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u63a7\u5236\u91cd\u590d\u6570\u91cf\uff0c\u4f18\u5148\u6784\u6210\u82b1\u575b\u7aef\u666f\u3002"
+        },
+        {
+            "asset_id": "prop_frame",
+            "runtime_path": "res://assets/images/processed/prop_frame.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_frame.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                232,
+                256
+            ],
+            "recommended_display_size": [
+                58,
+                64
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "photo-lane",
+                "photo-studio"
+            ],
+            "forbidden_contexts": [
+                "wall_picture"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u5b9e\u9645\u662f\u7acb\u5f0f\u7167\u7247\u5c55\u793a/\u667e\u6652\u67b6\uff0c\u4e0d\u4f5c\u5899\u4e0a\u76f8\u6846\u3002"
+        },
+        {
+            "asset_id": "prop_grasstuft",
+            "runtime_path": "res://assets/images/processed/prop_grasstuft.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_grasstuft.webp",
+            "category": "decoration",
+            "perspective": "top_down",
+            "native_size": [
+                256,
+                251
+            ],
+            "recommended_display_size": [
+                36,
+                35
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.85
+            ],
+            "contexts": [
+                "outdoor"
+            ],
+            "forbidden_contexts": [
+                "door_platform",
+                "road_center"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u56fa\u5b9a seed \u7a00\u758f\u4f7f\u7528\u3002"
+        },
+        {
+            "asset_id": "prop_lantern",
+            "runtime_path": "res://assets/images/processed/prop_lantern.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_lantern.webp",
+            "category": "decoration",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                65,
+                256
+            ],
+            "recommended_display_size": [
+                18,
+                70
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.98
+            ],
+            "contexts": [
+                "outdoor",
+                "interior"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "thin_post",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6237\u5916\u8def\u706f\u4e0e\u5ba4\u5185\u7acb\u706f\uff0c\u5149\u8272\u7531\u5e03\u5c40\u5b9a\u4e49\u3002"
+        },
+        {
+            "asset_id": "prop_net",
+            "runtime_path": "res://assets/images/processed/prop_net.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_net.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                244,
+                256
+            ],
+            "recommended_display_size": [
+                64,
+                67
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.9
+            ],
+            "contexts": [
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6e2f\u53e3\u6e14\u7f51\u7ef4\u62a4\u533a\u3002"
+        },
+        {
+            "asset_id": "prop_pebbles",
+            "runtime_path": "res://assets/images/processed/prop_pebbles.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_pebbles.webp",
+            "category": "decoration",
+            "perspective": "top_down",
+            "native_size": [
+                256,
+                215
+            ],
+            "recommended_display_size": [
+                48,
+                40
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.8
+            ],
+            "contexts": [
+                "town",
+                "chapel-hill",
+                "archive-lane",
+                "low-tide-cave"
+            ],
+            "forbidden_contexts": [
+                "main_path_center"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u5c0f\u77f3\u7ec4\u56e2\uff0c\u7528\u4e8e\u8fb9\u7f18\u548c\u6d1e\u7a74\u3002"
+        },
+        {
+            "asset_id": "prop_rack",
+            "runtime_path": "res://assets/images/processed/prop_rack.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_rack.webp",
+            "category": "furniture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                230,
+                256
+            ],
+            "recommended_display_size": [
+                62,
+                69
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.94
+            ],
+            "contexts": [
+                "photo-lane",
+                "clock-cabin",
+                "photo-studio",
+                "harbor-control",
+                "low-tide-cave"
+            ],
+            "forbidden_contexts": [
+                "generic_shelf"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u7ef4\u4fee\u5de5\u5177\u677f\uff0c\u4e0d\u66ff\u4ee3\u4e66\u67b6\u3002"
+        },
+        {
+            "asset_id": "prop_rope",
+            "runtime_path": "res://assets/images/processed/prop_rope.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_rope.webp",
+            "category": "decoration",
+            "perspective": "top_down",
+            "native_size": [
+                256,
+                209
+            ],
+            "recommended_display_size": [
+                56,
+                46
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.8
+            ],
+            "contexts": [
+                "harbor",
+                "chapel-belfry",
+                "harbor-control",
+                "clock-cabin"
+            ],
+            "forbidden_contexts": [
+                "living_room"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u529f\u80fd\u533a\u6210\u7ec4\u4f7f\u7528\u3002"
+        },
+        {
+            "asset_id": "prop_shelf",
+            "runtime_path": "res://assets/images/processed/prop_shelf.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_shelf.webp",
+            "category": "furniture",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                144,
+                256
+            ],
+            "recommended_display_size": [
+                42,
+                75
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "inn-lobby",
+                "player-room",
+                "photo-studio",
+                "archive-room"
+            ],
+            "forbidden_contexts": [
+                "all_cabinetry"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "furniture_base",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u660e\u663e\u9ad8\u4e8e\u89d2\u8272\uff0c\u9760\u5899\u4f7f\u7528\u3002"
+        },
+        {
+            "asset_id": "prop_sign",
+            "runtime_path": "res://assets/images/processed/prop_sign.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_sign.webp",
+            "category": "decoration",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                164,
+                256
+            ],
+            "recommended_display_size": [
+                40,
+                62
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "town",
+                "inn-yard",
+                "photo-lane",
+                "archive-lane",
+                "harbor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "thin_post",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u516c\u544a\u724c\u56fe\u5f62\u65e0\u53ef\u8bfb\u6587\u5b57\uff0c\u4f46\u65b9\u5411\u6027\u660e\u786e\uff0c\u672c\u8f6e\u4e0d\u955c\u50cf\u3002"
+        },
+        {
+            "asset_id": "prop_tree",
+            "runtime_path": "res://assets/images/processed/prop_tree.png",
+            "source_path": "res://assets/images/source_art/runtime/prop_tree.webp",
+            "category": "decoration",
+            "perspective": "top_down_three_quarter",
+            "native_size": [
+                223,
+                256
+            ],
+            "recommended_display_size": [
+                90,
+                103
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.88
+            ],
+            "contexts": [
+                "outdoor"
+            ],
+            "forbidden_contexts": [
+                "door_platform",
+                "main_path_center"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "tree_trunk",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6811\u51a0\u53ef\u8fdb\u5165\u524d\u666f\u5c42\uff0c\u78b0\u649e\u4ec5\u4f7f\u7528\u6811\u5e72\u3002"
+        },
+        {
+            "asset_id": "spr_player",
+            "runtime_path": "res://assets/images/processed/spr_player.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_player.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                153,
+                300
+            ],
+            "recommended_display_size": [
+                24,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "all_maps"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6240\u6709\u95e8\u548c\u5bb6\u5177\u6bd4\u4f8b\u57fa\u51c6\u3002"
+        },
+        {
+            "asset_id": "spr_ada",
+            "runtime_path": "res://assets/images/processed/spr_ada.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_ada.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                124,
+                300
+            ],
+            "recommended_display_size": [
+                20,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "hidden-darkroom"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6697\u623f\u53d9\u4e8b\u4e2d\u5fc3\u3002"
+        },
+        {
+            "asset_id": "spr_arthur",
+            "runtime_path": "res://assets/images/processed/spr_arthur.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_arthur.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                157,
+                300
+            ],
+            "recommended_display_size": [
+                25,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "clock-cabin",
+                "inn-upstairs"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u7ef4\u4fee\u8d1f\u8d23\u4eba\u3002"
+        },
+        {
+            "asset_id": "spr_beatrice",
+            "runtime_path": "res://assets/images/processed/spr_beatrice.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_beatrice.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                155,
+                300
+            ],
+            "recommended_display_size": [
+                25,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "chapel-interior",
+                "inn-upstairs"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u793c\u62dc\u5802\u503c\u5b88\u3002"
+        },
+        {
+            "asset_id": "spr_conrad",
+            "runtime_path": "res://assets/images/processed/spr_conrad.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_conrad.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                169,
+                300
+            ],
+            "recommended_display_size": [
+                27,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "harbor",
+                "harbor-control"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6e2f\u53e3\u503c\u5b88\u3002"
+        },
+        {
+            "asset_id": "spr_dorothea",
+            "runtime_path": "res://assets/images/processed/spr_dorothea.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_dorothea.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                136,
+                300
+            ],
+            "recommended_display_size": [
+                22,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "inn-lobby",
+                "inn-upstairs"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": true,
+            "notes": "\u900f\u660e\u50cf\u7d20\u6bd4\u4f8b\u5f02\u5e38\uff0c\u8f6e\u5ed3\u53ef\u7528\u4f46\u9700\u4eba\u5de5\u590d\u6838\u8272\u9636\u3002"
+        },
+        {
+            "asset_id": "spr_elias",
+            "runtime_path": "res://assets/images/processed/spr_elias.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_elias.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                120,
+                300
+            ],
+            "recommended_display_size": [
+                19,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "photo-studio",
+                "inn-upstairs"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6444\u5f71\u5e08\u3002"
+        },
+        {
+            "asset_id": "spr_florence",
+            "runtime_path": "res://assets/images/processed/spr_florence.png",
+            "source_path": "res://assets/images/source_art/runtime/spr_florence.webp",
+            "category": "character",
+            "perspective": "front_three_quarter",
+            "native_size": [
+                127,
+                300
+            ],
+            "recommended_display_size": [
+                20,
+                48
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_anchor": [
+                0.5,
+                0.96
+            ],
+            "contexts": [
+                "archive-room",
+                "inn-upstairs"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": true,
+            "collision_preset": "character_feet",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6863\u6848\u7ba1\u7406\u5458\u3002"
+        },
+        {
+            "asset_id": "tile_grass_low_noise",
+            "runtime_path": "res://assets/images/processed/tile_grass_low_noise.png",
+            "source_path": "res://assets/images/source_art/world/tile_grass.png",
+            "category": "ground_texture",
+            "perspective": "top_down",
+            "native_size": [
+                1024,
+                1024
+            ],
+            "recommended_display_size": [
+                64,
+                64
+            ],
+            "anchor": [
+                0.0,
+                0.0
+            ],
+            "sort_anchor": [
+                0.0,
+                0.0
+            ],
+            "contexts": [
+                "outdoor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u6700\u8fd1\u90bb\u79bb\u7ebf\u7f29\u81f3 64x64\uff0c\u4ec5\u4f4e\u900f\u660e\u5ea6\u53e0\u52a0\u3002"
+        },
+        {
+            "asset_id": "tile_cobble_low_contrast",
+            "runtime_path": "res://assets/images/processed/tile_cobble_low_contrast.png",
+            "source_path": "res://assets/images/source_art/world/tile_cobble.png",
+            "category": "path_texture",
+            "perspective": "top_down",
+            "native_size": [
+                1024,
+                1024
+            ],
+            "recommended_display_size": [
+                64,
+                64
+            ],
+            "anchor": [
+                0.0,
+                0.0
+            ],
+            "sort_anchor": [
+                0.0,
+                0.0
+            ],
+            "contexts": [
+                "outdoor"
+            ],
+            "forbidden_contexts": [
+                "interior"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u9053\u8def\u7eb9\u7406\u4ee5\u4f4e\u5bf9\u6bd4\u8c03\u5236\uff0c\u4e0d\u76f4\u63a5\u4f7f\u7528\u6e90\u56fe\u9ad8\u9891\u4eae\u5ea6\u3002"
+        },
+        {
+            "asset_id": "tile_water_world",
+            "runtime_path": "res://assets/images/processed/tile_water_world.png",
+            "source_path": "res://assets/images/source_art/world/tile_water.png",
+            "category": "water_texture",
+            "perspective": "top_down",
+            "native_size": [
+                1024,
+                1024
+            ],
+            "recommended_display_size": [
+                64,
+                64
+            ],
+            "anchor": [
+                0.0,
+                0.0
+            ],
+            "sort_anchor": [
+                0.0,
+                0.0
+            ],
+            "contexts": [
+                "town",
+                "inn-yard",
+                "harbor",
+                "low-tide-cave"
+            ],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u56fa\u5b9a\u4e16\u754c\u5750\u6807\u5e73\u94fa\uff0c\u7a0b\u5e8f\u5316\u5cb8\u7ebf\u88c1\u5207\u3002"
+        },
+        {
+            "asset_id": "tile_wood_warm",
+            "runtime_path": "res://assets/images/processed/tile_wood_warm.png",
+            "source_path": "res://assets/images/source_art/world/tile_wood.png",
+            "category": "floor_texture",
+            "perspective": "top_down",
+            "native_size": [
+                1024,
+                1024
+            ],
+            "recommended_display_size": [
+                64,
+                64
+            ],
+            "anchor": [
+                0.0,
+                0.0
+            ],
+            "sort_anchor": [
+                0.0,
+                0.0
+            ],
+            "contexts": [
+                "player-room",
+                "inn-lobby",
+                "inn-upstairs"
+            ],
+            "forbidden_contexts": [
+                "low-tide-cave",
+                "clock-basement",
+                "hidden-darkroom"
+            ],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4ec5\u65c5\u5e97\u7cfb\u6696\u6728\u5730\u9762\u4f7f\u7528\u3002"
+        },
+        {
+            "asset_id": "time_echo_horizon",
+            "runtime_path": "res://assets/images/time_echo_horizon.webp",
+            "source_path": "res://assets/images/source_art/runtime/time_echo_horizon.webp",
+            "category": "concept_only",
+            "perspective": "illustration",
+            "native_size": [
+                1599,
+                900
+            ],
+            "recommended_display_size": [
+                1152,
+                648
+            ],
+            "anchor": [
+                0.5,
+                0.5
+            ],
+            "sort_anchor": [
+                0.5,
+                0.5
+            ],
+            "contexts": [
+                "title_screen"
+            ],
+            "forbidden_contexts": [
+                "world_map"
+            ],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": false,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "notes": "\u4ec5\u6807\u9898\u80cc\u666f\uff0c\u4e0d\u4f5c\u4e3a\u5730\u56fe Sprite\u3002"
+        },
+        {
+            "asset_id": "grass_base_variants",
+            "runtime_path": "res://assets/images/processed/grass_base_variants.png",
+            "source_path": "res://assets/images/source_art/generated/grass_base_variants.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/grass_base_variants.png",
+            "category": "ground_texture",
+            "perspective": "top_down",
+            "native_size": [128, 128],
+            "recommended_display_size": [128, 128],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.0, 0.0],
+            "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["town", "inn-yard", "chapel-hill", "photo-lane", "archive-lane", "harbor"],
+            "forbidden_contexts": ["interior"],
+            "contains_text": false,
+            "can_mirror": true,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "asset_form": "tile_set",
+            "tile_size": [32, 32],
+            "atlas_grid": [4, 4],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 16,
+            "tile_roles": ["base_a", "base_b", "base_c", "base_d", "base_e", "base_f", "base_g", "base_h", "dense_grass_a", "dense_grass_b", "dense_grass_c", "dense_grass_d", "cool_patch_a", "cool_patch_b", "cool_patch_c", "cool_patch_d"],
+            "replaces_missing_asset_ids": ["tile_grass_base_variants"],
+            "processing_script": "res://tools/prepare_generated_tiles.py",
+            "notes": "16 个 32×32 低噪声草地格；前八格为安静基底，后八格仅作稀疏密度和色温变化。"
+        },
+        {
+            "asset_id": "grass_path_edge_set",
+            "runtime_path": "res://assets/images/processed/grass_path_edge_set.png",
+            "source_path": "res://assets/images/source_art/generated/grass_path_edge_set.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/grass_path_edge_set.png",
+            "category": "path_texture",
+            "perspective": "top_down",
+            "native_size": [128, 128],
+            "recommended_display_size": [128, 128],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.0, 0.0],
+            "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["town", "inn-yard", "chapel-hill", "photo-lane", "archive-lane", "harbor"],
+            "forbidden_contexts": ["interior"],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": true,
+            "asset_form": "modular",
+            "tile_size": [32, 32],
+            "atlas_grid": [4, 4],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 16,
+            "tile_roles": ["edge_n", "edge_s", "edge_w", "edge_e", "outer_corner_nw", "outer_corner_ne", "outer_corner_sw", "outer_corner_se", "inner_corner_nw", "inner_corner_ne", "inner_corner_sw", "inner_corner_se", "intrusion_n", "intrusion_s", "intrusion_w", "intrusion_e"],
+            "replaces_missing_asset_ids": ["tile_grass_path_edges"],
+            "processing_script": "res://tools/prepare_generated_tiles.py",
+            "notes": "透明草侵入覆盖层；内外角轮廓差异偏弱，标杆地图只谨慎使用方向明确的边和侵入格。"
+        },
+        {
+      "asset_id": "stone_path_corner_set",
+            "runtime_path": "res://assets/images/processed/stone_path_corner_set_v3.png",
+            "source_path": "res://assets/images/source_art/generated/stone_path_corner_set_v3.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/stone_path_corner_set.png",
+            "previous_source_path": "res://assets/images/source_art/generated/stone_path_corner_set.png",
+            "repair_reference_path": "res://assets/images/source_art/generated/references/stone_path_corner_set_v2_imagegen_reference.png",
+            "category": "path_texture",
+            "perspective": "top_down",
+            "native_size": [256, 256],
+            "recommended_display_size": [256, 256],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.0, 0.0],
+            "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["town", "chapel-hill", "photo-lane", "archive-lane", "harbor"],
+            "forbidden_contexts": ["interior"],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "asset_form": "tile_set",
+            "tile_size": [32, 32],
+            "atlas_grid": [8, 8],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 64,
+            "tile_roles": ["center_a", "edge_n", "edge_s", "edge_w", "edge_e", "outer_corner_nw", "outer_corner_ne", "outer_corner_sw", "outer_corner_se", "inner_corner_nw", "inner_corner_ne", "inner_corner_sw", "inner_corner_se", "t_junction", "cross_junction", "small_platform", "stone_t_junction_wide", "stone_cross_junction_wide", "stone_branch_narrow_to_wide", "stone_clean_edge", "stone_grass_intrusion_sparse_a", "stone_grass_intrusion_sparse_b", "stone_broken_edge_a", "center_worn_a", "center_gravel_a", "broken_edge_n", "broken_edge_s", "broken_edge_w", "broken_edge_e", "doorway_platform", "worn_edge_n", "worn_edge_s", "worn_edge_w", "worn_edge_e", "worn_outer_corner_nw", "worn_outer_corner_ne", "worn_outer_corner_sw", "worn_outer_corner_se", "worn_inner_corner_nw", "worn_inner_corner_ne", "worn_inner_corner_sw", "worn_inner_corner_se", "gravel_edge_n", "gravel_edge_s", "gravel_edge_w", "gravel_edge_e", "gravel_outer_corner_nw", "gravel_outer_corner_ne", "gravel_outer_corner_sw", "gravel_outer_corner_se", "gravel_inner_corner_nw", "gravel_inner_corner_ne", "gravel_inner_corner_sw", "gravel_inner_corner_se"],
+            "replaces_missing_asset_ids": ["tile_cobble_edges_corners"],
+            "source_generation_script": "res://tools/repair_p0_fix_atlases.py",
+            "processing_script": "res://tools/process_art_assets.py",
+            "notes": "P0 fix v3 保留原 16 格并新增宽 T/十字、窄转宽支路、干净/稀疏草侵入/破损边和低噪声旧石路、碎石泥路中心格。"
+        },
+        {
+      "asset_id": "water_shallow_deep_set",
+            "runtime_path": "res://assets/images/processed/water_shallow_deep_set_v3.png",
+            "source_path": "res://assets/images/source_art/generated/water_shallow_deep_set_v3.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/water_shallow_deep_set.png",
+            "previous_source_path": "res://assets/images/source_art/generated/water_shallow_deep_set.png",
+            "repair_reference_path": "res://assets/images/source_art/generated/references/water_shallow_deep_set_v2_imagegen_reference.png",
+            "category": "water_texture",
+            "perspective": "top_down",
+            "native_size": [128, 128],
+            "recommended_display_size": [128, 128],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.0, 0.0],
+            "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["town", "inn-yard", "archive-lane", "harbor", "low-tide-cave"],
+            "forbidden_contexts": [],
+            "contains_text": false,
+      "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+      "needs_review": false,
+            "asset_form": "tile_set",
+            "tile_size": [32, 32],
+            "atlas_grid": [4, 4],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 16,
+            "tile_roles": ["shallow_a", "shallow_b", "deep_a", "deep_b", "shallow_to_deep_n", "shallow_to_deep_s", "shallow_to_deep_w", "shallow_to_deep_e", "transition_corner_nw", "transition_corner_ne", "transition_corner_sw", "transition_corner_se", "deep_highlight_a", "deep_highlight_b", "shallow_highlight", "deep_c"],
+            "replaces_missing_asset_ids": ["water_shallow_deep_tiles"],
+            "source_generation_script": "res://tools/repair_p0_fix_atlases.py",
+            "processing_script": "res://tools/process_art_assets.py",
+            "notes": "P0 fix v3 保留合格基础格，重做硬像素浅深直边、角块和不规则深水核心；标杆图的细过渡由 water_transition_patch_set 提供。"
+        },
+        {
+            "asset_id": "natural_shoreline_set",
+            "runtime_path": "res://assets/images/processed/natural_shoreline_set_v3.png",
+            "source_path": "res://assets/images/source_art/generated/natural_shoreline_set_v3.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/natural_shoreline_set.png",
+            "previous_source_path": "res://assets/images/source_art/generated/natural_shoreline_set.png",
+            "repair_reference_path": "res://assets/images/source_art/generated/references/natural_shoreline_set_v2_imagegen_reference.png",
+            "category": "water_texture",
+            "perspective": "top_down",
+            "native_size": [192, 192],
+            "recommended_display_size": [192, 192],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.0, 0.0],
+            "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["town", "inn-yard", "harbor", "low-tide-cave"],
+            "forbidden_contexts": [],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "asset_form": "modular",
+            "tile_size": [32, 32],
+            "atlas_grid": [6, 6],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 36,
+            "theme_rows": {"grass_bank": [0, 1], "mud_bank": [2, 3], "stone_bank": [4, 5]},
+            "tile_roles_per_theme": ["north", "south", "west", "east", "outer_nw", "outer_ne", "outer_sw", "outer_se", "inner_nw", "inner_ne", "inner_sw", "inner_se"],
+            "replaces_missing_asset_ids": ["shoreline_bank_set"],
+            "source_generation_script": "res://tools/repair_p0_fix_atlases.py",
+            "processing_script": "res://tools/process_art_assets.py",
+            "notes": "P0 fix v3 只替换 town/harbor 实际引用与报告点名格；远水改为硬透明覆盖，保留 4px 浅水唇，无黑断条、透明裂缝或错误旋转。"
+        },
+        {
+            "asset_id": "interior_wall_modular_set",
+            "runtime_path": "res://assets/images/processed/interior_wall_modular_set.png",
+            "source_path": "res://assets/images/source_art/generated/interior_wall_modular_set.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/interior_wall_modular_set.png",
+            "category": "wall_texture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [160, 240],
+            "recommended_display_size": [160, 240],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.5, 1.0],
+            "module_sort_anchor": [0.5, 1.0],
+            "contexts": ["player-room", "inn-lobby", "inn-upstairs", "clock-cabin", "chapel-interior", "chapel-belfry", "photo-studio", "archive-room", "harbor-control", "clock-basement", "hidden-darkroom"],
+            "forbidden_contexts": ["outdoor"],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "asset_form": "modular",
+            "tile_size": [32, 48],
+            "atlas_grid": [5, 5],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 25,
+            "theme_rows": ["inn_warm", "chapel_archive", "photo_harbor", "clock_mechanical", "hidden_darkroom"],
+            "tile_roles_per_theme": ["straight", "panel_dense", "panel_light", "door_compatible", "damaged_end"],
+            "replaces_missing_asset_ids": ["interior_wall_modular"],
+            "processing_script": "res://tools/prepare_generated_tiles.py",
+            "notes": "五个地点主题、每主题五件；没有独立 window-compatible 列，门洞列保留透明下部。"
+        },
+        {
+            "asset_id": "interior_corner_set",
+            "runtime_path": "res://assets/images/processed/interior_corner_set.png",
+            "source_path": "res://assets/images/source_art/generated/interior_corner_set.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/interior_corner_set.png",
+            "category": "wall_texture",
+            "perspective": "top_down_three_quarter",
+            "native_size": [192, 240],
+            "recommended_display_size": [192, 240],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.5, 1.0],
+            "module_sort_anchor": [0.5, 1.0],
+            "contexts": ["all_interiors"],
+            "forbidden_contexts": ["outdoor"],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "asset_form": "modular",
+            "tile_size": [48, 48],
+            "atlas_grid": [4, 5],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 20,
+            "theme_rows": ["inn_warm", "chapel_archive", "photo_harbor", "clock_mechanical", "hidden_darkroom"],
+            "tile_roles_per_theme": ["inside_left", "inside_right", "outside_left", "outside_right"],
+            "replaces_missing_asset_ids": ["interior_wall_corners"],
+            "processing_script": "res://tools/prepare_generated_tiles.py",
+            "notes": "48×48 V 形墙角保留 3/4 视角侧面；只用于顶墙转角，不旋转充当长侧墙。"
+        },
+        {
+            "asset_id": "baseboard_set",
+            "runtime_path": "res://assets/images/processed/baseboard_set.png",
+            "source_path": "res://assets/images/source_art/generated/baseboard_set.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/baseboard_set.png",
+            "category": "wall_texture",
+            "perspective": "front_three_quarter",
+            "native_size": [160, 60],
+            "recommended_display_size": [160, 60],
+            "anchor": [0.0, 0.0],
+            "sort_anchor": [0.0, 0.0],
+            "module_anchor": [0.5, 1.0],
+            "module_sort_anchor": [0.5, 1.0],
+            "contexts": ["all_interiors"],
+            "forbidden_contexts": ["outdoor"],
+            "contains_text": false,
+            "can_mirror": false,
+            "pixel_art": true,
+            "contact_shadow": false,
+            "collision_preset": "none",
+            "enabled": true,
+            "needs_review": false,
+            "asset_form": "modular",
+            "tile_size": [32, 12],
+            "atlas_grid": [5, 5],
+            "semantic_map": "res://data/art_atlas_semantics.json",
+            "variant_count": 25,
+            "theme_rows": ["inn_warm", "chapel_archive", "photo_harbor", "clock_mechanical", "hidden_darkroom"],
+            "tile_roles_per_theme": ["straight", "left_stop", "right_stop", "inside_corner", "worn_straight"],
+            "replaces_missing_asset_ids": ["interior_baseboards"],
+            "processing_script": "res://tools/prepare_generated_tiles.py",
+            "notes": "五主题 32×12 墙脚线；包含左右止口、V 形内角和磨损直线，门洞处必须显式中断。"
+        },
+        {
+            "asset_id": "inn_staircase",
+            "runtime_path": "res://assets/images/processed/inn_staircase.png",
+            "source_path": "res://assets/images/source_art/generated/inn_staircase.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_staircase.png",
+            "category": "architecture", "perspective": "top_down_three_quarter",
+            "native_size": [64, 112], "recommended_display_size": [64, 112],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.96],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["outdoor"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true,
+            "contact_shadow": true, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "正式旅店楼梯；宽踏步、顶部楼梯口与双扶手，替换程序化垂直梯子。"
+        },
+        {
+            "asset_id": "inn_reception_partition",
+            "runtime_path": "res://assets/images/processed/inn_reception_partition.png",
+            "source_path": "res://assets/images/source_art/generated/inn_reception_partition.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_reception_partition.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [48, 56], "recommended_display_size": [48, 56],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.94],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["outdoor", "full_wall"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true,
+            "contact_shadow": true, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "柜台侧矮隔断与三根开放栏杆，不遮挡接待 NPC。"
+        },
+        {
+            "asset_id": "inn_main_door_closed",
+            "runtime_path": "res://assets/images/processed/inn_main_door_closed.png",
+            "source_path": "res://assets/images/source_art/generated/inn_main_door_closed.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_main_door.png",
+            "category": "architecture", "perspective": "top_down_three_quarter",
+            "native_size": [48, 64], "recommended_display_size": [48, 64],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["outdoor"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true,
+            "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "宽 48、高 64 的关闭主入口，含薄门框、3/4 顶部与黄铜把手。"
+        },
+        {
+            "asset_id": "inn_main_door_open",
+            "runtime_path": "res://assets/images/processed/inn_main_door_open.png",
+            "source_path": "res://assets/images/source_art/generated/inn_main_door_open.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_main_door.png",
+            "category": "architecture", "perspective": "top_down_three_quarter",
+            "native_size": [48, 64], "recommended_display_size": [48, 64],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["outdoor"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true,
+            "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "与关闭门同源的打开状态；本轮保留供交互状态切换，不新增动画。"
+        },
+        {
+            "asset_id": "generic_table_small",
+            "runtime_path": "res://assets/images/processed/generic_table_small.png",
+            "source_path": "res://assets/images/source_art/generated/generic_table_small.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_table_set.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [48, 40], "recommended_display_size": [48, 40],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.9],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["workbench"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true, "contact_shadow": true,
+            "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "普通小桌；与餐桌、阅读桌共用一套暖木母版，不含椅子。"
+        },
+        {
+            "asset_id": "generic_table_dining",
+            "runtime_path": "res://assets/images/processed/generic_table_dining.png",
+            "source_path": "res://assets/images/source_art/generated/generic_table_dining.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_table_set.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [64, 48], "recommended_display_size": [64, 48],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.9],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["workbench"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true, "contact_shadow": true,
+            "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "公共餐桌，四腿与接地点清晰，不含椅子或抽屉。"
+        },
+        {
+            "asset_id": "generic_table_reading",
+            "runtime_path": "res://assets/images/processed/generic_table_reading.png",
+            "source_path": "res://assets/images/source_art/generated/generic_table_reading.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_table_set.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [64, 48], "recommended_display_size": [64, 48],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.9],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["workbench"],
+            "contains_text": false, "can_mirror": false, "pixel_art": true, "contact_shadow": true,
+            "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "带抽象闭合书本与墨水瓶轮廓，无可读文字；不是 prop_desk 复制。"
+        },
+        {
+            "asset_id": "generic_chair_front",
+            "runtime_path": "res://assets/images/processed/generic_chair_front.png",
+            "source_path": "res://assets/images/source_art/generated/generic_chair_front.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_chair_set_v2.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [24, 32], "recommended_display_size": [24, 32],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.92], "contexts": ["inn-lobby"],
+            "forbidden_contexts": [], "contains_text": false, "can_mirror": false, "pixel_art": true,
+            "contact_shadow": true, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "单人椅正向独立格；不使用运行时镜像。"
+        },
+        {
+            "asset_id": "generic_chair_back",
+            "runtime_path": "res://assets/images/processed/generic_chair_back.png",
+            "source_path": "res://assets/images/source_art/generated/generic_chair_back.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_chair_set_v2.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [24, 32], "recommended_display_size": [24, 32],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.92], "contexts": ["inn-lobby"],
+            "forbidden_contexts": [], "contains_text": false, "can_mirror": false, "pixel_art": true,
+            "contact_shadow": true, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "单人椅背向独立格；窄靠背与后腿清晰。"
+        },
+        {
+            "asset_id": "generic_chair_left",
+            "runtime_path": "res://assets/images/processed/generic_chair_left.png",
+            "source_path": "res://assets/images/source_art/generated/generic_chair_left.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_chair_set_v2.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [24, 32], "recommended_display_size": [24, 32],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.92], "contexts": ["inn-lobby"],
+            "forbidden_contexts": [], "contains_text": false, "can_mirror": false, "mirror_pair": "generic_chair_right", "pixel_art": true,
+            "contact_shadow": true, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "单人椅左向独立格；与右向格互为 manifest mirror_pair，但运行时不镜像。"
+        },
+        {
+            "asset_id": "generic_chair_right",
+            "runtime_path": "res://assets/images/processed/generic_chair_right.png",
+            "source_path": "res://assets/images/source_art/generated/generic_chair_right.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/generic_chair_set_v2.png",
+            "category": "furniture", "perspective": "top_down_three_quarter",
+            "native_size": [24, 32], "recommended_display_size": [24, 32],
+            "anchor": [0.5, 1.0], "sort_anchor": [0.5, 0.92], "contexts": ["inn-lobby"],
+            "forbidden_contexts": [], "contains_text": false, "can_mirror": false, "mirror_pair": "generic_chair_left", "pixel_art": true,
+            "contact_shadow": true, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "单人椅右向独立格；与左向格互为 manifest mirror_pair，但运行时不镜像。"
+        },
+        {
+            "asset_id": "inn_wall_lake_painting",
+            "runtime_path": "res://assets/images/processed/inn_wall_lake_painting.png",
+            "source_path": "res://assets/images/source_art/generated/inn_wall_lake_painting.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_wall_decor_set.png",
+            "category": "wall_decoration", "perspective": "frontal_wall_decoration",
+            "native_size": [48, 32], "recommended_display_size": [48, 32], "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["floor"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "低对比湖景抽象画；无文字，不抢柜台与角色。"
+        },
+        {
+            "asset_id": "inn_wall_town_photo",
+            "runtime_path": "res://assets/images/processed/inn_wall_town_photo.png",
+            "source_path": "res://assets/images/source_art/generated/inn_wall_town_photo.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_wall_decor_set.png",
+            "category": "wall_decoration", "perspective": "frontal_wall_decoration",
+            "native_size": [32, 24], "recommended_display_size": [32, 24], "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["floor"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "低对比小镇照片；与湖景画尺寸和构图不对称。"
+        },
+        {
+            "asset_id": "inn_wall_license",
+            "runtime_path": "res://assets/images/processed/inn_wall_license.png",
+            "source_path": "res://assets/images/source_art/generated/inn_wall_license.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_wall_decor_set.png",
+            "category": "wall_decoration", "perspective": "frontal_wall_decoration",
+            "native_size": [24, 24], "recommended_display_size": [24, 24], "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["floor"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "母版伪字已在规范化阶段替换为三组抽象像素线与印章点。"
+        },
+        {
+            "asset_id": "inn_key_board",
+            "runtime_path": "res://assets/images/processed/inn_key_board.png",
+            "source_path": "res://assets/images/source_art/generated/inn_key_board.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_wall_decor_set.png",
+            "category": "wall_decoration", "perspective": "frontal_wall_decoration",
+            "native_size": [48, 32], "recommended_display_size": [48, 32], "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["floor"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "七个明显挂钩与一个克制空位，不含房号文字。"
+        },
+        {
+            "asset_id": "inn_notice_board_small",
+            "runtime_path": "res://assets/images/processed/inn_notice_board_small.png",
+            "source_path": "res://assets/images/source_art/generated/inn_notice_board_small.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/inn_wall_decor_set.png",
+            "category": "wall_decoration", "perspective": "frontal_wall_decoration",
+            "native_size": [32, 24], "recommended_display_size": [32, 24], "anchor": [0.5, 1.0], "sort_anchor": [0.5, 1.0],
+            "contexts": ["inn-lobby"], "forbidden_contexts": ["floor"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "source_generation_script": "res://tools/prepare_p0_fix_assets.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "公告内容由抽象纸块、点和短线组成，无 AI 伪文字。"
+        },
+        {
+            "asset_id": "harbor_dock_entry_set",
+            "runtime_path": "res://assets/images/processed/harbor_dock_entry_set.png",
+            "source_path": "res://assets/images/source_art/generated/harbor_dock_entry_set.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/harbor_dock_entry_set.png",
+            "category": "path_texture", "perspective": "top_down_three_quarter",
+            "native_size": [128, 64], "recommended_display_size": [128, 64],
+            "anchor": [0.0, 0.0], "sort_anchor": [0.0, 0.0], "module_anchor": [0.0, 0.0], "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["harbor"], "forbidden_contexts": ["interior"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "asset_form": "tile_set", "tile_size": [32, 32], "atlas_grid": [4, 2], "semantic_map": "res://data/art_atlas_semantics.json", "variant_count": 8,
+            "tile_roles": ["dock_entry_center", "dock_entry_left_edge", "dock_entry_right_edge", "dock_entry_stone_to_wood", "dock_pile_left", "dock_pile_right", "dock_water_shadow", "dock_shallow_water_disturbance"],
+            "source_generation_script": "res://tools/repair_p0_fix_atlases.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "正式主码头桥台八格：三格入口、石木阈值、双木桩、水下暗线与两侧扰动。"
+        },
+        {
+            "asset_id": "water_transition_patch_set",
+            "runtime_path": "res://assets/images/processed/water_transition_patch_set.png",
+            "source_path": "res://assets/images/source_art/generated/water_transition_patch_set.png",
+            "source_master_path": "res://assets/images/source_art/generated/masters/water_transition_patch_set.png",
+            "category": "water_texture", "perspective": "top_down",
+            "native_size": [160, 128], "recommended_display_size": [160, 128],
+            "anchor": [0.0, 0.0], "sort_anchor": [0.0, 0.0], "module_anchor": [0.0, 0.0], "module_sort_anchor": [0.0, 0.0],
+            "contexts": ["town", "harbor"], "forbidden_contexts": ["interior"], "contains_text": false, "can_mirror": false,
+            "pixel_art": true, "contact_shadow": false, "collision_preset": "none", "enabled": true, "needs_review": false,
+            "asset_form": "tile_set", "tile_size": [32, 32], "atlas_grid": [5, 4], "semantic_map": "res://data/art_atlas_semantics.json", "variant_count": 20,
+            "tile_roles": ["shallow_to_deep_n_a", "shallow_to_deep_n_b", "shallow_to_deep_s_a", "shallow_to_deep_s_b", "shallow_to_deep_w_a", "shallow_to_deep_w_b", "shallow_to_deep_e_a", "shallow_to_deep_e_b", "shallow_to_deep_outer_nw", "shallow_to_deep_outer_ne", "shallow_to_deep_outer_sw", "shallow_to_deep_outer_se", "shallow_to_deep_inner_nw", "shallow_to_deep_inner_ne", "shallow_to_deep_inner_sw", "shallow_to_deep_inner_se", "shallow_irregular_a", "shallow_irregular_b", "deep_intrusion_a", "deep_intrusion_b"],
+            "source_generation_script": "res://tools/repair_p0_fix_atlases.py", "processing_script": "res://tools/process_art_assets.py",
+            "notes": "严格 32×32、硬 alpha/不透明水色、固定光向；只在 town 与 harbor 标杆图启用。"
+        }
+    ]
+}

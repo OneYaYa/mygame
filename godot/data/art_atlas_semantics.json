@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "atlases": {
+    "grass_base_variants": {
+      "tile_size": [32, 32],
+      "grid": [4, 4],
+      "tiles": {
+        "base_a": 0, "base_b": 1, "base_c": 2, "base_d": 3,
+        "base_e": 4, "base_f": 5, "base_g": 6, "base_h": 7,
+        "dense_grass_a": 8, "dense_grass_b": 9, "dense_grass_c": 10, "dense_grass_d": 11,
+        "cool_patch_a": 12, "cool_patch_b": 13, "cool_patch_c": 14, "cool_patch_d": 15
+      },
+      "rotation_safe": true,
+      "mirror_safe": true,
+      "notes": "没有花朵或石子 cell；8–15 仅是密度/色温变化。"
+    },
+    "grass_path_edge_set": {
+      "tile_size": [32, 32],
+      "grid": [4, 4],
+      "tiles": {
+        "edge_n": 0, "edge_s": 1, "edge_w": 2, "edge_e": 3,
+        "outer_corner_nw": 4, "outer_corner_ne": 5, "outer_corner_sw": 6, "outer_corner_se": 7,
+        "inner_corner_nw": 8, "inner_corner_ne": 9, "inner_corner_sw": 10, "inner_corner_se": 11,
+        "intrusion_n": 12, "intrusion_s": 13, "intrusion_w": 14, "intrusion_e": 15
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "透明覆盖层；没有 center tile。内外角轮廓差异偏弱，标杆地图只自动使用直边/侵入。"
+    },
+    "stone_path_corner_set": {
+      "tile_size": [32, 32],
+      "grid": [8, 8],
+      "tiles": {
+        "center_a": 0,
+        "edge_n": 1, "edge_s": 2, "edge_w": 3, "edge_e": 4,
+        "outer_corner_nw": 5, "outer_corner_ne": 6, "outer_corner_sw": 7, "outer_corner_se": 8,
+        "inner_corner_nw": 9, "inner_corner_ne": 10, "inner_corner_sw": 11, "inner_corner_se": 12,
+        "t_junction": 13, "cross_junction": 14, "small_platform": 15,
+        "stone_t_junction_wide": 16,
+        "stone_cross_junction_wide": 17,
+        "stone_branch_narrow_to_wide": 18,
+        "stone_clean_edge": 19,
+        "stone_grass_intrusion_sparse_a": 20,
+        "stone_grass_intrusion_sparse_b": 21,
+        "stone_broken_edge_a": 22,
+        "center_worn_a": 23,
+        "center_gravel_a": 24,
+        "broken_edge_n": 25,
+        "broken_edge_s": 26,
+        "broken_edge_w": 27,
+        "broken_edge_e": 28,
+        "doorway_platform": 29,
+        "worn_edge_n": 32, "worn_edge_s": 33, "worn_edge_w": 34, "worn_edge_e": 35,
+        "worn_outer_corner_nw": 36, "worn_outer_corner_ne": 37, "worn_outer_corner_sw": 38, "worn_outer_corner_se": 39,
+        "worn_inner_corner_nw": 40, "worn_inner_corner_ne": 41, "worn_inner_corner_sw": 42, "worn_inner_corner_se": 43,
+        "gravel_edge_n": 44, "gravel_edge_s": 45, "gravel_edge_w": 46, "gravel_edge_e": 47,
+        "gravel_outer_corner_nw": 48, "gravel_outer_corner_ne": 49, "gravel_outer_corner_sw": 50, "gravel_outer_corner_se": 51,
+        "gravel_inner_corner_nw": 52, "gravel_inner_corner_ne": 53, "gravel_inner_corner_sw": 54, "gravel_inner_corner_se": 55
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "P0 fix v3 保留原 16 格索引，追加宽路口、窄转宽、门台与低噪声旧石/碎石中心；方向格只按命名使用。"
+    },
+    "water_shallow_deep_set": {
+      "tile_size": [32, 32],
+      "grid": [4, 4],
+      "tiles": {
+        "shallow_a": 0, "shallow_b": 1, "deep_a": 2, "deep_b": 3,
+        "shallow_to_deep_n": 4, "shallow_to_deep_s": 5, "shallow_to_deep_w": 6, "shallow_to_deep_e": 7,
+        "transition_corner_nw": 8, "transition_corner_ne": 9, "transition_corner_sw": 10, "transition_corner_se": 11,
+        "deep_highlight_a": 12, "deep_highlight_b": 13, "shallow_highlight": 14, "deep_c": 15
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "P0 fix v3 保留合格浅/深基础格，重做硬像素过渡和不规则 deep_c；细轮廓使用 water_transition_patch_set。"
+    },
+    "natural_shoreline_set": {
+      "tile_size": [32, 32],
+      "grid": [6, 6],
+      "tiles": {
+        "grass_edge_n": 0, "grass_edge_s": 1, "grass_edge_w": 2, "grass_edge_e": 3,
+        "grass_outer_corner_nw": 4, "grass_outer_corner_ne": 5, "grass_outer_corner_sw": 6, "grass_outer_corner_se": 7,
+        "grass_inner_corner_nw": 8, "grass_inner_corner_ne": 9, "grass_inner_corner_sw": 10, "grass_inner_corner_se": 11,
+        "dirt_edge_n": 12, "dirt_edge_s": 13, "dirt_edge_w": 14, "dirt_edge_e": 15,
+        "dirt_outer_corner_nw": 16, "dirt_outer_corner_ne": 17, "dirt_outer_corner_sw": 18, "dirt_outer_corner_se": 19,
+        "dirt_inner_corner_nw": 20, "dirt_inner_corner_ne": 21, "dirt_inner_corner_sw": 22, "dirt_inner_corner_se": 23,
+        "stone_edge_n": 24, "stone_edge_s": 25, "stone_edge_w": 26, "stone_edge_e": 27,
+        "stone_outer_corner_nw": 28, "stone_outer_corner_ne": 29, "stone_outer_corner_sw": 30, "stone_outer_corner_se": 31,
+        "stone_inner_corner_nw": 32, "stone_inner_corner_ne": 33, "stone_inner_corner_sw": 34, "stone_inner_corner_se": 35
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "unsafe_tiles": [],
+      "notes": "P0 fix v3 只修复 town/harbor 所需格；岸外远水透明、浅水唇为硬像素，无黑断条或透明裂缝。"
+    },
+    "harbor_dock_entry_set": {
+      "tile_size": [32, 32],
+      "grid": [4, 2],
+      "tiles": {
+        "dock_entry_center": 0,
+        "dock_entry_left_edge": 1,
+        "dock_entry_right_edge": 2,
+        "dock_entry_stone_to_wood": 3,
+        "dock_pile_left": 4,
+        "dock_pile_right": 5,
+        "dock_water_shadow": 6,
+        "dock_shallow_water_disturbance": 7
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "主码头向东延伸；边缘、木桩、阴影和浅水扰动均使用显式方向语义，不改变碰撞宽度。"
+    },
+    "water_transition_patch_set": {
+      "tile_size": [32, 32],
+      "grid": [5, 4],
+      "tiles": {
+        "shallow_to_deep_n_a": 0,
+        "shallow_to_deep_n_b": 1,
+        "shallow_to_deep_s_a": 2,
+        "shallow_to_deep_s_b": 3,
+        "shallow_to_deep_w_a": 4,
+        "shallow_to_deep_w_b": 5,
+        "shallow_to_deep_e_a": 6,
+        "shallow_to_deep_e_b": 7,
+        "shallow_to_deep_outer_nw": 8,
+        "shallow_to_deep_outer_ne": 9,
+        "shallow_to_deep_outer_sw": 10,
+        "shallow_to_deep_outer_se": 11,
+        "shallow_to_deep_inner_nw": 12,
+        "shallow_to_deep_inner_ne": 13,
+        "shallow_to_deep_inner_sw": 14,
+        "shallow_to_deep_inner_se": 15,
+        "shallow_irregular_a": 16,
+        "shallow_irregular_b": 17,
+        "deep_intrusion_a": 18,
+        "deep_intrusion_b": 19
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "方向表示浅水所在方向；A/B 由固定 seed 选择，角块和不规则核心不得任意旋转替代。"
+    },
+    "interior_wall_modular_set": {
+      "tile_size": [32, 48],
+      "grid": [5, 5],
+      "themes": {
+        "inn_warm": 0, "chapel_archive": 1, "photo_harbor": 2, "clock_mechanical": 3, "hidden_darkroom": 4
+      },
+      "columns": {
+        "straight": 0, "panel_dense": 1, "panel_light": 2, "door_compatible": 3, "damaged_end": 4
+      },
+      "tiles": {
+        "inn_warm_straight": 0, "inn_warm_panel_dense": 1, "inn_warm_panel_light": 2, "inn_warm_door_compatible": 3, "inn_warm_damaged_end": 4,
+        "chapel_archive_straight": 5, "chapel_archive_panel_dense": 6, "chapel_archive_panel_light": 7, "chapel_archive_door_compatible": 8, "chapel_archive_damaged_end": 9,
+        "photo_harbor_straight": 10, "photo_harbor_panel_dense": 11, "photo_harbor_panel_light": 12, "photo_harbor_door_compatible": 13, "photo_harbor_damaged_end": 14,
+        "clock_mechanical_straight": 15, "clock_mechanical_panel_dense": 16, "clock_mechanical_panel_light": 17, "clock_mechanical_door_compatible": 18, "clock_mechanical_damaged_end": 19,
+        "hidden_darkroom_straight": 20, "hidden_darkroom_panel_dense": 21, "hidden_darkroom_panel_light": 22, "hidden_darkroom_door_compatible": 23, "hidden_darkroom_damaged_end": 24
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "没有真正的 window-compatible 列；第 3 列是门洞，第 4 列为破损端头。"
+    },
+    "interior_corner_set": {
+      "tile_size": [48, 48],
+      "grid": [4, 5],
+      "themes": {
+        "inn_warm": 0, "chapel_archive": 1, "photo_harbor": 2, "clock_mechanical": 3, "hidden_darkroom": 4
+      },
+      "columns": {"inside_left": 0, "inside_right": 1, "outside_left": 2, "outside_right": 3},
+      "tiles": {
+        "inn_warm_inside_left": 0, "inn_warm_inside_right": 1, "inn_warm_outside_left": 2, "inn_warm_outside_right": 3,
+        "chapel_archive_inside_left": 4, "chapel_archive_inside_right": 5, "chapel_archive_outside_left": 6, "chapel_archive_outside_right": 7,
+        "photo_harbor_inside_left": 8, "photo_harbor_inside_right": 9, "photo_harbor_outside_left": 10, "photo_harbor_outside_right": 11,
+        "clock_mechanical_inside_left": 12, "clock_mechanical_inside_right": 13, "clock_mechanical_outside_left": 14, "clock_mechanical_outside_right": 15,
+        "hidden_darkroom_inside_left": 16, "hidden_darkroom_inside_right": 17, "hidden_darkroom_outside_left": 18, "hidden_darkroom_outside_right": 19
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "V 形角宽 48px，只用于顶墙转角，不能旋转充当长侧墙。"
+    },
+    "baseboard_set": {
+      "tile_size": [32, 12],
+      "grid": [5, 5],
+      "themes": {
+        "inn_warm": 0, "chapel_archive": 1, "photo_harbor": 2, "clock_mechanical": 3, "hidden_darkroom": 4
+      },
+      "columns": {"straight": 0, "left_stop": 1, "right_stop": 2, "inside_corner": 3, "worn_straight": 4},
+      "tiles": {
+        "inn_warm_straight": 0, "inn_warm_left_stop": 1, "inn_warm_right_stop": 2, "inn_warm_inside_corner": 3, "inn_warm_worn_straight": 4,
+        "chapel_archive_straight": 5, "chapel_archive_left_stop": 6, "chapel_archive_right_stop": 7, "chapel_archive_inside_corner": 8, "chapel_archive_worn_straight": 9,
+        "photo_harbor_straight": 10, "photo_harbor_left_stop": 11, "photo_harbor_right_stop": 12, "photo_harbor_inside_corner": 13, "photo_harbor_worn_straight": 14,
+        "clock_mechanical_straight": 15, "clock_mechanical_left_stop": 16, "clock_mechanical_right_stop": 17, "clock_mechanical_inside_corner": 18, "clock_mechanical_worn_straight": 19,
+        "hidden_darkroom_straight": 20, "hidden_darkroom_left_stop": 21, "hidden_darkroom_right_stop": 22, "hidden_darkroom_inside_corner": 23, "hidden_darkroom_worn_straight": 24
+      },
+      "rotation_safe": false,
+      "mirror_safe": false,
+      "notes": "第 3 列是 V 形内角，不用于直墙重复。"
+    }
+  }
+}

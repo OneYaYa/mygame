@@ -4,18 +4,10 @@
 [ext_resource type="PackedScene" path="res://scenes/world/world_view.tscn" id="2_view"]
 [ext_resource type="PackedScene" path="res://scenes/characters/player.tscn" id="3_player"]
 
-[node name="WorldController" type="Node2D"]
+[node name="LocationRuntime" type="Node2D"]
 script = ExtResource("1_world")
 
 [node name="WorldView" parent="." instance=ExtResource("2_view")]
 
-[node name="CanvasModulate" type="CanvasModulate" parent="."]
-color = Color(1, 1, 1, 1)
-
-[node name="Collisions" type="Node2D" parent="."]
-
-[node name="Actors" type="Node2D" parent="."]
-y_sort_enabled = true
-
-[node name="Player" parent="." instance=ExtResource("3_player")]
+[node name="Player" parent="WorldView/Characters" instance=ExtResource("3_player")]
 

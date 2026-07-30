@@ -1,0 +1,229 @@
+{
+  "godot": {
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "hex": 263683,
+    "status": "stable",
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "timestamp": 0,
+    "string": "4.6.3-stable (official)"
+  },
+  "maps": [
+    {
+      "index": 1,
+      "id": "town",
+      "name": "钟影广场",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 768,
+      "time": "10:00",
+      "file": "01_town.png",
+      "art_metrics": {
+        "map_id": "town",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 23,
+        "collision_count": 9,
+        "portal_count": 5,
+        "generated_tile_count": 2637,
+        "player_spawn": [
+          576.0,
+          384.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "square_to_inn",
+            "target": "inn-yard",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              532.0,
+              724.0,
+              88.0,
+              40.0
+            ]
+          },
+          {
+            "portal_id": "square_to_chapel",
+            "target": "chapel-hill",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              532.0,
+              0.0,
+              88.0,
+              42.0
+            ]
+          },
+          {
+            "portal_id": "square_to_photo",
+            "target": "photo-lane",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              0.0,
+              354.0,
+              45.0,
+              74.0
+            ]
+          },
+          {
+            "portal_id": "square_to_harbor",
+            "target": "harbor",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              1107.0,
+              350.0,
+              45.0,
+              74.0
+            ]
+          },
+          {
+            "portal_id": "square_to_cabin",
+            "target": "clock-cabin",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              560.0,
+              284.0,
+              32.0,
+              44.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "id": "harbor",
+      "name": "回潮港",
+      "kind": "outdoor",
+      "width": 1280,
+      "height": 768,
+      "time": "10:00",
+      "file": "06_harbor.png",
+      "art_metrics": {
+        "map_id": "harbor",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 20,
+        "collision_count": 10,
+        "portal_count": 3,
+        "generated_tile_count": 2898,
+        "player_spawn": [
+          640.0,
+          384.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "conrad",
+            "position": [
+              765.948364257813,
+              433.939086914063
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "harbor_to_square",
+            "target": "town",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              0.0,
+              348.0,
+              44.0,
+              72.0
+            ]
+          },
+          {
+            "portal_id": "enter_harbor_control",
+            "target": "harbor-control",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              276.0,
+              270.0,
+              32.0,
+              42.0
+            ]
+          },
+          {
+            "portal_id": "enter_low_tide_cave",
+            "target": "low-tide-cave",
+            "revealed": false,
+            "reachable": true,
+            "trigger_rect": [
+              1164.0,
+              510.0,
+              60.0,
+              68.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "id": "inn-lobby",
+      "name": "湖畔旅店 · 大堂",
+      "kind": "interior",
+      "width": 840,
+      "height": 520,
+      "time": "10:00",
+      "file": "08_inn-lobby.png",
+      "art_metrics": {
+        "map_id": "inn-lobby",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 15,
+        "collision_count": 11,
+        "portal_count": 2,
+        "generated_tile_count": 67,
+        "player_spawn": [
+          420.0,
+          260.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "dorothea",
+            "position": [
+              414.333312988281,
+              275.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "lobby_to_yard",
+            "target": "inn-yard",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              390.0,
+              444.0,
+              52.0,
+              46.0
+            ]
+          },
+          {
+            "portal_id": "lobby_to_upstairs",
+            "target": "inn-upstairs",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              724.0,
+              300.0,
+              52.0,
+              82.0
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

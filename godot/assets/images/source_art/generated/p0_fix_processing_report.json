@@ -1,0 +1,301 @@
+{
+  "masters_overwritten": false,
+  "assets": [
+    {
+      "asset_id": "inn_staircase",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_staircase.png",
+      "master_sha256": "a258c20e1c12a8d9ab7b5080278159cd8f57194fa907961318877f0d6a92cdca",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_staircase.png",
+      "output_size": [
+        64,
+        112
+      ],
+      "cell": [
+        1,
+        1,
+        0
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 24
+    },
+    {
+      "asset_id": "inn_reception_partition",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_reception_partition.png",
+      "master_sha256": "71346d11d55f924790b25944cb4798e026522cce41d8bf2d8d9f46d38c22f019",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_reception_partition.png",
+      "output_size": [
+        48,
+        56
+      ],
+      "cell": [
+        1,
+        1,
+        0
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 20
+    },
+    {
+      "asset_id": "inn_main_door_closed",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_main_door.png",
+      "master_sha256": "a16250cb03996d74e2b509ccc364cf9c0c8e1ebbcef99ea8f50222a7ebf56fe1",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_main_door_closed.png",
+      "output_size": [
+        48,
+        64
+      ],
+      "cell": [
+        2,
+        1,
+        0
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 22
+    },
+    {
+      "asset_id": "inn_main_door_open",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_main_door.png",
+      "master_sha256": "a16250cb03996d74e2b509ccc364cf9c0c8e1ebbcef99ea8f50222a7ebf56fe1",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_main_door_open.png",
+      "output_size": [
+        48,
+        64
+      ],
+      "cell": [
+        2,
+        1,
+        1
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 22
+    },
+    {
+      "asset_id": "generic_table_small",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_table_set.png",
+      "master_sha256": "407e2fcc171556a4b086bac72603dd2bab58e64d63173d2f6aad30d6faa8a41e",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_table_small.png",
+      "output_size": [
+        48,
+        40
+      ],
+      "cell": [
+        3,
+        1,
+        0
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 20
+    },
+    {
+      "asset_id": "generic_table_dining",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_table_set.png",
+      "master_sha256": "407e2fcc171556a4b086bac72603dd2bab58e64d63173d2f6aad30d6faa8a41e",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_table_dining.png",
+      "output_size": [
+        64,
+        48
+      ],
+      "cell": [
+        3,
+        1,
+        1
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 20
+    },
+    {
+      "asset_id": "generic_table_reading",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_table_set.png",
+      "master_sha256": "407e2fcc171556a4b086bac72603dd2bab58e64d63173d2f6aad30d6faa8a41e",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_table_reading.png",
+      "output_size": [
+        64,
+        48
+      ],
+      "cell": [
+        3,
+        1,
+        2
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 22
+    },
+    {
+      "asset_id": "generic_chair_front",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_chair_set_v2.png",
+      "master_sha256": "f2dc45fe7d9f898da80145775f6c38f0cc7aaa9447056d1b5f18e4425aece816",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_chair_front.png",
+      "output_size": [
+        24,
+        32
+      ],
+      "cell": [
+        2,
+        2,
+        0
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 18
+    },
+    {
+      "asset_id": "generic_chair_back",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_chair_set_v2.png",
+      "master_sha256": "f2dc45fe7d9f898da80145775f6c38f0cc7aaa9447056d1b5f18e4425aece816",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_chair_back.png",
+      "output_size": [
+        24,
+        32
+      ],
+      "cell": [
+        2,
+        2,
+        1
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 18
+    },
+    {
+      "asset_id": "generic_chair_left",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_chair_set_v2.png",
+      "master_sha256": "f2dc45fe7d9f898da80145775f6c38f0cc7aaa9447056d1b5f18e4425aece816",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_chair_left.png",
+      "output_size": [
+        24,
+        32
+      ],
+      "cell": [
+        2,
+        2,
+        2
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 18
+    },
+    {
+      "asset_id": "generic_chair_right",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\generic_chair_set_v2.png",
+      "master_sha256": "f2dc45fe7d9f898da80145775f6c38f0cc7aaa9447056d1b5f18e4425aece816",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\generic_chair_right.png",
+      "output_size": [
+        24,
+        32
+      ],
+      "cell": [
+        2,
+        2,
+        3
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 18
+    },
+    {
+      "asset_id": "inn_wall_lake_painting",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_wall_decor_set.png",
+      "master_sha256": "f3aa517642d8ff42f04cf9e78a74fe58bb80bab7b33f4f4ef4f82fa38dbaa575",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_wall_lake_painting.png",
+      "output_size": [
+        48,
+        32
+      ],
+      "cell": [
+        5,
+        1,
+        0
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 22
+    },
+    {
+      "asset_id": "inn_wall_town_photo",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_wall_decor_set.png",
+      "master_sha256": "f3aa517642d8ff42f04cf9e78a74fe58bb80bab7b33f4f4ef4f82fa38dbaa575",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_wall_town_photo.png",
+      "output_size": [
+        32,
+        24
+      ],
+      "cell": [
+        5,
+        1,
+        1
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 20
+    },
+    {
+      "asset_id": "inn_wall_license",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_wall_decor_set.png",
+      "master_sha256": "f3aa517642d8ff42f04cf9e78a74fe58bb80bab7b33f4f4ef4f82fa38dbaa575",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_wall_license.png",
+      "output_size": [
+        24,
+        24
+      ],
+      "cell": [
+        5,
+        1,
+        2
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 14
+    },
+    {
+      "asset_id": "inn_key_board",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_wall_decor_set.png",
+      "master_sha256": "f3aa517642d8ff42f04cf9e78a74fe58bb80bab7b33f4f4ef4f82fa38dbaa575",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_key_board.png",
+      "output_size": [
+        48,
+        32
+      ],
+      "cell": [
+        5,
+        1,
+        3
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 18
+    },
+    {
+      "asset_id": "inn_notice_board_small",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\inn_wall_decor_set.png",
+      "master_sha256": "f3aa517642d8ff42f04cf9e78a74fe58bb80bab7b33f4f4ef4f82fa38dbaa575",
+      "normalized_source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_notice_board_small.png",
+      "output_size": [
+        32,
+        24
+      ],
+      "cell": [
+        5,
+        1,
+        4
+      ],
+      "binary_alpha": true,
+      "nearest_neighbour": true,
+      "palette_colors_max": 18
+    }
+  ],
+  "rejected_masters": [
+    {
+      "source_master_path": "res://assets/images/source_art/generated/masters/generic_chair_set.png",
+      "needs_review": true,
+      "integrated": false,
+      "reason": "First chair sheet read as park benches at game scale; replaced by generic_chair_set_v2.png."
+    }
+  ]
+}

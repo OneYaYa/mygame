@@ -1,0 +1,254 @@
+{
+  "masters_overwritten": false,
+  "nearest_neighbour": true,
+  "assets": [
+    {
+      "asset_id": "grass_base_variants",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\grass_base_variants.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\grass_base_variants.png",
+      "output_size": [
+        128,
+        128
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "cell_size": [
+        32,
+        32
+      ],
+      "transparent": false,
+      "palette_colors_max": 12,
+      "visible_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "master_sha256": "83c771dcb51ccf414b1fbd09fed9f09ca912b5492fd09bf0825c77a70e9cb58d",
+      "source_pixel_sha256": "2289ed26a01fbc6dabdfb4f8ef28313793376c22d0f1f6a0465c1de34af666d5"
+    },
+    {
+      "asset_id": "grass_path_edge_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\grass_path_edge_set.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\grass_path_edge_set.png",
+      "output_size": [
+        128,
+        128
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "cell_size": [
+        32,
+        32
+      ],
+      "transparent": true,
+      "palette_colors_max": 16,
+      "visible_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "master_sha256": "c6cecf88eb53c175f32f3e955990d0215dafe4e3dcbe618d276f341071a20d3d",
+      "source_pixel_sha256": "b502c62341fb4456267957fd4f298fb52b5577dc7622f00881976998970ca7ef"
+    },
+    {
+      "asset_id": "stone_path_corner_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\stone_path_corner_set.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\stone_path_corner_set.png",
+      "output_size": [
+        128,
+        128
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "cell_size": [
+        32,
+        32
+      ],
+      "transparent": false,
+      "palette_colors_max": 18,
+      "visible_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "master_sha256": "edfd00538ef775f3138c9566da92fe617b6653a4073f6a89e20cb34f02236261",
+      "source_pixel_sha256": "a87bcd400a0d4ce51b1ff8f0500686df2ddec6efef5f75e2a13ca455e0f15ab7"
+    },
+    {
+      "asset_id": "water_shallow_deep_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\water_shallow_deep_set.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\water_shallow_deep_set.png",
+      "output_size": [
+        128,
+        128
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "cell_size": [
+        32,
+        32
+      ],
+      "transparent": false,
+      "palette_colors_max": 14,
+      "visible_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "master_sha256": "38c395b9d7ed0cc1afed52c2036e35abeee5197d45e7ff29fcb78f56399cfcf3",
+      "source_pixel_sha256": "e864714f133ddc937d4f5ad5f6de1ac4cb6614391acd455f00b8c9e2e31117e3"
+    },
+    {
+      "asset_id": "natural_shoreline_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\natural_shoreline_set.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\natural_shoreline_set.png",
+      "output_size": [
+        192,
+        192
+      ],
+      "grid": [
+        6,
+        6
+      ],
+      "cell_size": [
+        32,
+        32
+      ],
+      "transparent": true,
+      "palette_colors_max": 18,
+      "visible_bbox": [
+        0,
+        0,
+        192,
+        192
+      ],
+      "master_sha256": "62a9d3e39014a48d7a1612c37a0e9f2141072bd19e05f6158ae649e5815d4568",
+      "source_pixel_sha256": "80b5888cc66ea39c0fe903dd24e9eecc33958dea377a5dd463b3d9c34c464e32"
+    },
+    {
+      "asset_id": "interior_wall_modular_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\interior_wall_modular_set.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\interior_wall_modular_set.png",
+      "output_size": [
+        160,
+        240
+      ],
+      "grid": [
+        5,
+        5
+      ],
+      "cell_size": [
+        32,
+        48
+      ],
+      "transparent": true,
+      "palette_colors_max": 28,
+      "visible_bbox": [
+        0,
+        0,
+        160,
+        240
+      ],
+      "master_sha256": "ca88a31576b75758073f9d0280ecca23ddab31ce97c5edf96285e4547e5a82f8",
+      "source_pixel_sha256": "94cb77a422fd89695184ae0b811a794f63ba2d1bf19d9fa21b3c1265ec558cdd"
+    },
+    {
+      "asset_id": "interior_corner_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\interior_corner_set.png",
+      "master_size": [
+        1122,
+        1402
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\interior_corner_set.png",
+      "output_size": [
+        192,
+        240
+      ],
+      "grid": [
+        4,
+        5
+      ],
+      "cell_size": [
+        48,
+        48
+      ],
+      "transparent": true,
+      "palette_colors_max": 28,
+      "visible_bbox": [
+        0,
+        0,
+        183,
+        240
+      ],
+      "master_sha256": "a54e5f4e3c8b3458da4c797d6a89bd864cf1b2bc3c1c135609c2010a08e87b3e",
+      "source_pixel_sha256": "c07ae0b0cf6ddd88ad0851511c4787d5ac106b2efaca8223efebaafeeef4ff88"
+    },
+    {
+      "asset_id": "baseboard_set",
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\baseboard_set.png",
+      "master_size": [
+        1254,
+        1254
+      ],
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\baseboard_set.png",
+      "output_size": [
+        160,
+        60
+      ],
+      "grid": [
+        5,
+        5
+      ],
+      "cell_size": [
+        32,
+        12
+      ],
+      "transparent": true,
+      "palette_colors_max": 24,
+      "visible_bbox": [
+        0,
+        0,
+        160,
+        60
+      ],
+      "master_sha256": "7ea4efcfade64156ce299efc8ab95a6bafea53e2e11e950f60d3eb60d7140a1b",
+      "source_pixel_sha256": "0f6ed34b325513b8d2c8ab942eff9843945e0cf2d531ca02998e05ac47a0d919"
+    }
+  ]
+}

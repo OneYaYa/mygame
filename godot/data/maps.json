@@ -1,5 +1,7 @@
 {
   "schemaVersion": 1,
+  "artLayoutSchemaVersion": 1,
+  "artLayoutRoot": "res://data/art_layouts",
   "regions": [
     {
       "id": "town",
@@ -144,7 +146,7 @@
       "furniture":[{"type":"bench","x":400,"y":340,"w":110,"h":24},{"type":"shelf","x":865,"y":150,"w":55,"h":115}],
       "decorations":[{"id":"door1_banner","x":80,"y":145,"w":44,"h":70,"fabricColor":"#516774","layer":"wall"},{"id":"door2_banner","x":196,"y":145,"w":44,"h":70,"fabricColor":"#6a5870","layer":"wall"},{"id":"door3_banner","x":312,"y":145,"w":44,"h":70,"fabricColor":"#476a6f","layer":"wall"},{"id":"door4_banner","x":428,"y":145,"w":44,"h":70,"fabricColor":"#8c5351","layer":"wall"},{"id":"door5_banner","x":544,"y":145,"w":44,"h":70,"fabricColor":"#526c58","layer":"wall"},{"id":"door6_banner","x":660,"y":145,"w":44,"h":70,"fabricColor":"#4c526b","layer":"wall"},{"id":"hall_lamp","x":382,"y":165,"w":20,"h":42},{"id":"hall_lamp_2","x":730,"y":165,"w":20,"h":42}],
       "landmarks":[{"id":"room1_door","type":"door","label":"1 · MERCER","description":"阿瑟的房间。门内已经没有人。","interactive":true,"x":80,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room2_door","type":"door","label":"2 · HALE","description":"贝娅特丽斯的房间，床头放着一双擦亮的钟楼鞋。","interactive":true,"x":196,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room3_door","type":"door","label":"3 · VOSS","description":"康拉德的房间，门把上还沾着盐。","interactive":true,"x":312,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room4_door","type":"door","label":"4 · VALE","description":"多萝西娅很少锁门，但今天门缝里没有光。","interactive":true,"x":428,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room5_door","type":"door","label":"5 · QUINN","description":"埃利亚斯的门上贴着一张过曝的湖面照片。","interactive":true,"x":544,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room6_door","type":"door","label":"6 · RAINE","description":"弗洛伦斯的房门下塞着一张旧索引卡。","interactive":true,"x":660,"y":186,"w":45,"h":64,"layer":"wall"},{"id":"room7_gap","type":"wall_mark","label":"六号与八号之间的空墙","description":"墙纸花纹在这里少了一朵，踢脚线也比别处新。","interactive":true,"x":748,"y":174,"w":56,"h":75,"layer":"wall"}],
-      "portals":[{"id":"hall_to_lobby","label":"下楼回大堂","type":"stairs","x":42,"y":285,"w":72,"h":105,"targetRegionId":"town","targetPlaceId":"inn-lobby","spawn":{"x":735,"y":340}},{"id":"hall_to_room8","label":"进入八号房","type":"door","x":805,"y":190,"w":48,"h":62,"targetRegionId":"town","targetPlaceId":"player-room","spawn":{"x":384,"y":405}}]
+      "portals":[{"id":"hall_to_lobby","label":"下楼回大堂","type":"stairs","x":42,"y":285,"w":72,"h":105,"targetRegionId":"town","targetPlaceId":"inn-lobby","spawn":{"x":680,"y":360}},{"id":"hall_to_room8","label":"进入八号房","type":"door","x":805,"y":190,"w":48,"h":62,"targetRegionId":"town","targetPlaceId":"player-room","spawn":{"x":384,"y":405}}]
     },
     {
       "id":"clock-cabin","regionId":"town","name":"主钟维修舱","subtitle":"齿轮油、红色校准线和一条通向地下的冷风","kind":"interior","width":768,"height":480,"shell":"workshop","wallDepth":112,

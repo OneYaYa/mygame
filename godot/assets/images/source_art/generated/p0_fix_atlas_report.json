@@ -1,0 +1,65 @@
+{
+  "preserved_v2_sources": true,
+  "assets": [
+    {
+      "asset_id": "natural_shoreline_set_v3",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\natural_shoreline_set_v3.png",
+      "output_size": [
+        192,
+        192
+      ],
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\natural_shoreline_set.png",
+      "master_sha256": "62a9d3e39014a48d7a1612c37a0e9f2141072bd19e05f6158ae649e5815d4568",
+      "nearest_neighbour": true,
+      "hard_pixel_edges": true
+    },
+    {
+      "asset_id": "stone_path_corner_set_v3",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\stone_path_corner_set_v3.png",
+      "output_size": [
+        256,
+        256
+      ],
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\stone_path_corner_set.png",
+      "master_sha256": "edfd00538ef775f3138c9566da92fe617b6653a4073f6a89e20cb34f02236261",
+      "nearest_neighbour": true,
+      "hard_pixel_edges": true
+    },
+    {
+      "asset_id": "water_shallow_deep_set_v3",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\water_shallow_deep_set_v3.png",
+      "output_size": [
+        128,
+        128
+      ],
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\water_shallow_deep_set.png",
+      "master_sha256": "38c395b9d7ed0cc1afed52c2036e35abeee5197d45e7ff29fcb78f56399cfcf3",
+      "nearest_neighbour": true,
+      "hard_pixel_edges": true
+    },
+    {
+      "asset_id": "harbor_dock_entry_set",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_dock_entry_set.png",
+      "output_size": [
+        128,
+        64
+      ],
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\harbor_dock_entry_set.png",
+      "master_sha256": "f50b2a31a046159c32eb88793fa0dc1b779c069c7df8caa2237d77d59cdb788c",
+      "nearest_neighbour": true,
+      "hard_pixel_edges": true
+    },
+    {
+      "asset_id": "water_transition_patch_set",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\water_transition_patch_set.png",
+      "output_size": [
+        160,
+        128
+      ],
+      "master": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\masters\\water_transition_patch_set.png",
+      "master_sha256": "9c2c6c2e85905fad69ce8e0edcbc2e7bb192c08663fa49df8389d82964d1b841",
+      "nearest_neighbour": true,
+      "hard_pixel_edges": true
+    }
+  ]
+}

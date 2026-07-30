@@ -1,0 +1,49 @@
+{
+  "maps": [
+    {
+      "map_id": "town",
+      "width": 1152,
+      "height": 648,
+      "hud_excluded_rows": 50,
+      "delta_max_threshold": 24,
+      "delta_rgb_sum_threshold": 42,
+      "strict_changed_pixels": 96200,
+      "strict_coverage_percent": 13.964,
+      "impact_block_size": 8,
+      "impact_changed_pixels": 188928,
+      "scene_pixels": 688896,
+      "coverage_percent": 27.425,
+      "diff_file": "art_review/p0_visual_impact/diff/town_diff.png"
+    },
+    {
+      "map_id": "harbor",
+      "width": 1152,
+      "height": 648,
+      "hud_excluded_rows": 50,
+      "delta_max_threshold": 24,
+      "delta_rgb_sum_threshold": 42,
+      "strict_changed_pixels": 66441,
+      "strict_coverage_percent": 9.645,
+      "impact_block_size": 8,
+      "impact_changed_pixels": 349584,
+      "scene_pixels": 688896,
+      "coverage_percent": 50.746,
+      "diff_file": "art_review/p0_visual_impact/diff/harbor_diff.png"
+    },
+    {
+      "map_id": "inn-lobby",
+      "width": 1152,
+      "height": 648,
+      "hud_excluded_rows": 50,
+      "delta_max_threshold": 24,
+      "delta_rgb_sum_threshold": 42,
+      "strict_changed_pixels": 187284,
+      "strict_coverage_percent": 27.186,
+      "impact_block_size": 8,
+      "impact_changed_pixels": 353984,
+      "scene_pixels": 688896,
+      "coverage_percent": 51.384,
+      "diff_file": "art_review/p0_visual_impact/diff/inn-lobby_diff.png"
+    }
+  ]
+}

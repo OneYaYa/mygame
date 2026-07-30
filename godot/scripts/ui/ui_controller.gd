@@ -37,7 +37,7 @@ var sound_button: Button
 var _modal_kind: String = ""
 var _current_puzzle: String = ""
 var _puzzle_state: Dictionary = {}
-var _journal_visible: bool = true
+var _journal_visible: bool = false
 var _reset_pending: bool = false
 
 
@@ -78,8 +78,11 @@ func _build_ui() -> void:
 	_build_hint()
 	_build_modal()
 	toast_label = Label.new()
-	toast_label.position = Vector2(24, 585)
-	toast_label.size = Vector2(760, 36)
+	toast_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	toast_label.offset_left = -380
+	toast_label.offset_top = -58
+	toast_label.offset_right = 380
+	toast_label.offset_bottom = -22
 	toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	toast_label.add_theme_color_override("font_color", Color("f4df9c"))
 	toast_label.add_theme_color_override("font_shadow_color", Color("101819"))
@@ -143,41 +146,44 @@ func _build_hud() -> void:
 	hud = PanelContainer.new()
 	hud.name = "HUD"
 	hud.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	hud.offset_bottom = 70
+	hud.offset_bottom = 50
 	root.add_child(hud)
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 5)
+	margin.add_theme_constant_override("margin_bottom", 5)
 	hud.add_child(margin)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
+	row.add_theme_constant_override("separation", 8)
 	margin.add_child(row)
 	location_label = Label.new()
 	location_label.text = "LAKESIDE TOWN\n湖畔旅店 · 八号房"
 	location_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	location_label.add_theme_font_size_override("font_size", 18)
+	location_label.add_theme_font_size_override("font_size", 15)
 	row.add_child(location_label)
-	var clock_box := VBoxContainer.new()
-	clock_box.custom_minimum_size = Vector2(150, 0)
+	var clock_box := HBoxContainer.new()
+	clock_box.custom_minimum_size = Vector2(224, 0)
+	clock_box.add_theme_constant_override("separation", 10)
 	row.add_child(clock_box)
 	time_label = Label.new()
 	time_label.text = "SATURDAY  06:00"
 	time_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	time_label.add_theme_font_size_override("font_size", 20)
+	time_label.add_theme_font_size_override("font_size", 16)
+	time_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	clock_box.add_child(time_label)
 	loop_label = Label.new()
 	loop_label.text = "LOOP 01"
 	loop_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	loop_label.add_theme_color_override("font_color", Color("d2ad67"))
+	loop_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	clock_box.add_child(loop_label)
-	row.add_child(_button("J", func() -> void: show_journal("journal"), Vector2(44, 42)))
-	row.add_child(_button("I", func() -> void: show_journal("inventory"), Vector2(44, 42)))
-	sound_button = _button("♪", _toggle_sound, Vector2(44, 42))
+	row.add_child(_button("J", func() -> void: show_journal("journal"), Vector2(34, 32)))
+	row.add_child(_button("I", func() -> void: show_journal("inventory"), Vector2(34, 32)))
+	sound_button = _button("♪", _toggle_sound, Vector2(34, 32))
 	row.add_child(sound_button)
-	row.add_child(_button("▣", func() -> void: save_requested.emit(), Vector2(44, 42)))
-	row.add_child(_button("?", show_help, Vector2(44, 42)))
+	row.add_child(_button("▣", func() -> void: save_requested.emit(), Vector2(34, 32)))
+	row.add_child(_button("?", show_help, Vector2(34, 32)))
 	hud.visible = false
 
 
@@ -186,7 +192,7 @@ func _build_journal() -> void:
 	journal_panel.name = "FieldJournal"
 	journal_panel.set_anchors_preset(Control.PRESET_RIGHT_WIDE)
 	journal_panel.offset_left = -316
-	journal_panel.offset_top = 78
+	journal_panel.offset_top = 58
 	journal_panel.offset_right = -12
 	journal_panel.offset_bottom = -18
 	root.add_child(journal_panel)
@@ -218,10 +224,10 @@ func _build_journal() -> void:
 func _build_hint() -> void:
 	hint_panel = PanelContainer.new()
 	hint_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	hint_panel.offset_left = -210
-	hint_panel.offset_top = -66
-	hint_panel.offset_right = 210
-	hint_panel.offset_bottom = -22
+	hint_panel.offset_left = -180
+	hint_panel.offset_top = -56
+	hint_panel.offset_right = 180
+	hint_panel.offset_bottom = -18
 	root.add_child(hint_panel)
 	hint_label = Label.new()
 	hint_label.text = "[ E ] 检查"
@@ -286,14 +292,13 @@ func show_title(has_save: bool) -> void:
 func show_game() -> void:
 	title_screen.visible = false
 	hud.visible = true
-	journal_panel.visible = _journal_visible
-	_render_side_journal("orders")
+	journal_panel.visible = false
 
 
 func update_state(state: Dictionary, scene: Dictionary) -> void:
 	if state.is_empty():
 		return
-	location_label.text = "LAKESIDE TOWN\n%s" % scene.get("name", state.get("placeId", ""))
+	location_label.text = "TIME ECHO  ·  %s" % scene.get("name", state.get("placeId", ""))
 	time_label.text = "%s  %s" % [state.get("dayLabel", "SATURDAY"), TimeManager.format_time(int(state.get("minute", 360)))]
 	loop_label.text = "LOOP %02d" % (int(state.get("loopCount", 0)) + 1)
 	if journal_panel.visible:

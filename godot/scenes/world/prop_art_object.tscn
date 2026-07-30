@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/art_object_2d.gd" id="1_art"]
+
+[node name="ArtObject2D" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_art")
+
+[node name="ContactShadow" type="Polygon2D" parent="."]
+z_index = -2
+
+[node name="Visual" type="Sprite2D" parent="."]
+texture_filter = 1
+
+[node name="ForegroundVisual" type="Sprite2D" parent="."]
+texture_filter = 1
+z_index = 2
+
+[node name="CollisionBody" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+
+[node name="EntranceMarker" type="Marker2D" parent="."]
+
+[node name="NavigationObstacle" type="Node2D" parent="."]
+
+[node name="DebugOverlay" type="Node2D" parent="."]

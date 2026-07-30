@@ -1,0 +1,1037 @@
+{
+    "schema_version": 1,
+    "map_id": "town",
+    "theme_variant": "clock_square_warm_day",
+    "interaction_distance": 54,
+    "atlas_tile_art": {
+        "cell_size": [32, 32],
+        "replaced_ground_shapes": [
+            "town_path_north", "town_path_south", "town_path_west", "town_path_east",
+            "clock_forecourt", "bakery_step", "bindery_step", "town_pond"
+        ],
+        "base_fill": {
+            "asset_id": "grass_base_variants",
+            "base_tiles": ["base_a", "base_b", "base_c", "base_d", "base_e", "base_f", "base_g", "base_h"],
+            "variation_tiles": ["dense_grass_a", "dense_grass_b", "dense_grass_c", "dense_grass_d", "cool_patch_a", "cool_patch_b", "cool_patch_c", "cool_patch_d"],
+            "variation_ratio": 0.12,
+            "edge_variation_ratio": 0.20,
+            "avoid_radius": 1,
+            "seed": "town:p0_batch_01:grass"
+        },
+        "terrain_masks": [
+            {
+                "mask_id": "town_stone_routes",
+                "asset_id": "stone_path_corner_set",
+                "layer": "PathTiles",
+                "rects": [
+                    [-1, 11, 38, 2], [17, -1, 2, 26],
+                    [14, 7, 8, 5], [13, 8, 10, 3],
+                    [5, 8, 2, 4], [4, 7, 4, 3],
+                    [30, 8, 2, 4], [29, 7, 4, 3]
+                ],
+                "center_tiles": ["center_worn_a"],
+                "seed": "town:p0_fix:stone_hierarchy",
+                "tint": "#d7d0c1",
+                "material_zones": [
+                    {"rects": [[-1, 11, 38, 2], [17, -1, 2, 26]], "center_tiles": ["center_worn_a"], "semantic_prefix":"worn", "tint":"#d0c9bb"},
+                    {"rects": [[4, 7, 4, 4], [29, 7, 4, 4]], "center_tiles": ["center_gravel_a"], "semantic_prefix":"gravel", "tint":"#c9b89a"},
+                    {"rects": [[13, 7, 10, 5]], "center_tiles": ["center_a"], "tint":"#e5ded0"}
+                ],
+                "edge_distribution": {
+                    "clean": 0.60, "grass": 0.25, "broken": 0.10, "special": 0.05,
+                    "grass_asset": "grass_path_edge_set", "seed": "town:p0_fix:edge_distribution"
+                }
+            }
+        ],
+        "water_masks": [
+            {
+                "mask_id": "town_pond_tiles",
+                "asset_id": "water_shallow_deep_set",
+                "layer": "WaterTiles",
+                "auto_shore": true,
+                "use_transitions": true,
+                "transition_asset": "water_transition_patch_set",
+                "rows": [[14, 3, 6], [15, 2, 8], [16, 1, 8], [17, 1, 9], [18, 2, 9], [19, 2, 7]],
+                "shallow_tiles": ["shallow_a", "shallow_b"],
+                "deep_tiles": ["deep_a", "deep_b", "deep_c"],
+                "highlight_tiles": ["deep_highlight_a", "deep_highlight_b"],
+                "highlight_ratio": 0.025,
+                "deep_intrusion_ratio": 0.045,
+                "shore_asset": "natural_shoreline_set",
+                "shore_material": "grass",
+                "seed": "town:p0_fix:pond"
+            }
+        ],
+        "shore_stamps": [
+            {"layer":"PathTiles","asset_id":"stone_path_corner_set","tile":"stone_cross_junction_wide","cell":[17,11],"tint":"#ded7c8"},
+            {"layer":"PathTiles","asset_id":"stone_path_corner_set","tile":"stone_branch_narrow_to_wide","cell":[5,10],"tint":"#ded7c8"},
+            {"layer":"PathTiles","asset_id":"stone_path_corner_set","tile":"stone_branch_narrow_to_wide","cell":[30,10],"tint":"#ded7c8"},
+            {"layer":"PathTiles","asset_id":"stone_path_corner_set","tile":"doorway_platform","cell":[5,8],"tint":"#d9d0bd"},
+            {"layer":"PathTiles","asset_id":"stone_path_corner_set","tile":"doorway_platform","cell":[30,8],"tint":"#d9d0bd"}
+        ]
+    },
+    "canvas": {
+        "base_color": "#667f58",
+        "base_texture": "tile_grass_low_noise",
+        "texture_opacity": 0.12,
+        "detail_density": 118,
+        "path_color": "#a89672",
+        "water_color": "#3e6872",
+        "shore_color": "#889377",
+        "edge_color": "#2f4842",
+        "day_tint": "#fff4d2"
+    },
+    "ground_shapes": [
+        {
+            "object_id": "town_path_north",
+            "kind": "path",
+            "points": [
+                [
+                    576,
+                    0
+                ],
+                [
+                    576,
+                    126
+                ],
+                [
+                    570,
+                    205
+                ]
+            ],
+            "width": 68,
+            "color": "#aa9875"
+        },
+        {
+            "object_id": "town_path_south",
+            "kind": "path",
+            "points": [
+                [
+                    576,
+                    326
+                ],
+                [
+                    574,
+                    488
+                ],
+                [
+                    588,
+                    768
+                ]
+            ],
+            "width": 72,
+            "color": "#ad9870"
+        },
+        {
+            "object_id": "town_path_west",
+            "kind": "path",
+            "points": [
+                [
+                    0,
+                    390
+                ],
+                [
+                    196,
+                    390
+                ],
+                [
+                    402,
+                    382
+                ],
+                [
+                    500,
+                    360
+                ]
+            ],
+            "width": 62,
+            "color": "#a7926c"
+        },
+        {
+            "object_id": "town_path_east",
+            "kind": "path",
+            "points": [
+                [
+                    652,
+                    360
+                ],
+                [
+                    770,
+                    386
+                ],
+                [
+                    968,
+                    388
+                ],
+                [
+                    1152,
+                    386
+                ]
+            ],
+            "width": 62,
+            "color": "#a7926c"
+        },
+        {
+            "object_id": "clock_forecourt",
+            "kind": "plaza",
+            "points": [
+                [
+                    470,
+                    286
+                ],
+                [
+                    516,
+                    254
+                ],
+                [
+                    640,
+                    254
+                ],
+                [
+                    690,
+                    292
+                ],
+                [
+                    674,
+                    354
+                ],
+                [
+                    624,
+                    382
+                ],
+                [
+                    520,
+                    378
+                ],
+                [
+                    472,
+                    344
+                ]
+            ],
+            "color": "#aa9a7d"
+        },
+        {
+            "object_id": "bakery_step",
+            "kind": "platform",
+            "points": [
+                [
+                    121,
+                    279
+                ],
+                [
+                    239,
+                    279
+                ],
+                [
+                    248,
+                    303
+                ],
+                [
+                    112,
+                    303
+                ]
+            ],
+            "color": "#9e8765"
+        },
+        {
+            "object_id": "bindery_step",
+            "kind": "platform",
+            "points": [
+                [
+                    909,
+                    279
+                ],
+                [
+                    1049,
+                    279
+                ],
+                [
+                    1056,
+                    303
+                ],
+                [
+                    900,
+                    303
+                ]
+            ],
+            "color": "#9b8d73"
+        },
+        {
+            "object_id": "town_pond",
+            "kind": "water",
+            "points": [
+                [
+                    54,
+                    528
+                ],
+                [
+                    75,
+                    502
+                ],
+                [
+                    122,
+                    493
+                ],
+                [
+                    180,
+                    500
+                ],
+                [
+                    218,
+                    524
+                ],
+                [
+                    230,
+                    566
+                ],
+                [
+                    211,
+                    602
+                ],
+                [
+                    166,
+                    620
+                ],
+                [
+                    105,
+                    614
+                ],
+                [
+                    65,
+                    590
+                ]
+            ],
+            "color": "#3b6872",
+            "shore_color": "#829176"
+        },
+        {
+            "object_id": "town_flowerbed",
+            "kind": "garden",
+            "points": [
+                [
+                    718,
+                    492
+                ],
+                [
+                    804,
+                    478
+                ],
+                [
+                    862,
+                    502
+                ],
+                [
+                    850,
+                    548
+                ],
+                [
+                    758,
+                    556
+                ],
+                [
+                    708,
+                    532
+                ]
+            ],
+            "color": "#765d44"
+        }
+    ],
+    "objects": [
+        {
+            "object_id": "clock_tower_art",
+            "gameplay_id": "master_clock_tower",
+            "asset_id": "env_master_clock_tower",
+            "position": [
+                576,
+                326
+            ],
+            "display_size": [
+                134,
+                260
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 326,
+            "layer": "WorldObjects",
+            "contact_shadow": true,
+            "shadow_size": [
+                132,
+                16
+            ],
+            "shadow_offset": [
+                8,
+                -5
+            ]
+        },
+        {
+            "object_id": "bakery_art",
+            "gameplay_id": "bakery",
+            "asset_id": "env_bakery",
+            "position": [
+                180,
+                282
+            ],
+            "display_size": [
+                190,
+                215
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 282,
+            "layer": "WorldObjects",
+            "contact_shadow": false
+        },
+        {
+            "object_id": "bookbinder_art",
+            "gameplay_id": "bookbinder",
+            "asset_id": "env_bookbinder",
+            "position": [
+                982,
+                286
+            ],
+            "display_size": [
+                205,
+                210
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 286,
+            "layer": "WorldObjects",
+            "contact_shadow": false
+        },
+        {
+            "object_id": "clock_base",
+            "procedural_type": "console",
+            "position": [
+                576,
+                344
+            ],
+            "display_size": [
+                88,
+                18
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 344,
+            "layer": "ArchitectureBack",
+            "color": "#6d6658",
+            "accent": "#92836b",
+            "contact_shadow": false
+        },
+        {
+            "object_id": "clock_step_a",
+            "procedural_type": "threshold_wear",
+            "position": [
+                576,
+                365
+            ],
+            "display_size": [
+                90,
+                10
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "z_index": 0,
+            "layer": "GroundDetails",
+            "color": "#6c6759",
+            "accent": "#857b68"
+        },
+        {
+            "object_id": "bakery_threshold_wear",
+            "procedural_type": "threshold_wear",
+            "position": [180, 311],
+            "display_size": [54, 10],
+            "anchor": [0.5, 1.0],
+            "sort_y": 0,
+            "layer": "GroundDetails",
+            "color": "#76654e",
+            "accent": "#9a896d"
+        },
+        {
+            "object_id": "bindery_threshold_wear",
+            "procedural_type": "threshold_wear",
+            "position": [982, 313],
+            "display_size": [56, 10],
+            "anchor": [0.5, 1.0],
+            "sort_y": 0,
+            "layer": "GroundDetails",
+            "color": "#756850",
+            "accent": "#9b8c72"
+        },
+        {
+            "object_id": "town_bench_w",
+            "asset_id": "prop_bench",
+            "position": [
+                706,
+                606
+            ],
+            "display_size": [
+                76,
+                72
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 606,
+            "layer": "WorldObjects",
+            "mirror_x": false,
+            "contact_shadow": true
+        },
+        {
+            "object_id": "town_bench_e",
+            "asset_id": "prop_bench",
+            "position": [
+                910,
+                614
+            ],
+            "display_size": [
+                76,
+                72
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 614,
+            "layer": "WorldObjects",
+            "mirror_x": true,
+            "contact_shadow": true
+        },
+        {
+            "object_id": "notice_board_art",
+            "gameplay_id": "square_signpost",
+            "asset_id": "prop_sign",
+            "position": [
+                884,
+                548
+            ],
+            "display_size": [
+                40,
+                62
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 548,
+            "layer": "WorldObjects",
+            "contact_shadow": true
+        },
+        {
+            "object_id": "flower_cluster_a",
+            "asset_id": "prop_flowers",
+            "position": [
+                760,
+                536
+            ],
+            "display_size": [
+                58,
+                57
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 540,
+            "layer": "WorldObjects"
+        },
+        {
+            "object_id": "flower_cluster_b",
+            "asset_id": "prop_flowers",
+            "position": [
+                822,
+                530
+            ],
+            "display_size": [
+                58,
+                57
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 533,
+            "layer": "WorldObjects",
+            "mirror_x": true
+        },
+        {
+            "object_id": "town_lantern_nw",
+            "asset_id": "prop_lantern",
+            "position": [
+                456,
+                344
+            ],
+            "display_size": [
+                18,
+                70
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 344,
+            "layer": "WorldObjects",
+            "contact_shadow": true
+        },
+        {
+            "object_id": "town_lantern_se",
+            "asset_id": "prop_lantern",
+            "position": [
+                686,
+                402
+            ],
+            "display_size": [
+                18,
+                70
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 402,
+            "layer": "WorldObjects",
+            "contact_shadow": true
+        },
+        {
+            "object_id": "bakery_barrel",
+            "asset_id": "prop_barrel",
+            "position": [
+                101,
+                294
+            ],
+            "display_size": [
+                37,
+                51
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 294,
+            "layer": "WorldObjects",
+            "contact_shadow": true
+        },
+        {
+            "object_id": "bindery_crate",
+            "asset_id": "prop_crate",
+            "position": [
+                1066,
+                302
+            ],
+            "display_size": [
+                48,
+                47
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 302,
+            "layer": "WorldObjects",
+            "contact_shadow": true
+        },
+        {
+            "object_id": "pond_bank_stones",
+            "asset_id": "prop_pebbles",
+            "position": [
+                66,
+                598
+            ],
+            "display_size": [
+                48,
+                40
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "layer": "GroundDetails",
+            "contact_shadow": false
+        },
+        {
+            "object_id": "pond_bank_grass",
+            "asset_id": "prop_grasstuft",
+            "position": [
+                228,
+                602
+            ],
+            "display_size": [
+                36,
+                35
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "layer": "GroundDetails",
+            "mirror_x": true,
+            "contact_shadow": false
+        },
+        {
+            "object_id": "town_tree_nw",
+            "asset_id": "prop_tree",
+            "position": [
+                76,
+                151
+            ],
+            "display_size": [
+                90,
+                103
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 151,
+            "layer": "WorldObjects",
+            "contact_shadow": true,
+            "shadow_size": [
+                44,
+                12
+            ]
+        },
+        {
+            "object_id": "town_tree_ne",
+            "asset_id": "prop_tree",
+            "position": [
+                1090,
+                170
+            ],
+            "display_size": [
+                90,
+                103
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 170,
+            "layer": "WorldObjects",
+            "mirror_x": true,
+            "contact_shadow": true,
+            "shadow_size": [
+                44,
+                12
+            ]
+        },
+        {
+            "object_id": "town_tree_sw",
+            "asset_id": "prop_tree",
+            "position": [
+                340,
+                760
+            ],
+            "display_size": [
+                90,
+                103
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 760,
+            "layer": "Foreground",
+            "contact_shadow": true,
+            "shadow_size": [
+                44,
+                12
+            ]
+        },
+        {
+            "object_id": "town_pebbles_a",
+            "asset_id": "prop_pebbles",
+            "position": [
+                270,
+                658
+            ],
+            "display_size": [
+                48,
+                40
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "z_index": 0,
+            "layer": "GroundDetails"
+        },
+        {
+            "object_id": "town_pebbles_b",
+            "asset_id": "prop_pebbles",
+            "position": [
+                958,
+                522
+            ],
+            "display_size": [
+                48,
+                40
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "z_index": 0,
+            "layer": "GroundDetails",
+            "mirror_x": true
+        },
+        {
+            "object_id": "town_grass_a",
+            "asset_id": "prop_grasstuft",
+            "position": [
+                88,
+                692
+            ],
+            "display_size": [
+                36,
+                35
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "z_index": 0,
+            "layer": "GroundDetails"
+        },
+        {
+            "object_id": "town_grass_b",
+            "asset_id": "prop_grasstuft",
+            "position": [
+                1012,
+                650
+            ],
+            "display_size": [
+                36,
+                35
+            ],
+            "anchor": [
+                0.5,
+                1.0
+            ],
+            "sort_y": 0,
+            "z_index": 0,
+            "layer": "GroundDetails",
+            "mirror_x": true
+        },
+        {
+            "object_id": "town_foreground_tree_se",
+            "asset_id": "prop_tree",
+            "position": [1080, 766],
+            "display_size": [96, 110],
+            "anchor": [0.5, 1.0],
+            "sort_y": 766,
+            "layer": "Foreground",
+            "mirror_x": true,
+            "contact_shadow": true,
+            "shadow_size": [46, 12]
+        },
+        {
+            "object_id": "town_foreground_bush_south_a",
+            "asset_id": "prop_bush",
+            "position": [442, 758],
+            "display_size": [66, 68],
+            "anchor": [0.5, 1.0],
+            "sort_y": 758,
+            "layer": "Foreground",
+            "contact_shadow": true
+        },
+        {
+            "object_id": "town_foreground_bush_south_b",
+            "asset_id": "prop_bush",
+            "position": [858, 760],
+            "display_size": [66, 68],
+            "anchor": [0.5, 1.0],
+            "sort_y": 760,
+            "layer": "Foreground",
+            "mirror_x": true,
+            "contact_shadow": true
+        }
+    ],
+    "collision_rects": [
+        {
+            "object_id": "col_clock_left",
+            "rect": [
+                500,
+                286,
+                58,
+                40
+            ]
+        },
+        {
+            "object_id": "col_clock_right",
+            "rect": [
+                594,
+                286,
+                58,
+                40
+            ]
+        },
+        {
+            "object_id": "col_bakery",
+            "rect": [
+                102,
+                251,
+                156,
+                35
+            ]
+        },
+        {
+            "object_id": "col_bindery",
+            "rect": [
+                906,
+                252,
+                156,
+                34
+            ]
+        },
+        {
+            "object_id": "col_pond_core",
+            "rect": [
+                66,
+                516,
+                150,
+                90
+            ]
+        },
+        {
+            "object_id": "col_tree_nw",
+            "rect": [
+                68,
+                135,
+                18,
+                18
+            ]
+        },
+        {
+            "object_id": "col_tree_ne",
+            "rect": [
+                1081,
+                153,
+                18,
+                18
+            ]
+        },
+        {
+            "object_id": "col_tree_sw",
+            "rect": [
+                291,
+                684,
+                18,
+                18
+            ]
+        },
+        {
+            "object_id": "col_notice",
+            "rect": [
+                850,
+                558,
+                28,
+                16
+            ]
+        }
+    ],
+    "gameplay_overrides": {
+        "square_clock_face": {
+            "interaction_rect": [
+                554,
+                102,
+                44,
+                58
+            ]
+        },
+        "square_signpost": {
+            "interaction_rect": [
+                842,
+                528,
+                44,
+                50
+            ]
+        },
+        "white_line_view": {
+            "interaction_rect": [
+                1050,
+                416,
+                44,
+                36
+            ]
+        },
+        "square_to_inn": {
+            "trigger_rect": [
+                532,
+                724,
+                88,
+                40
+            ]
+        },
+        "square_to_chapel": {
+            "trigger_rect": [
+                532,
+                0,
+                88,
+                42
+            ]
+        },
+        "square_to_photo": {
+            "trigger_rect": [
+                0,
+                354,
+                45,
+                74
+            ]
+        },
+        "square_to_harbor": {
+            "trigger_rect": [
+                1107,
+                350,
+                45,
+                74
+            ]
+        },
+        "square_to_cabin": {
+            "trigger_rect": [
+                560,
+                284,
+                32,
+                44
+            ]
+        }
+    },
+    "lights": [
+        {
+            "object_id": "town_lantern_nw_light",
+            "position": [
+                456,
+                310
+            ],
+            "color": "#efbd69",
+            "energy": 0.32,
+            "radius": 72
+        },
+        {
+            "object_id": "town_lantern_se_light",
+            "position": [
+                686,
+                368
+            ],
+            "color": "#efbd69",
+            "energy": 0.32,
+            "radius": 72
+        }
+    ],
+    "zones": []
+}
