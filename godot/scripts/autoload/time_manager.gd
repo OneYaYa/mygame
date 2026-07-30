@@ -62,9 +62,17 @@ func sync_world_flags(state: Dictionary) -> void:
 func sync_npc_schedules(state: Dictionary) -> void:
 	var elapsed: float = float(state.get("loopElapsed", 0.0))
 	var wander: float = 22.0 if int(elapsed / 35.0) % 2 != 0 else -18.0
+	var schedule_flags: Dictionary = state.get("flags", {}) as Dictionary
 	_move_npc(state, "dorothea", "inn-lobby" if elapsed < 16.0 * 60.0 else "inn-upstairs", 430.0 + wander if elapsed < 16.0 * 60.0 else 470.0, 275.0 if elapsed < 16.0 * 60.0 else 335.0)
-	_move_npc(state, "arthur", "clock-cabin" if elapsed < 17.0 * 60.0 else "inn-upstairs", 385.0 + wander if elapsed < 17.0 * 60.0 else 130.0, 300.0 if elapsed < 17.0 * 60.0 else 335.0)
-	_move_npc(state, "beatrice", "chapel-interior" if elapsed < 17.5 * 60.0 else "inn-upstairs", 545.0 if elapsed < 17.5 * 60.0 else 240.0, 320.0 + wander * 0.5 if elapsed < 17.5 * 60.0 else 335.0)
+	if bool(schedule_flags.get("arthur_stops_clock", false)):
+		_move_npc(state, "arthur", "clock-basement", 310.0, 326.0)
+	else:
+		_move_npc(state, "arthur", "clock-cabin" if elapsed < 17.0 * 60.0 else "inn-upstairs", 385.0 + wander if elapsed < 17.0 * 60.0 else 130.0, 300.0 if elapsed < 17.0 * 60.0 else 335.0)
+	var beatrice_committed: bool = bool(schedule_flags.get("beatrice_rings_seventh", false))
+	if beatrice_committed:
+		_move_npc(state, "beatrice", "chapel-belfry", 548.0, 368.0)
+	else:
+		_move_npc(state, "beatrice", "chapel-interior" if elapsed < 17.5 * 60.0 else "inn-upstairs", 545.0 if elapsed < 17.5 * 60.0 else 240.0, 320.0 + wander * 0.5 if elapsed < 17.5 * 60.0 else 335.0)
 	_move_npc(state, "conrad", "harbor" if elapsed < 19.0 * 60.0 else "harbor-control", 770.0 + wander * 2.0 if elapsed < 19.0 * 60.0 else 560.0, 465.0 if elapsed < 19.0 * 60.0 else 315.0)
 	_move_npc(state, "elias", "photo-studio" if elapsed < 18.0 * 60.0 else "inn-upstairs", 430.0 + wander if elapsed < 18.0 * 60.0 else 590.0, 315.0 if elapsed < 18.0 * 60.0 else 335.0)
 	_move_npc(state, "florence", "archive-room" if elapsed < 18.0 * 60.0 else "inn-upstairs", 430.0 + wander if elapsed < 18.0 * 60.0 else 700.0, 270.0 if elapsed < 18.0 * 60.0 else 335.0)

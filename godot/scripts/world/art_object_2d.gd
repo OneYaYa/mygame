@@ -16,6 +16,8 @@ var display_size: Vector2 = Vector2(32, 32)
 var _procedural_type: String = ""
 var _primary: Color = Color("78664f")
 var _secondary: Color = Color("c5aa72")
+var _story_opacity: float = 1.0
+var _occlusion_opacity: float = 1.0
 
 
 func configure(data: Dictionary, asset: Dictionary, texture: Texture2D) -> void:
@@ -45,6 +47,35 @@ func configure(data: Dictionary, asset: Dictionary, texture: Texture2D) -> void:
 	_build_shadow(bool(data.get("contact_shadow", asset.get("contact_shadow", false))))
 	_build_collision(data.get("collision_rect", []))
 	queue_redraw()
+
+
+func update_story_state(state: Dictionary) -> void:
+	var flag_name: String = str(object_data.get("story_flag", ""))
+	if flag_name.is_empty():
+		_story_opacity = 1.0
+	else:
+		var flags: Dictionary = state.get("flags", {}) as Dictionary
+		var active: bool = bool(flags.get(flag_name, false))
+		if bool(object_data.get("story_invert", false)):
+			active = not active
+		_story_opacity = 1.0 if active else clampf(float(object_data.get("inactive_opacity", 0.28)), 0.0, 1.0)
+	_apply_runtime_opacity()
+
+
+func update_occlusion(player_position: Vector2) -> void:
+	var values: Array = object_data.get("occlusion_fade_rect", []) as Array
+	if values.size() != 4:
+		_occlusion_opacity = 1.0
+		_apply_runtime_opacity()
+		return
+	var fade_rect := Rect2(float(values[0]), float(values[1]), float(values[2]), float(values[3]))
+	var target: float = clampf(float(object_data.get("occlusion_alpha", 0.36)), 0.15, 1.0) if fade_rect.has_point(player_position) else 1.0
+	_occlusion_opacity = move_toward(_occlusion_opacity, target, 0.10)
+	_apply_runtime_opacity()
+
+
+func _apply_runtime_opacity() -> void:
+	modulate.a = minf(_story_opacity, _occlusion_opacity)
 
 
 func visual_rect() -> Rect2:
@@ -77,6 +108,23 @@ func _draw() -> void:
 		"slot": _draw_slot(rect)
 		"signal": _draw_signal(rect)
 		"safelight": _draw_safelight(rect)
+		"built_in_storage": _draw_built_in_storage(rect)
+		"window_seat": _draw_window_seat(rect)
+		"fireplace_surround": _draw_fireplace_surround(rect)
+		"entry_partition": _draw_entry_partition(rect)
+		"timber_platform": _draw_timber_platform(rect)
+		"support_column": _draw_support_column(rect)
+		"hammer_frame": _draw_hammer_frame(rect)
+		"depth_background": _draw_depth_background(rect)
+		"foreground_beam": _draw_foreground_beam(rect)
+		"cave_wall_cluster": _draw_cave_wall_cluster(rect)
+		"cave_overhang": _draw_cave_overhang(rect)
+		"evidence_cluster": _draw_evidence_cluster(rect)
+		"radial_floor": _draw_radial_floor(rect)
+		"slot_arc_frame": _draw_slot_arc_frame(rect)
+		"station_structure": _draw_station_structure(rect)
+		"signal_bridge": _draw_signal_bridge(rect)
+		"foreground_pipe": _draw_foreground_pipe(rect)
 		"missing":
 			draw_rect(rect, _primary.darkened(0.2))
 			draw_rect(rect.grow(-3), _secondary, false, 2.0)
@@ -261,6 +309,178 @@ func _draw_signal(rect: Rect2) -> void:
 func _draw_safelight(rect: Rect2) -> void:
 	draw_rect(Rect2(rect.position + Vector2(rect.size.x * 0.42, rect.size.y * 0.4), Vector2(rect.size.x * 0.16, rect.size.y * 0.6)), _primary.darkened(0.45))
 	draw_circle(rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.34), minf(rect.size.x, rect.size.y) * 0.28, _secondary)
+
+
+func _draw_built_in_storage(rect: Rect2) -> void:
+	draw_rect(rect, _primary.darkened(0.44))
+	draw_rect(rect.grow(-4), _primary.darkened(0.12))
+	draw_rect(Rect2(rect.position + Vector2(3, 3), Vector2(rect.size.x - 6, 7)), _secondary.darkened(0.30))
+	var bays: int = maxi(2, floori(rect.size.x / 34.0))
+	for index: int in range(1, bays):
+		var x: float = rect.position.x + rect.size.x * float(index) / float(bays)
+		draw_line(Vector2(x, rect.position.y + 6), Vector2(x, rect.end.y - 5), _primary.darkened(0.5), 3.0)
+	for y: float in [rect.position.y + rect.size.y * 0.43, rect.position.y + rect.size.y * 0.70]:
+		draw_line(Vector2(rect.position.x + 5, y), Vector2(rect.end.x - 5, y), _secondary.darkened(0.38), 2.0)
+	for index: int in range(bays):
+		draw_circle(Vector2(rect.position.x + rect.size.x * (float(index) + 0.5) / float(bays), rect.position.y + rect.size.y * 0.58), 1.5, _secondary)
+
+
+func _draw_window_seat(rect: Rect2) -> void:
+	var frame := Rect2(rect.position, Vector2(rect.size.x, rect.size.y * 0.64))
+	draw_rect(frame, _primary.darkened(0.48))
+	draw_rect(frame.grow(-4), Color("597878"))
+	draw_line(Vector2(frame.get_center().x, frame.position.y + 4), Vector2(frame.get_center().x, frame.end.y - 4), _primary.darkened(0.32), 3.0)
+	draw_line(Vector2(frame.position.x + 4, frame.get_center().y), Vector2(frame.end.x - 4, frame.get_center().y), _primary.darkened(0.32), 2.0)
+	var seat := Rect2(rect.position + Vector2(2, rect.size.y * 0.62), Vector2(rect.size.x - 4, rect.size.y * 0.26))
+	draw_rect(seat, _primary.darkened(0.24))
+	draw_rect(seat.grow(-4), _secondary.darkened(0.28))
+	draw_line(rect.position + Vector2(6, rect.size.y - 3), rect.end - Vector2(6, 3), _primary.darkened(0.5), 4.0)
+
+
+func _draw_fireplace_surround(rect: Rect2) -> void:
+	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 10)), _secondary.darkened(0.38))
+	draw_rect(Rect2(rect.position + Vector2(6, 10), Vector2(13, rect.size.y - 10)), _primary.darkened(0.30))
+	draw_rect(Rect2(Vector2(rect.end.x - 19, rect.position.y + 10), Vector2(13, rect.size.y - 10)), _primary.darkened(0.30))
+	draw_rect(Rect2(rect.position + Vector2(16, 18), Vector2(rect.size.x - 32, rect.size.y - 18)), _primary.darkened(0.58))
+	for y: int in range(int(rect.position.y + 14), int(rect.end.y), 12):
+		draw_line(Vector2(rect.position.x + 5, y), Vector2(rect.end.x - 5, y), _secondary.darkened(0.55), 1.0)
+
+
+func _draw_entry_partition(rect: Rect2) -> void:
+	draw_rect(Rect2(rect.position, Vector2(9, rect.size.y)), _primary.darkened(0.42))
+	draw_rect(Rect2(Vector2(rect.end.x - 9, rect.position.y), Vector2(9, rect.size.y)), _primary.darkened(0.42))
+	draw_rect(Rect2(rect.position + Vector2(0, rect.size.y * 0.60), Vector2(rect.size.x, rect.size.y * 0.40)), _primary.darkened(0.16))
+	draw_line(Vector2(rect.position.x + 5, rect.position.y + rect.size.y * 0.66), Vector2(rect.end.x - 5, rect.position.y + rect.size.y * 0.66), _secondary.darkened(0.30), 3.0)
+	for x: int in range(int(rect.position.x + 14), int(rect.end.x - 10), 22):
+		draw_line(Vector2(x, rect.position.y + rect.size.y * 0.66), Vector2(x, rect.end.y - 4), _primary.darkened(0.48), 2.0)
+
+
+func _draw_timber_platform(rect: Rect2) -> void:
+	draw_colored_polygon(PackedVector2Array([rect.position + Vector2(6, 0), rect.end - Vector2(6, rect.size.y), rect.end - Vector2(0, 10), rect.position + Vector2(0, rect.size.y - 10)]), _primary.darkened(0.26))
+	for y: int in range(int(rect.position.y + 8), int(rect.end.y - 8), 12):
+		draw_line(Vector2(rect.position.x + 4, y), Vector2(rect.end.x - 4, y), _secondary.darkened(0.47), 2.0)
+	draw_line(rect.position + Vector2(2, rect.size.y - 9), rect.end - Vector2(2, 9), _secondary.darkened(0.18), 4.0)
+	for x: int in range(int(rect.position.x + 12), int(rect.end.x), 38):
+		draw_line(Vector2(x, rect.end.y - 10), Vector2(x - 8, rect.end.y), _primary.darkened(0.55), 4.0)
+
+
+func _draw_support_column(rect: Rect2) -> void:
+	draw_colored_polygon(PackedVector2Array([rect.position + Vector2(7, 0), rect.end - Vector2(7, rect.size.y), rect.end - Vector2(1, 0), rect.position + Vector2(1, rect.size.y)]), _primary.darkened(0.28))
+	draw_line(rect.position + Vector2(9, 4), rect.end - Vector2(rect.size.x - 9, 5), _secondary.darkened(0.34), 3.0)
+	draw_line(rect.position + Vector2(2, rect.size.y * 0.35), Vector2(rect.end.x - 2, rect.position.y + rect.size.y * 0.52), _primary.darkened(0.52), 5.0)
+	draw_circle(rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.20), 3.0, _secondary)
+	draw_circle(rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.78), 3.0, _secondary)
+
+
+func _draw_hammer_frame(rect: Rect2) -> void:
+	var post_w: float = maxf(9.0, rect.size.x * 0.09)
+	draw_rect(Rect2(rect.position + Vector2(8, 20), Vector2(post_w, rect.size.y - 20)), _primary.darkened(0.30))
+	draw_rect(Rect2(Vector2(rect.end.x - 8 - post_w, rect.position.y + 20), Vector2(post_w, rect.size.y - 20)), _primary.darkened(0.30))
+	draw_rect(Rect2(rect.position + Vector2(2, 8), Vector2(rect.size.x - 4, 14)), _primary.darkened(0.18))
+	draw_line(rect.position + Vector2(14, 20), rect.end - Vector2(14, 3), _secondary.darkened(0.44), 5.0)
+	draw_line(Vector2(rect.end.x - 14, rect.position.y + 20), rect.position + Vector2(14, rect.size.y - 3), _secondary.darkened(0.44), 5.0)
+	for x: float in [rect.position.x + 18, rect.end.x - 18]:
+		draw_circle(Vector2(x, rect.position.y + 15), 3.0, _secondary)
+
+
+func _draw_depth_background(rect: Rect2) -> void:
+	draw_rect(rect, _primary.darkened(0.54))
+	for y: int in range(int(rect.position.y + 12), int(rect.end.y), 28):
+		draw_line(Vector2(rect.position.x, y), Vector2(rect.end.x, y - 10), _secondary.darkened(0.68), 3.0)
+	for x: int in range(int(rect.position.x + 18), int(rect.end.x), 54):
+		draw_line(Vector2(x, rect.position.y), Vector2(x - 22, rect.end.y), _primary.lightened(0.06), 4.0)
+
+
+func _draw_foreground_beam(rect: Rect2) -> void:
+	draw_rect(rect, _primary.darkened(0.38))
+	draw_rect(rect.grow(-4), _primary.darkened(0.12))
+	draw_line(rect.position + Vector2(8, 5), rect.end - Vector2(8, rect.size.y - 5), _secondary.darkened(0.38), 3.0)
+	for x: int in range(int(rect.position.x + 20), int(rect.end.x), 64):
+		draw_circle(Vector2(x, rect.get_center().y), 3.0, _secondary.darkened(0.24))
+
+
+func _draw_cave_wall_cluster(rect: Rect2) -> void:
+	var points := PackedVector2Array([
+		rect.position + Vector2(0, rect.size.y * 0.30), rect.position + Vector2(rect.size.x * 0.18, 3),
+		rect.position + Vector2(rect.size.x * 0.48, rect.size.y * 0.12), rect.position + Vector2(rect.size.x * 0.70, 0),
+		rect.end - Vector2(0, rect.size.y * 0.38), rect.end, rect.position + Vector2(0, rect.size.y),
+	])
+	draw_colored_polygon(points, _primary.darkened(0.25))
+	var outline: PackedVector2Array = points.duplicate()
+	outline.append(points[0])
+	draw_polyline(outline, _secondary.darkened(0.48), 4.0)
+	draw_colored_polygon(PackedVector2Array([points[1], points[2], rect.position + Vector2(rect.size.x * 0.34, rect.size.y * 0.58)]), _primary.lightened(0.07))
+	draw_colored_polygon(PackedVector2Array([points[3], points[4], rect.position + Vector2(rect.size.x * 0.62, rect.size.y * 0.66)]), _primary.darkened(0.42))
+
+
+func _draw_cave_overhang(rect: Rect2) -> void:
+	var points := PackedVector2Array([
+		rect.position, rect.end - Vector2(0, rect.size.y), rect.position + Vector2(rect.size.x, rect.size.y * 0.48),
+		rect.position + Vector2(rect.size.x * 0.82, rect.size.y * 0.42), rect.position + Vector2(rect.size.x * 0.68, rect.size.y * 0.72),
+		rect.position + Vector2(rect.size.x * 0.53, rect.size.y * 0.50), rect.position + Vector2(rect.size.x * 0.34, rect.size.y * 0.82),
+		rect.position + Vector2(rect.size.x * 0.18, rect.size.y * 0.52),
+	])
+	draw_colored_polygon(points, _primary.darkened(0.22))
+	draw_colored_polygon(PackedVector2Array([points[0], points[7], rect.position + Vector2(rect.size.x * 0.30, rect.size.y * 0.28)]), _primary.lightened(0.04))
+	draw_colored_polygon(PackedVector2Array([points[2], points[3], points[4], rect.position + Vector2(rect.size.x * 0.72, rect.size.y * 0.24)]), _primary.darkened(0.38))
+	draw_colored_polygon(PackedVector2Array([points[5], points[6], rect.position + Vector2(rect.size.x * 0.46, rect.size.y * 0.30)]), _primary.darkened(0.08))
+	draw_polyline(points, _secondary.darkened(0.62), 4.0)
+
+
+func _draw_evidence_cluster(rect: Rect2) -> void:
+	_draw_cave_wall_cluster(rect)
+	var pocket := rect.position + Vector2(rect.size.x * 0.57, rect.size.y * 0.62)
+	draw_circle(pocket, 11.0, _primary.darkened(0.62))
+	draw_rect(Rect2(pocket - Vector2(8, 5), Vector2(16, 10)), _secondary.darkened(0.18))
+	draw_line(pocket - Vector2(5, 2), pocket + Vector2(5, 1), Color("9abdb8"), 2.0)
+
+
+func _draw_radial_floor(rect: Rect2) -> void:
+	var center: Vector2 = rect.get_center()
+	var outer: float = minf(rect.size.x, rect.size.y) * 0.46
+	for ring_ratio: float in [1.0, 0.76, 0.48]:
+		draw_arc(center, outer * ring_ratio, 0.0, TAU, 24, _primary.lightened(0.10 if ring_ratio < 1.0 else 0.0), 4.0)
+	for index: int in range(8):
+		var angle: float = TAU * float(index) / 8.0 - PI * 0.5
+		draw_line(center + Vector2(cos(angle), sin(angle)) * outer * 0.25, center + Vector2(cos(angle), sin(angle)) * outer, _secondary.darkened(0.46), 4.0)
+		draw_circle(center + Vector2(cos(angle), sin(angle)) * outer * 0.78, 3.0, _secondary.darkened(0.20))
+
+
+func _draw_slot_arc_frame(rect: Rect2) -> void:
+	var center := Vector2(rect.get_center().x, rect.end.y + rect.size.y * 0.12)
+	draw_arc(center, rect.size.x * 0.48, PI, TAU, 28, _primary, 10.0)
+	draw_arc(center, rect.size.x * 0.42, PI, TAU, 28, _secondary.darkened(0.46), 3.0)
+	for index: int in range(7):
+		var angle: float = PI + PI * (float(index) + 0.5) / 7.0
+		var point := center + Vector2(cos(angle), sin(angle)) * rect.size.x * 0.45
+		draw_line(point, point + Vector2(cos(angle), sin(angle)) * 14.0, _secondary, 4.0)
+
+
+func _draw_station_structure(rect: Rect2) -> void:
+	draw_colored_polygon(PackedVector2Array([rect.position + Vector2(10, 0), rect.end - Vector2(10, rect.size.y), rect.end - Vector2(0, 16), rect.position + Vector2(0, rect.size.y - 16)]), _primary.darkened(0.34))
+	draw_rect(Rect2(rect.position + Vector2(8, 10), Vector2(rect.size.x - 16, rect.size.y * 0.45)), _primary.darkened(0.08))
+	draw_rect(Rect2(rect.position + Vector2(15, 17), Vector2(rect.size.x - 30, rect.size.y * 0.22)), _secondary.darkened(0.46))
+	draw_line(rect.position + Vector2(10, rect.size.y - 18), rect.end - Vector2(10, 18), _secondary.darkened(0.18), 5.0)
+	for x: int in range(int(rect.position.x + 22), int(rect.end.x - 10), 28):
+		draw_circle(Vector2(x, rect.position.y + rect.size.y * 0.30), 3.0, _secondary)
+
+
+func _draw_signal_bridge(rect: Rect2) -> void:
+	draw_rect(Rect2(rect.position + Vector2(0, rect.size.y * 0.38), Vector2(rect.size.x, 14)), _primary.darkened(0.30))
+	draw_line(rect.position + Vector2(4, rect.size.y * 0.38), rect.position + Vector2(rect.size.x * 0.18, rect.size.y), _primary.darkened(0.52), 7.0)
+	draw_line(Vector2(rect.end.x - 4, rect.position.y + rect.size.y * 0.38), rect.position + Vector2(rect.size.x * 0.82, rect.size.y), _primary.darkened(0.52), 7.0)
+	for ratio: float in [0.25, 0.5, 0.75]:
+		var center := rect.position + Vector2(rect.size.x * ratio, rect.size.y * 0.28)
+		draw_rect(Rect2(center - Vector2(13, 12), Vector2(26, 24)), _primary.darkened(0.48))
+		draw_circle(center, 6.0, _secondary)
+
+
+func _draw_foreground_pipe(rect: Rect2) -> void:
+	var pipe_y: float = rect.position.y + rect.size.y * 0.48
+	draw_line(Vector2(rect.position.x + 12, pipe_y), Vector2(rect.end.x - 12, pipe_y), _primary.darkened(0.36), maxf(10.0, rect.size.y * 0.24))
+	draw_line(Vector2(rect.position.x + 12, pipe_y - 3), Vector2(rect.end.x - 12, pipe_y - 3), _secondary.darkened(0.42), 3.0)
+	for x: int in range(int(rect.position.x + 28), int(rect.end.x), 72):
+		draw_arc(Vector2(x, pipe_y), 9.0, -PI * 0.5, PI * 0.5, 8, _secondary.darkened(0.18), 3.0)
 
 
 func _rounded_vector(value: Variant) -> Vector2:

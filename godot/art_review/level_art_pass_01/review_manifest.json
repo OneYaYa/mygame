@@ -1,0 +1,172 @@
+{
+  "pass_id": "level_art_vertical_slice_pass_01",
+  "real_capture_renderer": "Godot 4.6.3 OpenGL Compatibility",
+  "capture_size": [
+    1152,
+    648
+  ],
+  "before": [
+    {
+      "map_id": "player-room",
+      "source": "07_player-room.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "player-room.png",
+        "player-room_full_scene.png",
+        "player-room_gameplay_camera.png",
+        "player-room_core_visual_center.png",
+        "player-room_main_function_cluster.png",
+        "player-room_foreground_layer.png",
+        "player-room_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    },
+    {
+      "map_id": "chapel-belfry",
+      "source": "12_chapel-belfry.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "chapel-belfry.png",
+        "chapel-belfry_full_scene.png",
+        "chapel-belfry_gameplay_camera.png",
+        "chapel-belfry_core_visual_center.png",
+        "chapel-belfry_main_function_cluster.png",
+        "chapel-belfry_foreground_layer.png",
+        "chapel-belfry_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    },
+    {
+      "map_id": "low-tide-cave",
+      "source": "16_low-tide-cave.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "low-tide-cave.png",
+        "low-tide-cave_full_scene.png",
+        "low-tide-cave_gameplay_camera.png",
+        "low-tide-cave_core_visual_center.png",
+        "low-tide-cave_main_function_cluster.png",
+        "low-tide-cave_foreground_layer.png",
+        "low-tide-cave_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    },
+    {
+      "map_id": "clock-basement",
+      "source": "17_clock-basement.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "clock-basement.png",
+        "clock-basement_full_scene.png",
+        "clock-basement_gameplay_camera.png",
+        "clock-basement_core_visual_center.png",
+        "clock-basement_main_function_cluster.png",
+        "clock-basement_foreground_layer.png",
+        "clock-basement_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    }
+  ],
+  "after": [
+    {
+      "map_id": "player-room",
+      "source": "07_player-room.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "player-room.png",
+        "player-room_full_scene.png",
+        "player-room_gameplay_camera.png",
+        "player-room_core_visual_center.png",
+        "player-room_main_function_cluster.png",
+        "player-room_foreground_layer.png",
+        "player-room_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    },
+    {
+      "map_id": "chapel-belfry",
+      "source": "12_chapel-belfry.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "chapel-belfry.png",
+        "chapel-belfry_full_scene.png",
+        "chapel-belfry_gameplay_camera.png",
+        "chapel-belfry_core_visual_center.png",
+        "chapel-belfry_main_function_cluster.png",
+        "chapel-belfry_foreground_layer.png",
+        "chapel-belfry_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    },
+    {
+      "map_id": "low-tide-cave",
+      "source": "16_low-tide-cave.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "low-tide-cave.png",
+        "low-tide-cave_full_scene.png",
+        "low-tide-cave_gameplay_camera.png",
+        "low-tide-cave_core_visual_center.png",
+        "low-tide-cave_main_function_cluster.png",
+        "low-tide-cave_foreground_layer.png",
+        "low-tide-cave_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    },
+    {
+      "map_id": "clock-basement",
+      "source": "17_clock-basement.png",
+      "source_size": [
+        1152,
+        648
+      ],
+      "views": [
+        "clock-basement.png",
+        "clock-basement_full_scene.png",
+        "clock-basement_gameplay_camera.png",
+        "clock-basement_core_visual_center.png",
+        "clock-basement_main_function_cluster.png",
+        "clock-basement_foreground_layer.png",
+        "clock-basement_entrance_and_path.png"
+      ],
+      "detail_scale": 2,
+      "detail_resampling": "nearest"
+    }
+  ],
+  "comparisons": [
+    "player-room_comparison.png",
+    "chapel-belfry_comparison.png",
+    "low-tide-cave_comparison.png",
+    "clock-basement_comparison.png"
+  ],
+  "contact_sheet": "contact_sheet.png",
+  "detail_policy": "crop real capture, then 2x nearest-neighbour only"
+}

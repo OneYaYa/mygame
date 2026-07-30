@@ -1,0 +1,983 @@
+{
+  "godot": {
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "hex": 263683,
+    "status": "stable",
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "timestamp": 0,
+    "string": "4.6.3-stable (official)"
+  },
+  "maps": [
+    {
+      "index": 1,
+      "id": "town",
+      "name": "钟影广场",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 768,
+      "time": "10:00",
+      "file": "01_town.png",
+      "art_metrics": {
+        "map_id": "town",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 28,
+        "collision_count": 9,
+        "portal_count": 5,
+        "generated_tile_count": 1162,
+        "player_spawn": [
+          576.0,
+          384.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "square_to_inn",
+            "target": "inn-yard",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              532.0,
+              724.0,
+              88.0,
+              40.0
+            ]
+          },
+          {
+            "portal_id": "square_to_chapel",
+            "target": "chapel-hill",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              532.0,
+              0.0,
+              88.0,
+              42.0
+            ]
+          },
+          {
+            "portal_id": "square_to_photo",
+            "target": "photo-lane",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              0.0,
+              354.0,
+              45.0,
+              74.0
+            ]
+          },
+          {
+            "portal_id": "square_to_harbor",
+            "target": "harbor",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              1107.0,
+              350.0,
+              45.0,
+              74.0
+            ]
+          },
+          {
+            "portal_id": "square_to_cabin",
+            "target": "clock-cabin",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              560.0,
+              284.0,
+              32.0,
+              44.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "id": "inn-yard",
+      "name": "湖畔旅店前庭",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 720,
+      "time": "10:00",
+      "file": "02_inn-yard.png",
+      "art_metrics": {
+        "map_id": "inn-yard",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 15,
+        "collision_count": 7,
+        "portal_count": 2,
+        "generated_tile_count": 1003,
+        "player_spawn": [
+          576.0,
+          360.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "innyard_to_square",
+            "target": "town",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              536.0,
+              0.0,
+              80.0,
+              42.0
+            ]
+          },
+          {
+            "portal_id": "enter_inn",
+            "target": "inn-lobby",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              560.0,
+              290.0,
+              32.0,
+              46.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "id": "chapel-hill",
+      "name": "六声礼拜堂",
+      "kind": "outdoor",
+      "width": 1120,
+      "height": 744,
+      "time": "10:00",
+      "file": "03_chapel-hill.png",
+      "art_metrics": {
+        "map_id": "chapel-hill",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 16,
+        "collision_count": 5,
+        "portal_count": 2,
+        "generated_tile_count": 916,
+        "player_spawn": [
+          560.0,
+          372.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "chapel_to_square",
+            "target": "town",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              518.0,
+              704.0,
+              84.0,
+              40.0
+            ]
+          },
+          {
+            "portal_id": "enter_chapel",
+            "target": "chapel-interior",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              544.0,
+              306.0,
+              30.0,
+              48.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "id": "photo-lane",
+      "name": "银盐巷",
+      "kind": "outdoor",
+      "width": 1152,
+      "height": 720,
+      "time": "10:00",
+      "file": "04_photo-lane.png",
+      "art_metrics": {
+        "map_id": "photo-lane",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 11,
+        "collision_count": 5,
+        "portal_count": 3,
+        "generated_tile_count": 922,
+        "player_spawn": [
+          576.0,
+          360.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "photo_to_square",
+            "target": "town",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              1108.0,
+              358.0,
+              44.0,
+              72.0
+            ]
+          },
+          {
+            "portal_id": "photo_to_archive",
+            "target": "archive-lane",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              0.0,
+              358.0,
+              44.0,
+              72.0
+            ]
+          },
+          {
+            "portal_id": "enter_studio",
+            "target": "photo-studio",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              305.0,
+              303.0,
+              30.0,
+              42.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "id": "archive-lane",
+      "name": "档案坡道",
+      "kind": "outdoor",
+      "width": 1100,
+      "height": 720,
+      "time": "10:00",
+      "file": "05_archive-lane.png",
+      "art_metrics": {
+        "map_id": "archive-lane",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 9,
+        "collision_count": 5,
+        "portal_count": 2,
+        "generated_tile_count": 899,
+        "player_spawn": [
+          550.0,
+          360.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "archive_to_photo",
+            "target": "photo-lane",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              1056.0,
+              354.0,
+              44.0,
+              72.0
+            ]
+          },
+          {
+            "portal_id": "enter_archive",
+            "target": "archive-room",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              486.0,
+              296.0,
+              30.0,
+              44.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "id": "harbor",
+      "name": "回潮港",
+      "kind": "outdoor",
+      "width": 1280,
+      "height": 768,
+      "time": "10:00",
+      "file": "06_harbor.png",
+      "art_metrics": {
+        "map_id": "harbor",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 21,
+        "collision_count": 11,
+        "portal_count": 3,
+        "generated_tile_count": 1607,
+        "player_spawn": [
+          640.0,
+          384.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "conrad",
+            "position": [
+              767.562133789063,
+              432.370025634766
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "harbor_to_square",
+            "target": "town",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              0.0,
+              348.0,
+              44.0,
+              72.0
+            ]
+          },
+          {
+            "portal_id": "enter_harbor_control",
+            "target": "harbor-control",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              276.0,
+              270.0,
+              32.0,
+              42.0
+            ]
+          },
+          {
+            "portal_id": "enter_low_tide_cave",
+            "target": "low-tide-cave",
+            "revealed": false,
+            "reachable": true,
+            "trigger_rect": [
+              1164.0,
+              510.0,
+              60.0,
+              68.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "id": "player-room",
+      "name": "湖畔旅店 · 八号房",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "07_player-room.png",
+      "art_metrics": {
+        "map_id": "player-room",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 13,
+        "collision_count": 10,
+        "portal_count": 1,
+        "generated_tile_count": 38,
+        "player_spawn": [
+          384.0,
+          240.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "room8_to_hall",
+            "target": "inn-upstairs",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              360.0,
+              420.0,
+              48.0,
+              42.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "id": "inn-lobby",
+      "name": "湖畔旅店 · 大堂",
+      "kind": "interior",
+      "width": 840,
+      "height": 520,
+      "time": "10:00",
+      "file": "08_inn-lobby.png",
+      "art_metrics": {
+        "map_id": "inn-lobby",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 21,
+        "collision_count": 12,
+        "portal_count": 2,
+        "generated_tile_count": 61,
+        "player_spawn": [
+          420.0,
+          260.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "dorothea",
+            "position": [
+              527.152526855469,
+              199.858062744141
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "lobby_to_yard",
+            "target": "inn-yard",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              392.0,
+              442.0,
+              56.0,
+              44.0
+            ]
+          },
+          {
+            "portal_id": "lobby_to_upstairs",
+            "target": "inn-upstairs",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              662.0,
+              318.0,
+              64.0,
+              112.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "id": "inn-upstairs",
+      "name": "湖畔旅店 · 二楼走廊",
+      "kind": "interior",
+      "width": 960,
+      "height": 430,
+      "time": "00:00",
+      "file": "09_inn-upstairs.png",
+      "art_metrics": {
+        "map_id": "inn-upstairs",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 13,
+        "collision_count": 7,
+        "portal_count": 2,
+        "generated_tile_count": 105,
+        "player_spawn": [
+          480.0,
+          215.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "arthur",
+            "position": [
+              130.0,
+              335.0
+            ]
+          },
+          {
+            "npc_id": "beatrice",
+            "position": [
+              240.0,
+              335.0
+            ]
+          },
+          {
+            "npc_id": "dorothea",
+            "position": [
+              470.0,
+              335.0
+            ]
+          },
+          {
+            "npc_id": "elias",
+            "position": [
+              590.0,
+              335.0
+            ]
+          },
+          {
+            "npc_id": "florence",
+            "position": [
+              700.0,
+              335.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "hall_to_lobby",
+            "target": "inn-lobby",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              44.0,
+              292.0,
+              56.0,
+              90.0
+            ]
+          },
+          {
+            "portal_id": "hall_to_room8",
+            "target": "player-room",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              824.0,
+              172.0,
+              38.0,
+              70.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "id": "clock-cabin",
+      "name": "主钟维修舱",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "10_clock-cabin.png",
+      "art_metrics": {
+        "map_id": "clock-cabin",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 13,
+        "collision_count": 10,
+        "portal_count": 2,
+        "generated_tile_count": 280,
+        "player_spawn": [
+          384.0,
+          240.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "arthur",
+            "position": [
+              367.0,
+              300.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "cabin_to_square",
+            "target": "town",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              360.0,
+              420.0,
+              48.0,
+              44.0
+            ]
+          },
+          {
+            "portal_id": "cabin_to_basement",
+            "target": "clock-basement",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              646.0,
+              336.0,
+              48.0,
+              80.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "id": "chapel-interior",
+      "name": "六声礼拜堂 · 钟厅",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "11_chapel-interior.png",
+      "art_metrics": {
+        "map_id": "chapel-interior",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 12,
+        "collision_count": 11,
+        "portal_count": 2,
+        "generated_tile_count": 47,
+        "player_spawn": [
+          384.0,
+          240.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "beatrice",
+            "position": [
+              545.0,
+              311.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "chapel_inside_to_hill",
+            "target": "chapel-hill",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              360.0,
+              420.0,
+              48.0,
+              44.0
+            ]
+          },
+          {
+            "portal_id": "chapel_to_belfry",
+            "target": "chapel-belfry",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              656.0,
+              326.0,
+              48.0,
+              82.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 12,
+      "id": "chapel-belfry",
+      "name": "六声礼拜堂 · 钟楼",
+      "kind": "interior",
+      "width": 850,
+      "height": 460,
+      "time": "10:00",
+      "file": "12_chapel-belfry.png",
+      "art_metrics": {
+        "map_id": "chapel-belfry",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 7,
+        "collision_count": 8,
+        "portal_count": 1,
+        "generated_tile_count": 80,
+        "player_spawn": [
+          425.0,
+          248.070892333984
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "belfry_to_chapel",
+            "target": "chapel-interior",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              98.0,
+              328.0,
+              48.0,
+              84.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 13,
+      "id": "photo-studio",
+      "name": "银盐照相馆",
+      "kind": "interior",
+      "width": 820,
+      "height": 500,
+      "time": "10:00",
+      "file": "13_photo-studio.png",
+      "art_metrics": {
+        "map_id": "photo-studio",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 16,
+        "collision_count": 12,
+        "portal_count": 2,
+        "generated_tile_count": 44,
+        "player_spawn": [
+          410.0,
+          250.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "elias",
+            "position": [
+              412.0,
+              315.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "studio_to_lane",
+            "target": "photo-lane",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              386.0,
+              442.0,
+              48.0,
+              42.0
+            ]
+          },
+          {
+            "portal_id": "studio_to_darkroom",
+            "target": "hidden-darkroom",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              54.0,
+              188.0,
+              38.0,
+              108.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 14,
+      "id": "archive-room",
+      "name": "市政档案馆",
+      "kind": "interior",
+      "width": 860,
+      "height": 520,
+      "time": "10:00",
+      "file": "14_archive-room.png",
+      "art_metrics": {
+        "map_id": "archive-room",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 14,
+        "collision_count": 12,
+        "portal_count": 1,
+        "generated_tile_count": 46,
+        "player_spawn": [
+          430.0,
+          260.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "florence",
+            "position": [
+              412.0,
+              270.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "archive_room_to_lane",
+            "target": "archive-lane",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              406.0,
+              462.0,
+              48.0,
+              42.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 15,
+      "id": "harbor-control",
+      "name": "港务控制室",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "15_harbor-control.png",
+      "art_metrics": {
+        "map_id": "harbor-control",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 12,
+        "collision_count": 10,
+        "portal_count": 1,
+        "generated_tile_count": 280,
+        "player_spawn": [
+          384.0,
+          240.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "control_to_harbor",
+            "target": "harbor",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              360.0,
+              420.0,
+              48.0,
+              44.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "id": "low-tide-cave",
+      "name": "退潮维护洞穴",
+      "kind": "interior",
+      "width": 920,
+      "height": 520,
+      "time": "02:30",
+      "file": "16_low-tide-cave.png",
+      "art_metrics": {
+        "map_id": "low-tide-cave",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 10,
+        "collision_count": 13,
+        "portal_count": 1,
+        "generated_tile_count": 259,
+        "player_spawn": [
+          460.0,
+          260.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "cave_to_harbor",
+            "target": "harbor",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              40.0,
+              220.0,
+              52.0,
+              112.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "id": "clock-basement",
+      "name": "主钟地下室",
+      "kind": "interior",
+      "width": 900,
+      "height": 560,
+      "time": "10:00",
+      "file": "17_clock-basement.png",
+      "art_metrics": {
+        "map_id": "clock-basement",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 17,
+        "collision_count": 10,
+        "portal_count": 1,
+        "generated_tile_count": 430,
+        "player_spawn": [
+          450.0,
+          280.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "basement_to_cabin",
+            "target": "clock-cabin",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              426.0,
+              484.0,
+              48.0,
+              50.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 18,
+      "id": "hidden-darkroom",
+      "name": "消失的第二暗房",
+      "kind": "interior",
+      "width": 820,
+      "height": 500,
+      "time": "02:30",
+      "file": "18_hidden-darkroom.png",
+      "art_metrics": {
+        "map_id": "hidden-darkroom",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 13,
+        "collision_count": 9,
+        "portal_count": 1,
+        "generated_tile_count": 350,
+        "player_spawn": [
+          410.0,
+          250.0
+        ],
+        "npc_points": [
+          {
+            "npc_id": "ada",
+            "position": [
+              560.0,
+              280.0
+            ]
+          }
+        ],
+        "portal_reachability": [
+          {
+            "portal_id": "darkroom_to_studio",
+            "target": "photo-studio",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              738.0,
+              248.0,
+              38.0,
+              116.0
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

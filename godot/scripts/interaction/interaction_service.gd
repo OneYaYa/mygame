@@ -20,6 +20,11 @@ func interact(landmark: Dictionary, state: Dictionary) -> Dictionary:
 			result["text"] = "三张纸使用不同部门的抬头，却都在 SATURDAY 06:00 同一刻签发。地图旁注标出广场、礼拜堂与港口。"
 		"player_journal":
 			result = {"kind": "journal", "tab": "journal"}
+		"player_bed":
+			flags["rested_in_room"] = true
+			result = {"kind": "rest", "title": "八号房床铺", "text": "你只睡了半小时。炉火仍亮着，手账和定影照片都留在原处。", "real_seconds": 15.0}
+		"player_memory_board":
+			result = {"kind": "journal", "tab": "inventory"}
 		"inn_ledger":
 			KnowledgeManager.add_evidence(state, "ledger_gap", "旅店登记簿在六号与八号之间缺失一整行；这不是编号错误。")
 			result["title"] = "登记簿缺失行"
@@ -67,7 +72,19 @@ func interact(landmark: Dictionary, state: Dictionary) -> Dictionary:
 			result["title"] = "七号房钥匙牌"
 			result["text"] = "旧黄铜牌边缘因长期使用变得圆滑。把它带给旅店主人。"
 		"seventh_hammer":
-			result["text"] = "底座没有钟绳，只有一枚音叉形校准槽。它不用于报时，而在等待另一个系统的终止信号。"
+			if InventoryManager.has_item(state, "silver_tuning_fork") and bool(flags.get("fork_identified", false)):
+				flags["seventh_hammer_calibrated"] = true
+				result["text"] = "已鉴定的银色音叉滑入校准槽，锤架与吊绳出现同频共振；第七锤现在只等待司钟人的确认。"
+			else:
+				result["text"] = "底座没有钟绳，只有一枚音叉形校准槽。它不用于报时，而在等待另一个系统的终止信号。"
+		"belfry_calibration_rope":
+			if bool(flags.get("seventh_hammer_calibrated", false)) and bool(flags.get("beatrice_rings_seventh", false)):
+				flags["seventh_signal_ready"] = true
+				result["text"] = "绳索拉力已传到锤轴。贝娅特丽斯接管最终落锤位置，第七声进入待命状态。"
+			elif bool(flags.get("seventh_hammer_calibrated", false)):
+				result["text"] = "绳索已与音叉同频，但不可逆的落锤必须由司钟人亲自确认。"
+			else:
+				result["text"] = "绳索带动锤架空行程；缺少与底座校准槽匹配的工具。"
 		"spare_lens_pickup":
 			_pickup(state, "spare_lens", "从港口沙滩捡到带双导轨的厚镜片。")
 			result["title"] = "双槽备用镜片"
@@ -140,4 +157,3 @@ func _pickup(state: Dictionary, item_id: String, note: String) -> void:
 	if not InventoryManager.has_item(state, item_id):
 		InventoryManager.add_item(state, item_id)
 		GameManager.add_journal("item", note, false)
-

@@ -1,0 +1,252 @@
+{
+  "renderer": "Godot 4.6.3 OpenGL Compatibility / NVIDIA GeForce RTX 2060",
+  "full_screenshots": [
+    "01_town.png",
+    "02_inn-yard.png",
+    "03_chapel-hill.png",
+    "04_photo-lane.png",
+    "05_archive-lane.png",
+    "06_harbor.png",
+    "07_player-room.png",
+    "08_inn-lobby.png",
+    "09_inn-upstairs.png",
+    "10_clock-cabin.png",
+    "11_chapel-interior.png",
+    "12_chapel-belfry.png",
+    "13_photo-studio.png",
+    "14_archive-room.png",
+    "15_harbor-control.png",
+    "16_low-tide-cave.png",
+    "17_clock-basement.png",
+    "18_hidden-darkroom.png"
+  ],
+  "detail_screenshots": [
+    {
+      "map_id": "town",
+      "file": "details/01_town_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "town",
+      "file": "details/01_town_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "inn-yard",
+      "file": "details/02_inn-yard_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "inn-yard",
+      "file": "details/02_inn-yard_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "chapel-hill",
+      "file": "details/03_chapel-hill_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "chapel-hill",
+      "file": "details/03_chapel-hill_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "photo-lane",
+      "file": "details/04_photo-lane_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "photo-lane",
+      "file": "details/04_photo-lane_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "archive-lane",
+      "file": "details/05_archive-lane_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "archive-lane",
+      "file": "details/05_archive-lane_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "harbor",
+      "file": "details/06_harbor_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "harbor",
+      "file": "details/06_harbor_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "player-room",
+      "file": "details/07_player-room_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "player-room",
+      "file": "details/07_player-room_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "inn-lobby",
+      "file": "details/08_inn-lobby_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "inn-lobby",
+      "file": "details/08_inn-lobby_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "inn-upstairs",
+      "file": "details/09_inn-upstairs_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "inn-upstairs",
+      "file": "details/09_inn-upstairs_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "clock-cabin",
+      "file": "details/10_clock-cabin_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "clock-cabin",
+      "file": "details/10_clock-cabin_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "chapel-interior",
+      "file": "details/11_chapel-interior_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "chapel-interior",
+      "file": "details/11_chapel-interior_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "chapel-belfry",
+      "file": "details/12_chapel-belfry_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "chapel-belfry",
+      "file": "details/12_chapel-belfry_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "photo-studio",
+      "file": "details/13_photo-studio_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "photo-studio",
+      "file": "details/13_photo-studio_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "archive-room",
+      "file": "details/14_archive-room_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "archive-room",
+      "file": "details/14_archive-room_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "harbor-control",
+      "file": "details/15_harbor-control_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "harbor-control",
+      "file": "details/15_harbor-control_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "low-tide-cave",
+      "file": "details/16_low-tide-cave_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "low-tide-cave",
+      "file": "details/16_low-tide-cave_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "clock-basement",
+      "file": "details/17_clock-basement_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "clock-basement",
+      "file": "details/17_clock-basement_detail_2.png",
+      "scale": 2
+    },
+    {
+      "map_id": "hidden-darkroom",
+      "file": "details/18_hidden-darkroom_detail_1.png",
+      "scale": 2
+    },
+    {
+      "map_id": "hidden-darkroom",
+      "file": "details/18_hidden-darkroom_detail_2.png",
+      "scale": 2
+    }
+  ],
+  "contact_sheets": [
+    "batch_a_inn_contact_sheet.png",
+    "batch_b_chapel_contact_sheet.png",
+    "batch_c_photo_archive_contact_sheet.png",
+    "batch_d_engineering_contact_sheet.png",
+    "batch_e_hidden_contact_sheet.png",
+    "all_18_maps_contact_sheet.png"
+  ],
+  "frozen_regression": {
+    "town": {
+      "before_sha256": "a85d714c22f999d5a083c87140344798e155077588ae96f29420faa5c2896e9b",
+      "after_sha256": "41ed8abd917192d6d7d4f330c3ab512d2a963c5bd6abd3ee11a8880042b57acb",
+      "exact": false,
+      "changed_pixels": 14058,
+      "changed_percent": 1.8832,
+      "difference_bbox": [
+        396,
+        592,
+        757,
+        631
+      ],
+      "classification": "dynamic_frame_only"
+    },
+    "harbor": {
+      "before_sha256": "5c6c0863c3921d4cd99e9a5e9d53fcf3b62efb86b2f1366f7969b5de96ed8a87",
+      "after_sha256": "5bda32b9650cc4b71bf2e2267cd3ae512f41dc58fec4bb743824edcca6197a46",
+      "exact": false,
+      "changed_pixels": 774,
+      "changed_percent": 0.1037,
+      "difference_bbox": [
+        691,
+        360,
+        716,
+        407
+      ],
+      "classification": "dynamic_frame_only"
+    },
+    "inn-lobby": {
+      "before_sha256": "f6ee0ced2ce2f296286089bc9a213e578d52a254d9afb8c3257b6e01d993bb03",
+      "after_sha256": "f6ee0ced2ce2f296286089bc9a213e578d52a254d9afb8c3257b6e01d993bb03",
+      "exact": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "difference_bbox": null,
+      "classification": "exact"
+    }
+  }
+}

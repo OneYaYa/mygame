@@ -1,51 +1,452 @@
 {
-  "schema_version":1,"map_id":"clock-basement","theme_variant":"seven_witness_protocol","interaction_distance":54,
-  "canvas":{"outside_color":"#090f11","room_rect":[46,42,808,500],"wall_height":58,"side_wall":20,"wall_color":"#484b49","wall_dark":"#22292a","floor_color":"#444642","floor_style":"mechanical_stone","ambient_color":"#89877a","edge_color":"#222e2f"},
-  "ground_shapes":[
-    {"object_id":"basement_core_plate","kind":"platform","points":[[270,190],[630,190],[682,322],[628,424],[272,424],[218,322]],"color":"#3a3f3d"},
-    {"object_id":"basement_entry_lane","kind":"platform","points":[[406,420],[494,420],[510,526],[390,526]],"color":"#4e4a42"}
-  ],
-  "objects":[
-    {"object_id":"basement_core_console","procedural_type":"console","position":[450,350],"display_size":[188,100],"anchor":[0.5,1.0],"sort_y":350,"layer":"WorldObjects","color":"#303a3b","accent":"#c09a4c","contact_shadow":true,"shadow_size":[152,13]},
-    {"object_id":"basement_signal_bank","procedural_type":"signal","position":[450,238],"display_size":[150,62],"anchor":[0.5,1.0],"sort_y":238,"layer":"WorldObjects","color":"#2c3537","accent":"#b7924d","contact_shadow":true,"shadow_size":[116,9]},
-    {"object_id":"witness_slot_1_art","procedural_type":"slot","position":[248,176],"display_size":[42,58],"anchor":[0.5,1.0],"sort_y":176,"layer":"WorldObjects","color":"#333938","accent":"#927a50"},
-    {"object_id":"witness_slot_2_art","procedural_type":"slot","position":[316,156],"display_size":[42,58],"anchor":[0.5,1.0],"sort_y":156,"layer":"WorldObjects","color":"#333938","accent":"#927a50"},
-    {"object_id":"witness_slot_3_art","procedural_type":"slot","position":[384,146],"display_size":[42,58],"anchor":[0.5,1.0],"sort_y":146,"layer":"WorldObjects","color":"#333938","accent":"#927a50"},
-    {"object_id":"witness_slot_4_art","procedural_type":"slot","position":[516,146],"display_size":[42,58],"anchor":[0.5,1.0],"sort_y":146,"layer":"WorldObjects","color":"#333938","accent":"#927a50"},
-    {"object_id":"witness_slot_5_art","procedural_type":"slot","position":[584,156],"display_size":[42,58],"anchor":[0.5,1.0],"sort_y":156,"layer":"WorldObjects","color":"#333938","accent":"#927a50"},
-    {"object_id":"witness_slot_6_art","procedural_type":"slot","position":[652,176],"display_size":[42,58],"anchor":[0.5,1.0],"sort_y":176,"layer":"WorldObjects","color":"#333938","accent":"#927a50"},
-    {"object_id":"witness_slot_7_art","procedural_type":"slot","position":[450,142],"display_size":[48,66],"anchor":[0.5,1.0],"sort_y":142,"layer":"WorldObjects","color":"#3b3c35","accent":"#d0b15c"},
-    {"object_id":"basement_red_lever","procedural_type":"console","position":[274,414],"display_size":[76,74],"anchor":[0.5,1.0],"sort_y":414,"layer":"WorldObjects","color":"#482b2b","accent":"#d45d52","contact_shadow":true,"shadow_size":[58,9]},
-    {"object_id":"basement_white_knob","procedural_type":"console","position":[626,414],"display_size":[76,74],"anchor":[0.5,1.0],"sort_y":414,"layer":"WorldObjects","color":"#3c4140","accent":"#e1d9bd","contact_shadow":true,"shadow_size":[58,9]},
-    {"object_id":"basement_brake","procedural_type":"clockwork","position":[150,296],"display_size":[104,82],"anchor":[0.5,1.0],"sort_y":296,"layer":"WorldObjects","color":"#343b3a","accent":"#9e7c45","contact_shadow":true,"shadow_size":[80,10]},
-    {"object_id":"basement_gear_left","procedural_type":"gear","position":[94,380],"display_size":[54,54],"anchor":[0.5,1.0],"sort_y":380,"layer":"WorldObjects","color":"#68563c","accent":"#a9884d"},
-    {"object_id":"basement_gear_right","procedural_type":"gear","position":[806,372],"display_size":[54,54],"anchor":[0.5,1.0],"sort_y":372,"layer":"WorldObjects","color":"#68563c","accent":"#a9884d"},
-    {"object_id":"basement_door","procedural_type":"door","position":[450,542],"display_size":[30,62],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#303333","accent":"#a68b56"}
-  ],
-  "collision_rects":[
-    {"object_id":"col_basement_top","rect":[46,42,808,60]},{"object_id":"col_basement_left","rect":[46,102,20,440]},{"object_id":"col_basement_right","rect":[834,102,20,440]},
-    {"object_id":"col_basement_bottom_l","rect":[46,526,378,16]},{"object_id":"col_basement_bottom_r","rect":[476,526,378,16]},
-    {"object_id":"col_basement_core","rect":[362,310,176,40]},{"object_id":"col_basement_signal","rect":[380,212,140,26]},
-    {"object_id":"col_basement_red","rect":[240,384,68,30]},{"object_id":"col_basement_white","rect":[592,384,68,30]},
-    {"object_id":"col_basement_brake","rect":[103,262,94,34]}
-  ],
-  "gameplay_overrides":{
-    "three_signal_lights":{"interaction_rect":[378,186,144,54]},"witness_slot_seven":{"interaction_rect":[426,82,48,62]},
-    "red_erase_lever":{"interaction_rect":[238,346,72,70]},"white_continue_knob":{"interaction_rect":[590,346,72,70]},
-    "brake_interface":{"interaction_rect":[100,226,100,72]},"basement_to_cabin":{"trigger_rect":[426,484,48,50]}
+  "schema_version": 1,
+  "map_id": "clock-basement",
+  "theme_variant": "level_art_pass_01_radial_witness_protocol_center",
+  "interaction_distance": 60,
+  "camera_zoom": 1.15,
+  "camera_offset": [0, -22],
+  "review_player_position": [450, 492],
+  "canvas": {
+    "outside_color": "#070d0f",
+    "room_rect": [78, 46, 744, 498],
+    "wall_height": 60,
+    "side_wall": 20,
+    "wall_color": "#50534f",
+    "wall_dark": "#202829",
+    "floor_color": "#4b4d47",
+    "floor_style": "mechanical_stone",
+    "ambient_color": "#aaa795",
+    "edge_color": "#1d292b"
   },
-  "lights":[
-    {"object_id":"basement_core_light","position":[450,286],"color":"#c99c4f","energy":0.42,"radius":112},
-    {"object_id":"basement_red_light","position":[274,374],"color":"#d2554b","energy":0.34,"radius":74},
-    {"object_id":"basement_white_light","position":[626,374],"color":"#d7ded4","energy":0.28,"radius":74},
-    {"object_id":"basement_signal_cyan","position":[510,214],"color":"#65aeb1","energy":0.2,"radius":68}
+  "ground_shapes": [
+    {
+      "object_id": "basement_radial_core_field",
+      "kind": "platform",
+      "points": [[276,190],[624,190],[708,292],[676,414],[570,474],[330,474],[224,414],[192,292]],
+      "color": "#3c4140"
+    },
+    {
+      "object_id": "basement_entry_spine",
+      "kind": "platform",
+      "points": [[402,410],[498,410],[526,524],[374,524]],
+      "color": "#514a3f"
+    },
+    {
+      "object_id": "basement_red_station_floor",
+      "kind": "platform",
+      "points": [[148,344],[290,326],[326,420],[286,482],[142,462]],
+      "color": "#493737"
+    },
+    {
+      "object_id": "basement_white_station_floor",
+      "kind": "platform",
+      "points": [[610,326],[752,344],[758,462],[614,482],[574,420]],
+      "color": "#555650"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_basement_entrance","type":"entrance_zone","rect":[386,420,128,106]},
-    {"object_id":"zone_basement_move","type":"movement_zone","rect":[206,240,488,230]},
-    {"object_id":"zone_basement_primary","type":"primary_interaction_zone","rect":[330,180,240,190]},
-    {"object_id":"zone_basement_story","type":"secondary_story_zone","rect":[204,76,492,108]},
-    {"object_id":"zone_basement_decor","type":"decoration_zone","rect":[80,214,740,214]},
-    {"object_id":"zone_basement_blocked","type":"blocked_zone","rect":[46,42,808,60]}
-  ]
+  "objects": [
+    {
+      "object_id": "basement_radial_floor_structure",
+      "procedural_type": "radial_floor",
+      "position": [450, 432],
+      "anchor": [0.5, 1.0],
+      "display_size": [452, 336],
+      "color": "#676255",
+      "accent": "#bd914e",
+      "layer": "GroundDetails",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "basement_witness_slot_arc_frame",
+      "procedural_type": "slot_arc_frame",
+      "position": [450, 294],
+      "anchor": [0.5, 1.0],
+      "display_size": [520, 198],
+      "color": "#57594f",
+      "accent": "#c39a55",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "basement_signal_bridge",
+      "procedural_type": "signal_bridge",
+      "position": [450, 166],
+      "anchor": [0.5, 1.0],
+      "display_size": [292, 104],
+      "color": "#4d514c",
+      "accent": "#c8a45c",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "basement_left_equipment_bay",
+      "procedural_type": "station_structure",
+      "position": [150, 390],
+      "anchor": [0.5, 1.0],
+      "display_size": [116, 244],
+      "color": "#3f4643",
+      "accent": "#8f805e",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "basement_right_equipment_bay",
+      "procedural_type": "station_structure",
+      "position": [750, 390],
+      "anchor": [0.5, 1.0],
+      "display_size": [116, 244],
+      "color": "#3f4643",
+      "accent": "#8f805e",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "basement_protocol_platform",
+      "asset_id": "basement_protocol_platform",
+      "position": [450, 430],
+      "display_size": [210, 134],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [130, 14],
+      "sort_y": 430
+    },
+    {
+      "object_id": "basement_central_protocol_console",
+      "asset_id": "basement_central_protocol_console",
+      "position": [450, 390],
+      "display_size": [200, 128],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [124, 14],
+      "sort_y": 390
+    },
+    {
+      "object_id": "basement_slot_1",
+      "asset_id": "basement_witness_slot_empty",
+      "position": [254, 250],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 250
+    },
+    {
+      "object_id": "basement_slot_2",
+      "asset_id": "basement_witness_slot_active",
+      "position": [310, 214],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 214
+    },
+    {
+      "object_id": "basement_slot_3",
+      "asset_id": "basement_witness_slot_locked",
+      "position": [376, 190],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 190
+    },
+    {
+      "object_id": "basement_slot_4",
+      "asset_id": "basement_witness_slot_active",
+      "position": [450, 182],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 182
+    },
+    {
+      "object_id": "basement_slot_5",
+      "asset_id": "basement_witness_slot_empty",
+      "position": [524, 190],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 190
+    },
+    {
+      "object_id": "basement_slot_6",
+      "asset_id": "basement_witness_slot_active",
+      "position": [590, 214],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 214
+    },
+    {
+      "object_id": "basement_slot_7_locked",
+      "asset_id": "basement_witness_slot_locked",
+      "position": [646, 250],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 250,
+      "story_flag": "slot_seven_filled",
+      "story_invert": true,
+      "inactive_opacity": 0.0
+    },
+    {
+      "object_id": "basement_slot_7_active",
+      "asset_id": "basement_witness_slot_active",
+      "position": [646, 250],
+      "display_size": [64, 56],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 250,
+      "story_flag": "slot_seven_filled",
+      "inactive_opacity": 0.0
+    },
+    {
+      "object_id": "basement_signal_red",
+      "asset_id": "basement_signal_light_red",
+      "position": [390, 160],
+      "display_size": [62, 54],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 160
+    },
+    {
+      "object_id": "basement_signal_gold",
+      "asset_id": "basement_signal_light_gold",
+      "position": [450, 146],
+      "display_size": [62, 54],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 146
+    },
+    {
+      "object_id": "basement_signal_white",
+      "asset_id": "basement_signal_light_white",
+      "position": [510, 160],
+      "display_size": [62, 54],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 160
+    },
+    {
+      "object_id": "basement_red_station_structure",
+      "procedural_type": "station_structure",
+      "position": [232, 470],
+      "anchor": [0.5, 1.0],
+      "display_size": [154, 158],
+      "color": "#593537",
+      "accent": "#d45b4f",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "basement_red_mechanism",
+      "asset_id": "basement_clear_red_mechanism",
+      "position": [232, 448],
+      "display_size": [104, 94],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [64, 10],
+      "sort_y": 448
+    },
+    {
+      "object_id": "basement_white_station_structure",
+      "procedural_type": "station_structure",
+      "position": [668, 470],
+      "anchor": [0.5, 1.0],
+      "display_size": [154, 158],
+      "color": "#5a5b55",
+      "accent": "#e3e0c8",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false,
+      "story_flag": "slot_seven_filled",
+      "inactive_opacity": 0.24
+    },
+    {
+      "object_id": "basement_white_mechanism",
+      "asset_id": "basement_continue_white_mechanism",
+      "position": [668, 448],
+      "display_size": [104, 94],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [64, 10],
+      "sort_y": 448,
+      "story_flag": "slot_seven_filled",
+      "inactive_opacity": 0.22
+    },
+    {
+      "object_id": "basement_brake_protocol_board",
+      "asset_id": "basement_emergency_protocol_board",
+      "position": [150, 246],
+      "display_size": [88, 60],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "basement_left_gear_bank",
+      "asset_id": "basement_gear_set",
+      "position": [150, 338],
+      "display_size": [76, 62],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 338
+    },
+    {
+      "object_id": "basement_left_pipe_bank",
+      "asset_id": "basement_pipe_set",
+      "position": [154, 410],
+      "display_size": [112, 70],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 410
+    },
+    {
+      "object_id": "basement_right_pipe_bank",
+      "asset_id": "basement_pipe_set",
+      "position": [746, 410],
+      "display_size": [112, 70],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 410
+    },
+    {
+      "object_id": "basement_foreground_pipe_left",
+      "procedural_type": "foreground_pipe",
+      "position": [230, 552],
+      "anchor": [0.5, 1.0],
+      "display_size": [286, 64],
+      "color": "#3c4542",
+      "accent": "#9a8259",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 4,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [90, 448, 288, 100],
+      "occlusion_alpha": 0.30
+    },
+    {
+      "object_id": "basement_foreground_pipe_right",
+      "procedural_type": "foreground_pipe",
+      "position": [670, 552],
+      "anchor": [0.5, 1.0],
+      "display_size": [286, 64],
+      "color": "#3c4542",
+      "accent": "#9a8259",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 4,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [522, 448, 288, 100],
+      "occlusion_alpha": 0.30
+    }
+  ],
+  "collision_rects": [
+    {"object_id": "col_basement_top", "rect": [78, 46, 744, 60]},
+    {"object_id": "col_basement_left", "rect": [78, 106, 20, 438]},
+    {"object_id": "col_basement_right", "rect": [802, 106, 20, 438]},
+    {"object_id": "col_basement_bottom_left", "rect": [78, 524, 344, 20]},
+    {"object_id": "col_basement_bottom_right", "rect": [478, 524, 344, 20]},
+    {"object_id": "col_basement_back_equipment", "rect": [220, 106, 460, 38]},
+    {"object_id": "col_basement_left_equipment", "rect": [98, 152, 72, 250]},
+    {"object_id": "col_basement_right_equipment", "rect": [730, 152, 72, 250]},
+    {"object_id": "col_basement_core", "rect": [360, 350, 180, 44]},
+    {"object_id": "col_basement_signal_bridge", "rect": [360, 132, 180, 24]},
+    {"object_id": "col_basement_red_station", "rect": [192, 414, 82, 32]},
+    {"object_id": "col_basement_white_station", "rect": [626, 414, 82, 32]},
+    {"object_id": "col_basement_brake_bay", "rect": [112, 274, 84, 34]},
+    {"object_id": "col_basement_arc_left_post", "rect": [210, 198, 32, 84]},
+    {"object_id": "col_basement_arc_right_post", "rect": [658, 198, 32, 84]}
+  ],
+  "gameplay_overrides": {
+    "three_signal_lights": {"interaction_rect": [356, 112, 188, 62]},
+    "witness_slot_seven": {"interaction_rect": [614, 188, 64, 64]},
+    "red_erase_lever": {"interaction_rect": [192, 370, 82, 82]},
+    "white_continue_knob": {"interaction_rect": [626, 370, 82, 82]},
+    "brake_interface": {"interaction_rect": [106, 226, 92, 84]},
+    "basement_to_cabin": {"trigger_rect": [422, 486, 56, 58]}
+  },
+  "lights": [
+    {"object_id": "basement_protocol_gold_light", "position": [450, 350], "color": "#d7a553", "energy": 0.64, "radius": 142},
+    {"object_id": "basement_witness_arc_light", "position": [450, 226], "color": "#a99c72", "energy": 0.30, "radius": 124},
+    {"object_id": "basement_red_station_light", "position": [232, 410], "color": "#d25149", "energy": 0.56, "radius": 88},
+    {"object_id": "basement_white_station_light", "position": [668, 410], "color": "#ece8d3", "energy": 0.46, "inactive_energy": 0.10, "story_flag": "slot_seven_filled", "radius": 88},
+    {"object_id": "basement_signal_bridge_light", "position": [450, 150], "color": "#d0b56e", "energy": 0.26, "radius": 84},
+    {"object_id": "basement_entry_path_light", "position": [450, 492], "color": "#b7aa83", "energy": 0.24, "radius": 74}
+  ],
+  "zones": [
+    {"object_id": "zone_basement_primary_center", "type": "primary_visual_center", "rect": [310, 260, 280, 218]},
+    {"object_id": "zone_basement_entrance", "type": "entrance_zone", "rect": [370, 430, 160, 114]},
+    {"object_id": "zone_basement_movement", "type": "movement_zone", "rect": [190, 232, 520, 274]},
+    {"object_id": "zone_basement_primary_interaction", "type": "primary_interaction_zone", "rect": [338, 282, 224, 166]},
+    {"object_id": "zone_basement_secondary_story", "type": "secondary_story_zone", "rect": [122, 306, 206, 176]},
+    {"object_id": "zone_basement_decoration", "type": "decoration_zone", "rect": [572, 304, 206, 178]},
+    {"object_id": "zone_basement_blocked", "type": "blocked_zone", "rect": [78, 46, 744, 98]},
+    {"object_id": "zone_basement_foreground", "type": "foreground_zone", "rect": [78, 472, 744, 80]},
+    {"object_id": "zone_basement_protocol_cluster", "type": "function_cluster", "rect": [220, 170, 460, 308]},
+    {"object_id": "zone_basement_red_cluster", "type": "function_cluster", "rect": [122, 306, 206, 176]},
+    {"object_id": "zone_basement_white_cluster", "type": "function_cluster", "rect": [572, 306, 206, 176]},
+    {"object_id": "zone_basement_signal_cluster", "type": "function_cluster", "rect": [340, 92, 220, 102]}
+  ],
+  "atlas_tile_art": {
+    "cell_size": [32, 32],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [
+      {"layer": "GroundDetails", "asset_id": "basement_floor_cable_set", "tile": "edge_s", "position": [434, 250], "tint": "#d2ad68"},
+      {"layer": "GroundDetails", "asset_id": "basement_floor_cable_set", "tile": "edge_w", "position": [328, 328], "tint": "#bd9357"},
+      {"layer": "GroundDetails", "asset_id": "basement_floor_cable_set", "tile": "edge_e", "position": [540, 328], "tint": "#bd9357"},
+      {"layer": "GroundDetails", "asset_id": "basement_floor_cable_set", "tile": "outer_corner_sw", "position": [274, 392], "tint": "#b98152"},
+      {"layer": "GroundDetails", "asset_id": "basement_floor_cable_set", "tile": "outer_corner_se", "position": [594, 392], "tint": "#d4c79f"},
+      {"layer": "WallTiles", "asset_id": "basement_wall_recess_set", "tile": "base_a", "position": [104, 154], "tint": "#8f9890"},
+      {"layer": "WallTiles", "asset_id": "basement_wall_recess_set", "tile": "base_b", "position": [104, 186], "tint": "#8f9890"},
+      {"layer": "WallTiles", "asset_id": "basement_wall_recess_set", "tile": "base_c", "position": [764, 154], "tint": "#8f9890"},
+      {"layer": "WallTiles", "asset_id": "basement_wall_recess_set", "tile": "base_d", "position": [764, 186], "tint": "#8f9890"},
+      {"layer": "GroundDetails", "asset_id": "basement_contact_shadow_set", "tile": "base_a", "position": [204, 434], "tint": "#77766d"},
+      {"layer": "GroundDetails", "asset_id": "basement_contact_shadow_set", "tile": "base_b", "position": [664, 434], "tint": "#77766d"}
+    ],
+    "interior_shell": {
+      "theme": "clock_mechanical",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {"position": [98, 46], "count": 22, "pattern": ["panel_dense", "straight", "panel_light", "straight"], "tint": "#c9bd88"}
+      ],
+      "corners": [
+        {"position": [78, 46], "tile": "inside_left", "tint": "#c9bd88"},
+        {"position": [774, 46], "tile": "inside_right", "tint": "#c9bd88"}
+      ],
+      "baseboard_segments": [
+        {"position": [98, 94], "count": 22, "pattern": ["straight", "worn_straight", "straight"], "start": "left_stop", "end": "right_stop"}
+      ],
+      "structural_shapes": [
+        {"object_id": "basement_back_equipment_wall", "layer": "WallTiles", "points": [[218, 106],[682, 106],[682, 146],[606, 146],[590, 162],[310, 162],[294, 146],[218, 146]], "color": "#333b3a", "outline": "#181f20", "outline_width": 4, "z_index": 4},
+        {"object_id": "basement_left_side_wall", "layer": "WallTiles", "points": [[98, 146],[178, 146],[178, 402],[98, 420]], "color": "#343b39", "outline": "#181f20", "outline_width": 4, "z_index": 3},
+        {"object_id": "basement_right_side_wall", "layer": "WallTiles", "points": [[722, 146],[802, 146],[802, 420],[722, 402]], "color": "#343b39", "outline": "#181f20", "outline_width": 4, "z_index": 3}
+      ]
+    },
+    "floor_fills": [
+      {"asset_id": "basement_mechanical_floor_set", "rect": [98, 106, 704, 418], "tiles": ["base_a", "base_b", "base_c", "base_d"], "seed": "level-art-pass-01:clock-basement:floor", "tint": "#b7b19c"}
+    ]
+  },
+  "level_art_metrics": {
+    "effective_walkable_area_px2": 214520,
+    "empty_ratio_estimate": 0.26,
+    "function_clusters": 4,
+    "foreground_layers": 1,
+    "large_structure_groups": 6,
+    "new_raster_asset_ids": []
+  },
+  "rollout_metadata": {
+    "batch": "LEVEL_ART_PASS_01",
+    "new_asset_ids": [],
+    "reused_asset_ids": ["basement_mechanical_floor_set", "basement_protocol_platform", "basement_witness_slot_empty", "basement_witness_slot_active", "basement_witness_slot_locked", "basement_signal_light_red", "basement_signal_light_gold", "basement_signal_light_white", "basement_clear_red_mechanism", "basement_continue_white_mechanism", "basement_central_protocol_console", "basement_floor_cable_set", "basement_pipe_set", "basement_gear_set", "basement_emergency_protocol_board", "basement_wall_recess_set", "basement_contact_shadow_set"],
+    "primary_visual_center": "central_protocol_console_and_radial_floor",
+    "frozen_reference_maps_untouched": ["town", "harbor", "inn-lobby"]
+  }
 }

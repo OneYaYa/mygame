@@ -11,6 +11,7 @@ var _captures: Array[Dictionary] = []
 var _failures: int = 0
 var _suffix: String = ""
 var _time_of_day: String = ""
+var _layout_catalog := TimeEchoArtLayoutCatalog.new()
 
 
 func _ready() -> void:
@@ -34,6 +35,7 @@ func _generate_gallery() -> void:
 		return
 
 	var state: Dictionary = _create_gallery_state()
+	_layout_catalog.load_catalog()
 	main.ui.close_modal(false)
 	main.ui.show_game()
 	main.ui.journal_panel.visible = false
@@ -125,8 +127,10 @@ func _capture_scene(index: int, scene: Dictionary, state: Dictionary, output_abs
 	TimeManager.sync_world_flags(state)
 	TimeManager.sync_npc_schedules(state)
 	var player_state: Dictionary = state.get("player", {}) as Dictionary
-	player_state["x"] = float(scene.get("width", 768.0)) * 0.5
-	player_state["y"] = float(scene.get("height", 480.0)) * 0.5
+	var review_layout: Dictionary = _layout_catalog.get_layout(scene_id)
+	var review_position: Array = review_layout.get("review_player_position", [float(scene.get("width", 768.0)) * 0.5, float(scene.get("height", 480.0)) * 0.5]) as Array
+	player_state["x"] = float(review_position[0])
+	player_state["y"] = float(review_position[1])
 	player_state["facing"] = "down"
 	state["player"] = player_state
 	main.world.load_state(state, true)

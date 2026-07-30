@@ -1,44 +1,704 @@
 {
-  "schema_version":1,"map_id":"clock-cabin","theme_variant":"master_clock_engineering","interaction_distance":52,
-  "canvas":{"outside_color":"#0d1517","room_rect":[58,46,652,418],"wall_height":58,"side_wall":18,"wall_color":"#59605c","wall_dark":"#2e3434","floor_color":"#565044","floor_style":"engineering","ambient_color":"#b4a887","edge_color":"#273334"},
-  "ground_shapes":[{"object_id":"cabin_service_plate","kind":"platform","points":[[276,170],[494,170],[520,257],[493,326],[277,326],[251,256]],"color":"#4b4c45"}],
-  "objects":[
-    {"object_id":"cabin_main_mechanism","procedural_type":"clockwork","position":[385,224],"display_size":[174,94],"anchor":[0.5,1.0],"sort_y":224,"layer":"WorldObjects","color":"#414a49","accent":"#bd9851","contact_shadow":true,"shadow_size":[138,12]},
-    {"object_id":"cabin_gear_a","procedural_type":"gear","position":[330,186],"display_size":[42,42],"anchor":[0.5,1.0],"sort_y":186,"layer":"WorldObjects","color":"#8c7244","accent":"#d3ad5c"},
-    {"object_id":"cabin_gear_b","procedural_type":"gear","position":[427,190],"display_size":[48,48],"anchor":[0.5,1.0],"sort_y":190,"layer":"WorldObjects","color":"#745e3d","accent":"#c69a4f"},
-    {"object_id":"cabin_work_desk","asset_id":"prop_desk","position":[158,270],"display_size":[82,80],"anchor":[0.5,1.0],"sort_y":270,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cabin_tool_rack","asset_id":"prop_rack","position":[130,173],"display_size":[62,69],"anchor":[0.5,1.0],"sort_y":173,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cabin_material_crate","asset_id":"prop_crate","position":[604,354],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":354,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cabin_material_barrel","asset_id":"prop_barrel","position":[652,350],"display_size":[37,51],"anchor":[0.5,1.0],"sort_y":350,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cabin_rope","asset_id":"prop_rope","position":[573,354],"display_size":[56,46],"anchor":[0.5,1.0],"sort_y":354,"layer":"WorldObjects"},
-    {"object_id":"cabin_blueprint","procedural_type":"notice","position":[226,148],"display_size":[58,36],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#344b51","accent":"#9bb8b5"},
-    {"object_id":"cabin_console","procedural_type":"console","position":[551,245],"display_size":[84,66],"anchor":[0.5,1.0],"sort_y":245,"layer":"WorldObjects","color":"#3d4748","accent":"#c29e55","contact_shadow":true},
-    {"object_id":"cabin_lamp","asset_id":"prop_lantern","position":[235,286],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":286,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cabin_door_square","procedural_type":"door","position":[384,464],"display_size":[30,62],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#363532","accent":"#b39155"},
-    {"object_id":"cabin_stairs_basement","procedural_type":"beam","position":[670,414],"display_size":[48,92],"anchor":[0.5,1.0],"sort_y":414,"layer":"WorldObjects","color":"#363837","accent":"#7f7154","contact_shadow":true}
-  ],
-  "collision_rects":[
-    {"object_id":"col_cabin_top","rect":[58,46,652,60]},{"object_id":"col_cabin_left","rect":[58,106,18,358]},{"object_id":"col_cabin_right","rect":[692,106,18,358]},
-    {"object_id":"col_cabin_bottom_l","rect":[58,448,300,16]},{"object_id":"col_cabin_bottom_r","rect":[410,448,300,16]},
-    {"object_id":"col_cabin_mechanism","rect":[303,190,164,34]},{"object_id":"col_cabin_desk","rect":[121,237,74,33]},
-    {"object_id":"col_cabin_console","rect":[513,216,76,29]},{"object_id":"col_cabin_material","rect":[553,330,116,24]},
-    {"object_id":"col_cabin_stairs","rect":[653,340,34,74]}
-  ],
-  "gameplay_overrides":{
-    "master_clock_mechanism":{"interaction_rect":[306,166,160,64]},"master_console":{"interaction_rect":[516,188,72,60]},
-    "silver_tuning_fork_pickup":{"interaction_rect":[212,252,34,30]},"cabin_to_square":{"trigger_rect":[360,420,48,44]},
-    "cabin_to_basement":{"trigger_rect":[646,336,48,80]}
+  "schema_version": 1,
+  "map_id": "clock-cabin",
+  "theme_variant": "full_map_rollout_clock_tower_calibration_workshop",
+  "interaction_distance": 54,
+  "canvas": {
+    "outside_color": "#0d1517",
+    "room_rect": [
+      58,
+      46,
+      652,
+      418
+    ],
+    "wall_height": 58,
+    "side_wall": 18,
+    "wall_color": "#59605c",
+    "wall_dark": "#2e3434",
+    "floor_color": "#565044",
+    "floor_style": "engineering",
+    "ambient_color": "#b4a887",
+    "edge_color": "#273334"
   },
-  "lights":[
-    {"object_id":"cabin_work_light","position":[235,252],"color":"#efbd68","energy":0.48,"radius":86},
-    {"object_id":"cabin_clock_light","position":[385,170],"color":"#d4ae5a","energy":0.32,"radius":92}
+  "ground_shapes": [
+    {
+      "object_id": "cabin_service_plate",
+      "kind": "platform",
+      "points": [
+        [
+          276,
+          170
+        ],
+        [
+          494,
+          170
+        ],
+        [
+          520,
+          257
+        ],
+        [
+          493,
+          326
+        ],
+        [
+          277,
+          326
+        ],
+        [
+          251,
+          256
+        ]
+      ],
+      "color": "#4b4c45"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_cabin_entrance","type":"entrance_zone","rect":[330,360,108,88]},
-    {"object_id":"zone_cabin_move","type":"movement_zone","rect":[244,250,280,152]},
-    {"object_id":"zone_cabin_primary","type":"primary_interaction_zone","rect":[268,150,322,112]},
-    {"object_id":"zone_cabin_story","type":"secondary_story_zone","rect":[96,122,170,170]},
-    {"object_id":"zone_cabin_decor","type":"decoration_zone","rect":[540,304,140,82]},
-    {"object_id":"zone_cabin_blocked","type":"blocked_zone","rect":[58,46,652,60]}
-  ]
+  "objects": [
+    {
+      "object_id": "rollout_clock_workbench",
+      "asset_id": "clock_workbench",
+      "position": [
+        180,
+        340
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 340,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_clock_tool_wall",
+      "asset_id": "clock_tool_wall",
+      "position": [
+        170,
+        185
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 185,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        9
+      ],
+      "display_size": [
+        72,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_clock_tool_set",
+      "asset_id": "clock_tool_set",
+      "position": [
+        265,
+        210
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 210,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_clock_gear_small_set",
+      "asset_id": "clock_gear_small_set",
+      "position": [
+        610,
+        380
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 380,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_clock_gear_large_set",
+      "asset_id": "clock_gear_large_set",
+      "position": [
+        652,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 330,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        6
+      ],
+      "display_size": [
+        72,
+        56
+      ]
+    },
+    {
+      "object_id": "rollout_clock_pipe_set",
+      "asset_id": "clock_pipe_set",
+      "position": [
+        640,
+        210
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 210,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        6
+      ],
+      "display_size": [
+        96,
+        56
+      ]
+    },
+    {
+      "object_id": "rollout_clock_cable_set",
+      "asset_id": "clock_cable_set",
+      "position": [
+        600,
+        425
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 425,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_clock_control_panel",
+      "asset_id": "clock_control_panel",
+      "position": [
+        390,
+        225
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 225,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_clock_alignment_three_gear_device",
+      "asset_id": "clock_alignment_three_gear_device",
+      "position": [
+        390,
+        355
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 355,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        96,
+        11
+      ],
+      "display_size": [
+        160,
+        96
+      ]
+    },
+    {
+      "object_id": "rollout_clock_calibration_marker_set",
+      "asset_id": "clock_calibration_marker_set",
+      "position": [
+        390,
+        170
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 170,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_clock_maintenance_crate",
+      "asset_id": "clock_maintenance_crate",
+      "position": [
+        660,
+        415
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 415,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        6
+      ],
+      "display_size": [
+        72,
+        56
+      ]
+    },
+    {
+      "object_id": "rollout_clock_blueprint_table",
+      "asset_id": "clock_blueprint_table",
+      "position": [
+        170,
+        410
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 410,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_clock_work_lamp",
+      "asset_id": "clock_work_lamp",
+      "position": [
+        245,
+        300
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 300,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        29,
+        7
+      ],
+      "display_size": [
+        48,
+        64
+      ]
+    }
+  ],
+  "collision_rects": [
+    {
+      "object_id": "col_cabin_top",
+      "rect": [
+        58,
+        46,
+        652,
+        60
+      ]
+    },
+    {
+      "object_id": "col_cabin_left",
+      "rect": [
+        58,
+        106,
+        18,
+        358
+      ]
+    },
+    {
+      "object_id": "col_cabin_right",
+      "rect": [
+        692,
+        106,
+        18,
+        358
+      ]
+    },
+    {
+      "object_id": "col_cabin_bottom_l",
+      "rect": [
+        58,
+        448,
+        300,
+        16
+      ]
+    },
+    {
+      "object_id": "col_cabin_bottom_r",
+      "rect": [
+        410,
+        448,
+        300,
+        16
+      ]
+    },
+    {
+      "object_id": "col_cabin_mechanism",
+      "rect": [
+        303,
+        190,
+        164,
+        34
+      ]
+    },
+    {
+      "object_id": "col_cabin_desk",
+      "rect": [
+        121,
+        237,
+        74,
+        33
+      ]
+    },
+    {
+      "object_id": "col_cabin_console",
+      "rect": [
+        513,
+        216,
+        76,
+        29
+      ]
+    },
+    {
+      "object_id": "col_cabin_material",
+      "rect": [
+        553,
+        330,
+        116,
+        24
+      ]
+    },
+    {
+      "object_id": "col_cabin_stairs",
+      "rect": [
+        653,
+        340,
+        34,
+        74
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "master_clock_mechanism": {
+      "interaction_rect": [
+        306,
+        166,
+        160,
+        64
+      ]
+    },
+    "master_console": {
+      "interaction_rect": [
+        516,
+        188,
+        72,
+        60
+      ]
+    },
+    "silver_tuning_fork_pickup": {
+      "interaction_rect": [
+        212,
+        252,
+        34,
+        30
+      ]
+    },
+    "cabin_to_square": {
+      "trigger_rect": [
+        360,
+        420,
+        48,
+        44
+      ]
+    },
+    "cabin_to_basement": {
+      "trigger_rect": [
+        646,
+        336,
+        48,
+        80
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        245,
+        285
+      ],
+      "color": "#e0ad5b",
+      "energy": 0.4,
+      "radius": 82
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        390,
+        305
+      ],
+      "color": "#c8a95d",
+      "energy": 0.2,
+      "radius": 70
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        275,
+        150,
+        217,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        275,
+        380,
+        217,
+        83
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        188,
+        185,
+        391,
+        209
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        275,
+        150,
+        217,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        112,
+        129,
+        163,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        492,
+        129,
+        163,
+        209
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        58,
+        46,
+        652,
+        52
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        58,
+        411,
+        652,
+        52
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [],
+    "interior_shell": {
+      "theme": "clock_mechanical",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {
+          "position": [
+            74,
+            46
+          ],
+          "count": 19,
+          "pattern": [
+            "straight",
+            "panel_light",
+            "straight",
+            "panel_dense"
+          ],
+          "tint": "#d7c89c"
+        }
+      ],
+      "corners": [
+        {
+          "position": [
+            58,
+            46
+          ],
+          "tile": "inside_left",
+          "tint": "#d7c89c"
+        },
+        {
+          "position": [
+            662,
+            46
+          ],
+          "tile": "inside_right",
+          "tint": "#d7c89c"
+        }
+      ],
+      "baseboard_segments": [
+        {
+          "position": [
+            74,
+            94
+          ],
+          "count": 19,
+          "pattern": [
+            "straight",
+            "straight",
+            "worn_straight"
+          ],
+          "start": "left_stop",
+          "end": "right_stop"
+        }
+      ]
+    },
+    "floor_fills": [
+      {
+        "asset_id": "clock_floor_plate_set",
+        "rect": [
+          74,
+          94,
+          620,
+          354
+        ],
+        "tiles": [
+          "base_a",
+          "base_b",
+          "base_c",
+          "base_d"
+        ],
+        "seed": "full:clock-cabin:floor"
+      }
+    ]
+  },
+  "rollout_metadata": {
+    "batch": "D",
+    "new_asset_ids": [
+      "clock_workbench",
+      "clock_tool_wall",
+      "clock_tool_set",
+      "clock_gear_small_set",
+      "clock_gear_large_set",
+      "clock_pipe_set",
+      "clock_cable_set",
+      "clock_control_panel",
+      "clock_alignment_three_gear_device",
+      "clock_calibration_marker_set",
+      "clock_maintenance_crate",
+      "clock_blueprint_table",
+      "clock_work_lamp",
+      "clock_floor_plate_set"
+    ],
+    "primary_visual_center": "three_gear_alignment_device",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

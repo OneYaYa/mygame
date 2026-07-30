@@ -1,8 +1,10 @@
 # TIME ECHO / 时间回响
 
-《时间回响》是一款浏览器运行的像素风时间循环探索游戏。当前版本依据 `my_script.doc` 重做，旧 `mygame` 的政治世界线、五地数值结局和素材数据都没有带入；只复用了经过验证的摄像机、碰撞、寻路、像素角色动画以及安全的同源 NPC 服务端。
+《时间回响》是一款浏览器运行的像素风时间循环探索游戏。目前开发基于godot4.6，html版本仅为初稿，不再维护。测试请基于godot4.6版本启动。
 
 ## 启动
+
+html初稿版本
 
 在 PowerShell 中运行：
 
@@ -23,8 +25,9 @@ http://127.0.0.1:8000
 
 完整 Godot 4.6 工程位于 [`godot/`](godot/)，主场景为 `godot/scenes/main/main.tscn`。使用 Godot 4.6 打开 `godot/project.godot`，或在仓库根目录运行：
 
-```powershell
-godot --path godot
+
+```在powershell运行启动游戏
+& "your-path-to-godot.exe" --path .\godot
 ```
 
 Godot 版保留相同 JSON 数据、18 个地点、7 位 NPC、时间循环、谜题、AI 本地回退和存档语义，并迁移了 `art/` 美术资产。详细信息：
@@ -82,7 +85,7 @@ python godot/tests/validate_project.py
 
 ## 终端 AI NPC 状态实验台
 
-不启动网页也可以逐个测试 NPC。交互模式：
+不启动游戏也可以逐个测试 NPC。交互模式：
 
 ~~~powershell
 python tools/npc_terminal.py
@@ -105,7 +108,7 @@ NPC 动作进一步区分“玩家持有”“当面出示”“解释证据关�
 
 成功的在线对话会把最多八条记忆只写入当前 NPC，并自动保存到 tmp/npc-terminal-state.json。之后可用 --load-state 恢复；应用剧情预设默认保留各 NPC 自己的记忆，/reset all 才会清空。
 
-## 可选大模型配置
+## 大模型配置
 
 复制 `.env.example` 为 `.env`，填写服务端环境变量：
 

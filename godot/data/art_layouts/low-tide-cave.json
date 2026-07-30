@@ -1,48 +1,329 @@
 {
-  "schema_version":1,"map_id":"low-tide-cave","theme_variant":"wet_maintenance_cave","interaction_distance":52,
-  "canvas":{"outside_color":"#070d0f","room_rect":[40,38,840,462],"wall_height":48,"side_wall":22,"wall_color":"#343e3e","wall_dark":"#151d1f","floor_color":"#394343","floor_style":"wet_stone","ambient_color":"#76817d","edge_color":"#192728"},
-  "ground_shapes":[
-    {"object_id":"cave_safe_path","kind":"path","points":[[78,278],[176,300],[278,272],[376,234],[514,216],[674,205],[760,190]],"width":42,"color":"#5a5b53"},
-    {"object_id":"cave_pool","kind":"water","points":[[318,342],[365,312],[436,318],[490,298],[564,318],[610,360],[591,412],[530,438],[458,427],[397,444],[334,416],[302,378]],"color":"#294e59","shore_color":"#596a66"},
-    {"object_id":"cave_side_puddle","kind":"water","points":[[700,340],[736,324],[782,337],[806,368],[792,398],[744,407],[707,388]],"color":"#294d57","shore_color":"#586864"}
-  ],
-  "objects":[
-    {"object_id":"cave_rock_left","procedural_type":"rock","position":[176,216],"display_size":[92,66],"anchor":[0.5,1.0],"sort_y":216,"layer":"WorldObjects","color":"#3b4645","accent":"#65716c","contact_shadow":true,"shadow_size":[68,10]},
-    {"object_id":"cave_rock_mid","procedural_type":"rock","position":[282,404],"display_size":[74,54],"anchor":[0.5,1.0],"sort_y":404,"layer":"WorldObjects","color":"#364140","accent":"#606b67","contact_shadow":true,"shadow_size":[54,9]},
-    {"object_id":"cave_rock_right","procedural_type":"rock","position":[838,290],"display_size":[86,62],"anchor":[0.5,1.0],"sort_y":290,"layer":"WorldObjects","color":"#394443","accent":"#63706b","contact_shadow":true,"shadow_size":[62,9]},
-    {"object_id":"cave_crate","asset_id":"prop_crate","position":[246,348],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":348,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cave_barrel","asset_id":"prop_barrel","position":[205,342],"display_size":[37,51],"anchor":[0.5,1.0],"sort_y":342,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cave_tool_rack","asset_id":"prop_rack","position":[628,192],"display_size":[62,69],"anchor":[0.5,1.0],"sort_y":192,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cave_dead_lantern","asset_id":"prop_lantern","position":[332,248],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":248,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"cave_negative","procedural_type":"photo","position":[744,202],"display_size":[28,22],"anchor":[0.5,1.0],"sort_y":202,"layer":"WorldObjects","color":"#24292b","accent":"#88918b"},
-    {"object_id":"cave_inscription_art","procedural_type":"notice","position":[500,133],"display_size":[112,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#2b3637","accent":"#6d7772"},
-    {"object_id":"cave_pebbles_a","asset_id":"prop_pebbles","position":[138,408],"display_size":[48,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails"},
-    {"object_id":"cave_pebbles_b","asset_id":"prop_pebbles","position":[664,444],"display_size":[48,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails","mirror_x":true},
-    {"object_id":"cave_foreground_left","procedural_type":"rock","position":[44,520],"display_size":[130,210],"anchor":[0.5,1.0],"sort_y":0,"layer":"Foreground","color":"#11191b","accent":"#263032"},
-    {"object_id":"cave_foreground_right","procedural_type":"rock","position":[885,520],"display_size":[140,230],"anchor":[0.5,1.0],"sort_y":0,"layer":"Foreground","color":"#11191b","accent":"#263032"}
-  ],
-  "collision_rects":[
-    {"object_id":"col_cave_top","rect":[40,38,840,50]},{"object_id":"col_cave_left_top","rect":[40,88,22,128]},{"object_id":"col_cave_left_bottom","rect":[40,338,22,162]},
-    {"object_id":"col_cave_right","rect":[858,88,22,412]},{"object_id":"col_cave_bottom","rect":[40,484,840,16]},
-    {"object_id":"col_cave_pool_left","rect":[322,330,126,90]},{"object_id":"col_cave_pool_right","rect":[448,324,148,100]},
-    {"object_id":"col_cave_puddle","rect":[710,336,84,62]},{"object_id":"col_cave_rock_l","rect":[136,190,78,26]},
-    {"object_id":"col_cave_rock_mid","rect":[250,382,64,22]},{"object_id":"col_cave_rock_r","rect":[800,268,76,22]},
-    {"object_id":"col_cave_supplies","rect":[187,318,80,30]},{"object_id":"col_cave_tools","rect":[600,162,56,30]}
-  ],
-  "gameplay_overrides":{
-    "cave_negative_pickup":{"interaction_rect":[724,174,42,30]},"cave_inscription":{"interaction_rect":[446,104,112,38]},
-    "cave_to_harbor":{"trigger_rect":[40,220,52,112]}
+  "schema_version": 1,
+  "map_id": "low-tide-cave",
+  "theme_variant": "level_art_pass_01_irregular_low_tide_cavern",
+  "interaction_distance": 60,
+  "camera_zoom": 1.15,
+  "camera_offset": [0, -20],
+  "review_player_position": [188, 294],
+  "canvas": {
+    "outside_color": "#061013",
+    "room_rect": [24, 30, 872, 474],
+    "wall_height": 48,
+    "side_wall": 22,
+    "wall_color": "#343e3e",
+    "wall_dark": "#132529",
+    "floor_color": "#3d5052",
+    "floor_style": "wet_stone",
+    "ambient_color": "#bec2b3",
+    "edge_color": "#172629",
+    "draw_map_border": false,
+    "natural_boundary": true,
+    "boundary_points": [[42,244],[82,150],[170,105],[270,120],[350,75],[455,110],[560,78],[675,110],[820,160],[875,250],[830,310],[870,390],[780,445],[650,430],[555,480],[440,445],[320,485],[235,435],[120,420],[70,355]]
   },
-  "lights":[
-    {"object_id":"cave_maintenance_light","position":[332,214],"color":"#d7b46a","energy":0.3,"radius":76},
-    {"object_id":"cave_flashlight_hint","position":[744,182],"color":"#abc4bd","energy":0.2,"radius":68}
+  "ground_shapes": [
+    {
+      "object_id": "cave_entry_stone_path",
+      "kind": "path",
+      "points": [[72,296],[142,306],[210,292],[266,270]],
+      "width": 52,
+      "color": "#62665e",
+      "edge_color": "#313f3e"
+    },
+    {
+      "object_id": "cave_mid_broken_path",
+      "kind": "path",
+      "points": [[280,270],[344,242],[410,252],[468,270]],
+      "width": 42,
+      "color": "#565e58",
+      "edge_color": "#2b3939"
+    },
+    {
+      "object_id": "cave_device_approach",
+      "kind": "path",
+      "points": [[500,270],[556,250],[616,258],[690,244],[760,252]],
+      "width": 38,
+      "color": "#4e5b58",
+      "edge_color": "#283738"
+    },
+    {
+      "object_id": "cave_main_pool",
+      "kind": "water",
+      "points": [[285,350],[345,320],[420,335],[485,312],[550,330],[620,315],[690,350],[710,400],[675,445],[600,455],[525,438],[450,466],[370,445],[300,420]],
+      "color": "#2f5b64",
+      "shore_color": "#66736d"
+    },
+    {
+      "object_id": "cave_evidence_puddle",
+      "kind": "water",
+      "points": [[715,318],[770,300],[828,330],[852,372],[824,410],[766,418],[724,388]],
+      "color": "#284f59",
+      "shore_color": "#5e6e69"
+    },
+    {
+      "object_id": "cave_device_shelf",
+      "kind": "platform",
+      "points": [[610,214],[786,208],[820,268],[786,316],[626,310],[592,266]],
+      "color": "#43504d"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_cave_entrance","type":"entrance_zone","rect":[54,216,130,124]},
-    {"object_id":"zone_cave_move","type":"movement_zone","rect":[130,188,650,116]},
-    {"object_id":"zone_cave_primary","type":"primary_interaction_zone","rect":[690,142,110,100]},
-    {"object_id":"zone_cave_story","type":"secondary_story_zone","rect":[430,98,148,80]},
-    {"object_id":"zone_cave_decor","type":"decoration_zone","rect":[160,306,670,144]},
-    {"object_id":"zone_cave_blocked","type":"blocked_zone","rect":[300,300,318,150]}
-  ]
+  "objects": [
+    {
+      "object_id": "cave_entry_wall_cluster",
+      "procedural_type": "cave_wall_cluster",
+      "position": [166, 250],
+      "anchor": [0.5, 1.0],
+      "display_size": [164, 112],
+      "color": "#425658",
+      "accent": "#758484",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "cave_upper_wall_cluster",
+      "procedural_type": "cave_wall_cluster",
+      "position": [452, 194],
+      "anchor": [0.5, 1.0],
+      "display_size": [252, 100],
+      "color": "#3a4e50",
+      "accent": "#708083",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "cave_evidence_wall_cluster",
+      "procedural_type": "evidence_cluster",
+      "position": [806, 288],
+      "anchor": [0.5, 1.0],
+      "display_size": [150, 104],
+      "color": "#3b5052",
+      "accent": "#89a3a0",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "cave_entrance_frame",
+      "asset_id": "cave_entrance_frame",
+      "position": [98, 354],
+      "display_size": [116, 112],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [72, 12],
+      "sort_y": 354
+    },
+    {
+      "object_id": "cave_maintenance_device",
+      "asset_id": "cave_old_maintenance_device",
+      "position": [686, 304],
+      "display_size": [122, 112],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [76, 11],
+      "sort_y": 304
+    },
+    {
+      "object_id": "cave_maintenance_tools",
+      "asset_id": "cave_rusty_tool_set",
+      "position": [598, 300],
+      "display_size": [76, 62],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 300
+    },
+    {
+      "object_id": "cave_walkway_planks",
+      "asset_id": "cave_wood_plank_walkway",
+      "position": [426, 350],
+      "display_size": [106, 62],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 350
+    },
+    {
+      "object_id": "cave_rotten_crossing",
+      "asset_id": "cave_rotten_board_set",
+      "position": [522, 360],
+      "display_size": [96, 58],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 360
+    },
+    {
+      "object_id": "cave_entry_rock_set",
+      "asset_id": "cave_rock_small_set",
+      "position": [202, 386],
+      "display_size": [76, 58],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 386
+    },
+    {
+      "object_id": "cave_evidence_rock_set",
+      "asset_id": "cave_rock_large_set",
+      "position": [798, 322],
+      "display_size": [98, 70],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 322
+    },
+    {
+      "object_id": "cave_stalagmite_gate",
+      "asset_id": "cave_stalagmite_set",
+      "position": [566, 312],
+      "display_size": [64, 82],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 312
+    },
+    {
+      "object_id": "cave_water_drip",
+      "asset_id": "cave_water_drip_effect",
+      "position": [472, 232],
+      "display_size": [68, 70],
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "cave_main_reflection",
+      "asset_id": "cave_wet_reflection_patch",
+      "position": [492, 416],
+      "display_size": [122, 58],
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "cave_ceiling_overhang_main",
+      "procedural_type": "cave_overhang",
+      "position": [454, 150],
+      "anchor": [0.5, 1.0],
+      "display_size": [650, 86],
+      "color": "#24383b",
+      "accent": "#607174",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 2,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [250, 130, 410, 144],
+      "occlusion_alpha": 0.34
+    },
+    {
+      "object_id": "cave_ceiling_overhang_left",
+      "procedural_type": "cave_overhang",
+      "position": [112, 408],
+      "anchor": [0.5, 1.0],
+      "display_size": [150, 78],
+      "color": "#203438",
+      "accent": "#586b6e",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 4,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [44, 270, 210, 160],
+      "occlusion_alpha": 0.30
+    },
+    {
+      "object_id": "cave_ceiling_overhang_right",
+      "procedural_type": "cave_overhang",
+      "position": [820, 438],
+      "anchor": [0.5, 1.0],
+      "display_size": [160, 82],
+      "color": "#203438",
+      "accent": "#586b6e",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 4,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [704, 280, 188, 164],
+      "occlusion_alpha": 0.30
+    }
+  ],
+  "collision_rects": [
+    {"object_id": "col_cave_top", "rect": [0, 0, 920, 76]},
+    {"object_id": "col_cave_upper_left", "rect": [0, 76, 166, 98]},
+    {"object_id": "col_cave_upper_mid_left", "rect": [254, 76, 94, 72]},
+    {"object_id": "col_cave_upper_mid", "rect": [430, 76, 126, 66]},
+    {"object_id": "col_cave_upper_right", "rect": [674, 76, 246, 102]},
+    {"object_id": "col_cave_left_upper", "rect": [0, 174, 62, 70]},
+    {"object_id": "col_cave_left_lower", "rect": [0, 356, 74, 164]},
+    {"object_id": "col_cave_right", "rect": [874, 178, 46, 342]},
+    {"object_id": "col_cave_bottom_left", "rect": [74, 438, 244, 82]},
+    {"object_id": "col_cave_bottom_mid", "rect": [318, 478, 250, 42]},
+    {"object_id": "col_cave_bottom_right", "rect": [568, 452, 306, 68]},
+    {"object_id": "col_cave_main_pool_left", "rect": [300, 348, 190, 88]},
+    {"object_id": "col_cave_main_pool_right", "rect": [490, 340, 202, 100]},
+    {"object_id": "col_cave_evidence_puddle", "rect": [724, 330, 122, 78]},
+    {"object_id": "col_cave_device", "rect": [632, 272, 108, 34]},
+    {"object_id": "col_cave_entry_rocks", "rect": [174, 364, 70, 24]},
+    {"object_id": "col_cave_evidence_rocks", "rect": [764, 300, 82, 26]},
+    {"object_id": "col_cave_stalagmites", "rect": [540, 286, 54, 26]}
+  ],
+  "gameplay_overrides": {
+    "cave_negative_pickup": {"interaction_rect": [774, 216, 58, 46]},
+    "cave_inscription": {"interaction_rect": [466, 150, 118, 44]},
+    "cave_to_harbor": {"trigger_rect": [42, 254, 72, 112]}
+  },
+  "lights": [
+    {"object_id": "cave_entry_cold_light", "position": [94, 300], "color": "#83bbc4", "energy": 0.62, "radius": 116},
+    {"object_id": "cave_maintenance_work_light", "position": [676, 270], "color": "#e1a45c", "energy": 0.56, "radius": 92},
+    {"object_id": "cave_wet_reflection_light", "position": [482, 382], "color": "#6fa5aa", "energy": 0.24, "radius": 92},
+    {"object_id": "cave_evidence_guide_light", "position": [800, 250], "color": "#a6c7be", "energy": 0.22, "radius": 56}
+  ],
+  "zones": [
+    {"object_id": "zone_cave_primary_center", "type": "primary_visual_center", "rect": [604, 190, 250, 142]},
+    {"object_id": "zone_cave_entrance", "type": "entrance_zone", "rect": [40, 236, 210, 154]},
+    {"object_id": "zone_cave_movement", "type": "movement_zone", "rect": [96, 214, 700, 132]},
+    {"object_id": "zone_cave_primary_interaction", "type": "primary_interaction_zone", "rect": [626, 194, 220, 130]},
+    {"object_id": "zone_cave_secondary_story", "type": "secondary_story_zone", "rect": [42, 220, 230, 176]},
+    {"object_id": "zone_cave_decoration", "type": "decoration_zone", "rect": [286, 320, 562, 150]},
+    {"object_id": "zone_cave_blocked", "type": "blocked_zone", "rect": [0, 0, 920, 150]},
+    {"object_id": "zone_cave_foreground", "type": "foreground_zone", "rect": [36, 44, 850, 402]},
+    {"object_id": "zone_cave_entry_cluster", "type": "function_cluster", "rect": [42, 220, 230, 176]},
+    {"object_id": "zone_cave_maintenance_cluster", "type": "function_cluster", "rect": [272, 210, 450, 164]},
+    {"object_id": "zone_cave_evidence_cluster", "type": "function_cluster", "rect": [686, 194, 174, 150]}
+  ],
+  "atlas_tile_art": {
+    "cell_size": [32, 32],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [
+      {"layer": "BaseTiles", "asset_id": "cave_wet_stone_floor_set", "tile": "base_a", "position": [252, 252], "tint": "#829291"},
+      {"layer": "BaseTiles", "asset_id": "cave_wet_stone_floor_set", "tile": "base_b", "position": [284, 252], "tint": "#829291"},
+      {"layer": "BaseTiles", "asset_id": "cave_wet_stone_floor_set", "tile": "base_c", "position": [500, 252], "tint": "#829291"},
+      {"layer": "WallTiles", "asset_id": "cave_wall_straight_set", "tile": "edge_s", "position": [176, 112], "tint": "#849695"},
+      {"layer": "WallTiles", "asset_id": "cave_wall_straight_set", "tile": "base_a", "position": [208, 112], "tint": "#758887"},
+      {"layer": "CornerTiles", "asset_id": "cave_wall_outer_corner_set", "tile": "outer_corner_sw", "position": [72, 174], "tint": "#829493"},
+      {"layer": "CornerTiles", "asset_id": "cave_wall_outer_corner_set", "tile": "outer_corner_se", "position": [820, 174], "tint": "#829493"},
+      {"layer": "CornerTiles", "asset_id": "cave_wall_inner_corner_set", "tile": "inner_corner_ne", "position": [336, 116], "tint": "#758887"},
+      {"layer": "CornerTiles", "asset_id": "cave_wall_inner_corner_set", "tile": "inner_corner_nw", "position": [560, 112], "tint": "#758887"},
+      {"layer": "ShoreTiles", "asset_id": "cave_puddle_edge_set", "tile": "edge_n", "position": [356, 332], "tint": "#90a5a1"},
+      {"layer": "ShoreTiles", "asset_id": "cave_puddle_edge_set", "tile": "outer_corner_ne", "position": [660, 340], "tint": "#90a5a1"},
+      {"layer": "WaterTiles", "asset_id": "cave_shallow_pool_set", "tile": "base_a", "position": [430, 370], "tint": "#789ca0"},
+      {"layer": "WaterTiles", "asset_id": "cave_shallow_pool_set", "tile": "base_b", "position": [560, 356], "tint": "#789ca0"},
+      {"layer": "ForegroundTiles", "asset_id": "cave_ceiling_foreground_set", "tile": "edge_s", "position": [146, 94], "tint": "#65787a"},
+      {"layer": "ForegroundTiles", "asset_id": "cave_ceiling_foreground_set", "tile": "base_a", "position": [178, 94], "tint": "#566b6e"},
+      {"layer": "ForegroundTiles", "asset_id": "cave_ceiling_foreground_set", "tile": "base_b", "position": [704, 108], "tint": "#566b6e"},
+      {"layer": "ForegroundTiles", "asset_id": "cave_ceiling_foreground_set", "tile": "edge_e", "position": [836, 190], "tint": "#65787a"}
+    ]
+  },
+  "level_art_metrics": {
+    "effective_walkable_area_px2": 145080,
+    "empty_ratio_estimate": 0.25,
+    "function_clusters": 3,
+    "foreground_layers": 3,
+    "large_structure_groups": 5,
+    "new_raster_asset_ids": []
+  },
+  "rollout_metadata": {
+    "batch": "LEVEL_ART_PASS_01",
+    "new_asset_ids": [],
+    "reused_asset_ids": ["cave_wet_stone_floor_set", "cave_wall_straight_set", "cave_wall_outer_corner_set", "cave_wall_inner_corner_set", "cave_ceiling_foreground_set", "cave_rock_small_set", "cave_rock_large_set", "cave_stalagmite_set", "cave_puddle_edge_set", "cave_shallow_pool_set", "cave_wood_plank_walkway", "cave_rotten_board_set", "cave_rusty_tool_set", "cave_old_maintenance_device", "cave_water_drip_effect", "cave_wet_reflection_patch", "cave_entrance_frame"],
+    "primary_visual_center": "maintenance_device_and_hidden_evidence_pocket",
+    "frozen_reference_maps_untouched": ["town", "harbor", "inn-lobby"]
+  }
 }

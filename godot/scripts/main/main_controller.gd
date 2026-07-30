@@ -134,6 +134,13 @@ func _dispatch_interaction_result(result: Dictionary) -> void:
 			ui.show_inspect(str(result.get("title", "现场记录")), str(result.get("text", "")))
 		"journal":
 			ui.show_journal(str(result.get("tab", "journal")))
+		"rest":
+			var events: Array[Dictionary] = TimeManager.advance_travel(GameManager.state, float(result.get("real_seconds", 15.0)))
+			world.load_state(GameManager.state)
+			ui.update_state(GameManager.state, DataManager.get_scene_data(str(GameManager.state.get("placeId", "player-room"))))
+			ui.show_inspect(str(result.get("title", "休息")), str(result.get("text", "")))
+			_handle_time_events(events)
+			GameManager.save(false)
 		"puzzle":
 			flow.transition(GameFlowStateMachine.State.PUZZLE)
 			ui.show_puzzle(str(result.get("puzzle", "")), GameManager.state)

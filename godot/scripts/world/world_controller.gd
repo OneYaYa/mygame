@@ -16,6 +16,7 @@ var state: Dictionary = {}
 var npc_actors: Dictionary = {}
 var _last_step_at: int = 0
 var _time_of_day_override: String = ""
+var _player_light_texture: Texture2D
 
 
 func _ready() -> void:
@@ -31,6 +32,7 @@ func load_state(new_state: Dictionary, force_scene_rebuild: bool = false) -> voi
 	else:
 		world_view.update_state(state)
 		_update_npcs(0.0)
+	_update_player_light()
 	_update_daylight()
 
 
@@ -50,12 +52,15 @@ func set_art_debug(value: bool) -> void:
 func get_art_review_metrics() -> Dictionary:
 	var metrics: Dictionary = world_view.get_review_metrics()
 	metrics["player_spawn"] = [player.position.x, player.position.y]
+	metrics["camera_zoom"] = (player.get_node("Camera2D") as Camera2D).zoom.x
 	var npc_points: Array[Dictionary] = []
 	for npc_id: Variant in npc_actors.keys():
 		var actor: TimeEchoNPCActor = npc_actors[npc_id] as TimeEchoNPCActor
 		npc_points.append({"npc_id": str(npc_id), "position": [actor.position.x, actor.position.y]})
 	metrics["npc_points"] = npc_points
 	metrics["portal_reachability"] = get_portal_reachability_report()
+	metrics["interaction_reachability"] = get_interaction_reachability_report()
+	metrics["npc_reachability"] = get_npc_reachability_report()
 	return metrics
 
 
@@ -66,7 +71,64 @@ func get_portal_reachability_report() -> Array[Dictionary]:
 	const GRID: int = 16
 	var bounds := Rect2(0, 0, float(current_scene.get("width", 768)), float(current_scene.get("height", 480)))
 	var obstacles: Array[Rect2] = world_view.get_collision_rects()
-	var start: Vector2i = _nearest_open_cell(_world_to_cell(player.position, GRID), GRID, bounds, obstacles)
+	var visited: Dictionary = _reachable_cells_from_player(GRID, bounds, obstacles)
+	for raw: Variant in current_scene.get("portals", []):
+		var portal: Dictionary = raw as Dictionary
+		var portal_id: String = str(portal.get("id", ""))
+		var trigger: Rect2 = world_view.get_gameplay_rect(portal_id, "trigger_rect", _rect(portal))
+		report.append({
+			"portal_id": portal_id,
+			"target": str(portal.get("targetPlaceId", "")),
+			"revealed": SceneManager.can_reveal_portal(portal, state),
+			"reachable": _rect_is_reachable(trigger, visited, GRID),
+			"trigger_rect": [trigger.position.x, trigger.position.y, trigger.size.x, trigger.size.y],
+		})
+	return report
+
+
+func get_interaction_reachability_report() -> Array[Dictionary]:
+	var report: Array[Dictionary] = []
+	if current_scene.is_empty():
+		return report
+	const GRID: int = 16
+	var bounds := Rect2(0, 0, float(current_scene.get("width", 768)), float(current_scene.get("height", 480)))
+	var obstacles: Array[Rect2] = world_view.get_collision_rects()
+	var visited: Dictionary = _reachable_cells_from_player(GRID, bounds, obstacles)
+	for raw: Variant in current_scene.get("landmarks", []):
+		var landmark: Dictionary = raw as Dictionary
+		if not bool(landmark.get("interactive", false)):
+			continue
+		var landmark_id: String = str(landmark.get("id", ""))
+		var interaction_rect: Rect2 = world_view.get_gameplay_rect(landmark_id, "interaction_rect", _rect(landmark))
+		report.append({
+			"landmark_id": landmark_id,
+			"reachable": _rect_is_reachable(interaction_rect, visited, GRID),
+			"interaction_rect": [interaction_rect.position.x, interaction_rect.position.y, interaction_rect.size.x, interaction_rect.size.y],
+		})
+	return report
+
+
+func get_npc_reachability_report() -> Array[Dictionary]:
+	var report: Array[Dictionary] = []
+	if current_scene.is_empty():
+		return report
+	const GRID: int = 16
+	var bounds := Rect2(0, 0, float(current_scene.get("width", 768)), float(current_scene.get("height", 480)))
+	var obstacles: Array[Rect2] = world_view.get_collision_rects()
+	var visited: Dictionary = _reachable_cells_from_player(GRID, bounds, obstacles)
+	for npc_id: Variant in npc_actors.keys():
+		var actor: TimeEchoNPCActor = npc_actors[npc_id] as TimeEchoNPCActor
+		var standing_area := Rect2(actor.position - Vector2(14.0, 14.0), Vector2(28.0, 28.0))
+		report.append({
+			"npc_id": str(npc_id),
+			"reachable": _rect_is_reachable(standing_area, visited, GRID),
+			"position": [actor.position.x, actor.position.y],
+		})
+	return report
+
+
+func _reachable_cells_from_player(grid: int, bounds: Rect2, obstacles: Array[Rect2]) -> Dictionary:
+	var start: Vector2i = _nearest_open_cell(_world_to_cell(player.position, grid), grid, bounds, obstacles)
 	var visited: Dictionary = {start: true}
 	var frontier: Array[Vector2i] = [start]
 	var cursor: int = 0
@@ -76,28 +138,19 @@ func get_portal_reachability_report() -> Array[Dictionary]:
 		cursor += 1
 		for direction: Vector2i in directions:
 			var next: Vector2i = cell + direction
-			if visited.has(next) or _cell_is_blocked(next, GRID, bounds, obstacles):
+			if visited.has(next) or _cell_is_blocked(next, grid, bounds, obstacles):
 				continue
 			visited[next] = true
 			frontier.append(next)
-	for raw: Variant in current_scene.get("portals", []):
-		var portal: Dictionary = raw as Dictionary
-		var portal_id: String = str(portal.get("id", ""))
-		var trigger: Rect2 = world_view.get_gameplay_rect(portal_id, "trigger_rect", _rect(portal))
-		var reachable: bool = false
-		for cell_value: Variant in visited.keys():
-			var point: Vector2 = _cell_center(cell_value as Vector2i, GRID)
-			if trigger.grow(10.0).has_point(point):
-				reachable = true
-				break
-		report.append({
-			"portal_id": portal_id,
-			"target": str(portal.get("targetPlaceId", "")),
-			"revealed": SceneManager.can_reveal_portal(portal, state),
-			"reachable": reachable,
-			"trigger_rect": [trigger.position.x, trigger.position.y, trigger.size.x, trigger.size.y],
-		})
-	return report
+	return visited
+
+
+func _rect_is_reachable(rect: Rect2, visited: Dictionary, grid: int) -> bool:
+	for cell_value: Variant in visited.keys():
+		var point: Vector2 = _cell_center(cell_value as Vector2i, grid)
+		if rect.grow(10.0).has_point(point):
+			return true
+	return false
 
 
 func get_nearest_interaction() -> Dictionary:
@@ -171,6 +224,10 @@ func _change_scene(place_id: String) -> void:
 	var bounds := Rect2(0, 0, float(current_scene.get("width", 768)), float(current_scene.get("height", 480)))
 	player.configure(Vector2(float(player_state.get("x", 384.0)), float(player_state.get("y", 350.0))), str(player_state.get("facing", "down")), bounds)
 	var camera: Camera2D = player.get_node("Camera2D") as Camera2D
+	var camera_zoom: float = clampf(float(world_view.get_art_layout().get("camera_zoom", 1.0)), 0.75, 1.5)
+	var camera_offset_values: Array = world_view.get_art_layout().get("camera_offset", [0, -32]) as Array
+	camera.zoom = Vector2(camera_zoom, camera_zoom)
+	camera.position = Vector2(float(camera_offset_values[0]), float(camera_offset_values[1])).round() if camera_offset_values.size() == 2 else Vector2(0, -32)
 	camera.limit_left = 0
 	camera.limit_top = 0
 	camera.limit_right = int(bounds.size.x)
@@ -192,6 +249,33 @@ func _rebuild_npcs() -> void:
 		actors.add_child(actor)
 		actor.configure(DataManager.get_npc(str(npc_id)), npc_state)
 		npc_actors[npc_id] = actor
+
+
+func _update_player_light() -> void:
+	var light: PointLight2D = player.get_node_or_null("LevelArtFlashlight") as PointLight2D
+	if light == null:
+		light = PointLight2D.new()
+		light.name = "LevelArtFlashlight"
+		light.position = Vector2(0, -18)
+		light.color = Color("f2bd72")
+		light.energy = 0.46
+		light.texture_scale = 2.5
+		light.blend_mode = Light2D.BLEND_MODE_ADD
+		if _player_light_texture == null:
+			_player_light_texture = _make_player_light_texture()
+		light.texture = _player_light_texture
+		player.add_child(light)
+	light.enabled = str(current_scene.get("id", "")) == "low-tide-cave" and InventoryManager.has_item(state, "flashlight")
+
+
+func _make_player_light_texture() -> Texture2D:
+	var image := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	for y: int in range(64):
+		for x: int in range(64):
+			var distance: float = Vector2(x - 31.5, y - 31.5).length() / 31.5
+			var alpha: float = clampf(1.0 - distance, 0.0, 1.0)
+			image.set_pixel(x, y, Color(1.0, 1.0, 1.0, alpha * alpha))
+	return ImageTexture.create_from_image(image)
 
 
 func _update_npcs(delta: float) -> void:

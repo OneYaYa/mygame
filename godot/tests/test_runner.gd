@@ -35,12 +35,12 @@ func _run() -> void:
 	_check(DataManager.items_by_id.has("fixed_portrait"), "stable item IDs are indexed")
 	var art_catalog := TimeEchoArtCatalog.new()
 	_check(art_catalog.load_catalog(), "typed art manifest loads without resource failures")
-	_check(art_catalog.assets_by_id.size() == 75, "art manifest inventories the P0 fix assets together with the existing art catalog")
+	_check(art_catalog.assets_by_id.size() == 253, "art manifest inventories the frozen benchmark catalog and all 178 full-map rollout assets")
 	_check((art_catalog.get_asset("prop_buckets") as Dictionary).get("category") == "concept_only", "semantic mismatch is disabled as concept-only")
 	_check(art_catalog.get_texture("spr_player") is Texture2D, "processed player sprite imports as Texture2D")
 	_check(art_catalog.tile_count("grass_base_variants") == 16, "generated grass atlas exposes sixteen tiles")
 	_check(art_catalog.get_atlas_tile("grass_base_variants", 0) is AtlasTexture, "generated atlas tiles load through typed art catalog")
-	_check(art_catalog.tile_semantics_by_asset.size() == 10, "all benchmark and P0 fix atlases expose named semantics")
+	_check(art_catalog.tile_semantics_by_asset.size() == 45, "all benchmark, P0 fix, and full-map rollout atlases expose named semantics")
 	_check(art_catalog.tile_index("grass_base_variants", "base_a") == 0, "named grass semantics resolve without a map-side magic index")
 	_check(art_catalog.tile_index("water_shallow_deep_set", "transition_corner_se") == 11, "repaired water atlas exposes the southeast transition corner by name")
 	_check(art_catalog.tile_index("water_shallow_deep_set", "deep_c") == 15, "repaired water atlas keeps a third low-noise deep-water variant")
@@ -56,12 +56,19 @@ func _run() -> void:
 	_check(layout_catalog.layouts_by_id.size() == 18, "all eighteen locations have stable art layouts")
 	var art_review_scene: PackedScene = load("res://scenes/tools/art_review.tscn") as PackedScene
 	_check(art_review_scene != null, "art review developer scene loads")
+	var vertical_slice_ids: Array[String] = ["player-room", "chapel-belfry", "low-tide-cave", "clock-basement"]
+	var expected_slice_zoom: Dictionary = {
+		"player-room": 1.25,
+		"chapel-belfry": 1.20,
+		"low-tide-cave": 1.15,
+		"clock-basement": 1.15,
+	}
 	for scene_value: Variant in DataManager.scenes_by_id.values():
 		var scene: Dictionary = scene_value as Dictionary
 		for portal_value: Variant in scene.get("portals", []):
 			var portal: Dictionary = portal_value as Dictionary
 			_check(DataManager.scenes_by_id.has(str(portal.get("targetPlaceId", ""))), "portal target %s exists" % portal.get("id", "?"))
-	for benchmark_map_id: String in ["town", "harbor", "inn-lobby"]:
+	for benchmark_map_id: String in ["town", "harbor", "inn-lobby"] + vertical_slice_ids:
 		var benchmark_scene: Dictionary = DataManager.scenes_by_id.get(benchmark_map_id, {}) as Dictionary
 		for portal_value: Variant in benchmark_scene.get("portals", []):
 			var benchmark_portal: Dictionary = portal_value as Dictionary
@@ -84,29 +91,61 @@ func _run() -> void:
 	art_flags["counterweight_raised"] = true
 	art_flags["light_route_inn_studio"] = true
 	art_flags["slot_seven_filled"] = true
+	art_flags["arthur_stops_clock"] = true
+	art_flags["beatrice_rings_seventh"] = true
 	art_state["flags"] = art_flags
 	InventoryManager.add_item(art_state, "unnumbered_key")
 	InventoryManager.add_item(art_state, "flashlight")
+	TimeManager.sync_npc_schedules(art_state)
 	for scene_value: Variant in DataManager.scenes_by_id.values():
 		var scene: Dictionary = scene_value as Dictionary
-		art_state["placeId"] = scene.get("id", "")
+		var map_id: String = str(scene.get("id", "?"))
+		art_state["placeId"] = map_id
 		var player_state: Dictionary = art_state.get("player", {}) as Dictionary
-		player_state["x"] = roundf(float(scene.get("width", 768)) * 0.5)
-		player_state["y"] = roundf(float(scene.get("height", 480)) * 0.58)
+		var review_layout: Dictionary = layout_catalog.get_layout(map_id)
+		var review_position: Array = review_layout.get("review_player_position", [roundf(float(scene.get("width", 768)) * 0.5), roundf(float(scene.get("height", 480)) * 0.58)]) as Array
+		player_state["x"] = float(review_position[0])
+		player_state["y"] = float(review_position[1])
 		art_state["player"] = player_state
 		runtime.load_state(art_state, true)
 		var metrics: Dictionary = runtime.get_art_review_metrics()
 		_check((metrics.get("asset_errors", PackedStringArray()) as PackedStringArray).is_empty(), "%s has no art resource failures" % scene.get("id", "?"))
 		_check((metrics.get("warnings", PackedStringArray()) as PackedStringArray).is_empty(), "%s has integer art transforms and no flagged overlap" % scene.get("id", "?"))
-		var map_id: String = str(scene.get("id", "?"))
 		var generated_tiles: int = int(metrics.get("generated_tile_count", 0))
-		if map_id in ["town", "harbor", "inn-lobby"]:
-			_check(generated_tiles > 0, "%s builds its static semantic atlas layer" % map_id)
-		else:
-			_check(generated_tiles == 0, "%s retains the existing procedural fallback" % map_id)
+		_check(generated_tiles > 0, "%s builds its authored static semantic atlas layer" % map_id)
 		for portal_value: Variant in metrics.get("portal_reachability", []):
 			var portal: Dictionary = portal_value as Dictionary
 			_check(bool(portal.get("reachable", false)), "%s portal %s is reachable" % [scene.get("id", "?"), portal.get("portal_id", "?")])
+		if map_id in vertical_slice_ids:
+			_check(is_equal_approx(float(metrics.get("camera_zoom", 0.0)), float(expected_slice_zoom[map_id])), "%s uses its reviewed gameplay camera zoom" % map_id)
+			_check(int(metrics.get("foreground_count", 0)) > 0, "%s instantiates an authored foreground occlusion layer" % map_id)
+			var level_art_metrics: Dictionary = review_layout.get("level_art_metrics", {}) as Dictionary
+			_check(float(level_art_metrics.get("empty_ratio_estimate", 1.0)) <= 0.30, "%s keeps unassigned empty floor at or below the Level Art threshold" % map_id)
+			_check(int(level_art_metrics.get("function_clusters", 0)) >= 3, "%s declares at least three authored function clusters" % map_id)
+			_check((level_art_metrics.get("new_raster_asset_ids", []) as Array).is_empty(), "%s adds no decorative raster asset IDs" % map_id)
+			for interaction_value: Variant in metrics.get("interaction_reachability", []):
+				var interaction: Dictionary = interaction_value as Dictionary
+				_check(bool(interaction.get("reachable", false)), "%s interaction %s is reachable" % [map_id, interaction.get("landmark_id", "?")])
+			if map_id in ["chapel-belfry", "clock-basement"]:
+				_check(not (metrics.get("npc_reachability", []) as Array).is_empty(), "%s instantiates its committed story NPC" % map_id)
+				for npc_value: Variant in metrics.get("npc_reachability", []):
+					var npc_reach: Dictionary = npc_value as Dictionary
+					_check(bool(npc_reach.get("reachable", false)), "%s NPC %s is reachable from the entry path" % [map_id, npc_reach.get("npc_id", "?")])
+			if map_id == "chapel-belfry":
+				_check(bool((review_layout.get("canvas", {}) as Dictionary).get("open_structure", false)), "chapel-belfry disables the ordinary rectangular room shell")
+			if map_id == "clock-basement":
+				var slot_positions: Dictionary = {}
+				var signal_ids: Array[String] = []
+				for object_value: Variant in review_layout.get("objects", []):
+					var art_object: Dictionary = object_value as Dictionary
+					var object_id: String = str(art_object.get("object_id", ""))
+					if object_id.begins_with("basement_slot_"):
+						var position_values: Array = art_object.get("position", []) as Array
+						slot_positions[str(position_values)] = true
+					if object_id in ["basement_signal_red", "basement_signal_gold", "basement_signal_white"]:
+						signal_ids.append(object_id)
+				_check(slot_positions.size() == 7, "clock-basement presents seven spatially distinct witness slots")
+				_check(signal_ids.size() == 3, "clock-basement presents exactly three elevated external signal lights")
 
 	art_state["placeId"] = "town"
 	var movement_state: Dictionary = art_state.get("player", {}) as Dictionary
@@ -126,6 +165,34 @@ func _run() -> void:
 	_check(runtime.get_node("WorldView/Collisions").get_child_count() > 0, "rebuilt benchmark collision bodies instantiate at runtime")
 	_check((runtime.get_node("WorldView/WorldObjects") as Node2D).y_sort_enabled, "world props retain Y sorting")
 
+	var slice_movement_cases: Dictionary = {
+		"player-room": {"position": Vector2(384.0, 405.0), "action": "move_up"},
+		"chapel-belfry": {"position": Vector2(120.0, 350.0), "action": "move_right"},
+		"low-tide-cave": {"position": Vector2(120.0, 320.0), "action": "move_right"},
+		"clock-basement": {"position": Vector2(384.0, 405.0), "action": "move_down"},
+	}
+	for map_id: String in vertical_slice_ids:
+		var movement_case: Dictionary = slice_movement_cases[map_id] as Dictionary
+		var slice_player_state: Dictionary = art_state.get("player", {}) as Dictionary
+		var slice_position: Vector2 = movement_case["position"] as Vector2
+		slice_player_state["x"] = slice_position.x
+		slice_player_state["y"] = slice_position.y
+		art_state["player"] = slice_player_state
+		art_state["placeId"] = map_id
+		runtime.load_state(art_state, true)
+		var slice_player := runtime.get_node("WorldView/Characters/Player") as TimeEchoPlayer
+		slice_player.active = true
+		var slice_before: Vector2 = slice_player.position
+		var movement_action: String = str(movement_case["action"])
+		Input.action_press(movement_action)
+		for frame: int in range(6):
+			await get_tree().physics_frame
+		Input.action_release(movement_action)
+		await get_tree().physics_frame
+		_check(slice_player.position.distance_to(slice_before) > 0.5, "%s player traverses its entrance path under real physics" % map_id)
+		_check(slice_player.z_index == roundi(slice_player.position.y), "%s player Y sort follows physical movement" % map_id)
+		_check(runtime.get_node("WorldView/Collisions").get_child_count() > 0, "%s collision bodies instantiate at runtime" % map_id)
+
 	var npc_scene := load("res://scenes/characters/npc.tscn") as PackedScene
 	var test_npc := npc_scene.instantiate() as TimeEchoNPCActor
 	add_child(test_npc)
@@ -141,6 +208,7 @@ func _run() -> void:
 
 	var state: Dictionary = GameManager.create_initial_state()
 	_check(state.get("placeId") == "player-room", "new game starts in room eight")
+	_check(is_equal_approx(float((state.get("player", {}) as Dictionary).get("x", -1.0)), 384.0) and is_equal_approx(float((state.get("player", {}) as Dictionary).get("y", -1.0)), 370.0), "new game uses the retained player-room spawn")
 	_check(int(state.get("minute", 0)) == 360, "loop starts Saturday 06:00")
 	var before: float = float(state.get("loopElapsed", 0.0))
 	TimeManager.advance(state, 1.0)
@@ -154,6 +222,41 @@ func _run() -> void:
 	before = float(state.get("loopElapsed", 0.0))
 	TimeManager.advance(state, 1.0)
 	_check(is_equal_approx(float(state.get("loopElapsed", 0.0)), before), "low-tide cave pauses time")
+
+	var slice_interaction_service := InteractionService.new()
+	var room_state: Dictionary = GameManager.create_initial_state()
+	GameManager.state = room_state
+	var bed_result: Dictionary = slice_interaction_service.interact({"id": "player_bed"}, room_state)
+	_check(bed_result.get("kind") == "rest" and bool((room_state.get("flags", {}) as Dictionary).get("rested_in_room", false)), "player-room bed exposes a real rest interaction and stable state flag")
+	var rest_before: float = float(room_state.get("loopElapsed", 0.0))
+	TimeManager.advance_travel(room_state, float(bed_result.get("real_seconds", 0.0)))
+	_check(is_equal_approx(float(room_state.get("loopElapsed", 0.0)) - rest_before, 30.0), "player-room rest advances the authored half-hour")
+	var journal_result: Dictionary = slice_interaction_service.interact({"id": "player_journal"}, room_state)
+	var memory_result: Dictionary = slice_interaction_service.interact({"id": "player_memory_board"}, room_state)
+	_check(journal_result.get("kind") == "journal" and journal_result.get("tab") == "journal", "player-room journal interaction opens retained notes")
+	_check(memory_result.get("kind") == "journal" and memory_result.get("tab") == "inventory", "player-room memory board opens retained photos and items")
+
+	var belfry_state: Dictionary = GameManager.create_initial_state()
+	GameManager.state = belfry_state
+	InventoryManager.add_item(belfry_state, "silver_tuning_fork")
+	var belfry_flags: Dictionary = belfry_state.get("flags", {}) as Dictionary
+	belfry_flags["fork_identified"] = true
+	belfry_flags["beatrice_rings_seventh"] = true
+	belfry_state["flags"] = belfry_flags
+	slice_interaction_service.interact({"id": "seventh_hammer"}, belfry_state)
+	var rope_result: Dictionary = slice_interaction_service.interact({"id": "belfry_calibration_rope"}, belfry_state)
+	_check(bool((belfry_state.get("flags", {}) as Dictionary).get("seventh_hammer_calibrated", false)), "identified tuning fork calibrates the belfry seventh-hammer frame")
+	_check(bool((belfry_state.get("flags", {}) as Dictionary).get("seventh_signal_ready", false)) and rope_result.get("kind") == "inspect", "belfry rope connects the calibrated hammer to Beatrice's commitment")
+	TimeManager.sync_npc_schedules(belfry_state)
+	_check(str(((belfry_state.get("npcs", {}) as Dictionary)["beatrice"] as Dictionary).get("placeId", "")) == "chapel-belfry", "committed Beatrice is reachable at the authored belfry maintenance position")
+
+	var cave_state: Dictionary = GameManager.create_initial_state()
+	GameManager.state = cave_state
+	slice_interaction_service.interact({"id": "cave_negative_pickup"}, cave_state)
+	_check(not InventoryManager.has_item(cave_state, "cave_negative"), "cave evidence remains hidden without the flashlight")
+	InventoryManager.add_item(cave_state, "flashlight")
+	slice_interaction_service.interact({"id": "cave_negative_pickup"}, cave_state)
+	_check(InventoryManager.has_item(cave_state, "cave_negative"), "flashlight reveals and collects the cave negative")
 
 	GameManager.state = state
 	GameManager.mark_repair("master")

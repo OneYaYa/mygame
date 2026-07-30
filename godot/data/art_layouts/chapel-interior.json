@@ -1,50 +1,739 @@
 {
-  "schema_version":1,"map_id":"chapel-interior","theme_variant":"chapel_ritual_clock_hall","interaction_distance":52,
-  "canvas":{"outside_color":"#0d1517","room_rect":[58,46,652,418],"wall_height":60,"side_wall":18,"wall_color":"#68706c","wall_dark":"#303838","floor_color":"#565855","floor_style":"chapel_stone","ambient_color":"#aaa99a","edge_color":"#283534"},
-  "ground_shapes":[
-    {"object_id":"chapel_inside_aisle","kind":"platform","points":[[348,106],[420,106],[430,448],[338,448]],"color":"#6b635d"},
-    {"object_id":"chapel_clock_dais","kind":"platform","points":[[278,108],[490,108],[516,190],[252,190]],"color":"#5b5d59"}
-  ],
-  "objects":[
-    {"object_id":"chapel_six_hammers","procedural_type":"clockwork","position":[384,208],"display_size":[210,92],"anchor":[0.5,1.0],"sort_y":208,"layer":"WorldObjects","color":"#414949","accent":"#b99752","contact_shadow":true,"shadow_size":[166,12]},
-    {"object_id":"chapel_hammer_a","procedural_type":"hammer","position":[314,164],"display_size":[24,42],"anchor":[0.5,1.0],"sort_y":164,"layer":"WorldObjects","color":"#887041","accent":"#d1b05d"},
-    {"object_id":"chapel_hammer_b","procedural_type":"hammer","position":[356,164],"display_size":[24,42],"anchor":[0.5,1.0],"sort_y":164,"layer":"WorldObjects","color":"#887041","accent":"#d1b05d"},
-    {"object_id":"chapel_hammer_c","procedural_type":"hammer","position":[398,164],"display_size":[24,42],"anchor":[0.5,1.0],"sort_y":164,"layer":"WorldObjects","color":"#887041","accent":"#d1b05d"},
-    {"object_id":"chapel_hammer_d","procedural_type":"hammer","position":[440,164],"display_size":[24,42],"anchor":[0.5,1.0],"sort_y":164,"layer":"WorldObjects","color":"#887041","accent":"#d1b05d"},
-    {"object_id":"chapel_pew_left_a","procedural_type":"pew","position":[216,286],"display_size":[104,52],"anchor":[0.5,1.0],"sort_y":286,"layer":"WorldObjects","color":"#574332","accent":"#99734a","contact_shadow":true,"shadow_size":[86,8]},
-    {"object_id":"chapel_pew_left_b","procedural_type":"pew","position":[216,374],"display_size":[104,52],"anchor":[0.5,1.0],"sort_y":374,"layer":"WorldObjects","color":"#574332","accent":"#99734a","contact_shadow":true,"shadow_size":[86,8]},
-    {"object_id":"chapel_pew_right_a","procedural_type":"pew","position":[552,292],"display_size":[104,52],"anchor":[0.5,1.0],"sort_y":292,"layer":"WorldObjects","color":"#574332","accent":"#99734a","contact_shadow":true,"shadow_size":[86,8]},
-    {"object_id":"chapel_rope_rack","procedural_type":"rope_hang","position":[592,196],"display_size":[70,82],"anchor":[0.5,1.0],"sort_y":196,"layer":"WorldObjects","color":"#9c7a47","accent":"#d3b46d"},
-    {"object_id":"chapel_pin_crate","asset_id":"prop_crate","position":[120,362],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":362,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"chapel_candle_a","procedural_type":"safelight","position":[280,142],"display_size":[24,30],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#493c30","accent":"#e8c579"},
-    {"object_id":"chapel_candle_b","procedural_type":"safelight","position":[488,142],"display_size":[24,30],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#493c30","accent":"#e8c579"},
-    {"object_id":"chapel_inside_banner","asset_id":"prop_banner","position":[652,176],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations"},
-    {"object_id":"chapel_inside_door","procedural_type":"door","position":[384,464],"display_size":[30,62],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#3c3530","accent":"#b99a5d"},
-    {"object_id":"chapel_belfry_stairs","procedural_type":"beam","position":[680,406],"display_size":[42,94],"anchor":[0.5,1.0],"sort_y":406,"layer":"WorldObjects","color":"#3f3a35","accent":"#7e6b50","contact_shadow":true}
-  ],
-  "collision_rects":[
-    {"object_id":"col_chapel_in_top","rect":[58,46,652,62]},{"object_id":"col_chapel_in_left","rect":[58,108,18,356]},{"object_id":"col_chapel_in_right","rect":[692,108,18,356]},
-    {"object_id":"col_chapel_in_bottom_l","rect":[58,448,300,16]},{"object_id":"col_chapel_in_bottom_r","rect":[410,448,300,16]},
-    {"object_id":"col_six_hammers","rect":[284,174,200,34]},{"object_id":"col_pew_la","rect":[167,264,98,22]},
-    {"object_id":"col_pew_lb","rect":[167,352,98,22]},{"object_id":"col_pew_ra","rect":[503,270,98,22]},
-    {"object_id":"col_rope_rack","rect":[562,163,60,33]},{"object_id":"col_belfry_stairs","rect":[665,330,30,76]}
-  ],
-  "gameplay_overrides":{
-    "chapel_clock_mechanism":{"interaction_rect":[286,138,196,70]},"chapel_rope":{"interaction_rect":[560,126,64,74]},
-    "missing_pin":{"interaction_rect":[100,330,40,34]},"chapel_inside_to_hill":{"trigger_rect":[360,420,48,44]},
-    "chapel_to_belfry":{"trigger_rect":[656,326,48,82]}
+  "schema_version": 1,
+  "map_id": "chapel-interior",
+  "theme_variant": "full_map_rollout_chapel_six_hammer_ritual",
+  "interaction_distance": 54,
+  "canvas": {
+    "outside_color": "#0d1517",
+    "room_rect": [
+      58,
+      46,
+      652,
+      418
+    ],
+    "wall_height": 60,
+    "side_wall": 18,
+    "wall_color": "#68706c",
+    "wall_dark": "#303838",
+    "floor_color": "#565855",
+    "floor_style": "chapel_stone",
+    "ambient_color": "#aaa99a",
+    "edge_color": "#283534"
   },
-  "lights":[
-    {"object_id":"chapel_candle_light_a","position":[280,142],"color":"#e6c277","energy":0.28,"radius":66},
-    {"object_id":"chapel_candle_light_b","position":[488,142],"color":"#e6c277","energy":0.28,"radius":66},
-    {"object_id":"chapel_clock_cold_light","position":[384,170],"color":"#78969a","energy":0.22,"radius":96}
+  "ground_shapes": [
+    {
+      "object_id": "chapel_inside_aisle",
+      "kind": "platform",
+      "points": [
+        [
+          348,
+          106
+        ],
+        [
+          420,
+          106
+        ],
+        [
+          430,
+          448
+        ],
+        [
+          338,
+          448
+        ]
+      ],
+      "color": "#6b635d"
+    },
+    {
+      "object_id": "chapel_clock_dais",
+      "kind": "platform",
+      "points": [
+        [
+          278,
+          108
+        ],
+        [
+          490,
+          108
+        ],
+        [
+          516,
+          190
+        ],
+        [
+          252,
+          190
+        ]
+      ],
+      "color": "#5b5d59"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_chapel_in_entrance","type":"entrance_zone","rect":[330,374,108,74]},
-    {"object_id":"zone_chapel_in_move","type":"movement_zone","rect":[330,190,108,210]},
-    {"object_id":"zone_chapel_in_primary","type":"primary_interaction_zone","rect":[250,116,270,112]},
-    {"object_id":"zone_chapel_in_story","type":"secondary_story_zone","rect":[544,120,106,106]},
-    {"object_id":"zone_chapel_in_decor","type":"decoration_zone","rect":[100,244,520,146]},
-    {"object_id":"zone_chapel_in_blocked","type":"blocked_zone","rect":[58,46,652,62]}
-  ]
+  "objects": [
+    {
+      "object_id": "rollout_chapel_pew_short",
+      "asset_id": "chapel_pew_short",
+      "position": [
+        220,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 330,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        6
+      ],
+      "display_size": [
+        72,
+        56
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_pew_long",
+      "asset_id": "chapel_pew_long",
+      "position": [
+        560,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 330,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        6
+      ],
+      "display_size": [
+        96,
+        56
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_candle_stand",
+      "asset_id": "chapel_candle_stand",
+      "position": [
+        190,
+        260
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 260,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        29,
+        7
+      ],
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_wall_sconce",
+      "asset_id": "chapel_wall_sconce",
+      "position": [
+        618,
+        165
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_altar_base",
+      "asset_id": "chapel_altar_base",
+      "position": [
+        384,
+        215
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 215,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        67,
+        8
+      ],
+      "display_size": [
+        112,
+        72
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_six_hammer_mechanism",
+      "asset_id": "chapel_six_hammer_mechanism",
+      "position": [
+        384,
+        286
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 286,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        106,
+        12
+      ],
+      "display_size": [
+        176,
+        112
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_hammer_support_frame",
+      "asset_id": "chapel_hammer_support_frame",
+      "position": [
+        384,
+        235
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 235,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        53,
+        9
+      ],
+      "display_size": [
+        88,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_bell_rope_set",
+      "asset_id": "chapel_bell_rope_set",
+      "position": [
+        656,
+        285
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 285,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        29,
+        7
+      ],
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_ritual_banner_small",
+      "asset_id": "chapel_ritual_banner_small",
+      "position": [
+        180,
+        162
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 162,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_stained_window_set",
+      "asset_id": "chapel_stained_window_set",
+      "position": [
+        384,
+        155
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "chapel_pew_left_extra",
+      "asset_id": "chapel_pew_long",
+      "position": [
+        220,
+        390
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        96,
+        56
+      ]
+    },
+    {
+      "object_id": "chapel_pew_right_extra",
+      "asset_id": "chapel_pew_long",
+      "position": [
+        560,
+        390
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        96,
+        56
+      ]
+    }
+  ],
+  "collision_rects": [
+    {
+      "object_id": "col_chapel_in_top",
+      "rect": [
+        58,
+        46,
+        652,
+        62
+      ]
+    },
+    {
+      "object_id": "col_chapel_in_left",
+      "rect": [
+        58,
+        108,
+        18,
+        356
+      ]
+    },
+    {
+      "object_id": "col_chapel_in_right",
+      "rect": [
+        692,
+        108,
+        18,
+        356
+      ]
+    },
+    {
+      "object_id": "col_chapel_in_bottom_l",
+      "rect": [
+        58,
+        448,
+        300,
+        16
+      ]
+    },
+    {
+      "object_id": "col_chapel_in_bottom_r",
+      "rect": [
+        410,
+        448,
+        300,
+        16
+      ]
+    },
+    {
+      "object_id": "col_six_hammers",
+      "rect": [
+        284,
+        174,
+        200,
+        34
+      ]
+    },
+    {
+      "object_id": "col_pew_la",
+      "rect": [
+        167,
+        264,
+        98,
+        22
+      ]
+    },
+    {
+      "object_id": "col_pew_lb",
+      "rect": [
+        167,
+        352,
+        98,
+        22
+      ]
+    },
+    {
+      "object_id": "col_pew_ra",
+      "rect": [
+        503,
+        270,
+        98,
+        22
+      ]
+    },
+    {
+      "object_id": "col_rope_rack",
+      "rect": [
+        562,
+        163,
+        60,
+        33
+      ]
+    },
+    {
+      "object_id": "col_belfry_stairs",
+      "rect": [
+        665,
+        330,
+        30,
+        76
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "chapel_clock_mechanism": {
+      "interaction_rect": [
+        286,
+        138,
+        196,
+        70
+      ]
+    },
+    "chapel_rope": {
+      "interaction_rect": [
+        560,
+        126,
+        64,
+        74
+      ]
+    },
+    "missing_pin": {
+      "interaction_rect": [
+        100,
+        330,
+        40,
+        34
+      ]
+    },
+    "chapel_inside_to_hill": {
+      "trigger_rect": [
+        360,
+        420,
+        48,
+        44
+      ]
+    },
+    "chapel_to_belfry": {
+      "trigger_rect": [
+        656,
+        326,
+        48,
+        82
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        190,
+        245
+      ],
+      "color": "#efbc6d",
+      "energy": 0.34,
+      "radius": 74
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        578,
+        245
+      ],
+      "color": "#efbc6d",
+      "energy": 0.34,
+      "radius": 74
+    },
+    {
+      "object_id": "full_light_2",
+      "position": [
+        384,
+        190
+      ],
+      "color": "#a9c1c0",
+      "energy": 0.2,
+      "radius": 92
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        275,
+        150,
+        217,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        275,
+        380,
+        217,
+        83
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        188,
+        185,
+        391,
+        209
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        275,
+        150,
+        217,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        112,
+        129,
+        163,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        492,
+        129,
+        163,
+        209
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        58,
+        46,
+        652,
+        52
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        58,
+        411,
+        652,
+        52
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          7
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          8
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          10
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          11
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          12
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "chapel_aisle_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          13
+        ],
+        "tint": "#ffffff"
+      }
+    ],
+    "interior_shell": {
+      "theme": "chapel_archive",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {
+          "position": [
+            74,
+            46
+          ],
+          "count": 19,
+          "pattern": [
+            "straight",
+            "panel_light",
+            "straight",
+            "panel_dense"
+          ],
+          "tint": "#d7d4c4"
+        }
+      ],
+      "corners": [
+        {
+          "position": [
+            58,
+            46
+          ],
+          "tile": "inside_left",
+          "tint": "#d7d4c4"
+        },
+        {
+          "position": [
+            662,
+            46
+          ],
+          "tile": "inside_right",
+          "tint": "#d7d4c4"
+        }
+      ],
+      "baseboard_segments": [
+        {
+          "position": [
+            74,
+            94
+          ],
+          "count": 19,
+          "pattern": [
+            "straight",
+            "straight",
+            "worn_straight"
+          ],
+          "start": "left_stop",
+          "end": "right_stop"
+        }
+      ]
+    }
+  },
+  "rollout_metadata": {
+    "batch": "B",
+    "new_asset_ids": [
+      "chapel_pew_short",
+      "chapel_pew_long",
+      "chapel_aisle_runner_set",
+      "chapel_candle_stand",
+      "chapel_wall_sconce",
+      "chapel_altar_base",
+      "chapel_six_hammer_mechanism",
+      "chapel_hammer_support_frame",
+      "chapel_bell_rope_set",
+      "chapel_ritual_banner_small",
+      "chapel_stained_window_set"
+    ],
+    "primary_visual_center": "six_hammer_mechanism",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

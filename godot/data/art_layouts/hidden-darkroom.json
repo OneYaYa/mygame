@@ -1,43 +1,1070 @@
 {
-  "schema_version":1,"map_id":"hidden-darkroom","theme_variant":"erased_second_darkroom","interaction_distance":52,
-  "canvas":{"outside_color":"#070b0d","room_rect":[54,46,712,438],"wall_height":58,"side_wall":18,"wall_color":"#4b302f","wall_dark":"#201b1d","floor_color":"#352729","floor_style":"darkroom","ambient_color":"#6f4c49","edge_color":"#251d20"},
-  "ground_shapes":[{"object_id":"darkroom_develop_tile","kind":"platform","points":[[154,190],[410,190],[432,332],[142,332]],"color":"#30282a"}],
-  "objects":[
-    {"object_id":"darkroom_fixing_table","asset_id":"prop_desk","position":[300,300],"display_size":[82,80],"anchor":[0.5,1.0],"sort_y":300,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[66,10]},
-    {"object_id":"darkroom_develop_counter","asset_id":"prop_counter","position":[184,258],"display_size":[86,79],"anchor":[0.5,1.0],"sort_y":258,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[70,10]},
-    {"object_id":"darkroom_record_shelf","asset_id":"prop_shelf","position":[114,194],"display_size":[42,75],"anchor":[0.5,1.0],"sort_y":194,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"darkroom_chair","procedural_type":"chair","position":[302,346],"display_size":[27,34],"anchor":[0.5,1.0],"sort_y":346,"layer":"WorldObjects","color":"#3b2927","accent":"#76504a","contact_shadow":true},
-    {"object_id":"darkroom_photo_a","procedural_type":"wall_frame","position":[202,158],"display_size":[34,42],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#241e20","accent":"#88706b"},
-    {"object_id":"darkroom_photo_b","procedural_type":"wall_frame","position":[256,154],"display_size":[38,34],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#241e20","accent":"#77615e"},
-    {"object_id":"darkroom_photo_c","procedural_type":"wall_frame","position":[314,160],"display_size":[32,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#241e20","accent":"#92746d"},
-    {"object_id":"darkroom_ada_frame","procedural_type":"slot","position":[560,198],"display_size":[70,92],"anchor":[0.5,1.0],"sort_y":198,"layer":"WorldObjects","color":"#2a2325","accent":"#b06a61"},
-    {"object_id":"darkroom_safe_lamp","procedural_type":"safelight","position":[478,160],"display_size":[34,42],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#342324","accent":"#c4433e"},
-    {"object_id":"darkroom_chemical_crate","asset_id":"prop_crate","position":[410,384],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":384,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"darkroom_hidden_door","procedural_type":"door","position":[766,344],"display_size":[30,72],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#241e20","accent":"#754942"},
-    {"object_id":"darkroom_foreground_left","procedural_type":"beam","position":[62,484],"display_size":[18,330],"anchor":[0.5,1.0],"sort_y":0,"layer":"Foreground","color":"#171317","accent":"#2e2528"},
-    {"object_id":"darkroom_foreground_right","procedural_type":"beam","position":[758,484],"display_size":[18,330],"anchor":[0.5,1.0],"sort_y":0,"layer":"Foreground","color":"#171317","accent":"#2e2528"}
-  ],
-  "collision_rects":[
-    {"object_id":"col_darkroom_top","rect":[54,46,712,60]},{"object_id":"col_darkroom_left","rect":[54,106,18,378]},
-    {"object_id":"col_darkroom_right_top","rect":[748,106,18,142]},{"object_id":"col_darkroom_right_bottom","rect":[748,366,18,118]},
-    {"object_id":"col_darkroom_bottom","rect":[54,468,712,16]},{"object_id":"col_darkroom_desk","rect":[263,267,74,33]},
-    {"object_id":"col_darkroom_counter","rect":[145,225,78,33]},{"object_id":"col_darkroom_shelf","rect":[95,161,38,33]},
-    {"object_id":"col_darkroom_crate","rect":[389,363,42,21]}
-  ],
-  "gameplay_overrides":{
-    "identity_fixing_table":{"interaction_rect":[262,230,78,70]},"ada_voice":{"interaction_rect":[526,166,68,102]},
-    "darkroom_to_studio":{"trigger_rect":[738,248,38,116]}
+  "schema_version": 1,
+  "map_id": "hidden-darkroom",
+  "theme_variant": "full_map_rollout_forgotten_silver_salt_darkroom",
+  "interaction_distance": 54,
+  "canvas": {
+    "outside_color": "#08090b",
+    "room_rect": [
+      54,
+      46,
+      712,
+      438
+    ],
+    "wall_height": 58,
+    "side_wall": 18,
+    "wall_color": "#533438",
+    "wall_dark": "#20191d",
+    "floor_color": "#432d30",
+    "floor_style": "darkroom",
+    "ambient_color": "#6f4c49",
+    "edge_color": "#251d20"
   },
-  "lights":[
-    {"object_id":"darkroom_safe_red_light","position":[478,160],"color":"#c83f3b","energy":0.6,"radius":118},
-    {"object_id":"darkroom_ada_red_light","position":[560,224],"color":"#a93f3b","energy":0.34,"radius":92}
+  "ground_shapes": [
+    {
+      "object_id": "darkroom_develop_tile",
+      "kind": "platform",
+      "points": [
+        [
+          154,
+          190
+        ],
+        [
+          410,
+          190
+        ],
+        [
+          432,
+          332
+        ],
+        [
+          142,
+          332
+        ]
+      ],
+      "color": "#30282a"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_darkroom_entrance","type":"entrance_zone","rect":[680,244,68,126]},
-    {"object_id":"zone_darkroom_move","type":"movement_zone","rect":[224,300,420,136]},
-    {"object_id":"zone_darkroom_primary","type":"primary_interaction_zone","rect":[244,206,126,112]},
-    {"object_id":"zone_darkroom_story","type":"secondary_story_zone","rect":[500,142,124,156]},
-    {"object_id":"zone_darkroom_decor","type":"decoration_zone","rect":[90,122,372,280]},
-    {"object_id":"zone_darkroom_blocked","type":"blocked_zone","rect":[54,46,712,60]}
-  ]
+  "objects": [
+    {
+      "object_id": "rollout_darkroom_red_safe_light",
+      "asset_id": "darkroom_red_safe_light",
+      "position": [
+        405,
+        175
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 175,
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_developing_table",
+      "asset_id": "darkroom_developing_table",
+      "position": [
+        220,
+        360
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 360,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_chemical_tray_set",
+      "asset_id": "darkroom_chemical_tray_set",
+      "position": [
+        250,
+        395
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 395,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_photo_drying_line",
+      "asset_id": "darkroom_photo_drying_line",
+      "position": [
+        410,
+        250
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 250,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        67,
+        7
+      ],
+      "display_size": [
+        112,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_hanging_photo_set",
+      "asset_id": "darkroom_hanging_photo_set",
+      "position": [
+        405,
+        280
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 280,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_unfinished_portrait_holder",
+      "asset_id": "darkroom_unfinished_portrait_holder",
+      "position": [
+        590,
+        260
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 260,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        9
+      ],
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_silver_salt_door_frame",
+      "asset_id": "darkroom_silver_salt_door_frame",
+      "position": [
+        730,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_exposure_mark_set",
+      "asset_id": "darkroom_exposure_mark_set",
+      "position": [
+        310,
+        180
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_record_board",
+      "asset_id": "darkroom_record_board",
+      "position": [
+        170,
+        175
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        72,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_storage_shelf",
+      "asset_id": "darkroom_storage_shelf",
+      "position": [
+        140,
+        380
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 380,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        9
+      ],
+      "display_size": [
+        72,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_wet_reflection_patch",
+      "asset_id": "darkroom_wet_reflection_patch",
+      "position": [
+        340,
+        405
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_darkroom_ada_focus_light",
+      "asset_id": "darkroom_ada_focus_light",
+      "position": [
+        590,
+        200
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 200,
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "darkroom_chair",
+      "asset_id": "generic_chair_left",
+      "position": [
+        280,
+        385
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        24,
+        32
+      ]
+    }
+  ],
+  "collision_rects": [
+    {
+      "object_id": "col_darkroom_top",
+      "rect": [
+        54,
+        46,
+        712,
+        60
+      ]
+    },
+    {
+      "object_id": "col_darkroom_left",
+      "rect": [
+        54,
+        106,
+        18,
+        378
+      ]
+    },
+    {
+      "object_id": "col_darkroom_right_top",
+      "rect": [
+        748,
+        106,
+        18,
+        142
+      ]
+    },
+    {
+      "object_id": "col_darkroom_right_bottom",
+      "rect": [
+        748,
+        366,
+        18,
+        118
+      ]
+    },
+    {
+      "object_id": "col_darkroom_bottom",
+      "rect": [
+        54,
+        468,
+        712,
+        16
+      ]
+    },
+    {
+      "object_id": "col_darkroom_desk",
+      "rect": [
+        263,
+        267,
+        74,
+        33
+      ]
+    },
+    {
+      "object_id": "col_darkroom_counter",
+      "rect": [
+        145,
+        225,
+        78,
+        33
+      ]
+    },
+    {
+      "object_id": "col_darkroom_shelf",
+      "rect": [
+        95,
+        161,
+        38,
+        33
+      ]
+    },
+    {
+      "object_id": "col_darkroom_crate",
+      "rect": [
+        389,
+        363,
+        42,
+        21
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "identity_fixing_table": {
+      "interaction_rect": [
+        262,
+        230,
+        78,
+        70
+      ]
+    },
+    "ada_voice": {
+      "interaction_rect": [
+        526,
+        166,
+        68,
+        102
+      ]
+    },
+    "darkroom_to_studio": {
+      "trigger_rect": [
+        738,
+        248,
+        38,
+        116
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        405,
+        170
+      ],
+      "color": "#b94b48",
+      "energy": 0.5,
+      "radius": 104
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        590,
+        230
+      ],
+      "color": "#d56a60",
+      "energy": 0.38,
+      "radius": 88
+    },
+    {
+      "object_id": "full_light_2",
+      "position": [
+        220,
+        350
+      ],
+      "color": "#a6423f",
+      "energy": 0.2,
+      "radius": 64
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        291,
+        155,
+        237,
+        146
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        291,
+        396,
+        237,
+        87
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        196,
+        192,
+        427,
+        219
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        291,
+        155,
+        237,
+        146
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        113,
+        133,
+        178,
+        146
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        528,
+        133,
+        178,
+        219
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        54,
+        46,
+        712,
+        54
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        54,
+        429,
+        712,
+        54
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          3,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          4,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          5,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          6,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          7,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          8,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          9,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          10,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          12,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          13,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          14,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          15,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          16,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          17,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          18,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          19,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          20,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          21,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "WallTiles",
+        "asset_id": "darkroom_wall_set",
+        "tile": "base_a",
+        "cell": [
+          22,
+          4
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          2,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          3,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          4,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          5,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          6,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          7,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          8,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          9,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          10,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          12,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          13,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          14,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          15,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          16,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          17,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          18,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          19,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          20,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          21,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          22,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ForegroundTiles",
+        "asset_id": "darkroom_foreground_shadow_set",
+        "tile": "base_a",
+        "cell": [
+          23,
+          14
+        ],
+        "tint": "#ffffff"
+      }
+    ],
+    "interior_shell": {
+      "theme": "hidden_darkroom",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {
+          "position": [
+            70,
+            46
+          ],
+          "count": 21,
+          "pattern": [
+            "straight",
+            "panel_light",
+            "straight",
+            "panel_dense"
+          ],
+          "tint": "#b47a72"
+        }
+      ],
+      "corners": [
+        {
+          "position": [
+            54,
+            46
+          ],
+          "tile": "inside_left",
+          "tint": "#b47a72"
+        },
+        {
+          "position": [
+            718,
+            46
+          ],
+          "tile": "inside_right",
+          "tint": "#b47a72"
+        }
+      ],
+      "baseboard_segments": [
+        {
+          "position": [
+            70,
+            94
+          ],
+          "count": 21,
+          "pattern": [
+            "straight",
+            "straight",
+            "worn_straight"
+          ],
+          "start": "left_stop",
+          "end": "right_stop"
+        }
+      ]
+    },
+    "floor_fills": [
+      {
+        "asset_id": "darkroom_floor_set",
+        "rect": [
+          70,
+          94,
+          680,
+          374
+        ],
+        "tiles": [
+          "base_a",
+          "base_b",
+          "base_c",
+          "base_d"
+        ],
+        "seed": "full:hidden-darkroom:floor"
+      }
+    ]
+  },
+  "rollout_metadata": {
+    "batch": "E",
+    "new_asset_ids": [
+      "darkroom_floor_set",
+      "darkroom_wall_set",
+      "darkroom_red_safe_light",
+      "darkroom_developing_table",
+      "darkroom_chemical_tray_set",
+      "darkroom_photo_drying_line",
+      "darkroom_hanging_photo_set",
+      "darkroom_unfinished_portrait_holder",
+      "darkroom_silver_salt_door_frame",
+      "darkroom_exposure_mark_set",
+      "darkroom_record_board",
+      "darkroom_storage_shelf",
+      "darkroom_wet_reflection_patch",
+      "darkroom_ada_focus_light",
+      "darkroom_foreground_shadow_set"
+    ],
+    "primary_visual_center": "ada_and_unfinished_portrait",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

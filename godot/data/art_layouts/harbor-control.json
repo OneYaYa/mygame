@@ -1,41 +1,650 @@
 {
-  "schema_version":1,"map_id":"harbor-control","theme_variant":"harbor_watch_control","interaction_distance":52,
-  "canvas":{"outside_color":"#0c1518","room_rect":[58,46,652,418],"wall_height":58,"side_wall":18,"wall_color":"#4e6065","wall_dark":"#29363a","floor_color":"#3f4a4b","floor_style":"dark_wood","ambient_color":"#9faea6","edge_color":"#253538"},
-  "ground_shapes":[{"object_id":"control_console_plate","kind":"platform","points":[[430,142],[666,142],[674,274],[422,274]],"color":"#394548"}],
-  "objects":[
-    {"object_id":"control_main_console","procedural_type":"console","position":[552,250],"display_size":[164,92],"anchor":[0.5,1.0],"sort_y":250,"layer":"WorldObjects","color":"#334348","accent":"#d0a44d","contact_shadow":true,"shadow_size":[132,12]},
-    {"object_id":"control_chart_table","procedural_type":"chart_table","position":[260,318],"display_size":[108,58],"anchor":[0.5,1.0],"sort_y":318,"layer":"WorldObjects","color":"#473b32","accent":"#879a91","contact_shadow":true,"shadow_size":[86,9]},
-    {"object_id":"control_record_desk","asset_id":"prop_desk","position":[154,244],"display_size":[82,80],"anchor":[0.5,1.0],"sort_y":244,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"control_signal_rack","asset_id":"prop_rack","position":[650,170],"display_size":[62,69],"anchor":[0.5,1.0],"sort_y":170,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"control_rope","asset_id":"prop_rope","position":[330,378],"display_size":[56,46],"anchor":[0.5,1.0],"sort_y":378,"layer":"WorldObjects"},
-    {"object_id":"control_crate","asset_id":"prop_crate","position":[640,370],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":370,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"control_barrel","asset_id":"prop_barrel","position":[684,366],"display_size":[37,51],"anchor":[0.5,1.0],"sort_y":366,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"control_weather_chart","procedural_type":"notice","position":[250,158],"display_size":[104,46],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#31464d","accent":"#9eb9b3"},
-    {"object_id":"control_signal_light","procedural_type":"signal","position":[472,156],"display_size":[74,34],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#303c3f","accent":"#c8a057"},
-    {"object_id":"control_lantern","asset_id":"prop_lantern","position":[390,302],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":302,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"control_door","procedural_type":"door","position":[384,464],"display_size":[30,62],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#2e383a","accent":"#aa8b58"}
-  ],
-  "collision_rects":[
-    {"object_id":"col_control_top","rect":[58,46,652,60]},{"object_id":"col_control_left","rect":[58,106,18,358]},{"object_id":"col_control_right","rect":[692,106,18,358]},
-    {"object_id":"col_control_bottom_l","rect":[58,448,300,16]},{"object_id":"col_control_bottom_r","rect":[410,448,300,16]},
-    {"object_id":"col_control_console","rect":[478,214,148,36]},{"object_id":"col_control_chart","rect":[209,291,102,27]},
-    {"object_id":"col_control_desk","rect":[117,211,74,33]},{"object_id":"col_control_rack","rect":[622,140,56,30]},
-    {"object_id":"col_control_freight","rect":[618,344,84,26]}
-  ],
-  "gameplay_overrides":{
-    "lighthouse_router":{"interaction_rect":[478,176,148,76]},"tide_test_console":{"interaction_rect":[206,266,108,54]},
-    "control_to_harbor":{"trigger_rect":[360,420,48,44]}
+  "schema_version": 1,
+  "map_id": "harbor-control",
+  "theme_variant": "full_map_rollout_harbor_signal_watch_room",
+  "interaction_distance": 54,
+  "canvas": {
+    "outside_color": "#0c1518",
+    "room_rect": [
+      58,
+      46,
+      652,
+      418
+    ],
+    "wall_height": 58,
+    "side_wall": 18,
+    "wall_color": "#4e6065",
+    "wall_dark": "#29363a",
+    "floor_color": "#3f4a4b",
+    "floor_style": "dark_wood",
+    "ambient_color": "#9faea6",
+    "edge_color": "#253538"
   },
-  "lights":[
-    {"object_id":"control_warm_light","position":[390,268],"color":"#e5b86c","energy":0.42,"radius":84},
-    {"object_id":"control_cyan_light","position":[552,186],"color":"#63aeb4","energy":0.24,"radius":88}
+  "ground_shapes": [
+    {
+      "object_id": "control_console_plate",
+      "kind": "platform",
+      "points": [
+        [
+          430,
+          142
+        ],
+        [
+          666,
+          142
+        ],
+        [
+          674,
+          274
+        ],
+        [
+          422,
+          274
+        ]
+      ],
+      "color": "#394548"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_control_entrance","type":"entrance_zone","rect":[330,374,108,74]},
-    {"object_id":"zone_control_move","type":"movement_zone","rect":[276,260,240,150]},
-    {"object_id":"zone_control_primary","type":"primary_interaction_zone","rect":[452,154,200,118]},
-    {"object_id":"zone_control_story","type":"secondary_story_zone","rect":[192,242,142,100]},
-    {"object_id":"zone_control_decor","type":"decoration_zone","rect":[102,132,592,252]},
-    {"object_id":"zone_control_blocked","type":"blocked_zone","rect":[58,46,652,60]}
-  ]
+  "objects": [
+    {
+      "object_id": "rollout_harbor_chart_table",
+      "asset_id": "harbor_chart_table",
+      "position": [
+        220,
+        360
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_wall_chart",
+      "asset_id": "harbor_wall_chart",
+      "position": [
+        285,
+        165
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        72,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_signal_console",
+      "asset_id": "harbor_signal_console",
+      "position": [
+        520,
+        350
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 350,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_signal_lamp_set",
+      "asset_id": "harbor_signal_lamp_set",
+      "position": [
+        610,
+        225
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 225,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        29,
+        7
+      ],
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_gauge_panel",
+      "asset_id": "harbor_gauge_panel",
+      "position": [
+        520,
+        190
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 190,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        6
+      ],
+      "display_size": [
+        72,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_lever_set",
+      "asset_id": "harbor_lever_set",
+      "position": [
+        610,
+        355
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 355,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_telegraph",
+      "asset_id": "harbor_telegraph",
+      "position": [
+        635,
+        405
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 405,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_radio_device",
+      "asset_id": "harbor_radio_device",
+      "position": [
+        565,
+        410
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 410,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        53,
+        9
+      ],
+      "display_size": [
+        88,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_record_cabinet",
+      "asset_id": "harbor_record_cabinet",
+      "position": [
+        670,
+        300
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 300,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        53,
+        9
+      ],
+      "display_size": [
+        88,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_observation_window",
+      "asset_id": "harbor_observation_window",
+      "position": [
+        390,
+        165
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        128,
+        72
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_weather_board",
+      "asset_id": "harbor_weather_board",
+      "position": [
+        490,
+        165
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 165,
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "display_size": [
+        72,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_harbor_float_and_rope_set",
+      "asset_id": "harbor_float_and_rope_set",
+      "position": [
+        170,
+        410
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 410,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        6
+      ],
+      "display_size": [
+        72,
+        56
+      ]
+    }
+  ],
+  "collision_rects": [
+    {
+      "object_id": "col_control_top",
+      "rect": [
+        58,
+        46,
+        652,
+        60
+      ]
+    },
+    {
+      "object_id": "col_control_left",
+      "rect": [
+        58,
+        106,
+        18,
+        358
+      ]
+    },
+    {
+      "object_id": "col_control_right",
+      "rect": [
+        692,
+        106,
+        18,
+        358
+      ]
+    },
+    {
+      "object_id": "col_control_bottom_l",
+      "rect": [
+        58,
+        448,
+        300,
+        16
+      ]
+    },
+    {
+      "object_id": "col_control_bottom_r",
+      "rect": [
+        410,
+        448,
+        300,
+        16
+      ]
+    },
+    {
+      "object_id": "col_control_console",
+      "rect": [
+        478,
+        214,
+        148,
+        36
+      ]
+    },
+    {
+      "object_id": "col_control_chart",
+      "rect": [
+        209,
+        291,
+        102,
+        27
+      ]
+    },
+    {
+      "object_id": "col_control_desk",
+      "rect": [
+        117,
+        211,
+        74,
+        33
+      ]
+    },
+    {
+      "object_id": "col_control_rack",
+      "rect": [
+        622,
+        140,
+        56,
+        30
+      ]
+    },
+    {
+      "object_id": "col_control_freight",
+      "rect": [
+        618,
+        344,
+        84,
+        26
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "lighthouse_router": {
+      "interaction_rect": [
+        478,
+        176,
+        148,
+        76
+      ]
+    },
+    "tide_test_console": {
+      "interaction_rect": [
+        206,
+        266,
+        108,
+        54
+      ]
+    },
+    "control_to_harbor": {
+      "trigger_rect": [
+        360,
+        420,
+        48,
+        44
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        220,
+        330
+      ],
+      "color": "#e6bd72",
+      "energy": 0.34,
+      "radius": 82
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        520,
+        300
+      ],
+      "color": "#5ca8a9",
+      "energy": 0.18,
+      "radius": 70
+    },
+    {
+      "object_id": "full_light_2",
+      "position": [
+        390,
+        155
+      ],
+      "color": "#86aeb2",
+      "energy": 0.16,
+      "radius": 78
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        275,
+        150,
+        217,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        275,
+        380,
+        217,
+        83
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        188,
+        185,
+        391,
+        209
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        275,
+        150,
+        217,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        112,
+        129,
+        163,
+        139
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        492,
+        129,
+        163,
+        209
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        58,
+        46,
+        652,
+        52
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        58,
+        411,
+        652,
+        52
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [],
+    "interior_shell": {
+      "theme": "photo_harbor",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {
+          "position": [
+            74,
+            46
+          ],
+          "count": 19,
+          "pattern": [
+            "straight",
+            "panel_light",
+            "straight",
+            "panel_dense"
+          ],
+          "tint": "#c6d3cf"
+        }
+      ],
+      "corners": [
+        {
+          "position": [
+            58,
+            46
+          ],
+          "tile": "inside_left",
+          "tint": "#c6d3cf"
+        },
+        {
+          "position": [
+            662,
+            46
+          ],
+          "tile": "inside_right",
+          "tint": "#c6d3cf"
+        }
+      ],
+      "baseboard_segments": [
+        {
+          "position": [
+            74,
+            94
+          ],
+          "count": 19,
+          "pattern": [
+            "straight",
+            "straight",
+            "worn_straight"
+          ],
+          "start": "left_stop",
+          "end": "right_stop"
+        }
+      ]
+    },
+    "floor_fills": [
+      {
+        "asset_id": "harbor_control_floor_set",
+        "rect": [
+          74,
+          94,
+          620,
+          354
+        ],
+        "tiles": [
+          "base_a",
+          "base_b",
+          "base_c",
+          "base_d"
+        ],
+        "seed": "full:harbor-control:floor"
+      }
+    ]
+  },
+  "rollout_metadata": {
+    "batch": "D",
+    "new_asset_ids": [
+      "harbor_chart_table",
+      "harbor_wall_chart",
+      "harbor_signal_console",
+      "harbor_signal_lamp_set",
+      "harbor_gauge_panel",
+      "harbor_lever_set",
+      "harbor_telegraph",
+      "harbor_radio_device",
+      "harbor_record_cabinet",
+      "harbor_observation_window",
+      "harbor_weather_board",
+      "harbor_float_and_rope_set",
+      "harbor_control_floor_set"
+    ],
+    "primary_visual_center": "chart_table_and_signal_console",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

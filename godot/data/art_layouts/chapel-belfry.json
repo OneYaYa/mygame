@@ -1,39 +1,300 @@
 {
-  "schema_version":1,"map_id":"chapel-belfry","theme_variant":"narrow_high_belfry","interaction_distance":50,
-  "canvas":{"outside_color":"#0a1214","room_rect":[92,44,666,392],"wall_height":54,"side_wall":20,"wall_color":"#58524a","wall_dark":"#282d2e","floor_color":"#4b4034","floor_style":"dark_wood","ambient_color":"#958f80","edge_color":"#243031"},
-  "ground_shapes":[{"object_id":"belfry_walkway","kind":"platform","points":[[104,280],[285,280],[312,242],[528,242],[559,278],[744,278],[744,420],[104,420]],"color":"#4a3f34"}],
-  "objects":[
-    {"object_id":"belfry_beam_top","procedural_type":"beam","position":[425,126],"display_size":[560,18],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureFront","color":"#352b25","accent":"#76573b"},
-    {"object_id":"belfry_beam_left","procedural_type":"beam","position":[184,420],"display_size":[22,300],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureFront","color":"#352b25","accent":"#76573b"},
-    {"object_id":"belfry_beam_right","procedural_type":"beam","position":[666,420],"display_size":[22,300],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureFront","color":"#352b25","accent":"#76573b"},
-    {"object_id":"seventh_hammer_art","procedural_type":"bell","position":[425,238],"display_size":[86,104],"anchor":[0.5,1.0],"sort_y":238,"layer":"WorldObjects","color":"#80663d","accent":"#d1ad5c","contact_shadow":true,"shadow_size":[64,10]},
-    {"object_id":"belfry_rope_hang","procedural_type":"rope_hang","position":[425,190],"display_size":[54,104],"anchor":[0.5,1.0],"sort_y":190,"layer":"WorldObjects","color":"#a5824c","accent":"#d4b16a"},
-    {"object_id":"belfry_rope_coil","asset_id":"prop_rope","position":[540,316],"display_size":[56,46],"anchor":[0.5,1.0],"sort_y":316,"layer":"WorldObjects"},
-    {"object_id":"belfry_tool_rack","asset_id":"prop_rack","position":[650,218],"display_size":[62,69],"anchor":[0.5,1.0],"sort_y":218,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"belfry_crate_a","asset_id":"prop_crate","position":[619,352],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":352,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"belfry_crate_b","asset_id":"prop_crate","position":[673,358],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":358,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"belfry_install_log","procedural_type":"notice","position":[272,192],"display_size":[48,34],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#3d342c","accent":"#d1c39a"},
-    {"object_id":"belfry_room7_tag","procedural_type":"photo","position":[286,326],"display_size":[24,18],"anchor":[0.5,1.0],"sort_y":326,"layer":"WorldObjects","color":"#6b4c31","accent":"#c4a05e"},
-    {"object_id":"belfry_lantern","asset_id":"prop_lantern","position":[252,330],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":330,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"belfry_stairs_down","procedural_type":"beam","position":[120,410],"display_size":[46,96],"anchor":[0.5,1.0],"sort_y":410,"layer":"WorldObjects","color":"#3a302a","accent":"#795f45","contact_shadow":true}
-  ],
-  "collision_rects":[
-    {"object_id":"col_belfry_top","rect":[92,44,666,56]},{"object_id":"col_belfry_left","rect":[92,100,20,336]},{"object_id":"col_belfry_right","rect":[738,100,20,336]},
-    {"object_id":"col_belfry_bottom","rect":[92,420,666,16]},{"object_id":"col_belfry_hammer","rect":[386,204,78,34]},
-    {"object_id":"col_belfry_tools","rect":[620,188,60,30]},{"object_id":"col_belfry_crates","rect":[597,330,98,28]},
-    {"object_id":"col_belfry_stairs","rect":[104,332,32,78]}
-  ],
-  "gameplay_overrides":{
-    "seventh_hammer":{"interaction_rect":[386,142,78,98]},"chapel_install_log":{"interaction_rect":[248,158,50,38]},
-    "room7_tag_pickup":{"interaction_rect":[270,304,34,24]},"belfry_to_chapel":{"trigger_rect":[98,328,48,84]}
+  "schema_version": 1,
+  "map_id": "chapel-belfry",
+  "theme_variant": "level_art_pass_01_open_high_belfry",
+  "interaction_distance": 58,
+  "camera_zoom": 1.2,
+  "camera_offset": [0, -24],
+  "review_player_position": [154, 354],
+  "canvas": {
+    "outside_color": "#071013",
+    "ambient_color": "#b4afa0",
+    "edge_color": "#1b292c",
+    "draw_map_border": false,
+    "open_structure": true,
+    "depth_color": "#11191a",
+    "depth_horizon_y": 164,
+    "far_beam_color": "#273031"
   },
-  "lights":[{"object_id":"belfry_lantern_light","position":[252,296],"color":"#e5b765","energy":0.42,"radius":82}],
-  "zones":[
-    {"object_id":"zone_belfry_entrance","type":"entrance_zone","rect":[102,314,94,106]},
-    {"object_id":"zone_belfry_move","type":"movement_zone","rect":[174,260,446,146]},
-    {"object_id":"zone_belfry_primary","type":"primary_interaction_zone","rect":[364,128,124,126]},
-    {"object_id":"zone_belfry_story","type":"secondary_story_zone","rect":[232,142,94,206]},
-    {"object_id":"zone_belfry_decor","type":"decoration_zone","rect":[580,150,130,228]},
-    {"object_id":"zone_belfry_blocked","type":"blocked_zone","rect":[92,44,666,56]}
-  ]
+  "ground_shapes": [
+    {
+      "object_id": "belfry_main_platform",
+      "kind": "wood_platform",
+      "points": [[246, 216], [602, 216], [642, 270], [622, 404], [282, 404], [228, 332]],
+      "color": "#65503a"
+    },
+    {
+      "object_id": "belfry_descent_platform",
+      "kind": "wood_platform",
+      "points": [[66, 300], [244, 300], [284, 374], [232, 436], [66, 420]],
+      "color": "#594532"
+    },
+    {
+      "object_id": "belfry_maintenance_platform",
+      "kind": "wood_platform",
+      "points": [[604, 256], [804, 236], [808, 370], [620, 396]],
+      "color": "#5f4a35"
+    },
+    {
+      "object_id": "belfry_hammer_calibration_inlay",
+      "kind": "platform",
+      "points": [[344, 276], [506, 276], [536, 348], [500, 384], [350, 384], [318, 346]],
+      "color": "#3c3e3a"
+    }
+  ],
+  "objects": [
+    {
+      "object_id": "belfry_depth_background",
+      "procedural_type": "depth_background",
+      "position": [425, 248],
+      "anchor": [0.5, 1.0],
+      "display_size": [720, 188],
+      "color": "#202829",
+      "accent": "#4c5553",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "belfry_inaccessible_high_platform",
+      "procedural_type": "timber_platform",
+      "position": [425, 184],
+      "anchor": [0.5, 1.0],
+      "display_size": [570, 68],
+      "color": "#4e3d2d",
+      "accent": "#8b6a43",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "belfry_hammer_frame",
+      "procedural_type": "hammer_frame",
+      "position": [425, 344],
+      "anchor": [0.5, 1.0],
+      "display_size": [196, 194],
+      "color": "#59412d",
+      "accent": "#c39a54",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "belfry_left_support_column",
+      "procedural_type": "support_column",
+      "position": [244, 420],
+      "anchor": [0.5, 1.0],
+      "display_size": [46, 254],
+      "color": "#59422f",
+      "accent": "#b78a50",
+      "layer": "ArchitectureFront",
+      "sort_y": 0,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [214, 230, 76, 188],
+      "occlusion_alpha": 0.36
+    },
+    {
+      "object_id": "belfry_right_support_column",
+      "procedural_type": "support_column",
+      "position": [610, 414],
+      "anchor": [0.5, 1.0],
+      "display_size": [46, 248],
+      "color": "#59422f",
+      "accent": "#b78a50",
+      "layer": "ArchitectureFront",
+      "sort_y": 0,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [580, 230, 76, 184],
+      "occlusion_alpha": 0.36
+    },
+    {
+      "object_id": "belfry_seventh_hammer_visual",
+      "asset_id": "belfry_seventh_hammer",
+      "position": [425, 292],
+      "display_size": [124, 124],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [78, 13],
+      "sort_y": 292
+    },
+    {
+      "object_id": "belfry_hammer_mount_visual",
+      "asset_id": "belfry_hammer_mount",
+      "position": [425, 356],
+      "display_size": [118, 108],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [72, 11],
+      "sort_y": 356
+    },
+    {
+      "object_id": "belfry_hammer_rope_bank",
+      "asset_id": "belfry_hanging_rope_set",
+      "position": [425, 230],
+      "display_size": [74, 164],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 230
+    },
+    {
+      "object_id": "belfry_descent_rope_bank",
+      "asset_id": "belfry_hanging_rope_set",
+      "position": [166, 314],
+      "display_size": [62, 132],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 314
+    },
+    {
+      "object_id": "belfry_high_window",
+      "asset_id": "belfry_high_window",
+      "position": [694, 188],
+      "display_size": [74, 108],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "belfry_side_platform_visual",
+      "asset_id": "belfry_narrow_platform",
+      "position": [704, 382],
+      "display_size": [150, 92],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [92, 10],
+      "sort_y": 382
+    },
+    {
+      "object_id": "belfry_maintenance_tools",
+      "asset_id": "belfry_maintenance_tool_set",
+      "position": [684, 322],
+      "display_size": [72, 60],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 322
+    },
+    {
+      "object_id": "belfry_rope_coil",
+      "asset_id": "belfry_rope_coil",
+      "position": [764, 350],
+      "display_size": [58, 74],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 350
+    },
+    {
+      "object_id": "belfry_descent_stairs",
+      "procedural_type": "stairs",
+      "position": [118, 430],
+      "anchor": [0.5, 1.0],
+      "display_size": [72, 106],
+      "color": "#554332",
+      "accent": "#b78d56",
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 430
+    },
+    {
+      "object_id": "belfry_large_foreground_beam",
+      "procedural_type": "foreground_beam",
+      "position": [425, 132],
+      "anchor": [0.5, 1.0],
+      "display_size": [748, 54],
+      "color": "#473525",
+      "accent": "#aa7c46",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 2,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [246, 126, 360, 142],
+      "occlusion_alpha": 0.34
+    },
+    {
+      "object_id": "belfry_near_edge_beam",
+      "procedural_type": "foreground_beam",
+      "position": [430, 454],
+      "anchor": [0.5, 1.0],
+      "display_size": [640, 44],
+      "color": "#3f2e22",
+      "accent": "#8f683f",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 4,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [250, 370, 360, 86],
+      "occlusion_alpha": 0.30
+    }
+  ],
+  "collision_rects": [
+    {"object_id": "col_belfry_upper_void", "rect": [0, 0, 850, 188]},
+    {"object_id": "col_belfry_left_upper_void", "rect": [0, 188, 224, 112]},
+    {"object_id": "col_belfry_right_upper_void", "rect": [642, 188, 208, 44]},
+    {"object_id": "col_belfry_left_edge_void", "rect": [0, 300, 58, 160]},
+    {"object_id": "col_belfry_right_edge_void", "rect": [816, 232, 34, 228]},
+    {"object_id": "col_belfry_bottom_main_void", "rect": [240, 424, 610, 36]},
+    {"object_id": "col_belfry_right_lower_void", "rect": [642, 400, 174, 60]},
+    {"object_id": "col_belfry_hammer", "rect": [374, 316, 102, 36]},
+    {"object_id": "col_belfry_left_column", "rect": [224, 318, 32, 78]},
+    {"object_id": "col_belfry_right_column", "rect": [594, 312, 32, 80]},
+    {"object_id": "col_belfry_maintenance_bench", "rect": [650, 356, 116, 30]}
+  ],
+  "gameplay_overrides": {
+    "seventh_hammer": {"interaction_rect": [368, 214, 114, 124]},
+    "belfry_calibration_rope": {"interaction_rect": [486, 208, 36, 120]},
+    "chapel_install_log": {"interaction_rect": [648, 280, 64, 40]},
+    "room7_tag_pickup": {"interaction_rect": [286, 352, 38, 26]},
+    "belfry_to_chapel": {"trigger_rect": [82, 326, 70, 102]}
+  },
+  "lights": [
+    {"object_id": "belfry_high_window_light", "position": [694, 176], "color": "#a8d5dc", "energy": 0.58, "radius": 122},
+    {"object_id": "belfry_hammer_focus_light", "position": [425, 284], "color": "#e7b763", "energy": 0.68, "radius": 106},
+    {"object_id": "belfry_maintenance_light", "position": [700, 310], "color": "#e0a45d", "energy": 0.38, "radius": 76},
+    {"object_id": "belfry_descent_path_light", "position": [126, 350], "color": "#8eb4b5", "energy": 0.28, "radius": 70}
+  ],
+  "zones": [
+    {"object_id": "zone_belfry_primary_center", "type": "primary_visual_center", "rect": [314, 188, 222, 198]},
+    {"object_id": "zone_belfry_entrance", "type": "entrance_zone", "rect": [66, 300, 190, 138]},
+    {"object_id": "zone_belfry_movement", "type": "movement_zone", "rect": [178, 282, 528, 132]},
+    {"object_id": "zone_belfry_primary_interaction", "type": "primary_interaction_zone", "rect": [346, 210, 158, 166]},
+    {"object_id": "zone_belfry_secondary_story", "type": "secondary_story_zone", "rect": [66, 286, 212, 152]},
+    {"object_id": "zone_belfry_decoration", "type": "decoration_zone", "rect": [620, 196, 196, 206]},
+    {"object_id": "zone_belfry_blocked", "type": "blocked_zone", "rect": [0, 0, 850, 188]},
+    {"object_id": "zone_belfry_foreground", "type": "foreground_zone", "rect": [52, 76, 746, 378]},
+    {"object_id": "zone_belfry_hammer_cluster", "type": "function_cluster", "rect": [314, 188, 222, 198]},
+    {"object_id": "zone_belfry_maintenance_cluster", "type": "function_cluster", "rect": [620, 220, 196, 182]},
+    {"object_id": "zone_belfry_descent_cluster", "type": "function_cluster", "rect": [66, 286, 212, 152]}
+  ],
+  "atlas_tile_art": {
+    "cell_size": [32, 32],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [
+      {"layer": "WallTiles", "asset_id": "belfry_timber_beam_set", "tile": "edge_n", "position": [150, 178], "tint": "#d0a36e"},
+      {"layer": "WallTiles", "asset_id": "belfry_timber_beam_set", "tile": "base_a", "position": [182, 178], "tint": "#c19362"},
+      {"layer": "WallTiles", "asset_id": "belfry_timber_beam_set", "tile": "base_b", "position": [214, 178], "tint": "#c19362"},
+      {"layer": "WallTiles", "asset_id": "belfry_timber_beam_set", "tile": "base_c", "position": [604, 178], "tint": "#c19362"},
+      {"layer": "WallTiles", "asset_id": "belfry_timber_beam_set", "tile": "edge_e", "position": [636, 178], "tint": "#d0a36e"},
+      {"layer": "ForegroundTiles", "asset_id": "belfry_foreground_beam_set", "tile": "edge_n", "position": [110, 96], "tint": "#d2a16a"},
+      {"layer": "ForegroundTiles", "asset_id": "belfry_foreground_beam_set", "tile": "base_a", "position": [142, 96], "tint": "#bd8a58"},
+      {"layer": "ForegroundTiles", "asset_id": "belfry_foreground_beam_set", "tile": "base_b", "position": [174, 96], "tint": "#bd8a58"},
+      {"layer": "ForegroundTiles", "asset_id": "belfry_foreground_beam_set", "tile": "base_c", "position": [686, 96], "tint": "#bd8a58"},
+      {"layer": "ForegroundTiles", "asset_id": "belfry_foreground_beam_set", "tile": "edge_e", "position": [718, 96], "tint": "#d2a16a"}
+    ]
+  },
+  "level_art_metrics": {
+    "effective_walkable_area_px2": 120640,
+    "empty_ratio_estimate": 0.24,
+    "function_clusters": 3,
+    "foreground_layers": 3,
+    "large_structure_groups": 5,
+    "new_raster_asset_ids": []
+  },
+  "rollout_metadata": {
+    "batch": "LEVEL_ART_PASS_01",
+    "new_asset_ids": [],
+    "reused_asset_ids": ["belfry_timber_beam_set", "belfry_foreground_beam_set", "belfry_rope_coil", "belfry_hanging_rope_set", "belfry_seventh_hammer", "belfry_hammer_mount", "belfry_maintenance_tool_set", "belfry_narrow_platform", "belfry_high_window"],
+    "primary_visual_center": "seventh_hammer_frame_and_calibration_inlay",
+    "frozen_reference_maps_untouched": ["town", "harbor", "inn-lobby"]
+  }
 }

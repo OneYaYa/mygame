@@ -1,0 +1,337 @@
+{
+  "godot": {
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "hex": 263683,
+    "status": "stable",
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "timestamp": 0,
+    "string": "4.6.3-stable (official)"
+  },
+  "maps": [
+    {
+      "index": 7,
+      "id": "player-room",
+      "name": "湖畔旅店 · 八号房",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "07_player-room.png",
+      "art_metrics": {
+        "map_id": "player-room",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 18,
+        "collision_count": 14,
+        "foreground_count": 2,
+        "portal_count": 1,
+        "generated_tile_count": 34,
+        "camera_zoom": 1.25,
+        "player_spawn": [
+          384.0,
+          394.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "room8_to_hall",
+            "target": "inn-upstairs",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              356.0,
+              402.0,
+              56.0,
+              46.0
+            ]
+          }
+        ],
+        "interaction_reachability": [
+          {
+            "landmark_id": "repair_orders",
+            "reachable": true,
+            "interaction_rect": [
+              486.0,
+              258.0,
+              58.0,
+              32.0
+            ]
+          },
+          {
+            "landmark_id": "player_journal",
+            "reachable": true,
+            "interaction_rect": [
+              542.0,
+              258.0,
+              42.0,
+              32.0
+            ]
+          },
+          {
+            "landmark_id": "player_bed",
+            "reachable": true,
+            "interaction_rect": [
+              158.0,
+              258.0,
+              94.0,
+              76.0
+            ]
+          },
+          {
+            "landmark_id": "player_memory_board",
+            "reachable": true,
+            "interaction_rect": [
+              484.0,
+              138.0,
+              108.0,
+              70.0
+            ]
+          }
+        ],
+        "npc_reachability": []
+      }
+    },
+    {
+      "index": 12,
+      "id": "chapel-belfry",
+      "name": "六声礼拜堂 · 钟楼",
+      "kind": "interior",
+      "width": 850,
+      "height": 460,
+      "time": "10:00",
+      "file": "12_chapel-belfry.png",
+      "art_metrics": {
+        "map_id": "chapel-belfry",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 16,
+        "collision_count": 11,
+        "foreground_count": 2,
+        "portal_count": 1,
+        "generated_tile_count": 10,
+        "camera_zoom": 1.20000004768372,
+        "player_spawn": [
+          154.0,
+          354.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "belfry_to_chapel",
+            "target": "chapel-interior",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              82.0,
+              326.0,
+              70.0,
+              102.0
+            ]
+          }
+        ],
+        "interaction_reachability": [
+          {
+            "landmark_id": "seventh_hammer",
+            "reachable": true,
+            "interaction_rect": [
+              368.0,
+              214.0,
+              114.0,
+              124.0
+            ]
+          },
+          {
+            "landmark_id": "belfry_calibration_rope",
+            "reachable": true,
+            "interaction_rect": [
+              486.0,
+              208.0,
+              36.0,
+              120.0
+            ]
+          },
+          {
+            "landmark_id": "chapel_install_log",
+            "reachable": true,
+            "interaction_rect": [
+              648.0,
+              280.0,
+              64.0,
+              40.0
+            ]
+          },
+          {
+            "landmark_id": "room7_tag_pickup",
+            "reachable": true,
+            "interaction_rect": [
+              286.0,
+              352.0,
+              38.0,
+              26.0
+            ]
+          }
+        ],
+        "npc_reachability": []
+      }
+    },
+    {
+      "index": 16,
+      "id": "low-tide-cave",
+      "name": "退潮维护洞穴",
+      "kind": "interior",
+      "width": 920,
+      "height": 520,
+      "time": "02:30",
+      "file": "16_low-tide-cave.png",
+      "art_metrics": {
+        "map_id": "low-tide-cave",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 16,
+        "collision_count": 18,
+        "foreground_count": 3,
+        "portal_count": 1,
+        "generated_tile_count": 17,
+        "camera_zoom": 1.14999997615814,
+        "player_spawn": [
+          188.0,
+          294.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "cave_to_harbor",
+            "target": "harbor",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              42.0,
+              254.0,
+              72.0,
+              112.0
+            ]
+          }
+        ],
+        "interaction_reachability": [
+          {
+            "landmark_id": "cave_negative_pickup",
+            "reachable": true,
+            "interaction_rect": [
+              774.0,
+              216.0,
+              58.0,
+              46.0
+            ]
+          },
+          {
+            "landmark_id": "cave_inscription",
+            "reachable": true,
+            "interaction_rect": [
+              466.0,
+              150.0,
+              118.0,
+              44.0
+            ]
+          }
+        ],
+        "npc_reachability": []
+      }
+    },
+    {
+      "index": 17,
+      "id": "clock-basement",
+      "name": "主钟地下室",
+      "kind": "interior",
+      "width": 900,
+      "height": 560,
+      "time": "10:00",
+      "file": "17_clock-basement.png",
+      "art_metrics": {
+        "map_id": "clock-basement",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 28,
+        "collision_count": 15,
+        "foreground_count": 2,
+        "portal_count": 1,
+        "generated_tile_count": 368,
+        "camera_zoom": 1.14999997615814,
+        "player_spawn": [
+          450.0,
+          492.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "basement_to_cabin",
+            "target": "clock-cabin",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              422.0,
+              486.0,
+              56.0,
+              58.0
+            ]
+          }
+        ],
+        "interaction_reachability": [
+          {
+            "landmark_id": "three_signal_lights",
+            "reachable": true,
+            "interaction_rect": [
+              356.0,
+              112.0,
+              188.0,
+              62.0
+            ]
+          },
+          {
+            "landmark_id": "witness_slot_seven",
+            "reachable": true,
+            "interaction_rect": [
+              614.0,
+              188.0,
+              64.0,
+              64.0
+            ]
+          },
+          {
+            "landmark_id": "red_erase_lever",
+            "reachable": true,
+            "interaction_rect": [
+              192.0,
+              370.0,
+              82.0,
+              82.0
+            ]
+          },
+          {
+            "landmark_id": "white_continue_knob",
+            "reachable": true,
+            "interaction_rect": [
+              626.0,
+              370.0,
+              82.0,
+              82.0
+            ]
+          },
+          {
+            "landmark_id": "brake_interface",
+            "reachable": true,
+            "interaction_rect": [
+              106.0,
+              226.0,
+              92.0,
+              84.0
+            ]
+          }
+        ],
+        "npc_reachability": []
+      }
+    }
+  ]
+}

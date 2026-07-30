@@ -228,6 +228,11 @@ benchmark_atlas_assets = {
     "harbor": {"grass_base_variants", "grass_path_edge_set", "stone_path_corner_set", "water_shallow_deep_set", "natural_shoreline_set", "water_transition_patch_set", "harbor_dock_entry_set"},
     "inn-lobby": {"interior_wall_modular_set", "interior_corner_set", "baseboard_set"},
 }
+dependency_document = json.loads((ROOT / "data" / "map_asset_dependencies.json").read_text(encoding="utf-8"))
+rollout_assets_by_map = {
+    entry["map_id"]: set(entry["generate"])
+    for entry in dependency_document.get("maps", [])
+}
 for scene in scenes:
     scene_id = scene["id"]
     layout_path = ROOT / "data" / "art_layouts" / f"{scene_id}.json"
@@ -238,8 +243,8 @@ for scene in scenes:
     if layout.get("map_id") != scene_id:
         fail(f"art layout map_id mismatch: {scene_id}")
     atlas_config = layout.get("atlas_tile_art", {})
-    if scene_id not in benchmark_atlas_assets and atlas_config:
-        fail(f"P0 batch-one atlas art was promoted outside benchmark maps: {scene_id}")
+    if scene_id not in benchmark_atlas_assets and scene_id not in rollout_assets_by_map and atlas_config:
+        fail(f"atlas art is enabled outside the benchmark/full-rollout scope: {scene_id}")
     if scene_id in benchmark_atlas_assets:
         serialized_config = json.dumps(atlas_config, ensure_ascii=False)
         missing_benchmark_assets = {
@@ -250,6 +255,14 @@ for scene in scenes:
             fail(f"{scene_id} is missing benchmark atlas references: {sorted(missing_benchmark_assets)}")
         if scene_id == "inn-lobby" and atlas_config.get("interior_shell", {}).get("theme") != "inn_warm":
             fail("inn-lobby benchmark must use only the inn_warm theme")
+    if scene_id in rollout_assets_by_map:
+        serialized_layout = json.dumps(layout, ensure_ascii=False)
+        missing_rollout_assets = {
+            asset_id for asset_id in rollout_assets_by_map[scene_id]
+            if asset_id not in serialized_layout
+        }
+        if missing_rollout_assets:
+            fail(f"{scene_id} is missing full-rollout asset references: {sorted(missing_rollout_assets)}")
     for collection in ("ground_shapes", "objects", "collision_rects", "lights"):
         ids: set[str] = set()
         for item in layout.get(collection, []):

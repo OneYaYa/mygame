@@ -1,0 +1,167 @@
+{
+  "godot": {
+    "major": 4,
+    "minor": 6,
+    "patch": 3,
+    "hex": 263683,
+    "status": "stable",
+    "build": "official",
+    "hash": "7d41c59c457bd5a245092b4e7eb2d833e3b3f8c3",
+    "timestamp": 0,
+    "string": "4.6.3-stable (official)"
+  },
+  "maps": [
+    {
+      "index": 7,
+      "id": "player-room",
+      "name": "湖畔旅店 · 八号房",
+      "kind": "interior",
+      "width": 768,
+      "height": 480,
+      "time": "10:00",
+      "file": "07_player-room.png",
+      "art_metrics": {
+        "map_id": "player-room",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 13,
+        "collision_count": 10,
+        "portal_count": 1,
+        "generated_tile_count": 38,
+        "player_spawn": [
+          384.0,
+          240.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "room8_to_hall",
+            "target": "inn-upstairs",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              360.0,
+              420.0,
+              48.0,
+              42.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 12,
+      "id": "chapel-belfry",
+      "name": "六声礼拜堂 · 钟楼",
+      "kind": "interior",
+      "width": 850,
+      "height": 460,
+      "time": "10:00",
+      "file": "12_chapel-belfry.png",
+      "art_metrics": {
+        "map_id": "chapel-belfry",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 7,
+        "collision_count": 8,
+        "portal_count": 1,
+        "generated_tile_count": 80,
+        "player_spawn": [
+          425.0,
+          248.070892333984
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "belfry_to_chapel",
+            "target": "chapel-interior",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              98.0,
+              328.0,
+              48.0,
+              84.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "id": "low-tide-cave",
+      "name": "退潮维护洞穴",
+      "kind": "interior",
+      "width": 920,
+      "height": 520,
+      "time": "02:30",
+      "file": "16_low-tide-cave.png",
+      "art_metrics": {
+        "map_id": "low-tide-cave",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 10,
+        "collision_count": 13,
+        "portal_count": 1,
+        "generated_tile_count": 259,
+        "player_spawn": [
+          460.0,
+          260.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "cave_to_harbor",
+            "target": "harbor",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              40.0,
+              220.0,
+              52.0,
+              112.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "id": "clock-basement",
+      "name": "主钟地下室",
+      "kind": "interior",
+      "width": 900,
+      "height": 560,
+      "time": "10:00",
+      "file": "17_clock-basement.png",
+      "art_metrics": {
+        "map_id": "clock-basement",
+        "asset_errors": [],
+        "warnings": [],
+        "object_count": 17,
+        "collision_count": 10,
+        "portal_count": 1,
+        "generated_tile_count": 430,
+        "player_spawn": [
+          450.0,
+          280.0
+        ],
+        "npc_points": [],
+        "portal_reachability": [
+          {
+            "portal_id": "basement_to_cabin",
+            "target": "clock-cabin",
+            "revealed": true,
+            "reachable": true,
+            "trigger_rect": [
+              426.0,
+              484.0,
+              48.0,
+              50.0
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -42,7 +42,7 @@
         362,
         412
       ],
-      "residual_pink_pixels": 0,
+      "residual_pink_pixels": 1,
       "status": "written"
     },
     {
@@ -63,7 +63,7 @@
         400,
         412
       ],
-      "residual_pink_pixels": 0,
+      "residual_pink_pixels": 1,
       "status": "written"
     },
     {
@@ -126,7 +126,7 @@
         282,
         412
       ],
-      "residual_pink_pixels": 0,
+      "residual_pink_pixels": 3,
       "status": "written"
     },
     {
@@ -147,7 +147,7 @@
         412,
         412
       ],
-      "residual_pink_pixels": 0,
+      "residual_pink_pixels": 1,
       "status": "written"
     },
     {
@@ -210,7 +210,7 @@
         364,
         412
       ],
-      "residual_pink_pixels": 0,
+      "residual_pink_pixels": 1,
       "status": "written"
     },
     {
@@ -735,7 +735,7 @@
         219,
         252
       ],
-      "residual_pink_pixels": 0,
+      "residual_pink_pixels": 1,
       "status": "written"
     },
     {
@@ -1531,6 +1531,3744 @@
         0,
         0,
         160,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_garden_soil_tile_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_garden_soil_tile_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_garden_soil_tile_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_garden_crop_row_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_garden_crop_row_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_garden_crop_row_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_garden_edge_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_garden_edge_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_garden_edge_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_firewood_stack",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_firewood_stack.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_firewood_stack.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        13,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_chopping_block",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_chopping_block.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_chopping_block.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        53,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_clothesline",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_clothesline.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_clothesline.png",
+      "source_size": [
+        112,
+        64
+      ],
+      "output_size": [
+        112,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        10,
+        109,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_water_pump",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_water_pump.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_water_pump.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        12,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_laundry_basket",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_laundry_basket.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_laundry_basket.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        53,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_kitchen_crates",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_kitchen_crates.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_kitchen_crates.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        2,
+        37,
+        70,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_small_fence_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_small_fence_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_small_fence_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_backyard_path_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_backyard_path_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_backyard_path_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_nightstand",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_nightstand.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_nightstand.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        4,
+        45,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_wardrobe",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_wardrobe.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_wardrobe.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        52,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_small_storage_chest",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_small_storage_chest.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_small_storage_chest.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        52,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_washbasin",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_washbasin.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_washbasin.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        15,
+        2,
+        41,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_luggage_stack",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_luggage_stack.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_luggage_stack.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        62,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_bedside_lamp",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_bedside_lamp.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_bedside_lamp.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        12,
+        2,
+        36,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_room_small_rug",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_room_small_rug.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_room_small_rug.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        2,
+        22,
+        70,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_room_curtain_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_room_curtain_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_room_curtain_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        7,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_photo_board",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_photo_board.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_photo_board.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        8,
+        2,
+        63,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_journal_desk_variant",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_journal_desk_variant.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_journal_desk_variant.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        52,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_corridor_door_closed",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_corridor_door_closed.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_corridor_door_closed.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        49,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_corridor_door_open",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_corridor_door_open.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_corridor_door_open.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        8,
+        2,
+        47,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_room_number_1_to_7_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_room_number_1_to_7_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_room_number_1_to_7_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        31,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_room_number_8_anomaly",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_room_number_8_anomaly.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_room_number_8_anomaly.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        13,
+        2,
+        43,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_corridor_runner_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_corridor_runner_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_corridor_runner_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_wall_lamp_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_wall_lamp_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_wall_lamp_set.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        49,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_stair_landing",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_stair_landing.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_stair_landing.png",
+      "source_size": [
+        96,
+        96
+      ],
+      "output_size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        2,
+        15,
+        94,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_corridor_end_window",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_corridor_end_window.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_corridor_end_window.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        48,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_corridor_trim_normal",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_corridor_trim_normal.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_corridor_trim_normal.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "inn_corridor_trim_anomaly",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\inn_corridor_trim_anomaly.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\inn_corridor_trim_anomaly.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_low_stone_wall_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_low_stone_wall_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_low_stone_wall_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_memorial_stone_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_memorial_stone_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_memorial_stone_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        30,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_small_grave_marker_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_small_grave_marker_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_small_grave_marker_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        35,
+        54,
+        45
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_withered_flower_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_withered_flower_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_withered_flower_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        47,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_path_step_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_path_step_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_path_step_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_courtyard_edge_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_courtyard_edge_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_courtyard_edge_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_tree_cluster",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_tree_cluster.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_tree_cluster.png",
+      "source_size": [
+        96,
+        96
+      ],
+      "output_size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        2,
+        63,
+        94,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_leaf_scatter_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_leaf_scatter_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_leaf_scatter_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_outdoor_candle_stand",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_outdoor_candle_stand.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_outdoor_candle_stand.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        48,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_pew_short",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_pew_short.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_pew_short.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        70,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_pew_long",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_pew_long.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_pew_long.png",
+      "source_size": [
+        96,
+        56
+      ],
+      "output_size": [
+        96,
+        56
+      ],
+      "alpha_bbox": [
+        2,
+        5,
+        94,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_aisle_runner_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_aisle_runner_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_aisle_runner_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_candle_stand",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_candle_stand.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_candle_stand.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        7,
+        3,
+        40,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_wall_sconce",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_wall_sconce.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_wall_sconce.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        4,
+        2,
+        44,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_altar_base",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_altar_base.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_altar_base.png",
+      "source_size": [
+        112,
+        72
+      ],
+      "output_size": [
+        112,
+        72
+      ],
+      "alpha_bbox": [
+        6,
+        2,
+        106,
+        71
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_six_hammer_mechanism",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_six_hammer_mechanism.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_six_hammer_mechanism.png",
+      "source_size": [
+        176,
+        112
+      ],
+      "output_size": [
+        176,
+        112
+      ],
+      "alpha_bbox": [
+        11,
+        2,
+        165,
+        111
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_hammer_support_frame",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_hammer_support_frame.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_hammer_support_frame.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        12,
+        2,
+        75,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_bell_rope_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_bell_rope_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_bell_rope_set.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        5,
+        2,
+        43,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_ritual_banner_small",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_ritual_banner_small.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_ritual_banner_small.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        47,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "chapel_stained_window_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\chapel_stained_window_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\chapel_stained_window_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        31,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_timber_beam_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_timber_beam_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_timber_beam_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_rope_coil",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_rope_coil.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_rope_coil.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        45,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_hanging_rope_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_hanging_rope_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_hanging_rope_set.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        45,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_seventh_hammer",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_seventh_hammer.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_seventh_hammer.png",
+      "source_size": [
+        96,
+        96
+      ],
+      "output_size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        17,
+        2,
+        74,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_hammer_mount",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_hammer_mount.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_hammer_mount.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        19,
+        3,
+        69,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_maintenance_tool_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_maintenance_tool_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_maintenance_tool_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        14,
+        2,
+        41,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_narrow_platform",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_narrow_platform.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_narrow_platform.png",
+      "source_size": [
+        112,
+        72
+      ],
+      "output_size": [
+        112,
+        72
+      ],
+      "alpha_bbox": [
+        2,
+        41,
+        110,
+        71
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_high_window",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_high_window.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_high_window.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        47,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "belfry_foreground_beam_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\belfry_foreground_beam_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\belfry_foreground_beam_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_street_display_frame",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_street_display_frame.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_street_display_frame.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        15,
+        2,
+        42,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_shop_awning",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_shop_awning.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_shop_awning.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        6,
+        2,
+        49,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_sign_stand",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_sign_stand.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_sign_stand.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        6,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_crate_of_frames",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_crate_of_frames.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_crate_of_frames.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        6,
+        9,
+        66,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_outdoor_drying_rack",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_outdoor_drying_rack.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_outdoor_drying_rack.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        33,
+        54,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_lane_fence_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_lane_fence_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_lane_fence_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_lane_ground_detail_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_lane_ground_detail_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_lane_ground_detail_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_camera_tripod",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_camera_tripod.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_camera_tripod.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        3,
+        11,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_camera_large_format",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_camera_large_format.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_camera_large_format.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        46,
+        62
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_portrait_backdrop",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_portrait_backdrop.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_portrait_backdrop.png",
+      "source_size": [
+        96,
+        96
+      ],
+      "output_size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        88,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_backdrop_stand",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_backdrop_stand.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_backdrop_stand.png",
+      "source_size": [
+        96,
+        96
+      ],
+      "output_size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        8,
+        2,
+        87,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_studio_light_left",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_studio_light_left.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_studio_light_left.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        11,
+        2,
+        45,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_studio_light_right",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_studio_light_right.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_studio_light_right.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        14,
+        2,
+        42,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_subject_chair",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_subject_chair.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_subject_chair.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        47,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_display_wall_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_display_wall_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_display_wall_set.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        31,
+        70,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_workbench",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_workbench.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_workbench.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        7,
+        94,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_negative_storage_rack",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_negative_storage_rack.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_negative_storage_rack.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        19,
+        70,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_developing_table",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_developing_table.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_developing_table.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        87,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_chemical_tray_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_chemical_tray_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_chemical_tray_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        6,
+        21,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_drying_line",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_drying_line.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_drying_line.png",
+      "source_size": [
+        112,
+        64
+      ],
+      "output_size": [
+        112,
+        64
+      ],
+      "alpha_bbox": [
+        3,
+        43,
+        110,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_hanging_print_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_hanging_print_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_hanging_print_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        37,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_darkroom_door_frame",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_darkroom_door_frame.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_darkroom_door_frame.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        42,
+        41,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "photo_red_safe_light_small",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\photo_red_safe_light_small.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\photo_red_safe_light_small.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        12,
+        2,
+        44,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_stone_step_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_stone_step_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_stone_step_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_low_railing_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_low_railing_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_low_railing_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_document_cart",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_document_cart.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_document_cart.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_sealed_crate_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_sealed_crate_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_sealed_crate_set.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        10,
+        2,
+        61,
+        50
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_municipal_notice_board",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_municipal_notice_board.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_municipal_notice_board.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        63,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_entry_lamp",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_entry_lamp.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_entry_lamp.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        40,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_platform_edge_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_platform_edge_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_platform_edge_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_cabinet_tall",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_cabinet_tall.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_cabinet_tall.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        6,
+        2,
+        50,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_cabinet_wide",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_cabinet_wide.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_cabinet_wide.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        8,
+        70,
+        76
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_shelf_variant_a",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_shelf_variant_a.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_shelf_variant_a.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        63,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_shelf_variant_b",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_shelf_variant_b.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_shelf_variant_b.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        8,
+        2,
+        64,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_service_counter",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_service_counter.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_service_counter.png",
+      "source_size": [
+        128,
+        72
+      ],
+      "output_size": [
+        128,
+        72
+      ],
+      "alpha_bbox": [
+        2,
+        14,
+        126,
+        71
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_reading_table",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_reading_table.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_reading_table.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        11,
+        94,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_reading_lamp",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_reading_lamp.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_reading_lamp.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        11,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_document_box_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_document_box_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_document_box_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        25,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_scroll_bundle",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_scroll_bundle.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_scroll_bundle.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        17,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_index_drawer",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_index_drawer.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_index_drawer.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        53,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_wall_map",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_wall_map.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_wall_map.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        12,
+        70,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "archive_record_board",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\archive_record_board.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\archive_record_board.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        7,
+        70,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_workbench",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_workbench.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_workbench.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        86,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_tool_wall",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_tool_wall.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_tool_wall.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        23,
+        70,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_tool_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_tool_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_tool_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        10,
+        2,
+        45,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_gear_small_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_gear_small_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_gear_small_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        53,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_gear_large_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_gear_large_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_gear_large_set.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        4,
+        2,
+        68,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_pipe_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_pipe_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_pipe_set.png",
+      "source_size": [
+        96,
+        56
+      ],
+      "output_size": [
+        96,
+        56
+      ],
+      "alpha_bbox": [
+        14,
+        2,
+        82,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_cable_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_cable_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_cable_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        4,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_control_panel",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_control_panel.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_control_panel.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        17,
+        2,
+        79,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_alignment_three_gear_device",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_alignment_three_gear_device.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_alignment_three_gear_device.png",
+      "source_size": [
+        160,
+        96
+      ],
+      "output_size": [
+        160,
+        96
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        158,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_calibration_marker_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_calibration_marker_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_calibration_marker_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        11,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_maintenance_crate",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_maintenance_crate.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_maintenance_crate.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        6,
+        2,
+        66,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_blueprint_table",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_blueprint_table.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_blueprint_table.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        93,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_work_lamp",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_work_lamp.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_work_lamp.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        13,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "clock_floor_plate_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\clock_floor_plate_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\clock_floor_plate_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_chart_table",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_chart_table.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_chart_table.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        4,
+        2,
+        91,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_wall_chart",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_wall_chart.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_wall_chart.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        17,
+        2,
+        54,
+        46
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_signal_console",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_signal_console.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_signal_console.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        3,
+        2,
+        93,
+        60
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_signal_lamp_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_signal_lamp_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_signal_lamp_set.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        15,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_gauge_panel",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_gauge_panel.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_gauge_panel.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        3,
+        70,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_lever_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_lever_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_lever_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        2,
+        53,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_telegraph",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_telegraph.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_telegraph.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        11,
+        2,
+        44,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_radio_device",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_radio_device.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_radio_device.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        79,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_record_cabinet",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_record_cabinet.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_record_cabinet.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        13,
+        2,
+        74,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_observation_window",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_observation_window.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_observation_window.png",
+      "source_size": [
+        128,
+        72
+      ],
+      "output_size": [
+        128,
+        72
+      ],
+      "alpha_bbox": [
+        2,
+        23,
+        126,
+        71
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_weather_board",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_weather_board.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_weather_board.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        13,
+        70,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_float_and_rope_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_float_and_rope_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_float_and_rope_set.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        2,
+        11,
+        70,
+        55
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "harbor_control_floor_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\harbor_control_floor_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\harbor_control_floor_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_mechanical_floor_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_mechanical_floor_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_mechanical_floor_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_protocol_platform",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_protocol_platform.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_protocol_platform.png",
+      "source_size": [
+        176,
+        112
+      ],
+      "output_size": [
+        176,
+        112
+      ],
+      "alpha_bbox": [
+        4,
+        2,
+        171,
+        111
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_witness_slot_empty",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_witness_slot_empty.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_witness_slot_empty.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        30,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_witness_slot_active",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_witness_slot_active.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_witness_slot_active.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        30,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_witness_slot_locked",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_witness_slot_locked.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_witness_slot_locked.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        30,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_signal_light_red",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_signal_light_red.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_signal_light_red.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        20,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_signal_light_gold",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_signal_light_gold.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_signal_light_gold.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        20,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_signal_light_white",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_signal_light_white.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_signal_light_white.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        20,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_clear_red_mechanism",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_clear_red_mechanism.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_clear_red_mechanism.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        6,
+        2,
+        81,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_continue_white_mechanism",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_continue_white_mechanism.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_continue_white_mechanism.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        15,
+        2,
+        73,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_central_protocol_console",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_central_protocol_console.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_central_protocol_console.png",
+      "source_size": [
+        176,
+        112
+      ],
+      "output_size": [
+        176,
+        112
+      ],
+      "alpha_bbox": [
+        2,
+        17,
+        174,
+        111
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_floor_cable_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_floor_cable_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_floor_cable_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_pipe_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_pipe_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_pipe_set.png",
+      "source_size": [
+        96,
+        56
+      ],
+      "output_size": [
+        96,
+        56
+      ],
+      "alpha_bbox": [
+        2,
+        6,
+        94,
+        45
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_gear_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_gear_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_gear_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        25,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_emergency_protocol_board",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_emergency_protocol_board.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_emergency_protocol_board.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        15,
+        70,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_wall_recess_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_wall_recess_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_wall_recess_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "basement_contact_shadow_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\basement_contact_shadow_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\basement_contact_shadow_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_wet_stone_floor_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_wet_stone_floor_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_wet_stone_floor_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_wall_straight_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_wall_straight_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_wall_straight_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_wall_outer_corner_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_wall_outer_corner_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_wall_outer_corner_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_wall_inner_corner_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_wall_inner_corner_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_wall_inner_corner_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_ceiling_foreground_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_ceiling_foreground_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_ceiling_foreground_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_rock_small_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_rock_small_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_rock_small_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        9,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_rock_large_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_rock_large_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_rock_large_set.png",
+      "source_size": [
+        72,
+        56
+      ],
+      "output_size": [
+        72,
+        56
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        64,
+        52
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_stalagmite_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_stalagmite_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_stalagmite_set.png",
+      "source_size": [
+        48,
+        64
+      ],
+      "output_size": [
+        48,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        37,
+        46,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_puddle_edge_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_puddle_edge_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_puddle_edge_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_shallow_pool_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_shallow_pool_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_shallow_pool_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_wood_plank_walkway",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_wood_plank_walkway.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_wood_plank_walkway.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        32,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_rotten_board_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_rotten_board_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_rotten_board_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        34,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_rusty_tool_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_rusty_tool_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_rusty_tool_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        29,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_old_maintenance_device",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_old_maintenance_device.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_old_maintenance_device.png",
+      "source_size": [
+        88,
+        80
+      ],
+      "output_size": [
+        88,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        7,
+        86,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_water_drip_effect",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_water_drip_effect.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_water_drip_effect.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        30,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_wet_reflection_patch",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_wet_reflection_patch.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_wet_reflection_patch.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        38,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "cave_entrance_frame",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\cave_entrance_frame.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\cave_entrance_frame.png",
+      "source_size": [
+        96,
+        96
+      ],
+      "output_size": [
+        96,
+        96
+      ],
+      "alpha_bbox": [
+        2,
+        43,
+        94,
+        95
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_floor_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_floor_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_floor_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_wall_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_wall_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_wall_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_red_safe_light",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_red_safe_light.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_red_safe_light.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        14,
+        2,
+        42,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_developing_table",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_developing_table.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_developing_table.png",
+      "source_size": [
+        96,
+        64
+      ],
+      "output_size": [
+        96,
+        64
+      ],
+      "alpha_bbox": [
+        5,
+        2,
+        91,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_chemical_tray_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_chemical_tray_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_chemical_tray_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        6,
+        31,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_photo_drying_line",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_photo_drying_line.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_photo_drying_line.png",
+      "source_size": [
+        112,
+        64
+      ],
+      "output_size": [
+        112,
+        64
+      ],
+      "alpha_bbox": [
+        2,
+        18,
+        110,
+        63
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_hanging_photo_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_hanging_photo_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_hanging_photo_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        28,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_unfinished_portrait_holder",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_unfinished_portrait_holder.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_unfinished_portrait_holder.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        3,
+        13,
+        54,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_silver_salt_door_frame",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_silver_salt_door_frame.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_silver_salt_door_frame.png",
+      "source_size": [
+        56,
+        80
+      ],
+      "output_size": [
+        56,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        35,
+        54,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_exposure_mark_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_exposure_mark_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_exposure_mark_set.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        23,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_record_board",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_record_board.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_record_board.png",
+      "source_size": [
+        72,
+        48
+      ],
+      "output_size": [
+        72,
+        48
+      ],
+      "alpha_bbox": [
+        9,
+        2,
+        62,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_storage_shelf",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_storage_shelf.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_storage_shelf.png",
+      "source_size": [
+        72,
+        80
+      ],
+      "output_size": [
+        72,
+        80
+      ],
+      "alpha_bbox": [
+        2,
+        8,
+        70,
+        79
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_wet_reflection_patch",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_wet_reflection_patch.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_wet_reflection_patch.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        25,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_ada_focus_light",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_ada_focus_light.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_ada_focus_light.png",
+      "source_size": [
+        56,
+        48
+      ],
+      "output_size": [
+        56,
+        48
+      ],
+      "alpha_bbox": [
+        2,
+        37,
+        54,
+        47
+      ],
+      "residual_pink_pixels": 0,
+      "status": "written"
+    },
+    {
+      "asset_id": "darkroom_foreground_shadow_set",
+      "source": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\source_art\\generated\\darkroom_foreground_shadow_set.png",
+      "output": "C:\\Users\\ethanypan\\Desktop\\mygame\\godot\\assets\\images\\processed\\darkroom_foreground_shadow_set.png",
+      "source_size": [
+        128,
+        128
+      ],
+      "output_size": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        128,
         128
       ],
       "residual_pink_pixels": 0,

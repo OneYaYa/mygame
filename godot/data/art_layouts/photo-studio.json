@@ -1,51 +1,780 @@
 {
-  "schema_version":1,"map_id":"photo-studio","theme_variant":"silver_salt_front_and_workroom","interaction_distance":52,
-  "canvas":{"outside_color":"#0d1517","room_rect":[54,46,712,438],"wall_height":58,"side_wall":18,"wall_color":"#586267","wall_dark":"#293438","floor_color":"#4c5354","floor_style":"dark_wood","ambient_color":"#aaa79b","edge_color":"#263437"},
-  "ground_shapes":[
-    {"object_id":"studio_front_floor","kind":"platform","points":[[72,104],[392,104],[392,466],[72,466]],"color":"#525758"},
-    {"object_id":"studio_work_floor","kind":"platform","points":[[392,104],[748,104],[748,466],[392,466]],"color":"#43494c"}
-  ],
-  "objects":[
-    {"object_id":"studio_front_rug","procedural_type":"rug","position":[246,408],"display_size":[116,42],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails","color":"#594a4d","accent":"#90705f"},
-    {"object_id":"studio_display_frame_a","asset_id":"prop_frame","position":[142,253],"display_size":[58,64],"anchor":[0.5,1.0],"sort_y":253,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"studio_display_frame_b","asset_id":"prop_frame","position":[220,250],"display_size":[58,64],"anchor":[0.5,1.0],"sort_y":250,"layer":"WorldObjects","mirror_x":true,"contact_shadow":true},
-    {"object_id":"studio_portrait_wall_a","procedural_type":"wall_frame","position":[130,158],"display_size":[38,44],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#313438","accent":"#a5a19a"},
-    {"object_id":"studio_portrait_wall_b","procedural_type":"wall_frame","position":[204,154],"display_size":[46,38],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#313438","accent":"#9b8879"},
-    {"object_id":"studio_camera","procedural_type":"console","position":[308,286],"display_size":[58,74],"anchor":[0.5,1.0],"sort_y":286,"layer":"WorldObjects","color":"#343c40","accent":"#b8a06b","contact_shadow":true,"shadow_size":[42,8]},
-    {"object_id":"studio_development_desk","asset_id":"prop_desk","position":[516,260],"display_size":[82,80],"anchor":[0.5,1.0],"sort_y":260,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"studio_development_counter","asset_id":"prop_counter","position":[642,270],"display_size":[86,79],"anchor":[0.5,1.0],"sort_y":270,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"studio_work_rack","asset_id":"prop_rack","position":[690,178],"display_size":[62,69],"anchor":[0.5,1.0],"sort_y":178,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"studio_shelf","asset_id":"prop_shelf","position":[446,190],"display_size":[42,75],"anchor":[0.5,1.0],"sort_y":190,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"studio_chair","procedural_type":"chair","position":[517,308],"display_size":[27,34],"anchor":[0.5,1.0],"sort_y":308,"layer":"WorldObjects","color":"#424042","accent":"#8b7763","contact_shadow":true},
-    {"object_id":"studio_chemical_crate","asset_id":"prop_crate","position":[696,374],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":374,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"studio_red_hint","procedural_type":"safelight","position":[420,158],"display_size":[28,34],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#3c292a","accent":"#b44943"},
-    {"object_id":"studio_counterweight","procedural_type":"gear","position":[92,290],"display_size":[44,44],"anchor":[0.5,1.0],"sort_y":290,"layer":"WorldObjects","color":"#596063","accent":"#a78b52"},
-    {"object_id":"studio_door_lane","procedural_type":"door","position":[410,484],"display_size":[30,62],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#34383a","accent":"#a9895b"},
-    {"object_id":"studio_hidden_door","procedural_type":"door","position":[72,296],"display_size":[32,72],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#242c30","accent":"#6f7e7f"}
-  ],
-  "collision_rects":[
-    {"object_id":"col_studio_top","rect":[54,46,712,60]},{"object_id":"col_studio_left_top","rect":[54,106,18,82]},{"object_id":"col_studio_left_bottom","rect":[54,312,18,172]},{"object_id":"col_studio_right","rect":[748,106,18,378]},
-    {"object_id":"col_studio_bottom_l","rect":[54,468,330,16]},{"object_id":"col_studio_bottom_r","rect":[436,468,330,16]},
-    {"object_id":"col_studio_frames","rect":[112,226,138,27]},{"object_id":"col_studio_camera","rect":[282,254,52,32]},
-    {"object_id":"col_studio_desk","rect":[479,227,74,33]},{"object_id":"col_studio_counter","rect":[603,237,78,33]},
-    {"object_id":"col_studio_shelf","rect":[427,157,38,33]},{"object_id":"col_studio_rack","rect":[662,148,56,30]}
-  ],
-  "gameplay_overrides":{
-    "development_bench":{"interaction_rect":[478,194,78,66]},"studio_counterweight":{"interaction_rect":[72,250,44,44]},
-    "silver_salt_wall":{"interaction_rect":[56,188,32,110]},"studio_to_lane":{"trigger_rect":[386,442,48,42]},
-    "studio_to_darkroom":{"trigger_rect":[54,188,38,108]}
+  "schema_version": 1,
+  "map_id": "photo-studio",
+  "theme_variant": "full_map_rollout_silver_salt_studio_workflow",
+  "interaction_distance": 54,
+  "canvas": {
+    "outside_color": "#0d1517",
+    "room_rect": [
+      54,
+      46,
+      712,
+      438
+    ],
+    "wall_height": 58,
+    "side_wall": 18,
+    "wall_color": "#586267",
+    "wall_dark": "#293438",
+    "floor_color": "#4c5354",
+    "floor_style": "dark_wood",
+    "ambient_color": "#aaa79b",
+    "edge_color": "#263437"
   },
-  "lights":[
-    {"object_id":"studio_work_light","position":[560,184],"color":"#e3bd76","energy":0.38,"radius":86},
-    {"object_id":"studio_red_hint_light","position":[420,158],"color":"#b84943","energy":0.22,"radius":62},
-    {"object_id":"studio_front_cool_light","position":[238,170],"color":"#819ca2","energy":0.18,"radius":92}
+  "ground_shapes": [
+    {
+      "object_id": "studio_front_floor",
+      "kind": "platform",
+      "points": [
+        [
+          72,
+          104
+        ],
+        [
+          392,
+          104
+        ],
+        [
+          392,
+          466
+        ],
+        [
+          72,
+          466
+        ]
+      ],
+      "color": "#525758"
+    },
+    {
+      "object_id": "studio_work_floor",
+      "kind": "platform",
+      "points": [
+        [
+          392,
+          104
+        ],
+        [
+          748,
+          104
+        ],
+        [
+          748,
+          466
+        ],
+        [
+          392,
+          466
+        ]
+      ],
+      "color": "#43494c"
+    }
   ],
-  "zones":[
-    {"object_id":"zone_studio_entrance","type":"entrance_zone","rect":[350,390,120,78]},
-    {"object_id":"zone_studio_move","type":"movement_zone","rect":[252,270,270,142]},
-    {"object_id":"zone_studio_primary","type":"primary_interaction_zone","rect":[452,174,252,146]},
-    {"object_id":"zone_studio_story","type":"secondary_story_zone","rect":[54,176,100,144]},
-    {"object_id":"zone_studio_decor","type":"decoration_zone","rect":[104,122,240,158]},
-    {"object_id":"zone_studio_blocked","type":"blocked_zone","rect":[54,46,712,60]}
-  ]
+  "objects": [
+    {
+      "object_id": "rollout_photo_camera_tripod",
+      "asset_id": "photo_camera_tripod",
+      "position": [
+        336,
+        345
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 345,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        29,
+        7
+      ],
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_photo_camera_large_format",
+      "asset_id": "photo_camera_large_format",
+      "position": [
+        350,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 330,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        29,
+        7
+      ],
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_photo_portrait_backdrop",
+      "asset_id": "photo_portrait_backdrop",
+      "position": [
+        420,
+        260
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 260,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        11
+      ],
+      "display_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "object_id": "rollout_photo_backdrop_stand",
+      "asset_id": "photo_backdrop_stand",
+      "position": [
+        420,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 330,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        11
+      ],
+      "display_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "object_id": "rollout_photo_studio_light_left",
+      "asset_id": "photo_studio_light_left",
+      "position": [
+        285,
+        350
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 350,
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_photo_studio_light_right",
+      "asset_id": "photo_studio_light_right",
+      "position": [
+        540,
+        350
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 350,
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_photo_subject_chair",
+      "asset_id": "photo_subject_chair",
+      "position": [
+        430,
+        385
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 385,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_photo_display_wall_set",
+      "asset_id": "photo_display_wall_set",
+      "position": [
+        656,
+        185
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        72,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_photo_workbench",
+      "asset_id": "photo_workbench",
+      "position": [
+        180,
+        350
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 350,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_photo_negative_storage_rack",
+      "asset_id": "photo_negative_storage_rack",
+      "position": [
+        190,
+        255
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 255,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        43,
+        9
+      ],
+      "display_size": [
+        72,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_photo_developing_table",
+      "asset_id": "photo_developing_table",
+      "position": [
+        650,
+        360
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 360,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        7
+      ],
+      "display_size": [
+        96,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_photo_chemical_tray_set",
+      "asset_id": "photo_chemical_tray_set",
+      "position": [
+        650,
+        400
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 400,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_photo_drying_line",
+      "asset_id": "photo_drying_line",
+      "position": [
+        640,
+        250
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 250,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        67,
+        7
+      ],
+      "display_size": [
+        112,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_photo_hanging_print_set",
+      "asset_id": "photo_hanging_print_set",
+      "position": [
+        540,
+        180
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 180,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_photo_darkroom_door_frame",
+      "asset_id": "photo_darkroom_door_frame",
+      "position": [
+        730,
+        330
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_photo_red_safe_light_small",
+      "asset_id": "photo_red_safe_light_small",
+      "position": [
+        716,
+        190
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 190,
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    }
+  ],
+  "collision_rects": [
+    {
+      "object_id": "col_studio_top",
+      "rect": [
+        54,
+        46,
+        712,
+        60
+      ]
+    },
+    {
+      "object_id": "col_studio_left_top",
+      "rect": [
+        54,
+        106,
+        18,
+        82
+      ]
+    },
+    {
+      "object_id": "col_studio_left_bottom",
+      "rect": [
+        54,
+        312,
+        18,
+        172
+      ]
+    },
+    {
+      "object_id": "col_studio_right",
+      "rect": [
+        748,
+        106,
+        18,
+        378
+      ]
+    },
+    {
+      "object_id": "col_studio_bottom_l",
+      "rect": [
+        54,
+        468,
+        330,
+        16
+      ]
+    },
+    {
+      "object_id": "col_studio_bottom_r",
+      "rect": [
+        436,
+        468,
+        330,
+        16
+      ]
+    },
+    {
+      "object_id": "col_studio_frames",
+      "rect": [
+        112,
+        226,
+        138,
+        27
+      ]
+    },
+    {
+      "object_id": "col_studio_camera",
+      "rect": [
+        282,
+        254,
+        52,
+        32
+      ]
+    },
+    {
+      "object_id": "col_studio_desk",
+      "rect": [
+        479,
+        227,
+        74,
+        33
+      ]
+    },
+    {
+      "object_id": "col_studio_counter",
+      "rect": [
+        603,
+        237,
+        78,
+        33
+      ]
+    },
+    {
+      "object_id": "col_studio_shelf",
+      "rect": [
+        427,
+        157,
+        38,
+        33
+      ]
+    },
+    {
+      "object_id": "col_studio_rack",
+      "rect": [
+        662,
+        148,
+        56,
+        30
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "development_bench": {
+      "interaction_rect": [
+        478,
+        194,
+        78,
+        66
+      ]
+    },
+    "studio_counterweight": {
+      "interaction_rect": [
+        72,
+        250,
+        44,
+        44
+      ]
+    },
+    "silver_salt_wall": {
+      "interaction_rect": [
+        56,
+        188,
+        32,
+        110
+      ]
+    },
+    "studio_to_lane": {
+      "trigger_rect": [
+        386,
+        442,
+        48,
+        42
+      ]
+    },
+    "studio_to_darkroom": {
+      "trigger_rect": [
+        54,
+        188,
+        38,
+        108
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        285,
+        330
+      ],
+      "color": "#e6bd78",
+      "energy": 0.38,
+      "radius": 86
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        540,
+        330
+      ],
+      "color": "#e6bd78",
+      "energy": 0.38,
+      "radius": 86
+    },
+    {
+      "object_id": "full_light_2",
+      "position": [
+        715,
+        190
+      ],
+      "color": "#bd5049",
+      "energy": 0.22,
+      "radius": 54
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        291,
+        155,
+        237,
+        146
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        291,
+        396,
+        237,
+        87
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        196,
+        192,
+        427,
+        219
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        291,
+        155,
+        237,
+        146
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        113,
+        133,
+        178,
+        146
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        528,
+        133,
+        178,
+        219
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        54,
+        46,
+        712,
+        54
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        54,
+        429,
+        712,
+        54
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [],
+    "interior_shell": {
+      "theme": "photo_harbor",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {
+          "position": [
+            70,
+            46
+          ],
+          "count": 21,
+          "pattern": [
+            "straight",
+            "panel_light",
+            "straight",
+            "panel_dense"
+          ],
+          "tint": "#d5c4b7"
+        }
+      ],
+      "corners": [
+        {
+          "position": [
+            54,
+            46
+          ],
+          "tile": "inside_left",
+          "tint": "#d5c4b7"
+        },
+        {
+          "position": [
+            718,
+            46
+          ],
+          "tile": "inside_right",
+          "tint": "#d5c4b7"
+        }
+      ],
+      "baseboard_segments": [
+        {
+          "position": [
+            70,
+            94
+          ],
+          "count": 21,
+          "pattern": [
+            "straight",
+            "straight",
+            "worn_straight"
+          ],
+          "start": "left_stop",
+          "end": "right_stop"
+        }
+      ]
+    }
+  },
+  "rollout_metadata": {
+    "batch": "C",
+    "new_asset_ids": [
+      "photo_camera_tripod",
+      "photo_camera_large_format",
+      "photo_portrait_backdrop",
+      "photo_backdrop_stand",
+      "photo_studio_light_left",
+      "photo_studio_light_right",
+      "photo_subject_chair",
+      "photo_display_wall_set",
+      "photo_workbench",
+      "photo_negative_storage_rack",
+      "photo_developing_table",
+      "photo_chemical_tray_set",
+      "photo_drying_line",
+      "photo_hanging_print_set",
+      "photo_darkroom_door_frame",
+      "photo_red_safe_light_small"
+    ],
+    "primary_visual_center": "camera_backdrop_light_triangle",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

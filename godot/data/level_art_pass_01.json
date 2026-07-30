@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "pass_id": "level_art_vertical_slice_pass_01",
+  "date": "2026-07-30",
+  "source_of_truth": "godot/",
+  "measurement": {
+    "effective_area": "visible authored floor minus fixed collision footprint; cave uses 0.91 inner boundary minus water and rock collisions",
+    "empty_ratio": "8px-grid visual audit of walkable floor not assigned to a function cluster, main path, interaction buffer, or intentional narrative void",
+    "screenshot": "Godot 4.6.3 stable, OpenGL Compatibility, 1152x648, normal game HUD",
+    "player_native_height_px": 48
+  },
+  "frozen_layouts": [
+    "town", "inn-yard", "chapel-hill", "photo-lane", "archive-lane", "harbor",
+    "inn-lobby", "inn-upstairs", "clock-cabin", "chapel-interior", "photo-studio",
+    "archive-room", "harbor-control", "hidden-darkroom"
+  ],
+  "maps": {
+    "player-room": {
+      "map_size": [768, 480],
+      "before": {"effective_walkable_area_px2": 187552, "empty_ratio": 0.57, "camera_zoom": 1.0, "player_height_px": 48, "foreground_layers": 0},
+      "target": {"effective_walkable_area_px2": [128000, 134000], "shrink_ratio": [0.29, 0.33], "empty_ratio_max": 0.30, "camera_zoom": 1.25, "player_height_px": 60},
+      "after": {"effective_walkable_area_px2": 139870, "shrink_ratio": 0.254, "empty_ratio": 0.27, "camera_zoom": 1.25, "player_height_px": 60, "function_zones": 4, "object_clusters": 3, "foreground_layers": 1, "large_structure_instances": 3, "medium_structure_instances": 1, "new_raster_asset_ids": 0, "overall_score": 8.3, "decision": "APPROVED"},
+      "primary_visual_center": "record desk + persistent photo/memory board",
+      "secondary_groups": ["sleeping alcove", "fireplace/rest alcove"],
+      "entrance_exit": ["room8_to_hall"],
+      "functional_zones": ["sleep", "record", "fireplace_storage", "entry_transition"],
+      "stable_ids": ["repair_orders", "player_journal", "player_bed", "player_memory_board", "room8_to_hall"],
+      "incoming_spawns": [[384, 405], [384, 370]],
+      "planned_reuse": ["interior_wall_modular_set", "interior_corner_set", "baseboard_set", "prop_bed", "prop_fireplace", "inn_nightstand", "inn_bedside_lamp", "inn_wardrobe", "inn_photo_board", "inn_journal_desk_variant", "inn_room_small_rug"]
+    },
+    "chapel-belfry": {
+      "map_size": [850, 460],
+      "before": {"effective_walkable_area_px2": 191880, "empty_ratio": 0.64, "camera_zoom": 1.0, "player_height_px": 48, "foreground_layers": 0},
+      "target": {"effective_walkable_area_px2": [116000, 123000], "shrink_ratio": [0.36, 0.40], "empty_ratio_max": 0.30, "camera_zoom": 1.20, "player_height_px": 58},
+      "after": {"effective_walkable_area_px2": 120640, "shrink_ratio": 0.371, "empty_ratio": 0.24, "camera_zoom": 1.20, "player_height_px": 58, "function_zones": 4, "object_clusters": 3, "foreground_layers": 3, "large_structure_instances": 5, "medium_structure_instances": 0, "new_raster_asset_ids": 0, "overall_score": 8.3, "decision": "APPROVED"},
+      "primary_visual_center": "seventh hammer frame + calibration slot",
+      "secondary_groups": ["high-window maintenance platform", "descent/log platform"],
+      "entrance_exit": ["belfry_to_chapel"],
+      "functional_zones": ["hammer_calibration", "side_maintenance", "descent", "inaccessible_high_beams"],
+      "stable_ids": ["seventh_hammer", "belfry_calibration_rope", "chapel_install_log", "room7_tag_pickup", "belfry_to_chapel"],
+      "incoming_spawns": [[120, 350]],
+      "planned_reuse": ["belfry_timber_beam_set", "belfry_foreground_beam_set", "belfry_hanging_rope_set", "belfry_seventh_hammer", "belfry_hammer_mount", "belfry_narrow_platform", "belfry_high_window", "belfry_maintenance_tool_set"]
+    },
+    "low-tide-cave": {
+      "map_size": [920, 520],
+      "before": {"effective_walkable_area_px2": 205215, "empty_ratio": 0.62, "camera_zoom": 1.0, "player_height_px": 48, "foreground_layers": 0},
+      "target": {"effective_walkable_area_px2": [142000, 150000], "shrink_ratio": [0.27, 0.31], "empty_ratio_max": 0.30, "camera_zoom": 1.15, "player_height_px": 55},
+      "after": {"effective_walkable_area_px2": 145080, "shrink_ratio": 0.293, "empty_ratio": 0.25, "camera_zoom": 1.15, "player_height_px": 55, "function_zones": 4, "object_clusters": 3, "foreground_layers": 3, "large_structure_instances": 4, "medium_structure_instances": 1, "new_raster_asset_ids": 0, "overall_score": 8.0, "decision": "APPROVED"},
+      "primary_visual_center": "old maintenance device + hidden negative rock pocket",
+      "secondary_groups": ["low-tide entrance", "broken maintenance crossing"],
+      "entrance_exit": ["cave_to_harbor"],
+      "functional_zones": ["entrance_tide_marks", "maintenance_path", "hidden_evidence", "flooded_lower_chamber"],
+      "stable_ids": ["cave_negative_pickup", "cave_inscription", "cave_to_harbor"],
+      "incoming_spawns": [[120, 320]],
+      "planned_reuse": ["cave_wall_straight_set", "cave_wall_outer_corner_set", "cave_wall_inner_corner_set", "cave_ceiling_foreground_set", "cave_shallow_pool_set", "cave_puddle_edge_set", "cave_entrance_frame", "cave_wood_plank_walkway", "cave_rotten_board_set", "cave_old_maintenance_device", "cave_wet_reflection_patch"]
+    },
+    "clock-basement": {
+      "map_size": [900, 560],
+      "before": {"effective_walkable_area_px2": 306140, "empty_ratio": 0.52, "camera_zoom": 1.0, "player_height_px": 48, "foreground_layers": 0},
+      "target": {"effective_walkable_area_px2": [205000, 217000], "shrink_ratio": [0.29, 0.33], "empty_ratio_max": 0.30, "camera_zoom": 1.15, "player_height_px": 55},
+      "after": {"effective_walkable_area_px2": 214520, "shrink_ratio": 0.299, "empty_ratio": 0.26, "camera_zoom": 1.15, "player_height_px": 55, "function_zones": 6, "object_clusters": 4, "foreground_layers": 1, "large_structure_instances": 5, "medium_structure_instances": 1, "new_raster_asset_ids": 0, "overall_score": 8.5, "decision": "APPROVED"},
+      "primary_visual_center": "central protocol console + radial floor",
+      "secondary_groups": ["red erase station", "white continue station", "three-signal bridge"],
+      "entrance_exit": ["basement_to_cabin"],
+      "functional_zones": ["central_protocol", "witness_arc", "red_ending", "white_ending", "signal_monitoring", "entry_maintenance"],
+      "stable_ids": ["three_signal_lights", "witness_slot_seven", "red_erase_lever", "white_continue_knob", "brake_interface", "basement_to_cabin"],
+      "incoming_spawns": [[384, 405]],
+      "planned_reuse": ["basement_mechanical_floor_set", "basement_floor_cable_set", "basement_wall_recess_set", "basement_contact_shadow_set", "basement_protocol_platform", "basement_central_protocol_console", "basement_witness_slot_empty", "basement_witness_slot_active", "basement_witness_slot_locked", "basement_signal_light_red", "basement_signal_light_gold", "basement_signal_light_white", "basement_clear_red_mechanism", "basement_continue_white_mechanism", "basement_pipe_set"]
+    }
+  },
+  "new_raster_asset_budget": {"planned": 0, "maximum_per_map": 5},
+  "rejected_asset_classes": ["random_small_crates", "small_tools", "small_hangers", "small_photos", "random_floor_debris", "readable_text_decals"],
+  "before_capture": {
+    "directory": "res://art_review/level_art_pass_01/before",
+    "maps_captured": 4,
+    "failures": 0,
+    "renderer": "OpenGL 3.3 Compatibility / NVIDIA GeForce RTX 2060"
+  },
+  "after_capture": {
+    "directory": "res://art_review/level_art_pass_01/after",
+    "maps_captured": 4,
+    "views_per_map": 6,
+    "comparisons": 4,
+    "failures": 0,
+    "renderer": "OpenGL 3.3 Compatibility / NVIDIA GeForce RTX 2060"
+  },
+  "final_review": {
+    "contact_sheet": "res://art_review/level_art_pass_01/contact_sheet.png",
+    "review_document": "res://docs/LEVEL_ART_PASS_01_REVIEW.md",
+    "test_runner": {"checks": 282, "failures": 0},
+    "isolated_save_test": {"checks": 287, "failures": 0},
+    "gallery": {"captures": 4, "failures": 0, "asset_errors": 0, "layout_warnings": 0},
+    "known_global_out_of_scope_asset_validation": {
+      "status": "FAILED_NOT_FIXED_OUT_OF_SCOPE",
+      "reason": "six legacy non-slice assets contain 1-3 residual magenta pixels",
+      "asset_ids": ["env_bakery", "env_bookbinder", "env_chapel_tower", "env_silver_salt_studio", "env_harbor_control", "prop_tree"]
+    },
+    "all_four_visual_thresholds_met": true,
+    "other_fourteen_layouts_modified": false,
+    "new_manifest_asset_ids": 0
+  }
+}

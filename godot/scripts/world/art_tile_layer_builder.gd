@@ -32,6 +32,7 @@ func rebuild(scene: Dictionary, layout: Dictionary, catalog: TimeEchoArtCatalog,
 		var mask: Dictionary = _mask_from_entry(entry)
 		occupied.merge(mask, true)
 	_build_base(config.get("base_fill", {}) as Dictionary, occupied)
+	_build_floor_fills(config.get("floor_fills", []) as Array)
 	for value: Variant in config.get("water_masks", []):
 		_build_water(value as Dictionary)
 	for value: Variant in config.get("terrain_masks", []):
@@ -44,6 +45,33 @@ func rebuild(scene: Dictionary, layout: Dictionary, catalog: TimeEchoArtCatalog,
 			_add_cell_tile(str(stamp.get("layer", "ShoreTiles")), str(stamp.get("asset_id", "")), str(stamp.get("tile", "")), _vector2i(stamp.get("cell", [0, 0]), Vector2i.ZERO), _color(stamp.get("tint", "#ffffff"), Color.WHITE))
 	_build_interior(config.get("interior_shell", {}) as Dictionary)
 	return warnings
+
+
+func _build_floor_fills(values: Array) -> void:
+	# Interior and special-space floors must stay inside their authored visual
+	# boundary.  This uses the same named atlas semantics as outdoor base fill,
+	# but accepts a pixel rect so room shells need not align to the world origin.
+	for value: Variant in values:
+		var config: Dictionary = value as Dictionary
+		var rect_values: Array = config.get("rect", []) as Array
+		if rect_values.size() != 4:
+			warnings.append("Floor fill is missing a four-value rect")
+			continue
+		var rect := Rect2i(int(rect_values[0]), int(rect_values[1]), int(rect_values[2]), int(rect_values[3]))
+		var asset_id: String = str(config.get("asset_id", ""))
+		var tiles: Array = config.get("tiles", ["base_a", "base_b", "base_c", "base_d"]) as Array
+		if tiles.is_empty():
+			warnings.append("Floor fill tile list is empty: %s" % asset_id)
+			continue
+		var seed: String = str(config.get("seed", "%s:floor" % _scene.get("id", "map")))
+		var columns: int = ceili(float(rect.size.x) / float(_cell_size.x))
+		var rows: int = ceili(float(rect.size.y) / float(_cell_size.y))
+		var tint: Color = _color(config.get("tint", "#ffffff"), Color.WHITE)
+		for y: int in range(rows):
+			for x: int in range(columns):
+				var cell := Vector2i(x, y)
+				var tile_name: String = str(tiles[_roll(seed, cell, "choice") % tiles.size()])
+				_add_pixel_tile(str(config.get("layer", "BaseTiles")), asset_id, tile_name, rect.position + cell * _cell_size, tint)
 
 
 func _clear_generated_nodes() -> void:

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "generator": "built_in_imagegen",
+  "master_count": 13,
+  "masters": [
+    {
+      "family": "inn_yard",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_a_inn_yard_master.png",
+      "sha256": "133d30106a958516f6ff05cfd9906af490d8c11cbda29fcb3b7cb20e51016b4d",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "player_room",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_a_player_room_master.png",
+      "sha256": "41a2dbcc2715f9d839edad6a4ab0b63bcb0e262f17471757422492f33562d252",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "inn_upstairs",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_a_inn_upstairs_master.png",
+      "sha256": "e9481374bf21c48e06b8e819cfe9452786f14e4ec7cc0e5964421caec3e1850b",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "chapel_hill",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_b_chapel_hill_master.png",
+      "sha256": "1cc234043d9a7f9b8287198f08f3ed33ef8529a8253e3898903e5165f776e983",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "chapel_interior",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_b_chapel_interior_master.png",
+      "sha256": "7dbb728dd1c6a8033e8182b4e37f8accbf8ed575477308172e4b8812bdc8282c",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "belfry",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_b_belfry_master.png",
+      "sha256": "ecba925840e92a80a15b184066feda7cd96f788222ce78519d47c2d4846d8277",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "photo",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_c_photo_master.png",
+      "sha256": "60574d627ef05e3a37e6ab8939228c091938bc793fb0aa88ce6b3914a1f073e7",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "archive",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_c_archive_master.png",
+      "sha256": "e5f7c3b8f8c83083888fc12cf9559109f10ba422e15eba3fe0cea36f790557e7",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "clock",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_d_clock_cabin_master.png",
+      "sha256": "3100efd653b084f0dc7452ac62cc364b8c6db0ac4d663682fc13d84143632dc5",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "harbor_control",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_d_harbor_control_master.png",
+      "sha256": "edb9b727b7e855f324bdcf313c64c2262c85a607d26c7a517d8a894053cd61d8",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "basement",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_d_clock_basement_master.png",
+      "sha256": "656a24b32ba9a37225ece46d576e25ceee082046b8a890db0efa77737d396916",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "cave",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_e_cave_master.png",
+      "sha256": "5c34f4a04b0e8ad1f4b711e8121e6ae71b788504c61539dd97dba03c51d526e0",
+      "selection": "initial_generation_selected"
+    },
+    {
+      "family": "darkroom",
+      "path": "res://assets/images/source_art/generated/masters/full_map_batch_e_darkroom_master.png",
+      "sha256": "2b2a27534258fabcea9daf20ed6998f102a6c6b85555408003f4235a1b519e45",
+      "selection": "initial_generation_selected"
+    }
+  ],
+  "shared_prompt_constraints": [
+    "original_pixel_art",
+    "top_down_three_quarter",
+    "solid_00ff00_background",
+    "no_text",
+    "no_characters",
+    "hard_pixel_edges"
+  ]
+}

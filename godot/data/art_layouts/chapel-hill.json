@@ -1,39 +1,847 @@
 {
-  "schema_version":1,"map_id":"chapel-hill","theme_variant":"chapel_quiet_hill","interaction_distance":54,
-  "canvas":{"base_color":"#66785f","base_texture":"tile_grass_low_noise","texture_opacity":0.1,"detail_density":92,"path_color":"#9d9682","edge_color":"#334743","day_tint":"#e8e7d8"},
-  "ground_shapes":[
-    {"object_id":"chapel_ritual_path","kind":"path","points":[[560,744],[557,606],[560,472],[558,357]],"width":58,"color":"#9b9480"},
-    {"object_id":"chapel_entry_step","kind":"platform","points":[[503,326],[613,326],[626,365],[492,365]],"color":"#918a7b"},
-    {"object_id":"chapel_memorial_bed","kind":"garden","points":[[688,475],[785,456],[842,488],[818,536],[706,541],[665,507]],"color":"#66574b"},
-    {"object_id":"chapel_cliff_edge","kind":"polygon","points":[[0,72],[160,60],[300,73],[430,58],[560,74],[700,61],[860,78],[1000,62],[1120,76],[1120,0],[0,0]],"color":"#40534e"}
-  ],
-  "objects":[
-    {"object_id":"chapel_art","gameplay_id":"chapel_tower","asset_id":"env_chapel_tower","position":[558,342],"display_size":[150,218],"anchor":[0.5,1.0],"sort_y":342,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[122,15]},
-    {"object_id":"chapel_bench_left","asset_id":"prop_bench","position":[395,470],"display_size":[76,72],"anchor":[0.5,1.0],"sort_y":470,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"chapel_bench_right","asset_id":"prop_bench","position":[704,584],"display_size":[76,72],"anchor":[0.5,1.0],"sort_y":584,"layer":"WorldObjects","mirror_x":true,"contact_shadow":true},
-    {"object_id":"chapel_memorial_flowers","asset_id":"prop_flowers","position":[744,532],"display_size":[58,57],"anchor":[0.5,1.0],"sort_y":532,"layer":"WorldObjects"},
-    {"object_id":"chapel_pebbles_a","asset_id":"prop_pebbles","position":[292,545],"display_size":[48,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails"},
-    {"object_id":"chapel_pebbles_b","asset_id":"prop_pebbles","position":[874,420],"display_size":[48,40],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails","mirror_x":true},
-    {"object_id":"chapel_lantern_left","asset_id":"prop_lantern","position":[488,404],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":404,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"chapel_lantern_right","asset_id":"prop_lantern","position":[626,412],"display_size":[18,70],"anchor":[0.5,1.0],"sort_y":412,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"chapel_banner_single","asset_id":"prop_banner","position":[641,290],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":290,"layer":"WorldObjects","contact_shadow":false},
-    {"object_id":"chapel_tree_left","asset_id":"prop_tree","position":[164,289],"display_size":[90,103],"anchor":[0.5,1.0],"sort_y":289,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[44,12]},
-    {"object_id":"chapel_tree_right","asset_id":"prop_tree","position":[978,350],"display_size":[90,103],"anchor":[0.5,1.0],"sort_y":350,"layer":"WorldObjects","mirror_x":true,"contact_shadow":true,"shadow_size":[44,12]},
-    {"object_id":"chapel_old_cart","asset_id":"prop_cart","position":[286,418],"display_size":[82,58],"anchor":[0.5,1.0],"sort_y":418,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"chapel_grass_a","asset_id":"prop_grasstuft","position":[210,620],"display_size":[36,35],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails"}
-  ],
-  "collision_rects":[
-    {"object_id":"col_chapel_left","rect":[490,308,54,34]},{"object_id":"col_chapel_right","rect":[574,308,52,34]},
-    {"object_id":"col_chapel_tree_l","rect":[155,272,18,18]},{"object_id":"col_chapel_tree_r","rect":[969,333,18,18]},
-    {"object_id":"col_chapel_cart","rect":[249,397,70,21]}
-  ],
-  "gameplay_overrides":{
-    "chapel_weather_vane":{"interaction_rect":[544,132,30,32]},
-    "chapel_to_square":{"trigger_rect":[518,704,84,40]},
-    "enter_chapel":{"trigger_rect":[544,306,30,48]}
+  "schema_version": 1,
+  "map_id": "chapel-hill",
+  "theme_variant": "full_map_rollout_chapel_memorial_hill",
+  "interaction_distance": 54,
+  "canvas": {
+    "base_color": "#66785f",
+    "base_texture": "tile_grass_low_noise",
+    "texture_opacity": 0.1,
+    "detail_density": 92,
+    "path_color": "#9d9682",
+    "edge_color": "#334743",
+    "day_tint": "#e8e7d8"
   },
-  "lights":[
-    {"object_id":"chapel_left_light","position":[488,370],"color":"#e8c17a","energy":0.28,"radius":68},
-    {"object_id":"chapel_right_light","position":[626,378],"color":"#e8c17a","energy":0.28,"radius":68}
-  ],"zones":[]
+  "ground_shapes": [
+    {
+      "object_id": "chapel_ritual_path",
+      "kind": "path",
+      "points": [
+        [
+          560,
+          744
+        ],
+        [
+          557,
+          606
+        ],
+        [
+          560,
+          472
+        ],
+        [
+          558,
+          357
+        ]
+      ],
+      "width": 58,
+      "color": "#9b9480"
+    },
+    {
+      "object_id": "chapel_entry_step",
+      "kind": "platform",
+      "points": [
+        [
+          503,
+          326
+        ],
+        [
+          613,
+          326
+        ],
+        [
+          626,
+          365
+        ],
+        [
+          492,
+          365
+        ]
+      ],
+      "color": "#918a7b"
+    },
+    {
+      "object_id": "chapel_memorial_bed",
+      "kind": "garden",
+      "points": [
+        [
+          688,
+          475
+        ],
+        [
+          785,
+          456
+        ],
+        [
+          842,
+          488
+        ],
+        [
+          818,
+          536
+        ],
+        [
+          706,
+          541
+        ],
+        [
+          665,
+          507
+        ]
+      ],
+      "color": "#66574b"
+    },
+    {
+      "object_id": "chapel_cliff_edge",
+      "kind": "polygon",
+      "points": [
+        [
+          0,
+          72
+        ],
+        [
+          160,
+          60
+        ],
+        [
+          300,
+          73
+        ],
+        [
+          430,
+          58
+        ],
+        [
+          560,
+          74
+        ],
+        [
+          700,
+          61
+        ],
+        [
+          860,
+          78
+        ],
+        [
+          1000,
+          62
+        ],
+        [
+          1120,
+          76
+        ],
+        [
+          1120,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "color": "#40534e"
+    }
+  ],
+  "objects": [
+    {
+      "object_id": "chapel_art",
+      "gameplay_id": "chapel_tower",
+      "asset_id": "env_chapel_tower",
+      "position": [
+        558,
+        342
+      ],
+      "display_size": [
+        150,
+        218
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 342,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        122,
+        15
+      ]
+    },
+    {
+      "object_id": "chapel_tree_left",
+      "asset_id": "prop_tree",
+      "position": [
+        164,
+        289
+      ],
+      "display_size": [
+        90,
+        103
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 289,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        44,
+        12
+      ]
+    },
+    {
+      "object_id": "chapel_tree_right",
+      "asset_id": "prop_tree",
+      "position": [
+        978,
+        350
+      ],
+      "display_size": [
+        90,
+        103
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 350,
+      "layer": "WorldObjects",
+      "mirror_x": true,
+      "contact_shadow": true,
+      "shadow_size": [
+        44,
+        12
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_memorial_stone_set",
+      "asset_id": "chapel_memorial_stone_set",
+      "position": [
+        180,
+        520
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 520,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_small_grave_marker_set",
+      "asset_id": "chapel_small_grave_marker_set",
+      "position": [
+        260,
+        560
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 560,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_withered_flower_set",
+      "asset_id": "chapel_withered_flower_set",
+      "position": [
+        205,
+        590
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 590,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        34,
+        6
+      ],
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_tree_cluster",
+      "asset_id": "chapel_tree_cluster",
+      "position": [
+        85,
+        680
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 680,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        11
+      ],
+      "display_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_leaf_scatter_set",
+      "asset_id": "chapel_leaf_scatter_set",
+      "position": [
+        830,
+        640
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_chapel_outdoor_candle_stand",
+      "asset_id": "chapel_outdoor_candle_stand",
+      "position": [
+        720,
+        430
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "chapel_hill_bench",
+      "asset_id": "prop_bench",
+      "position": [
+        770,
+        560
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        76,
+        72
+      ]
+    },
+    {
+      "object_id": "chapel_tree_cluster_west",
+      "asset_id": "chapel_tree_cluster",
+      "position": [
+        90,
+        430
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "object_id": "chapel_tree_cluster_east",
+      "asset_id": "chapel_tree_cluster",
+      "position": [
+        1030,
+        450
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "object_id": "chapel_memorial_extra_a",
+      "asset_id": "chapel_small_grave_marker_set",
+      "position": [
+        260,
+        600
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "chapel_memorial_extra_b",
+      "asset_id": "chapel_memorial_stone_set",
+      "position": [
+        315,
+        565
+      ],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "chapel_foreground_tree_west",
+      "asset_id": "prop_tree",
+      "position": [
+        92,
+        720
+      ],
+      "layer": "Foreground",
+      "contact_shadow": false,
+      "display_size": [
+        90,
+        103
+      ]
+    },
+    {
+      "object_id": "chapel_foreground_tree_east",
+      "asset_id": "prop_tree",
+      "position": [
+        1028,
+        720
+      ],
+      "layer": "Foreground",
+      "contact_shadow": false,
+      "display_size": [
+        90,
+        103
+      ]
+    }
+  ],
+  "collision_rects": [
+    {
+      "object_id": "col_chapel_left",
+      "rect": [
+        490,
+        308,
+        54,
+        34
+      ]
+    },
+    {
+      "object_id": "col_chapel_right",
+      "rect": [
+        574,
+        308,
+        52,
+        34
+      ]
+    },
+    {
+      "object_id": "col_chapel_tree_l",
+      "rect": [
+        155,
+        272,
+        18,
+        18
+      ]
+    },
+    {
+      "object_id": "col_chapel_tree_r",
+      "rect": [
+        969,
+        333,
+        18,
+        18
+      ]
+    },
+    {
+      "object_id": "col_chapel_cart",
+      "rect": [
+        249,
+        397,
+        70,
+        21
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "chapel_weather_vane": {
+      "interaction_rect": [
+        544,
+        132,
+        30,
+        32
+      ]
+    },
+    "chapel_to_square": {
+      "trigger_rect": [
+        518,
+        704,
+        84,
+        40
+      ]
+    },
+    "enter_chapel": {
+      "trigger_rect": [
+        544,
+        306,
+        30,
+        48
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        720,
+        405
+      ],
+      "color": "#e6b96b",
+      "energy": 0.24,
+      "radius": 70
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        390,
+        360
+      ],
+      "color": "#d5c48a",
+      "energy": 0.18,
+      "radius": 74
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        256,
+        120,
+        256,
+        160
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        256,
+        384,
+        256,
+        96
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        153,
+        160,
+        460,
+        240
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        256,
+        120,
+        256,
+        160
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        64,
+        96,
+        192,
+        160
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        512,
+        96,
+        192,
+        240
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        0,
+        0,
+        768,
+        60
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        0,
+        420,
+        768,
+        60
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [
+      "chapel_main_path",
+      "chapel_entry_plaza"
+    ],
+    "terrain_masks": [
+      {
+        "mask_id": "chapel_ritual_route",
+        "asset_id": "chapel_path_step_set",
+        "rects": [
+          [
+            16,
+            10,
+            3,
+            14
+          ],
+          [
+            14,
+            9,
+            7,
+            4
+          ]
+        ],
+        "center_tiles": [
+          "base_a",
+          "base_b"
+        ],
+        "seed": "chapel:steps"
+      }
+    ],
+    "water_masks": [],
+    "shore_stamps": [
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          4,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          5,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          6,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          7,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          8,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          9,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          10,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_low_stone_wall_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          14
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          14,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          15,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          16,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          17,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          18,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          19,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "ShoreTiles",
+        "asset_id": "chapel_courtyard_edge_set",
+        "tile": "edge_n",
+        "cell": [
+          20,
+          9
+        ],
+        "tint": "#ffffff"
+      }
+    ],
+    "base_fill": {
+      "asset_id": "grass_base_variants",
+      "base_tiles": [
+        "base_a",
+        "base_b",
+        "base_c",
+        "base_d"
+      ],
+      "variation_tiles": [
+        "cool_patch_a",
+        "cool_patch_b"
+      ],
+      "variation_ratio": 0.08,
+      "seed": "full:B:chapel-hill"
+    }
+  },
+  "rollout_metadata": {
+    "batch": "B",
+    "new_asset_ids": [
+      "chapel_low_stone_wall_set",
+      "chapel_memorial_stone_set",
+      "chapel_small_grave_marker_set",
+      "chapel_withered_flower_set",
+      "chapel_path_step_set",
+      "chapel_courtyard_edge_set",
+      "chapel_tree_cluster",
+      "chapel_leaf_scatter_set",
+      "chapel_outdoor_candle_stand"
+    ],
+    "primary_visual_center": "chapel_tower_and_ritual_steps",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

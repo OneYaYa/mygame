@@ -58,10 +58,12 @@ func set_world(scene: Dictionary, state: Dictionary) -> void:
 		"PathTiles": path_tiles,
 		"WaterTiles": water_tiles,
 		"ShoreTiles": shore_tiles,
+		"GroundDetails": ground_details,
 		"WallTiles": wall_tiles,
 		"CornerTiles": corner_tiles,
 		"BaseboardTiles": baseboard_tiles,
 		"DoorOpenings": door_openings,
+		"ForegroundTiles": foreground,
 	}))
 	_rebuild_objects()
 	_rebuild_lights()
@@ -71,6 +73,7 @@ func set_world(scene: Dictionary, state: Dictionary) -> void:
 
 func update_state(state: Dictionary) -> void:
 	game_state = state
+	_update_layout_object_state()
 	if _has_water:
 		queue_redraw()
 
@@ -119,14 +122,21 @@ func get_collision_rects() -> Array[Rect2]:
 
 
 func get_review_metrics() -> Dictionary:
+	var foreground_count: int = 0
+	for raw: Variant in layout.get("objects", []):
+		var entry: Dictionary = raw as Dictionary
+		if str(entry.get("layer", "WorldObjects")) == "Foreground":
+			foreground_count += 1
 	return {
 		"map_id": str(scene_data.get("id", "")),
 		"asset_errors": get_art_errors(),
 		"warnings": _validation_warnings,
 		"object_count": (layout.get("objects", []) as Array).size(),
 		"collision_count": (layout.get("collision_rects", []) as Array).size(),
+		"foreground_count": foreground_count,
 		"portal_count": (scene_data.get("portals", []) as Array).size(),
 		"generated_tile_count": tile_layer_builder.generated_tile_count,
+		"camera_zoom": float(layout.get("camera_zoom", 1.0)),
 	}
 
 
@@ -159,7 +169,8 @@ func _draw() -> void:
 		_draw_ground_shape(ground_shape, canvas)
 	_draw_dynamic_story_marks(canvas)
 	var border: Color = _color(canvas.get("edge_color", "#2f4743"), Color("2f4743"))
-	draw_rect(Rect2(3, 3, width - 6, height - 6), border, false, 4.0)
+	if bool(canvas.get("draw_map_border", true)):
+		draw_rect(Rect2(3, 3, width - 6, height - 6), border, false, 4.0)
 
 
 func _load_catalogs() -> void:
@@ -185,6 +196,8 @@ func _rebuild_objects() -> void:
 		var parent: Node2D = _layer_node(layer_name)
 		parent.add_child(object)
 		object.configure(entry, asset, art_catalog.get_texture(asset_id))
+		object.update_story_state(game_state)
+		object.update_occlusion(_player_position())
 		object.z_as_relative = false
 		if layer_name == "GroundDetails":
 			object.z_index = -720 + int(entry.get("z_index", 0))
@@ -196,6 +209,33 @@ func _rebuild_objects() -> void:
 			object.z_index = 1600 + int(entry.get("z_index", 0))
 		elif layer_name == "Foreground":
 			object.z_index = 1900 + int(entry.get("z_index", 0))
+
+
+func _update_layout_object_state() -> void:
+	var player_position: Vector2 = _player_position()
+	for parent: Node2D in [ground_details, architecture_back, wall_decorations, world_objects, architecture_front, foreground]:
+		for child: Node in parent.get_children():
+			if child is TimeEchoArtObject2D:
+				var object := child as TimeEchoArtObject2D
+				object.update_story_state(game_state)
+				object.update_occlusion(player_position)
+	_update_story_lights()
+
+
+func _update_story_lights() -> void:
+	var flags: Dictionary = game_state.get("flags", {}) as Dictionary
+	for child: Node in lighting.get_children():
+		if not (child is PointLight2D):
+			continue
+		var light := child as PointLight2D
+		var base_energy: float = float(light.get_meta("base_energy", light.energy))
+		var flag_name: String = str(light.get_meta("story_flag", ""))
+		light.energy = base_energy if flag_name.is_empty() or bool(flags.get(flag_name, false)) else float(light.get_meta("inactive_energy", base_energy * 0.25))
+
+
+func _player_position() -> Vector2:
+	var player_state: Dictionary = game_state.get("player", {}) as Dictionary
+	return Vector2(float(player_state.get("x", -9999.0)), float(player_state.get("y", -9999.0)))
 
 
 func _rebuild_lights() -> void:
@@ -213,9 +253,13 @@ func _rebuild_lights() -> void:
 		light.texture_scale = float(entry.get("radius", 72.0)) / 32.0
 		light.color = _color(entry.get("color", "#f1bd70"), Color("f1bd70"))
 		light.energy = float(entry.get("energy", 0.55))
+		light.set_meta("base_energy", light.energy)
+		light.set_meta("story_flag", str(entry.get("story_flag", "")))
+		light.set_meta("inactive_energy", float(entry.get("inactive_energy", light.energy * 0.25)))
 		light.blend_mode = Light2D.BLEND_MODE_ADD
 		light.shadow_enabled = false
 		lighting.add_child(light)
+	_update_story_lights()
 
 
 func _draw_outdoor_base(rect: Rect2, canvas: Dictionary) -> void:
@@ -231,6 +275,12 @@ func _draw_outdoor_base(rect: Rect2, canvas: Dictionary) -> void:
 
 
 func _draw_room_shell(world_rect: Rect2, canvas: Dictionary) -> void:
+	if bool(canvas.get("natural_boundary", false)):
+		_draw_natural_shell(world_rect, canvas)
+		return
+	if bool(canvas.get("open_structure", false)):
+		_draw_open_structure_shell(world_rect, canvas)
+		return
 	var outside: Color = _color(canvas.get("outside_color", "#101719"), Color("101719"))
 	draw_rect(world_rect, outside)
 	var room: Rect2 = _array_rect(canvas.get("room_rect", [48, 52, world_rect.size.x - 96, world_rect.size.y - 78]), Rect2(48, 52, world_rect.size.x - 96, world_rect.size.y - 78))
@@ -249,6 +299,54 @@ func _draw_room_shell(world_rect: Rect2, canvas: Dictionary) -> void:
 	# Pixel-dark corners and wall footings give the shell depth without blur.
 	draw_colored_polygon(PackedVector2Array([room.position, room.position + Vector2(34, 0), room.position + Vector2(side_width, wall_height + 24), room.position + Vector2(0, wall_height + 36)]), Color(0.04, 0.055, 0.06, 0.48))
 	draw_colored_polygon(PackedVector2Array([Vector2(room.end.x - 34, room.position.y), room.end - Vector2(0, room.size.y), room.position + Vector2(room.size.x, wall_height + 36), room.position + Vector2(room.size.x - side_width, wall_height + 24)]), Color(0.04, 0.055, 0.06, 0.48))
+
+
+func _draw_open_structure_shell(world_rect: Rect2, canvas: Dictionary) -> void:
+	# Elevated special spaces are assembled from authored platforms, beams and
+	# voids. They intentionally receive no rectangular room floor/baseboard.
+	var outside: Color = _color(canvas.get("outside_color", "#071013"), Color("071013"))
+	draw_rect(world_rect, outside)
+	var depth: Color = _color(canvas.get("depth_color", "#10191b"), Color("10191b"))
+	var horizon_y: float = float(canvas.get("depth_horizon_y", world_rect.size.y * 0.38))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, horizon_y), Vector2(world_rect.size.x, horizon_y),
+		Vector2(world_rect.size.x, world_rect.size.y), Vector2(0, world_rect.size.y),
+	]), depth)
+	var far_beam: Color = _color(canvas.get("far_beam_color", "#243033"), Color("243033"))
+	for y_offset: int in [0, 38, 84]:
+		var y: float = horizon_y + float(y_offset)
+		draw_line(Vector2(36, y), Vector2(world_rect.size.x - 36, y), far_beam.darkened(float(y_offset) / 260.0), 3.0)
+	for x: int in range(68, int(world_rect.size.x), 128):
+		draw_line(Vector2(x, 52), Vector2(x - 26, horizon_y + 112), far_beam.darkened(0.12), 4.0)
+
+
+func _draw_natural_shell(world_rect: Rect2, canvas: Dictionary) -> void:
+	# Caves use an authored irregular boundary instead of pretending to be a
+	# rectangular furnished room.  Atlas rock walls and ceiling overhangs are
+	# layered above this low-noise foundation by the tile builder.
+	var outside: Color = _color(canvas.get("outside_color", "#071012"), Color("071012"))
+	draw_rect(world_rect, outside)
+	var boundary: PackedVector2Array = _points(canvas.get("boundary_points", []))
+	if boundary.size() < 3:
+		boundary = PackedVector2Array([
+			Vector2(72, 98), Vector2(world_rect.size.x - 76, 82),
+			Vector2(world_rect.size.x - 42, world_rect.size.y - 82),
+			Vector2(74, world_rect.size.y - 58),
+		])
+	var floor: Color = _color(canvas.get("floor_color", "#344346"), Color("344346"))
+	var rim: Color = _color(canvas.get("wall_dark", "#172529"), Color("172529"))
+	draw_colored_polygon(boundary, rim)
+	var center := Vector2.ZERO
+	for point: Vector2 in boundary:
+		center += point
+	center /= float(boundary.size())
+	var inner := PackedVector2Array()
+	for point: Vector2 in boundary:
+		inner.append(center + (point - center) * 0.91)
+	draw_colored_polygon(inner, floor)
+	draw_polyline(_closed(boundary), rim.darkened(0.35), 7.0)
+	draw_polyline(_closed(inner), floor.lightened(0.09), 2.0)
+	_draw_floor_pattern(_polygon_bounds(inner), "wet_stone", floor)
 
 
 func _draw_floor_pattern(rect: Rect2, style: String, base: Color) -> void:
@@ -327,6 +425,17 @@ func _draw_ground_shape(item: Dictionary, canvas: Dictionary) -> void:
 		var bounds: Rect2 = _polygon_bounds(polygon)
 		for y: int in range(int(bounds.position.y + 8), int(bounds.end.y), 12):
 			draw_line(Vector2(bounds.position.x, y), Vector2(bounds.end.x, y), color.lightened(0.08), 2.0)
+	elif kind == "wood_platform":
+		draw_colored_polygon(polygon, color.darkened(0.18))
+		draw_polyline(_closed(polygon), color.darkened(0.52), 5.0)
+		var bounds: Rect2 = _polygon_bounds(polygon)
+		for y: int in range(int(bounds.position.y + 8), int(bounds.end.y), 13):
+			var from := Vector2(bounds.position.x, y)
+			var to := Vector2(bounds.end.x, y)
+			if Geometry2D.is_point_in_polygon(from + Vector2(5, 0), polygon) or Geometry2D.is_point_in_polygon(to - Vector2(5, 0), polygon):
+				draw_line(from, to, color.lightened(0.06), 2.0)
+		for x: int in range(int(bounds.position.x + 20), int(bounds.end.x), 58):
+			draw_line(Vector2(x, bounds.position.y + 4), Vector2(x, bounds.end.y - 4), color.darkened(0.22), 2.0)
 	elif kind in ["platform", "plaza"]:
 		draw_colored_polygon(polygon, color)
 		draw_polyline(_closed(polygon), color.darkened(0.3), 4.0)

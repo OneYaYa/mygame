@@ -1,48 +1,1078 @@
 {
-  "schema_version":1,"map_id":"inn-upstairs","theme_variant":"inn_long_quiet_corridor","interaction_distance":50,
-  "canvas":{"outside_color":"#0e1517","room_rect":[28,48,904,362],"wall_height":74,"side_wall":16,"wall_color":"#705b49","wall_dark":"#342f2c","floor_color":"#574435","floor_style":"dark_wood","ambient_color":"#b6aa91","edge_color":"#283333"},
-  "ground_shapes":[],
-  "objects":[
-    {"object_id":"hall_runner","procedural_type":"rug","position":[500,354],"display_size":[650,38],"anchor":[0.5,1.0],"sort_y":0,"layer":"GroundDetails","color":"#5d4646","accent":"#977252"},
-    {"object_id":"hall_door_1","procedural_type":"door","position":[154,206],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#433128","accent":"#b58955"},
-    {"object_id":"hall_door_2","procedural_type":"door","position":[270,206],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#433128","accent":"#b58955"},
-    {"object_id":"hall_door_3","procedural_type":"door","position":[386,206],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#433128","accent":"#b58955"},
-    {"object_id":"hall_door_4","procedural_type":"door","position":[502,206],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#433128","accent":"#b58955"},
-    {"object_id":"hall_door_5","procedural_type":"door","position":[618,206],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#433128","accent":"#b58955"},
-    {"object_id":"hall_door_6","procedural_type":"door","position":[734,206],"display_size":[30,64],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#433128","accent":"#b58955"},
-    {"object_id":"hall_room8_door","procedural_type":"door","position":[842,238],"display_size":[34,72],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#2e2e32","accent":"#b39164"},
-    {"object_id":"hall_bench","asset_id":"prop_bench","position":[455,304],"display_size":[76,72],"anchor":[0.5,1.0],"sort_y":304,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"hall_small_table","procedural_type":"table","position":[575,286],"display_size":[48,38],"anchor":[0.5,1.0],"sort_y":286,"layer":"WorldObjects","color":"#56402e","accent":"#9a7048","contact_shadow":true,"shadow_size":[38,7]},
-    {"object_id":"hall_lamp_a","procedural_type":"safelight","position":[214,146],"display_size":[24,30],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#46372d","accent":"#e5b86d"},
-    {"object_id":"hall_lamp_b","procedural_type":"safelight","position":[444,146],"display_size":[24,30],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#46372d","accent":"#e5b86d"},
-    {"object_id":"hall_lamp_c","procedural_type":"safelight","position":[674,146],"display_size":[24,30],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#46372d","accent":"#e5b86d"},
-    {"object_id":"hall_gap_mark","procedural_type":"wall_frame","position":[790,154],"display_size":[26,36],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#292c2d","accent":"#6f716b"},
-    {"object_id":"hall_stairs_lobby","procedural_type":"beam","position":[72,380],"display_size":[54,102],"anchor":[0.5,1.0],"sort_y":380,"layer":"WorldObjects","color":"#43362f","accent":"#88694d","contact_shadow":true,"shadow_size":[40,9]}
-  ],
-  "collision_rects":[
-    {"object_id":"col_hall_top","rect":[28,48,904,76]},{"object_id":"col_hall_left","rect":[28,124,16,286]},{"object_id":"col_hall_right","rect":[916,124,16,286]},
-    {"object_id":"col_hall_bottom","rect":[28,394,904,16]},{"object_id":"col_hall_bench","rect":[421,278,68,26]},
-    {"object_id":"col_hall_table","rect":[553,268,44,18]},{"object_id":"col_hall_stairs","rect":[52,296,40,84]}
-  ],
-  "gameplay_overrides":{
-    "room1_door":{"interaction_rect":[138,150,32,58]},"room2_door":{"interaction_rect":[254,150,32,58]},
-    "room3_door":{"interaction_rect":[370,150,32,58]},"room4_door":{"interaction_rect":[486,150,32,58]},
-    "room5_door":{"interaction_rect":[602,150,32,58]},"room6_door":{"interaction_rect":[718,150,32,58]},
-    "room7_gap":{"interaction_rect":[776,126,30,38]},"hall_to_lobby":{"trigger_rect":[44,292,56,90]},
-    "hall_to_room8":{"trigger_rect":[824,172,38,70]}
+  "schema_version": 1,
+  "map_id": "inn-upstairs",
+  "theme_variant": "full_map_rollout_inn_quiet_anomalous_corridor",
+  "interaction_distance": 54,
+  "canvas": {
+    "outside_color": "#0e1517",
+    "room_rect": [
+      28,
+      48,
+      904,
+      362
+    ],
+    "wall_height": 74,
+    "side_wall": 16,
+    "wall_color": "#705b49",
+    "wall_dark": "#342f2c",
+    "floor_color": "#574435",
+    "floor_style": "dark_wood",
+    "ambient_color": "#b6aa91",
+    "edge_color": "#283333"
   },
-  "lights":[
-    {"object_id":"hall_light_a","position":[214,146],"color":"#e4b86c","energy":0.24,"radius":60},
-    {"object_id":"hall_light_b","position":[444,146],"color":"#e4b86c","energy":0.24,"radius":60},
-    {"object_id":"hall_light_c","position":[674,146],"color":"#e4b86c","energy":0.24,"radius":60},
-    {"object_id":"hall_room8_cold_light","position":[842,202],"color":"#7898a2","energy":0.22,"radius":68}
+  "ground_shapes": [],
+  "objects": [
+    {
+      "object_id": "rollout_inn_corridor_door_closed",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        142,
+        235
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_inn_corridor_door_open",
+      "asset_id": "inn_corridor_door_open",
+      "position": [
+        812,
+        248
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "rollout_inn_room_number_1_to_7_set",
+      "asset_id": "inn_room_number_1_to_7_set",
+      "position": [
+        448,
+        164
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_inn_room_number_8_anomaly",
+      "asset_id": "inn_room_number_8_anomaly",
+      "position": [
+        790,
+        164
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "rollout_inn_wall_lamp_set",
+      "asset_id": "inn_wall_lamp_set",
+      "position": [
+        548,
+        169
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        48,
+        64
+      ]
+    },
+    {
+      "object_id": "rollout_inn_stair_landing",
+      "asset_id": "inn_stair_landing",
+      "position": [
+        105,
+        366
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 366,
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "shadow_size": [
+        58,
+        11
+      ],
+      "display_size": [
+        96,
+        96
+      ]
+    },
+    {
+      "object_id": "rollout_inn_corridor_end_window",
+      "asset_id": "inn_corridor_end_window",
+      "position": [
+        858,
+        183
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "sort_y": 0,
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        48
+      ]
+    },
+    {
+      "object_id": "corridor_door_1",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        235,
+        244
+      ],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "corridor_door_2",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        340,
+        244
+      ],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "corridor_door_3",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        445,
+        244
+      ],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "corridor_door_4",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        550,
+        244
+      ],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "corridor_door_5",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        655,
+        244
+      ],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    },
+    {
+      "object_id": "corridor_door_6",
+      "asset_id": "inn_corridor_door_closed",
+      "position": [
+        760,
+        244
+      ],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "display_size": [
+        56,
+        80
+      ]
+    }
   ],
-  "zones":[
-    {"object_id":"zone_hall_entrance","type":"entrance_zone","rect":[44,286,82,108]},
-    {"object_id":"zone_hall_move","type":"movement_zone","rect":[112,284,724,100]},
-    {"object_id":"zone_hall_primary","type":"primary_interaction_zone","rect":[124,138,640,82]},
-    {"object_id":"zone_hall_story","type":"secondary_story_zone","rect":[764,126,106,128]},
-    {"object_id":"zone_hall_decor","type":"decoration_zone","rect":[396,230,232,84]},
-    {"object_id":"zone_hall_blocked","type":"blocked_zone","rect":[28,48,904,76]}
-  ]
+  "collision_rects": [
+    {
+      "object_id": "col_hall_top",
+      "rect": [
+        28,
+        48,
+        904,
+        76
+      ]
+    },
+    {
+      "object_id": "col_hall_left",
+      "rect": [
+        28,
+        124,
+        16,
+        286
+      ]
+    },
+    {
+      "object_id": "col_hall_right",
+      "rect": [
+        916,
+        124,
+        16,
+        286
+      ]
+    },
+    {
+      "object_id": "col_hall_bottom",
+      "rect": [
+        28,
+        394,
+        904,
+        16
+      ]
+    },
+    {
+      "object_id": "col_hall_bench",
+      "rect": [
+        421,
+        278,
+        68,
+        26
+      ]
+    },
+    {
+      "object_id": "col_hall_table",
+      "rect": [
+        553,
+        268,
+        44,
+        18
+      ]
+    },
+    {
+      "object_id": "col_hall_stairs",
+      "rect": [
+        52,
+        296,
+        40,
+        84
+      ]
+    }
+  ],
+  "gameplay_overrides": {
+    "room1_door": {
+      "interaction_rect": [
+        138,
+        150,
+        32,
+        58
+      ]
+    },
+    "room2_door": {
+      "interaction_rect": [
+        254,
+        150,
+        32,
+        58
+      ]
+    },
+    "room3_door": {
+      "interaction_rect": [
+        370,
+        150,
+        32,
+        58
+      ]
+    },
+    "room4_door": {
+      "interaction_rect": [
+        486,
+        150,
+        32,
+        58
+      ]
+    },
+    "room5_door": {
+      "interaction_rect": [
+        602,
+        150,
+        32,
+        58
+      ]
+    },
+    "room6_door": {
+      "interaction_rect": [
+        718,
+        150,
+        32,
+        58
+      ]
+    },
+    "room7_gap": {
+      "interaction_rect": [
+        776,
+        126,
+        30,
+        38
+      ]
+    },
+    "hall_to_lobby": {
+      "trigger_rect": [
+        44,
+        292,
+        56,
+        90
+      ]
+    },
+    "hall_to_room8": {
+      "trigger_rect": [
+        824,
+        172,
+        38,
+        70
+      ]
+    }
+  },
+  "lights": [
+    {
+      "object_id": "full_light_0",
+      "position": [
+        250,
+        170
+      ],
+      "color": "#edb66b",
+      "energy": 0.26,
+      "radius": 70
+    },
+    {
+      "object_id": "full_light_1",
+      "position": [
+        550,
+        170
+      ],
+      "color": "#edb66b",
+      "energy": 0.25,
+      "radius": 70
+    },
+    {
+      "object_id": "full_light_2",
+      "position": [
+        790,
+        166
+      ],
+      "color": "#c6b379",
+      "energy": 0.18,
+      "radius": 62
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone_primary_center",
+      "type": "primary_visual_center",
+      "rect": [
+        329,
+        138,
+        301,
+        120
+      ]
+    },
+    {
+      "object_id": "zone_entrance",
+      "type": "entrance_zone",
+      "rect": [
+        329,
+        337,
+        301,
+        72
+      ]
+    },
+    {
+      "object_id": "zone_movement",
+      "type": "movement_zone",
+      "rect": [
+        208,
+        168,
+        542,
+        181
+      ]
+    },
+    {
+      "object_id": "zone_primary_interaction",
+      "type": "primary_interaction_zone",
+      "rect": [
+        329,
+        138,
+        301,
+        120
+      ]
+    },
+    {
+      "object_id": "zone_secondary_story",
+      "type": "secondary_story_zone",
+      "rect": [
+        103,
+        120,
+        226,
+        120
+      ]
+    },
+    {
+      "object_id": "zone_decoration",
+      "type": "decoration_zone",
+      "rect": [
+        630,
+        120,
+        226,
+        181
+      ]
+    },
+    {
+      "object_id": "zone_blocked",
+      "type": "blocked_zone",
+      "rect": [
+        28,
+        48,
+        904,
+        45
+      ]
+    },
+    {
+      "object_id": "zone_foreground",
+      "type": "foreground_zone",
+      "rect": [
+        28,
+        364,
+        904,
+        45
+      ]
+    }
+  ],
+  "atlas_tile_art": {
+    "cell_size": [
+      32,
+      32
+    ],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          4,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          5,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          6,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          7,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          8,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          9,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          10,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          11,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          12,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          13,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          14,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          15,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          16,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          17,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          18,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          19,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          20,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          21,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          22,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          23,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          24,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          25,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "PathTiles",
+        "asset_id": "inn_corridor_runner_set",
+        "tile": "base_a",
+        "cell": [
+          26,
+          9
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          3,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          4,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          5,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          6,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          7,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          8,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          9,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          10,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          11,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          12,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          13,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          14,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          15,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          16,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          17,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          18,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          19,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          20,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          21,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          22,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          23,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          24,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          25,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          26,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_normal",
+        "tile": "edge_n",
+        "cell": [
+          27,
+          5
+        ],
+        "tint": "#ffffff"
+      },
+      {
+        "layer": "BaseboardTiles",
+        "asset_id": "inn_corridor_trim_anomaly",
+        "tile": "edge_n",
+        "cell": [
+          24,
+          5
+        ],
+        "tint": "#ffffff"
+      }
+    ],
+    "interior_shell": {
+      "theme": "inn_warm",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {
+          "position": [
+            44,
+            48
+          ],
+          "count": 27,
+          "pattern": [
+            "straight",
+            "panel_light",
+            "straight",
+            "panel_dense"
+          ],
+          "tint": "#e8c99e"
+        }
+      ],
+      "corners": [
+        {
+          "position": [
+            28,
+            48
+          ],
+          "tile": "inside_left",
+          "tint": "#e8c99e"
+        },
+        {
+          "position": [
+            884,
+            48
+          ],
+          "tile": "inside_right",
+          "tint": "#e8c99e"
+        }
+      ],
+      "baseboard_segments": [
+        {
+          "position": [
+            44,
+            96
+          ],
+          "count": 27,
+          "pattern": [
+            "straight",
+            "straight",
+            "worn_straight"
+          ],
+          "start": "left_stop",
+          "end": "right_stop"
+        }
+      ]
+    }
+  },
+  "rollout_metadata": {
+    "batch": "A",
+    "new_asset_ids": [
+      "inn_corridor_door_closed",
+      "inn_corridor_door_open",
+      "inn_room_number_1_to_7_set",
+      "inn_room_number_8_anomaly",
+      "inn_corridor_runner_set",
+      "inn_wall_lamp_set",
+      "inn_stair_landing",
+      "inn_corridor_end_window",
+      "inn_corridor_trim_normal",
+      "inn_corridor_trim_anomaly"
+    ],
+    "primary_visual_center": "room_eight_anomaly_gap",
+    "frozen_reference_maps_untouched": [
+      "town",
+      "harbor",
+      "inn-lobby"
+    ]
+  }
 }

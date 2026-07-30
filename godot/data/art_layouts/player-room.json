@@ -1,64 +1,318 @@
 {
   "schema_version": 1,
   "map_id": "player-room",
-  "theme_variant": "inn_private_room_warm",
-  "interaction_distance": 52,
+  "theme_variant": "level_art_pass_01_compact_private_memory_room",
+  "interaction_distance": 58,
+  "camera_zoom": 1.25,
+  "camera_offset": [0, -28],
+  "review_player_position": [384, 394],
   "canvas": {
-    "outside_color":"#101719",
-    "room_rect":[72,52,624,410],
-    "wall_height":58,
-    "side_wall":18,
-    "wall_color":"#80684f",
-    "wall_dark":"#3d352f",
-    "floor_color":"#76583f",
-    "floor_style":"warm_wood",
-    "ambient_color":"#d8c4a0",
-    "edge_color":"#2d3837"
+    "outside_color": "#0b1213",
+    "room_rect": [120, 60, 528, 388],
+    "wall_height": 58,
+    "side_wall": 18,
+    "wall_color": "#8b6d50",
+    "wall_dark": "#3a302b",
+    "floor_color": "#79593f",
+    "floor_style": "warm_wood",
+    "ambient_color": "#e0c9a5",
+    "edge_color": "#293535"
   },
   "ground_shapes": [
-    {"object_id":"room8_hearth_tile","kind":"platform","points":[[510,111],[623,111],[630,167],[504,167]],"color":"#625a51"}
+    {
+      "object_id": "player_room_hearth_inlay",
+      "kind": "platform",
+      "points": [[340, 165], [446, 165], [454, 242], [332, 242]],
+      "color": "#66574a"
+    },
+    {
+      "object_id": "player_room_sleeping_rug_field",
+      "kind": "polygon",
+      "points": [[150, 282], [292, 282], [304, 378], [144, 378]],
+      "color": "#684d50",
+      "outline_width": 2
+    },
+    {
+      "object_id": "player_room_entry_wear",
+      "kind": "polygon",
+      "points": [[330, 388], [438, 388], [454, 430], [314, 430]],
+      "color": "#694e39",
+      "outline_width": 2
+    }
   ],
   "objects": [
-    {"object_id":"room8_rug","procedural_type":"rug","position":[384,389],"display_size":[132,54],"anchor":[0.5,1.0],"sort_y":0,"z_index":0,"layer":"GroundDetails","color":"#75524d","accent":"#b28a62"},
-    {"object_id":"room8_bed","asset_id":"prop_bed","position":[176,219],"display_size":[80,76],"anchor":[0.5,1.0],"sort_y":219,"layer":"WorldObjects","mirror_x":false,"contact_shadow":true,"shadow_size":[62,10]},
-    {"object_id":"room8_fireplace","asset_id":"prop_fireplace","position":[567,179],"display_size":[62,72],"anchor":[0.5,1.0],"sort_y":179,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[50,9]},
-    {"object_id":"room8_desk","asset_id":"prop_desk","position":[272,248],"display_size":[82,80],"anchor":[0.5,1.0],"sort_y":248,"layer":"WorldObjects","contact_shadow":true,"shadow_size":[66,10]},
-    {"object_id":"room8_chair","procedural_type":"chair","position":[276,285],"display_size":[27,34],"anchor":[0.5,1.0],"sort_y":285,"layer":"WorldObjects","color":"#60442f","accent":"#b17d4e","contact_shadow":true,"shadow_size":[22,7]},
-    {"object_id":"room8_shelf","asset_id":"prop_shelf","position":[646,222],"display_size":[42,75],"anchor":[0.5,1.0],"sort_y":222,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"room8_crate","asset_id":"prop_crate","position":[620,328],"display_size":[48,47],"anchor":[0.5,1.0],"sort_y":328,"layer":"WorldObjects","contact_shadow":true},
-    {"object_id":"room8_travel_bag","procedural_type":"bucket","position":[662,336],"display_size":[28,24],"anchor":[0.5,1.0],"sort_y":336,"layer":"WorldObjects","color":"#574437","accent":"#98724d","contact_shadow":true,"shadow_size":[22,6]},
-    {"object_id":"room8_journal","procedural_type":"photo","position":[274,194],"display_size":[24,18],"anchor":[0.5,1.0],"sort_y":195,"layer":"WallDecorations","color":"#6c4d31","accent":"#d8c59a"},
-    {"object_id":"room8_orders","procedural_type":"photo","position":[322,187],"display_size":[32,22],"anchor":[0.5,1.0],"sort_y":187,"layer":"WallDecorations","color":"#6b4e34","accent":"#d7c69d"},
-    {"object_id":"room8_wall_frame","procedural_type":"wall_frame","position":[420,160],"display_size":[42,34],"anchor":[0.5,1.0],"sort_y":0,"layer":"WallDecorations","color":"#493629","accent":"#9e8060"},
-    {"object_id":"room8_door","procedural_type":"door","position":[384,462],"display_size":[30,62],"anchor":[0.5,1.0],"sort_y":0,"layer":"ArchitectureBack","color":"#4a3328","accent":"#c49a57"}
+    {
+      "object_id": "player_room_built_in_storage",
+      "procedural_type": "built_in_storage",
+      "position": [566, 210],
+      "anchor": [0.5, 1.0],
+      "display_size": [128, 102],
+      "color": "#6b4c35",
+      "accent": "#c09358",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "player_room_window_seat",
+      "procedural_type": "window_seat",
+      "position": [282, 208],
+      "anchor": [0.5, 1.0],
+      "display_size": [112, 92],
+      "color": "#684b35",
+      "accent": "#b9946f",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "player_room_fireplace_surround",
+      "procedural_type": "fireplace_surround",
+      "position": [392, 222],
+      "anchor": [0.5, 1.0],
+      "display_size": [116, 112],
+      "color": "#746250",
+      "accent": "#c39a62",
+      "layer": "ArchitectureBack",
+      "sort_y": 0,
+      "contact_shadow": false
+    },
+    {
+      "object_id": "room_fireplace_reuse",
+      "asset_id": "prop_fireplace",
+      "position": [392, 216],
+      "display_size": [70, 82],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 216
+    },
+    {
+      "object_id": "room_bed_reuse",
+      "asset_id": "prop_bed",
+      "position": [205, 324],
+      "display_size": [92, 88],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 324
+    },
+    {
+      "object_id": "player_room_nightstand",
+      "asset_id": "inn_nightstand",
+      "position": [278, 300],
+      "display_size": [50, 66],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 300
+    },
+    {
+      "object_id": "player_room_bedside_lamp",
+      "asset_id": "inn_bedside_lamp",
+      "position": [280, 273],
+      "display_size": [38, 52],
+      "layer": "WorldObjects",
+      "contact_shadow": false,
+      "sort_y": 273
+    },
+    {
+      "object_id": "player_room_wardrobe",
+      "asset_id": "inn_wardrobe",
+      "position": [160, 238],
+      "display_size": [62, 88],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 238
+    },
+    {
+      "object_id": "player_room_sleep_rug",
+      "asset_id": "inn_room_small_rug",
+      "position": [226, 374],
+      "display_size": [118, 72],
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "player_room_curtain",
+      "asset_id": "inn_room_curtain_set",
+      "position": [204, 177],
+      "display_size": [70, 62],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "player_room_memory_board",
+      "asset_id": "inn_photo_board",
+      "position": [536, 194],
+      "display_size": [104, 70],
+      "layer": "WallDecorations",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "player_room_journal_desk",
+      "asset_id": "inn_journal_desk_variant",
+      "position": [530, 316],
+      "display_size": [110, 74],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 316
+    },
+    {
+      "object_id": "player_room_record_chair",
+      "asset_id": "generic_chair_left",
+      "position": [522, 365],
+      "display_size": [34, 46],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 365
+    },
+    {
+      "object_id": "player_room_record_chest",
+      "asset_id": "inn_small_storage_chest",
+      "position": [606, 362],
+      "display_size": [62, 52],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 362
+    },
+    {
+      "object_id": "player_room_fireplace_stool",
+      "asset_id": "generic_chair_left",
+      "position": [448, 282],
+      "display_size": [32, 42],
+      "layer": "WorldObjects",
+      "contact_shadow": true,
+      "sort_y": 282
+    },
+    {
+      "object_id": "player_room_hearth_rug",
+      "asset_id": "inn_room_small_rug",
+      "position": [396, 292],
+      "display_size": [92, 58],
+      "layer": "GroundDetails",
+      "contact_shadow": false,
+      "sort_y": 0
+    },
+    {
+      "object_id": "player_room_entry_partition_left",
+      "procedural_type": "entry_partition",
+      "position": [214, 438],
+      "anchor": [0.5, 1.0],
+      "display_size": [172, 88],
+      "color": "#62452f",
+      "accent": "#bd8d55",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 1,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [126, 360, 190, 86],
+      "occlusion_alpha": 0.38
+    },
+    {
+      "object_id": "player_room_entry_partition_right",
+      "procedural_type": "entry_partition",
+      "position": [554, 438],
+      "anchor": [0.5, 1.0],
+      "display_size": [172, 88],
+      "color": "#62452f",
+      "accent": "#bd8d55",
+      "layer": "Foreground",
+      "sort_y": 0,
+      "z_index": 1,
+      "contact_shadow": false,
+      "occlusion_fade_rect": [452, 360, 190, 86],
+      "occlusion_alpha": 0.38
+    }
   ],
   "collision_rects": [
-    {"object_id":"col_room8_top","rect":[72,52,624,60]},
-    {"object_id":"col_room8_left","rect":[72,112,18,350]},
-    {"object_id":"col_room8_right","rect":[678,112,18,350]},
-    {"object_id":"col_room8_bottom_left","rect":[72,446,286,16]},
-    {"object_id":"col_room8_bottom_right","rect":[410,446,286,16]},
-    {"object_id":"col_room8_bed","rect":[139,188,74,31]},
-    {"object_id":"col_room8_fireplace","rect":[538,148,58,31]},
-    {"object_id":"col_room8_desk","rect":[233,215,78,33]},
-    {"object_id":"col_room8_shelf","rect":[627,188,38,34]},
-    {"object_id":"col_room8_crate","rect":[599,307,42,21]}
+    {"object_id": "col_player_room_top", "rect": [120, 60, 528, 58]},
+    {"object_id": "col_player_room_left", "rect": [120, 118, 18, 330]},
+    {"object_id": "col_player_room_right", "rect": [630, 118, 18, 330]},
+    {"object_id": "col_player_room_bottom_left", "rect": [120, 430, 236, 18]},
+    {"object_id": "col_player_room_bottom_right", "rect": [412, 430, 236, 18]},
+    {"object_id": "col_player_room_left_alcove_return", "rect": [306, 118, 18, 92]},
+    {"object_id": "col_player_room_right_alcove_return", "rect": [456, 118, 18, 74]},
+    {"object_id": "col_player_room_bed", "rect": [164, 290, 82, 28]},
+    {"object_id": "col_player_room_wardrobe", "rect": [132, 210, 56, 28]},
+    {"object_id": "col_player_room_nightstand", "rect": [254, 278, 48, 20]},
+    {"object_id": "col_player_room_fireplace", "rect": [356, 184, 72, 34]},
+    {"object_id": "col_player_room_storage_wall", "rect": [502, 178, 128, 30]},
+    {"object_id": "col_player_room_journal_desk", "rect": [476, 286, 108, 30]},
+    {"object_id": "col_player_room_record_chest", "rect": [578, 338, 56, 22]}
   ],
   "gameplay_overrides": {
-    "repair_orders":{"interaction_rect":[300,172,42,28]},
-    "player_journal":{"interaction_rect":[258,176,32,26]},
-    "room8_to_hall":{"trigger_rect":[360,420,48,42]}
+    "repair_orders": {"interaction_rect": [486, 258, 58, 32]},
+    "player_journal": {"interaction_rect": [542, 258, 42, 32]},
+    "player_bed": {"interaction_rect": [158, 258, 94, 76]},
+    "player_memory_board": {"interaction_rect": [484, 138, 108, 70]},
+    "room8_to_hall": {"trigger_rect": [356, 402, 56, 46]}
   },
   "lights": [
-    {"object_id":"room8_fireplace_light","position":[567,145],"color":"#f19a55","energy":0.72,"radius":112},
-    {"object_id":"room8_desk_light","position":[294,180],"color":"#f0c87b","energy":0.28,"radius":68}
+    {"object_id": "player_room_fireplace_light", "position": [392, 202], "color": "#f59b4f", "energy": 0.68, "radius": 82},
+    {"object_id": "player_room_record_light", "position": [526, 276], "color": "#f1bd70", "energy": 0.44, "radius": 72},
+    {"object_id": "player_room_bedside_light", "position": [280, 264], "color": "#f2c47a", "energy": 0.38, "radius": 58},
+    {"object_id": "player_room_entry_light", "position": [384, 398], "color": "#d7c59d", "energy": 0.22, "radius": 64}
   ],
   "zones": [
-    {"object_id":"zone_room8_entrance","type":"entrance_zone","rect":[330,354,108,92]},
-    {"object_id":"zone_room8_move","type":"movement_zone","rect":[330,220,176,176]},
-    {"object_id":"zone_room8_primary","type":"primary_interaction_zone","rect":[218,162,136,134]},
-    {"object_id":"zone_room8_story","type":"secondary_story_zone","rect":[498,116,148,112]},
-    {"object_id":"zone_room8_decor","type":"decoration_zone","rect":[566,250,102,100]},
-    {"object_id":"zone_room8_blocked","type":"blocked_zone","rect":[72,52,624,60]}
-  ]
+    {"object_id": "zone_player_room_primary_center", "type": "primary_visual_center", "rect": [466, 178, 168, 196]},
+    {"object_id": "zone_player_room_entrance", "type": "entrance_zone", "rect": [318, 382, 132, 66]},
+    {"object_id": "zone_player_room_movement", "type": "movement_zone", "rect": [304, 218, 164, 204]},
+    {"object_id": "zone_player_room_primary_interaction", "type": "primary_interaction_zone", "rect": [472, 244, 126, 104]},
+    {"object_id": "zone_player_room_secondary_story", "type": "secondary_story_zone", "rect": [142, 170, 170, 212]},
+    {"object_id": "zone_player_room_decoration", "type": "decoration_zone", "rect": [326, 138, 134, 166]},
+    {"object_id": "zone_player_room_blocked", "type": "blocked_zone", "rect": [120, 60, 528, 58]},
+    {"object_id": "zone_player_room_foreground", "type": "foreground_zone", "rect": [120, 350, 528, 98]},
+    {"object_id": "zone_player_room_sleep_cluster", "type": "function_cluster", "rect": [142, 170, 168, 212]},
+    {"object_id": "zone_player_room_record_cluster", "type": "function_cluster", "rect": [470, 178, 164, 198]},
+    {"object_id": "zone_player_room_hearth_cluster", "type": "function_cluster", "rect": [326, 146, 136, 160]}
+  ],
+  "atlas_tile_art": {
+    "cell_size": [32, 32],
+    "replaced_ground_shapes": [],
+    "terrain_masks": [],
+    "water_masks": [],
+    "shore_stamps": [],
+    "interior_shell": {
+      "theme": "inn_warm",
+      "wall_asset": "interior_wall_modular_set",
+      "corner_asset": "interior_corner_set",
+      "baseboard_asset": "baseboard_set",
+      "wall_segments": [
+        {"position": [138, 60], "count": 15, "pattern": ["straight", "panel_light", "straight", "panel_dense"], "tint": "#ffe3b8"}
+      ],
+      "corners": [
+        {"position": [120, 60], "tile": "inside_left", "tint": "#ffe3b8"},
+        {"position": [600, 60], "tile": "inside_right", "tint": "#ffe3b8"}
+      ],
+      "baseboard_segments": [
+        {"position": [138, 106], "count": 15, "pattern": ["straight", "worn_straight", "straight"], "start": "left_stop", "end": "right_stop"}
+      ],
+      "structural_shapes": [
+        {"object_id": "player_room_sleep_alcove_wall", "layer": "WallTiles", "points": [[138, 118], [324, 118], [324, 146], [306, 146], [306, 210], [288, 210], [288, 150], [138, 150]], "color": "#5d4737", "outline": "#302722", "outline_width": 3, "z_index": 3},
+        {"object_id": "player_room_record_alcove_wall", "layer": "WallTiles", "points": [[456, 118], [630, 118], [630, 150], [474, 150], [474, 192], [456, 192]], "color": "#5b4434", "outline": "#302722", "outline_width": 3, "z_index": 3}
+      ],
+      "structural_lines": [
+        {"object_id": "player_room_sleep_alcove_trim", "layer": "WallTiles", "points": [[306, 118], [306, 210]], "width": 5, "color": "#9b7047", "z_index": 5},
+        {"object_id": "player_room_record_alcove_trim", "layer": "WallTiles", "points": [[456, 118], [456, 192]], "width": 5, "color": "#9b7047", "z_index": 5}
+      ]
+    }
+  },
+  "level_art_metrics": {
+    "effective_walkable_area_px2": 139870,
+    "empty_ratio_estimate": 0.27,
+    "function_clusters": 3,
+    "foreground_layers": 1,
+    "large_structure_groups": 4,
+    "new_raster_asset_ids": []
+  },
+  "rollout_metadata": {
+    "batch": "LEVEL_ART_PASS_01",
+    "new_asset_ids": [],
+    "reused_asset_ids": ["inn_nightstand", "inn_wardrobe", "inn_small_storage_chest", "inn_bedside_lamp", "inn_room_small_rug", "inn_room_curtain_set", "inn_photo_board", "inn_journal_desk_variant", "prop_bed", "prop_fireplace", "generic_chair_left", "interior_wall_modular_set", "interior_corner_set", "baseboard_set"],
+    "retained_but_rejected_from_layout": ["inn_washbasin", "inn_luggage_stack"],
+    "dependency_assets_retained": ["inn_nightstand", "inn_wardrobe", "inn_small_storage_chest", "inn_washbasin", "inn_luggage_stack", "inn_bedside_lamp", "inn_room_small_rug", "inn_room_curtain_set", "inn_photo_board", "inn_journal_desk_variant"],
+    "primary_visual_center": "journal_desk_memory_board_cluster",
+    "frozen_reference_maps_untouched": ["town", "harbor", "inn-lobby"]
+  }
 }
