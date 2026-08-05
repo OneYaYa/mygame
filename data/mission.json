@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "mission": {
+    "id": "blindspot_relay_vertical_slice",
+    "title": "盲区中继：K-17",
+    "objective": "协助林岚恢复电网与冷却回路，并从逃生舱撤离。"
+  },
+  "npc": {
+    "id": "lin_lan",
+    "name": "林岚",
+    "role": "K-17 维护技术员",
+    "persona": "受困在失压设施里的男性维护技术员。刚才狠狠撞了左肩，现在抬不起来；呼吸器也逐渐吃紧。他受过训练，但确实害怕，会承认不知道，不逞强，也不会把猜测说成事实。他只能描述当前房间内能看到、听到或触到的东西。",
+    "intro": "喂……调度？你能听见吗？门卡死了，我被困在中继控制室。左肩抬不起来，呼吸器还一直在叫……你先别断线，好吗？告诉我接下来该怎么办。"
+  },
+  "start": {
+    "room_id": "relay_control",
+    "oxygen": 100,
+    "power": 70
+  },
+  "rules": {
+    "carry_capacity": 1,
+    "max_oxygen": 100,
+    "max_power": 100,
+    "success_oxygen_threshold": 50,
+    "success_power_threshold": 40,
+    "oxygen_costs": {
+      "move": 3,
+      "inspect": 1,
+      "take": 1,
+      "drop": 1,
+      "connect": 2,
+      "toggle": 2,
+      "use": 1,
+      "wait": 6
+    },
+    "power_costs": {
+      "move": 0,
+      "inspect": 0,
+      "take": 0,
+      "drop": 0,
+      "connect": 1,
+      "toggle": 1,
+      "use": 0,
+      "wait": 0
+    }
+  },
+  "actions": [
+    {"id": "move", "label": "移动"},
+    {"id": "inspect", "label": "检查"},
+    {"id": "take", "label": "拾取"},
+    {"id": "drop", "label": "放下"},
+    {"id": "connect", "label": "连接"},
+    {"id": "toggle", "label": "切换"},
+    {"id": "use", "label": "使用"},
+    {"id": "wait", "label": "等待"}
+  ],
+  "items": {
+    "phase_fuse": {
+      "name": "相位保险芯",
+      "description": "只能在相位线对齐后装入电网控制器。"
+    },
+    "sealant_kit": {
+      "name": "低温密封剂",
+      "description": "用于封闭排压后暴露的冷却剂裂口。"
+    }
+  },
+  "rooms": [
+    {
+      "id": "relay_control",
+      "name": "中继控制室",
+      "links": ["central_junction"],
+      "items": ["phase_fuse"],
+      "inspect_targets": ["telemetry_console"],
+      "observation": "应急灯每隔几秒暗一次。遥测台仍能接收远端诊断包，但屏幕上的现场线路图已经烧坏。"
+    },
+    {
+      "id": "central_junction",
+      "name": "中央交汇舱",
+      "links": ["relay_control", "power_bay", "coolant_gallery", "escape_pod"],
+      "items": [],
+      "inspect_targets": ["escape_bulkhead"],
+      "observation": "四条短廊在这里汇合。冷雾贴着地面流动，逃生舱隔门上的两枚联锁灯都是红色。"
+    },
+    {
+      "id": "power_bay",
+      "name": "主电网舱",
+      "links": ["central_junction"],
+      "items": ["sealant_kit"],
+      "inspect_targets": ["cable_panel"],
+      "observation": "控制器前垂着蓝、红、黄三只接头，原用途标签已经烧焦。读数只能靠近面板逐一确认。"
+    },
+    {
+      "id": "coolant_gallery",
+      "name": "冷却回廊",
+      "links": ["central_junction"],
+      "items": [],
+      "inspect_targets": ["valve_manifold"],
+      "observation": "冷雾遮住半条回廊。阀组只剩 I、B、P 三个字母，管路走向需要靠近后逐一辨认；铭牌的步骤区已经剥落。"
+    },
+    {
+      "id": "escape_pod",
+      "name": "逃生舱",
+      "links": ["central_junction"],
+      "items": [],
+      "inspect_targets": ["launch_console"],
+      "observation": "单人逃生舱已完成自检，发射控制器等待人工确认。"
+    }
+  ]
+}
