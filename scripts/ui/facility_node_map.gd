@@ -90,16 +90,23 @@ func _room_centers() -> Dictionary:
 	var centers: Dictionary = {}
 	var count := maxi(_rooms.size(), 1)
 	if count == 5:
-		var positions := [
-			Vector2(size.x * 0.18, size.y * 0.54),
-			Vector2(size.x * 0.40, size.y * 0.32),
-			Vector2(size.x * 0.62, size.y * 0.54),
-			Vector2(size.x * 0.82, size.y * 0.32),
-			Vector2(size.x * 0.82, size.y * 0.75),
-		]
-		for index: int in range(_rooms.size()):
-			centers[str(_rooms[index].get("id", index))] = positions[index]
-		return centers
+		var star_positions := {
+			"relay_control": Vector2(size.x * 0.20, size.y * 0.28),
+			"power_bay": Vector2(size.x * 0.20, size.y * 0.76),
+			"central_junction": Vector2(size.x * 0.50, size.y * 0.52),
+			"coolant_gallery": Vector2(size.x * 0.80, size.y * 0.28),
+			"escape_pod": Vector2(size.x * 0.80, size.y * 0.76),
+		}
+		var uses_facility_star := true
+		for room: Dictionary in _rooms:
+			if not star_positions.has(str(room.get("id", ""))):
+				uses_facility_star = false
+				break
+		if uses_facility_star:
+			for room: Dictionary in _rooms:
+				var room_id := str(room.get("id", ""))
+				centers[room_id] = star_positions[room_id]
+			return centers
 	var columns := ceili(sqrt(float(count)))
 	for index: int in range(_rooms.size()):
 		var row := index / columns
@@ -138,19 +145,19 @@ func _normalize_links(snapshot: Dictionary) -> Array[Dictionary]:
 
 func _set_defaults() -> void:
 	_rooms = [
-		{"id": "relay", "label": "中继舱", "code": "RLY-01", "status": "safe"},
-		{"id": "junction", "label": "联络井", "code": "JNC-02", "status": "unknown"},
-		{"id": "workshop", "label": "维修间", "code": "WRK-03", "status": "unknown"},
-		{"id": "life_support", "label": "生命支持", "code": "LFS-04", "status": "offline"},
-		{"id": "escape", "label": "逃生舱", "code": "ESC-05", "status": "locked"},
+		{"id": "relay_control", "label": "中继控制室", "code": "RLY-01", "status": "safe"},
+		{"id": "central_junction", "label": "中央交汇舱", "code": "JNC-02", "status": "unknown"},
+		{"id": "power_bay", "label": "主电网舱", "code": "PWR-03", "status": "offline"},
+		{"id": "coolant_gallery", "label": "冷却回廊", "code": "CLT-04", "status": "danger"},
+		{"id": "escape_pod", "label": "逃生舱", "code": "ESC-05", "status": "locked"},
 	]
 	_links = [
-		{"from": "relay", "to": "junction", "state": "open"},
-		{"from": "junction", "to": "workshop", "state": "unknown"},
-		{"from": "workshop", "to": "life_support", "state": "locked"},
-		{"from": "workshop", "to": "escape", "state": "unknown"},
+		{"from": "central_junction", "to": "relay_control", "state": "open"},
+		{"from": "central_junction", "to": "power_bay", "state": "open"},
+		{"from": "central_junction", "to": "coolant_gallery", "state": "open"},
+		{"from": "central_junction", "to": "escape_pod", "state": "locked"},
 	]
-	_npc_room = "relay"
+	_npc_room = "relay_control"
 
 
 func _dictionary(value: Variant) -> Dictionary:

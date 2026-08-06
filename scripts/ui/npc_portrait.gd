@@ -31,6 +31,8 @@ var _transition := 1.0
 var _oxygen := 100.0
 var _power := 100.0
 var _mistakes := 0
+var _trust := 50
+var _fear := 35
 var _thinking := false
 var _candidate_pending := false
 var _action_active := false
@@ -44,6 +46,9 @@ var _character_asset := MALE_PIXEL_PORTRAIT_PATH
 var _using_male_portrait := true
 var _character_visual_rect := Rect2()
 var _reduced_motion := false
+var _focus_flash := 0.0
+var _focus_kind := ""
+var _last_event_signature := ""
 
 
 func _ready() -> void:
@@ -60,6 +65,7 @@ func _process(delta: float) -> void:
 	_phase += delta
 	_transition = minf(1.0, _transition + delta * 2.8)
 	_action_flash = maxf(0.0, _action_flash - delta)
+	_focus_flash = maxf(0.0, _focus_flash - delta)
 	queue_redraw()
 
 
@@ -68,6 +74,7 @@ func set_reduced_motion(enabled: bool) -> void:
 	if enabled:
 		_transition = 1.0
 		_action_flash = 0.0
+		_focus_flash = 0.0
 	set_process(not enabled)
 	queue_redraw()
 
@@ -90,6 +97,9 @@ func set_npc_state(state: Dictionary, connection: String = "local") -> void:
 	_oxygen = _number(merged, resources, ["oxygen", "oxygen_percent", "o2"], _oxygen)
 	_power = _number(merged, resources, ["power", "power_percent"], _power)
 	_mistakes = int(merged.get("mistakes", _mistakes))
+	var social := _dictionary(merged.get("npc_social", {}))
+	_trust = int(social.get("trust", _trust))
+	_fear = int(social.get("fear", _fear))
 	_flags = _dictionary(merged.get("flags", _flags)).duplicate(true)
 	_thinking = bool(merged.get("thinking", false))
 	_candidate_pending = bool(merged.get("candidate_pending", false))
@@ -107,8 +117,13 @@ func set_npc_state(state: Dictionary, connection: String = "local") -> void:
 			if raw_event_action is Dictionary
 			else str(raw_event_action)
 		)
-		if not event_action.is_empty() and event_action != _action_id:
+		var signature := "%s|%s|%s" % [last_event.get("turn", ""), event_action, str(last_event.get("text", "")).left(24)]
+		if not event_action.is_empty() and signature != _last_event_signature:
+			_last_event_signature = signature
 			pulse_action(event_action)
+			if event_action in ["inspect", "connect", "toggle", "use"] or str(last_event.get("type", "")) in ["puzzle_solved", "ending"]:
+				_focus_flash = 1.35
+				_focus_kind = str(last_event.get("type", event_action))
 
 	queue_redraw()
 
@@ -145,6 +160,9 @@ func trigger_action(action_id: String, success: bool = true) -> void:
 	_action_id = action_id
 	_action_success = success
 	_action_flash = 0.85
+	if action_id in ["inspect", "connect", "toggle", "use"]:
+		_focus_flash = 1.35
+		_focus_kind = "hazard" if not success else action_id
 	queue_redraw()
 
 
@@ -170,6 +188,10 @@ func get_debug_visual_state() -> Dictionary:
 		"action_id": _action_id,
 		"action_success": _action_success,
 		"oxygen": _oxygen,
+		"trust": _trust,
+		"fear": _fear,
+		"focus_active": _focus_flash > 0.0,
+		"focus_kind": _focus_kind,
 		"framing": "shoulders_up",
 		"character_asset": _character_asset,
 	}
@@ -224,7 +246,9 @@ func _draw() -> void:
 		_draw_room_scene(_room_id, world_rect, 1.0)
 
 	_draw_character(world_rect)
+	_draw_room_foreground(_room_id, world_rect)
 	_draw_state_effects(world_rect)
+	_draw_focus_overlay(world_rect)
 	_draw_feed_effects(image_rect)
 	_draw_hud(image_rect)
 
@@ -243,6 +267,44 @@ func _draw_room_scene(room_id: String, rect: Rect2, alpha: float) -> void:
 			_draw_escape_pod(rect, alpha)
 		_:
 			_draw_relay_control(rect, alpha)
+
+
+func _draw_room_foreground(room_id: String, rect: Rect2) -> void:
+	# Foreground silhouettes let machinery pass in front of the portrait, adding
+	# depth without requiring another authored sprite sheet.
+	match room_id:
+		"power_bay":
+			_fill(Rect2(rect.position + Vector2(-4, rect.size.y - 31), Vector2(rect.size.x * 0.32, 36)), Color("111918"), 0.88)
+			_fill(Rect2(rect.position + Vector2(rect.size.x - 36, 44), Vector2(42, rect.size.y - 39)), Color("181914"), 0.82)
+			if not bool(_flags.get("grid_online", false)):
+				var spark := 0.35 + 0.35 * sin(_phase * 12.0)
+				_draw_arc_flash(rect.position + Vector2(rect.size.x - 29, rect.size.y * 0.47), spark)
+		"coolant_gallery":
+			_fill(Rect2(rect.position + Vector2(-8, rect.size.y - 24), Vector2(rect.size.x + 16, 30)), Color("7ea3aa"), 0.08 if bool(_flags.get("leak_sealed", false)) else 0.18)
+			for index: int in range(3):
+				var fog_x := rect.position.x + fmod(_phase * (13.0 + index * 2.0) + index * 71.0, rect.size.x + 45.0) - 28.0
+				_fill(Rect2(Vector2(fog_x, rect.end.y - 18.0 - index * 5.0), Vector2(48, 4)), Color("a7c8cd"), 0.10)
+		"escape_pod":
+			if bool(_flags.get("escape_unlocked", false)):
+				_fill(rect, CYAN, 0.025 + 0.012 * sin(_phase * 2.0))
+		"central_junction":
+			_fill(Rect2(rect.position + Vector2(0, rect.size.y - 15), Vector2(rect.size.x, 17)), Color("0b1116"), 0.72)
+
+
+func _draw_focus_overlay(rect: Rect2) -> void:
+	if _focus_flash <= 0.0:
+		return
+	var strength := clampf(_focus_flash / 1.35, 0.0, 1.0)
+	var focus_rect := rect.grow(-9.0)
+	var accent := RED if _focus_kind == "hazard" else AMBER if _focus_kind == "puzzle" else CYAN
+	_fill(Rect2(focus_rect.position, Vector2(focus_rect.size.x, 15)), Color("02070a"), 0.72 * strength)
+	draw_string(ThemeDB.fallback_font, focus_rect.position + Vector2(5, 11), "FIELD CLOSE-UP // %s" % _focus_kind.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(accent, strength))
+	var bracket := 18.0
+	var center := _character_visual_rect.get_center() if _character_visual_rect.has_area() else rect.get_center()
+	draw_line(center - Vector2(bracket, bracket), center - Vector2(5, bracket), Color(accent, strength), 1.0)
+	draw_line(center - Vector2(bracket, bracket), center - Vector2(bracket, 5), Color(accent, strength), 1.0)
+	draw_line(center + Vector2(bracket, bracket), center + Vector2(5, bracket), Color(accent, strength), 1.0)
+	draw_line(center + Vector2(bracket, bracket), center + Vector2(bracket, 5), Color(accent, strength), 1.0)
 
 
 func _draw_relay_control(rect: Rect2, alpha: float) -> void:
@@ -370,7 +432,8 @@ func _draw_character(rect: Rect2) -> void:
 	var breath_amount := 0.018 if low_oxygen else 0.007
 	var breath := sin(_phase * TAU * breath_speed) * breath_amount
 	var bob := sin(_phase * TAU * breath_speed) * (1.8 if low_oxygen else 0.55)
-	var shake := sin(_phase * 27.0) * 1.15 if strained else 0.0
+	var fear_shake := clampf((float(_fear) - 45.0) / 35.0, 0.0, 1.0)
+	var shake := sin(_phase * 27.0) * (0.8 + fear_shake * 1.25) if strained else sin(_phase * 19.0) * fear_shake * 0.45
 	var work_shift := sin(_phase * (15.0 if not _action_success else 7.0)) * (3.1 if operating and not _action_success else 1.45) if operating else 0.0
 
 	# The shoulders sit just behind the lower camera HUD, while the face occupies
@@ -433,6 +496,8 @@ func _draw_state_effects(rect: Rect2) -> void:
 	if _candidate_pending:
 		var pulse := 0.45 + 0.25 * sin(_phase * 3.0)
 		_stroke(rect.grow(-3.0), AMBER, pulse, 1.0)
+	if _fear >= 70:
+		_fill(rect, RED, 0.025 + 0.018 * sin(_phase * 5.0))
 	if _terminal:
 		var lost := _outcome == "failure"
 		_fill(rect, Color("401016") if lost else Color("0c3936"), 0.16)
@@ -557,13 +622,17 @@ func _character_tint() -> Color:
 		return Color(0.90, 0.86, 0.82, 1.0)
 	if _action_active or _action_flash > 0.0:
 		return Color(0.96, 0.77, 0.74, 1.0) if not _action_success else Color(0.91, 1.0, 0.96, 1.0)
+	if _fear >= 70:
+		return Color(0.90, 0.84, 0.82, 1.0)
+	if _trust >= 65:
+		return Color(0.90, 0.97, 0.94, 1.0)
 	return Color(0.88, 0.94, 0.93, 1.0)
 
 
 func _is_strained() -> bool:
 	var mood := str(_state.get("mood", "focused")).to_lower()
 	var stress := str(_state.get("stress", "")).to_lower()
-	return _oxygen <= 25.0 or _mistakes >= 2 or mood in ["strained", "afraid", "panic", "hurt", "injured"] or stress in ["strained", "critical_but_functional"]
+	return _oxygen <= 25.0 or _mistakes >= 2 or _fear >= 70 or mood in ["strained", "afraid", "panic", "hurt", "injured"] or stress in ["strained", "critical_but_functional"]
 
 
 func _is_injured() -> bool:

@@ -34,8 +34,37 @@ func _ready() -> void:
 	for value: Variant in visible:
 		_check(value is String, "visible observations must be strings")
 	var ui: Node = main.get_node("MissionConsoleUI")
+	var left_panel := ui.get("_left_panel") as Control
+	var objective_text := ui.get("_objective_text") as RichTextLabel
+	var observation_text := ui.get("_npc_observation") as RichTextLabel
+	_check(left_panel != null and left_panel.custom_minimum_size.x >= 400.0, "facility panel should be wide enough to reduce wrapped scrolling")
+	_check(objective_text != null and objective_text.custom_minimum_size.y >= 140.0, "objective and system feed should have a taller reading area")
+	_check(observation_text != null and observation_text.custom_minimum_size.y >= 126.0, "local observation should have a taller reading area")
+	var facility_map := ui.get("_facility_map") as Control
+	var map_links := facility_map.get("_links") as Array
+	var junction_routes := 0
+	var has_escape_route := false
+	for map_link: Dictionary in map_links:
+		var from_id := str(map_link.get("from", ""))
+		var to_id := str(map_link.get("to", ""))
+		if from_id == "central_junction" or to_id == "central_junction":
+			junction_routes += 1
+		if [from_id, to_id].has("central_junction") and [from_id, to_id].has("escape_pod"):
+			has_escape_route = true
+	_check(junction_routes == 4, "facility map should show all four corridors from the central junction")
+	_check(has_escape_route, "facility map should explicitly connect the central junction to the escape pod")
+	var map_centers := facility_map.call("_room_centers") as Dictionary
+	var junction_center := map_centers.get("central_junction", Vector2.ZERO) as Vector2
+	var power_center := map_centers.get("power_bay", Vector2.ZERO) as Vector2
+	var escape_center := map_centers.get("escape_pod", Vector2.ZERO) as Vector2
+	_check(power_center.x < junction_center.x and escape_center.x > junction_center.x, "star layout should keep the escape route from passing behind the power node")
 	var settings := ui.call("get_settings") as Dictionary
-	_check(settings.has("font_scale") and settings.has("reduced_motion") and settings.has("online_enabled"), "UI should expose persistent accessibility and provider settings")
+	_check(settings.has("font_scale") and settings.has("reduced_motion") and settings.has("online_enabled") and settings.has("quick_safe_actions"), "UI should expose persistent accessibility, provider and safe-action settings")
+	var settings_dialog := ui.get("_settings_dialog") as Window
+	_check(settings_dialog != null and not settings_dialog.visible, "settings should stay hidden until the player requests them")
+	ui.call("_open_settings")
+	_check(settings_dialog != null and settings_dialog.visible, "settings button should open the settings window on demand")
+	settings_dialog.hide()
 	var intro_state := ui.call("get_intro_debug_state") as Dictionary
 	_check(bool(intro_state.get("active", false)), "signal boot sequence should start on the first UI instance")
 	_check(bool(intro_state.get("input_blocked", false)), "opening overlay should block input while the signal is unstable")
@@ -49,12 +78,23 @@ func _ready() -> void:
 	main.call("_on_restart_requested")
 	var restart_intro := ui.call("get_intro_debug_state") as Dictionary
 	_check(not bool(restart_intro.get("active", true)), "restarting the mission should not replay the program boot sequence")
+	var system_entries := ui.get("_system_entries") as Array
+	var dialogue_entries := ui.get("_log_entries") as Array
+	_check(not system_entries.is_empty(), "authoritative SYSTEM events should appear in the left information panel")
+	_check(dialogue_entries.all(func(entry: Dictionary) -> bool: return str(entry.get("speaker", "")).to_upper() != "SYSTEM"), "central dialogue log should contain no SYSTEM speaker entries")
+	_check(objective_text.text.contains("SYSTEM FEED / 系统事件"), "left information panel should visibly label the SYSTEM feed")
 	var carried_label := ui.get("_carried_value") as Label
 	_check(carried_label != null and carried_label.text == "无 / EMPTY", "empty carry slot should have an explicit UI value")
 	_check(carried_label != null and carried_label.size.x > 20.0 and carried_label.size.y > 10.0, "carry-slot value should receive visible layout space")
 	var telemetry_box := ui.get("_telemetry_box") as VBoxContainer
 	_check(telemetry_box != null and telemetry_box.get_child_count() > 0, "operator telemetry should render without exposing an action list")
-	var quick_box := ui.get("_quick_box") as VBoxContainer
+	var local_clue_box := ui.get("_local_clue_box") as VBoxContainer
+	_check(local_clue_box != null and local_clue_box.get_child_count() > 0, "clue workbench should expose the local evidence lane")
+	ui.call("_pin_remote_clue", "PWR-03 本轮需要 4.2 Ω 闭环")
+	ui.call("_pin_local_clue", "蓝色接头 4.2 Ω；红色接头 6.8 Ω")
+	var workbench_summary := ui.get("_workbench_summary") as Label
+	_check(workbench_summary != null and workbench_summary.text.contains("同域证据已对齐"), "workbench should recognize compatible remote and local clues")
+	var quick_box := ui.get("_quick_box") as GridContainer
 	var expected_quick_labels := [
 		"尝试询问他的状态",
 		"尝试询问他的周边环境",
@@ -95,6 +135,15 @@ func _ready() -> void:
 			if str(action.get("action", "")) == "take" and str(action.get("target", "")) == "phase_fuse":
 				found_take = true
 	_check(found_take, "Godot take action must survive the proxy payload mapping")
+	var ambiguous_context := context.duplicate(true)
+	ambiguous_context["available_actions"] = [
+		{"id": "connect", "target": "blue_cable", "enabled": true},
+		{"id": "connect", "target": "red_cable", "enabled": true},
+	]
+	var rejected_empty_target := service.call("_sanitize_decision", {
+		"reply": "我接一根。", "intent": "propose_action", "action": "connect", "target": "", "mood": "focused"
+	}, ambiguous_context, "test") as Dictionary
+	_check(not bool(rejected_empty_target.get("candidate_valid", true)), "client defense rejects an empty target when multiple actions share the same verb")
 
 	var before := (main.get("_snapshot") as Dictionary).duplicate(true)
 	main.call("_on_decision_ready", {
@@ -112,9 +161,10 @@ func _ready() -> void:
 	var candidate_panel := ui.get("_candidate_panel") as PanelContainer
 	_check(candidate_panel != null and candidate_panel.visible, "authorization card should be visible for one validated candidate")
 
-	ui.call("_authorize_candidate")
+	(ui.get("_settings") as Dictionary)["quick_safe_actions"] = true
+	ui.call("_submit_message", "")
 	var after_confirmed_ui_action := main.get("_snapshot") as Dictionary
-	_check(int(after_confirmed_ui_action.get("turn", 0)) == 1, "explicit UI action should reach the core")
+	_check(int(after_confirmed_ui_action.get("turn", 0)) == 1, "empty Enter should quick-authorize an already validated safe action")
 	_check(str(after_confirmed_ui_action.get("carried_item", "")) == "phase_fuse", "confirmed UI action should update inventory")
 	_check((ui.get("_pending_candidate") as Dictionary).is_empty(), "authorization card should clear after emitting exactly one action")
 
@@ -129,6 +179,7 @@ func _ready() -> void:
 	var action_visual := portrait.call("get_debug_visual_state") as Dictionary
 	_check(bool(action_visual.get("action_active", false)), "completed core actions should trigger a short pixel-character animation")
 	_check(str(action_visual.get("action_id", "")) == "inspect", "pixel action animation should identify the completed action")
+	_check(bool(action_visual.get("focus_active", false)), "inspection should trigger a short field close-up overlay")
 	var before_danger := (main.get("_snapshot") as Dictionary).duplicate(true)
 	main.call("_on_action_requested", "connect", "red_cable", {})
 	var pending := (main.get("_snapshot") as Dictionary).get("pending_confirmation", {}) as Dictionary
@@ -163,9 +214,11 @@ func _ready() -> void:
 	_check(int(after_single_confirm.get("turn", -1)) == before_single_confirm + 1, "risk acknowledged in the candidate card should execute without a second dialog")
 	_check((after_single_confirm.get("pending_confirmation", {}) as Dictionary).is_empty(), "single-confirm risk flow should leave no pending proposal")
 	var log_entries := ui.get("_log_entries") as Array
+	var routed_system_entries := ui.get("_system_entries") as Array
 	var seen_log_ids: Dictionary = {}
 	var unique_log_ids := true
-	for log_entry: Dictionary in log_entries:
+	var all_routed_entries: Array = log_entries + routed_system_entries
+	for log_entry: Dictionary in all_routed_entries:
 		var source_id := str(log_entry.get("source_id", ""))
 		if source_id.is_empty():
 			continue

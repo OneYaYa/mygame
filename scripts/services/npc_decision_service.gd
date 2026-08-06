@@ -19,6 +19,7 @@ var _player_text := ""
 var _busy := false
 var _consecutive_failures := 0
 var _circuit_open_until_msec := 0
+var _trace_history: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -37,11 +38,13 @@ func request_decision(context: Dictionary, player_text: String) -> void:
 		return
 	if _busy:
 		var queued_local := _sanitize_decision(_local.decide(context, clean), context, "local_busy_fallback")
+		_record_trace(context, queued_local, "busy_fallback")
 		decision_ready.emit(queued_local)
 		return
 	if not online_enabled or Time.get_ticks_msec() < _circuit_open_until_msec:
 		var provider := "local_forced" if not online_enabled else "local_circuit_breaker"
 		var local_decision := _sanitize_decision(_local.decide(context, clean), context, provider)
+		_record_trace(context, local_decision, provider)
 		status_changed.emit("local", "已固定使用本地规则" if not online_enabled else "远端链路暂时熔断；本轮使用本地规则")
 		decision_ready.emit(local_decision)
 		return
@@ -54,7 +57,7 @@ func request_decision(context: Dictionary, player_text: String) -> void:
 		"Content-Type: application/json",
 		"Accept: application/json",
 	])
-	status_changed.emit("connecting", "正在连接远端推理服务")
+	status_changed.emit("connecting", "信号远程传输中……")
 	var error := _http.request(endpoint, headers, HTTPClient.METHOD_POST, JSON.stringify(payload))
 	if error != OK:
 		_fallback("HTTP 请求无法启动（%s）" % error_string(error))
@@ -97,6 +100,7 @@ func _build_payload(context: Dictionary, player_text: String) -> Dictionary:
 			"target": str(action.get("target", "")),
 			"label": str(action.get("label", action.get("action", action.get("id", "")))),
 			"dangerous": bool(action.get("dangerous", action.get("requires_confirmation", false))),
+			"enabled": bool(action.get("enabled", true)),
 		})
 	return {
 		"message": player_text,
@@ -108,11 +112,12 @@ func _build_payload(context: Dictionary, player_text: String) -> Dictionary:
 		"valid_actions": valid_actions,
 		"history": _history(context),
 		"conversation_memory": _dictionary(context.get("conversation_memory", {})).duplicate(true),
+		"context_protocol": _dictionary(context.get("context_protocol", {})).duplicate(true),
+		"prompt_trace": _dictionary(context.get("prompt_trace", {})).duplicate(true),
 		"available_actions": actions,
-		"context": context,
 		"client": {
 			"name": "blindspot-relay-godot",
-			"protocol": 1,
+			"protocol": 2,
 			"candidate_only": true,
 		},
 	}
@@ -136,6 +141,7 @@ func _on_request_completed(result: int, response_code: int, _headers: PackedStri
 		_fallback("服务响应缺少 reply")
 		return
 	var decision := _sanitize_decision(raw, _context, "http")
+	_record_trace(_context, decision, "online")
 	_busy = false
 	_consecutive_failures = 0
 	_circuit_open_until_msec = 0
@@ -152,6 +158,7 @@ func _unwrap_response(response: Dictionary) -> Dictionary:
 			var decision := (nested as Dictionary).duplicate(true)
 			decision["provider"] = str(response.get("provider", decision.get("provider", "http")))
 			decision["model"] = str(response.get("model", ""))
+			decision["prompt_trace"] = _dictionary(response.get("trace", decision.get("prompt_trace", {}))).duplicate(true)
 			return decision
 	return response.duplicate(true)
 
@@ -180,6 +187,7 @@ func _fallback(reason: String) -> void:
 	_player_text = ""
 	var decision := _sanitize_decision(_local.decide(context, message), context, "local_fallback")
 	decision["fallback_reason"] = reason
+	_record_trace(context, decision, "local_fallback")
 	_consecutive_failures += 1
 	if _consecutive_failures >= 2:
 		_circuit_open_until_msec = Time.get_ticks_msec() + 30000
@@ -194,6 +202,11 @@ func _sanitize_decision(raw: Dictionary, context: Dictionary, provider: String) 
 	var requested_action := str(raw.get("action", raw.get("action_id", ""))).strip_edges().left(80)
 	var requested_target := str(raw.get("target", "")).strip_edges().left(80)
 	var candidate := _allowed_candidate(requested_action, requested_target, context)
+	var referenced_ids: Array[String] = []
+	for value: Variant in _array(raw.get("referenced_ids", [])):
+		var reference := str(value).strip_edges().left(100)
+		if not reference.is_empty() and reference not in referenced_ids:
+			referenced_ids.append(reference)
 	return {
 		"reply": reply if not reply.is_empty() else "通讯中断。我保持原位，等待你的下一条指令。",
 		"intent": intent if not intent.is_empty() else "conversation",
@@ -201,6 +214,9 @@ func _sanitize_decision(raw: Dictionary, context: Dictionary, provider: String) 
 		"target": str(candidate.get("target", "")),
 		"mood": mood if not mood.is_empty() else "focused",
 		"provider": str(raw.get("provider", provider)),
+		"referenced_ids": referenced_ids.slice(0, mini(12, referenced_ids.size())),
+		"quality_guard": str(raw.get("quality_guard", "")).strip_edges().left(120),
+		"prompt_trace": _dictionary(raw.get("prompt_trace", context.get("prompt_trace", {}))).duplicate(true),
 		"candidate_valid": not candidate.is_empty(),
 		"candidate_only": true,
 	}
@@ -210,6 +226,7 @@ func _allowed_candidate(action_id: String, target: String, context: Dictionary) 
 	if action_id.is_empty() or action_id in ["none", "null", "talk", "conversation"]:
 		return {}
 	var actions: Array = _array(context.get("available_actions", context.get("actions", [])))
+	var matches: Array[Dictionary] = []
 	for value: Variant in actions:
 		if not value is Dictionary:
 			continue
@@ -218,10 +235,36 @@ func _allowed_candidate(action_id: String, target: String, context: Dictionary) 
 		if allowed_id != action_id or not bool(action.get("enabled", true)):
 			continue
 		var allowed_target := str(action.get("target", target))
-		if not target.is_empty() and not allowed_target.is_empty() and target != allowed_target:
+		if not target.is_empty():
+			if target == allowed_target:
+				return {"id": allowed_id, "target": allowed_target}
 			continue
-		return {"id": allowed_id, "target": allowed_target}
+		matches.append({"id": allowed_id, "target": allowed_target})
+	# Targetless outputs are accepted only when the action is truly unambiguous.
+	# This prevents an empty model target from silently selecting the first cable
+	# or pressure regulator in the local whitelist.
+	if matches.size() == 1:
+		return matches[0]
 	return {}
+
+
+func get_trace_history() -> Array[Dictionary]:
+	return _trace_history.duplicate(true)
+
+
+func _record_trace(context: Dictionary, decision: Dictionary, outcome: String) -> void:
+	var entry := _dictionary(context.get("prompt_trace", {})).duplicate(true)
+	var remote_trace := _dictionary(decision.get("prompt_trace", {}))
+	entry.merge(remote_trace, true)
+	entry["provider"] = str(decision.get("provider", "local"))
+	entry["selected_action"] = str(decision.get("action", ""))
+	entry["selected_target"] = str(decision.get("target", ""))
+	entry["referenced_ids"] = _array(decision.get("referenced_ids", [])).duplicate(true)
+	entry["quality_guard"] = str(decision.get("quality_guard", ""))
+	entry["outcome"] = outcome
+	_trace_history.append(entry)
+	if _trace_history.size() > 64:
+		_trace_history = _trace_history.slice(_trace_history.size() - 64)
 
 
 func _dictionary(value: Variant) -> Dictionary:

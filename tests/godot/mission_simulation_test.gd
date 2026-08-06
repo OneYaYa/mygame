@@ -2,6 +2,7 @@ extends Node
 
 const SimulationScript: Script = preload("res://scripts/core/mission_simulation.gd")
 const LocalProviderScript: Script = preload("res://scripts/services/local_npc_provider.gd")
+const ContextCompilerScript: Script = preload("res://scripts/services/npc_context_compiler.gd")
 
 var _checks: int = 0
 var _failures: int = 0
@@ -9,10 +10,13 @@ var _failures: int = 0
 
 func _ready() -> void:
 	_test_initial_contract()
+	_test_context_compiler_protocol_and_trace()
 	_test_split_clues_and_local_boundary()
 	_test_local_language_and_ambiguity()
 	_test_randomized_evidence_and_social_memory()
+	_test_relationship_and_communication_pressure()
 	_test_clean_completion()
+	_test_emergency_route_and_oxygen_branch()
 	_test_illegal_actions_and_carry_slot()
 	_test_danger_confirmation_can_cancel()
 	_test_wrong_cable_costly_completion()
@@ -40,8 +44,8 @@ func _wrong_cable(simulation: MissionSimulation) -> String:
 	return ""
 
 
-func _valve_sequence(simulation: MissionSimulation) -> Array:
-	return (_scenario(simulation).get("valve_sequence", []) as Array).duplicate()
+func _coolant_targets(simulation: MissionSimulation) -> Array:
+	return (_scenario(simulation).get("coolant_required_targets", []) as Array).duplicate()
 
 
 func _test_initial_contract() -> void:
@@ -66,6 +70,36 @@ func _test_initial_contract() -> void:
 	_expect((state.get("operator_telemetry", []) as Array).size() >= 2, "snapshot exposes operator-only telemetry")
 
 
+func _test_context_compiler_protocol_and_trace() -> void:
+	var simulation: MissionSimulation = _new_simulation()
+	simulation.record_conversation("远端记录写着 4.2 欧，但你先别猜是哪根。", {"intent": "report", "mood": "focused"})
+	var history: Array[Dictionary] = []
+	for index: int in range(14):
+		history.append({"role": "player" if index % 2 == 0 else "npc", "content": "连续通讯 %d" % index})
+	var compiler: NpcContextCompiler = ContextCompilerScript.new() as NpcContextCompiler
+	var compiled := compiler.compile(
+		simulation.build_npc_context(),
+		simulation.snapshot(),
+		simulation.valid_actions(),
+		history,
+		{"player_name": "陈锋", "promises": ["我会保持通讯。"]},
+		"你现在看见什么？"
+	)
+	var encoded := JSON.stringify(compiled)
+	_expect(not encoded.contains("operator_telemetry"), "context compiler hard-filters operator telemetry")
+	var protocol: Dictionary = compiled.get("context_protocol", {}) as Dictionary
+	_expect_equal(int(protocol.get("protocol_version", 0)), 2, "context compiler emits versioned protocol")
+	_expect_equal((protocol.get("recent_dialogue", []) as Array).size(), 10, "recent dialogue obeys its own quota")
+	var beliefs: Array = protocol.get("known_beliefs", []) as Array
+	_expect(beliefs.any(func(item: Variant) -> bool: return item is Dictionary and str((item as Dictionary).get("truth_status", "")) == "unverified_claim"), "operator report remains an unverified NPC belief")
+	var memories: Array = protocol.get("relevant_memories", []) as Array
+	_expect(memories.any(func(item: Variant) -> bool: return item is Dictionary and str((item as Dictionary).get("memory_id", "")) == "memory:player_name"), "subjective memory keeps a stable source ID")
+	var trace: Dictionary = compiled.get("prompt_trace", {}) as Dictionary
+	_expect(not str(trace.get("trace_id", "")).is_empty(), "compiled prompt has a replay trace ID")
+	_expect(not (trace.get("partition_token_estimates", {}) as Dictionary).is_empty(), "trace records per-partition token estimates")
+	_expect(not (trace.get("dropped", []) as Array).is_empty(), "trace records quota drops")
+
+
 func _test_split_clues_and_local_boundary() -> void:
 	var simulation: MissionSimulation = _new_simulation()
 	_execute(simulation, "inspect", "telemetry_console")
@@ -73,12 +107,13 @@ func _test_split_clues_and_local_boundary() -> void:
 	var telemetry_text: String = JSON.stringify(state.get("operator_telemetry", []))
 	var required_reading := str(_scenario(simulation).get("required_reading", ""))
 	_expect(not required_reading.is_empty() and telemetry_text.contains(required_reading), "operator telemetry contains this run's power-side half clue")
-	_expect(telemetry_text.contains("来流") and telemetry_text.contains("回环"), "operator telemetry contains staged coolant diagnostics")
+	var coolant_target := str(_scenario(simulation).get("coolant_target_pressure", ""))
+	_expect(not coolant_target.is_empty() and telemetry_text.contains(coolant_target) and telemetry_text.contains("kPa"), "operator telemetry contains the coolant target pressure")
 	var npc_context: Dictionary = simulation.build_npc_context()
 	var npc_json: String = JSON.stringify(npc_context)
 	_expect(not npc_context.has("operator_telemetry"), "NPC context excludes operator telemetry field")
 	_expect(not npc_json.contains("本轮控制器需要"), "NPC context does not leak operator power truth")
-	_expect(not npc_json.contains("先建立来流"), "NPC context does not leak operator valve stages")
+	_expect(not npc_json.contains("必须调节到"), "NPC context does not leak the operator-only target pressure")
 	_expect(not str((npc_context.get("local_state", {}) as Dictionary).get("stress", "")).is_empty(), "NPC context exposes derived stress")
 
 	_execute(simulation, "take", "phase_fuse")
@@ -124,13 +159,22 @@ func _test_local_language_and_ambiguity() -> void:
 		_expect_equal(str(check_in.get("action", "missing")), "", "check-in question remains conversation")
 		_expect(not str(check_in.get("reply", "")).is_empty(), "check-in question receives a humane reply")
 		_expect(not str(check_in.get("reply", "")).contains("physical_state") and not str(check_in.get("reply", "")).contains("精细操作"), "check-in reply avoids schema and medical-report language")
+	var coolant_simulation: MissionSimulation = _new_simulation()
+	_execute(coolant_simulation, "move", "central_junction")
+	_execute(coolant_simulation, "move", "coolant_gallery")
+	_execute(coolant_simulation, "inspect", "valve_manifold")
+	var coolant_context := coolant_simulation.build_npc_context()
+	coolant_context["available_actions"] = coolant_simulation.valid_actions()
+	var pressure_command := provider.decide(coolant_context, "接入 I 阀")
+	_expect_equal(str(pressure_command.get("action", "")), "toggle", "pressure-language verb maps to regulator toggle")
+	_expect_equal(str(pressure_command.get("target", "")), "valve_i", "pressure-language command keeps the explicit regulator target")
 
 
 func _test_randomized_evidence_and_social_memory() -> void:
 	var simulation: MissionSimulation = _new_simulation()
 	var initial: Dictionary = simulation.snapshot()
 	var initial_json := JSON.stringify(initial)
-	_expect(not initial_json.contains("correct_cable") and not initial_json.contains("valve_sequence"), "public snapshot never exposes randomized answers")
+	_expect(not initial_json.contains("correct_cable") and not initial_json.contains("coolant_required_targets"), "public snapshot never exposes randomized answers")
 	var first_id := str(initial.get("scenario_id", ""))
 	var restarted := simulation.restart()
 	_expect(str(restarted.get("scenario_id", "")) != first_id, "restart generates a new incident signature")
@@ -144,6 +188,29 @@ func _test_randomized_evidence_and_social_memory() -> void:
 	_expect_equal(int(after_social.get("turn", -2)), before_turn, "conversation changes social state without consuming a facility turn")
 	var beliefs := after_social.get("npc_beliefs", {}) as Dictionary
 	_expect(not (beliefs.get("operator_claims", []) as Array).is_empty(), "operator clue becomes an NPC belief rather than world truth")
+	_expect(bool((after_social.get("flags", {}) as Dictionary).get("focused_scan_ready", false)), "reassurance prepares a focused field scan")
+
+
+func _test_relationship_and_communication_pressure() -> void:
+	var simulation: MissionSimulation = _new_simulation()
+	var oxygen_before := int((simulation.snapshot().get("resources", {}) as Dictionary).get("oxygen", 0))
+	for index: int in range(3):
+		simulation.record_conversation("再报告一次现场。", {"intent": "report", "mood": "focused"})
+	var pressured := simulation.snapshot()
+	_expect_equal(int((pressured.get("resources", {}) as Dictionary).get("oxygen", 0)), oxygen_before - 1, "three conversation turns consume one communication-cycle oxygen")
+	_expect_equal(int((pressured.get("npc_social", {}) as Dictionary).get("communication_cycles", 0)), 1, "communication cycle is recorded")
+	for index: int in range(4):
+		simulation.record_conversation("闭嘴，快点照做。", {"intent": "refuse", "mood": "afraid"})
+	_execute(simulation, "take", "phase_fuse")
+	_execute(simulation, "move", "central_junction")
+	_execute(simulation, "move", "power_bay")
+	_execute(simulation, "inspect", "cable_panel")
+	var blocked := simulation.propose("connect", _correct_cable(simulation))
+	_expect_equal(str(blocked.get("status", "")), "invalid", "low trust and high fear block dangerous work")
+	for index: int in range(3):
+		simulation.record_conversation("我在，慢一点，我们重新核对。", {"intent": "reassure", "mood": "focused"})
+	var restored := simulation.propose("connect", _correct_cable(simulation))
+	_expect_equal(str(restored.get("status", "")), "confirmation_required", "reassurance restores willingness to attempt dangerous work")
 
 
 func _test_clean_completion() -> void:
@@ -160,10 +227,7 @@ func _test_clean_completion() -> void:
 	_execute(simulation, "move", "central_junction")
 	_execute(simulation, "move", "coolant_gallery")
 	_execute(simulation, "inspect", "valve_manifold")
-	var sequence := _valve_sequence(simulation)
-	_execute(simulation, "toggle", str(sequence[0]))
-	_execute(simulation, "toggle", str(sequence[1]))
-	_confirm_action(simulation, "toggle", str(sequence[2]))
+	_perform_coolant_solution(simulation)
 	_execute(simulation, "use", "sealant_kit")
 	var after_puzzles: Dictionary = simulation.snapshot()
 	_expect_equal(str((after_puzzles.get("puzzles", {}) as Dictionary).get("coolant", "")), "solved", "coolant puzzle solved deterministically")
@@ -176,6 +240,33 @@ func _test_clean_completion() -> void:
 	_expect_equal(str(ending.get("outcome", "")), "success", "clean route reaches success ending")
 	_expect_equal(int(ending.get("mistakes", -1)), 0, "clean route records no mistakes")
 	_expect((simulation.valid_actions()).is_empty(), "terminal mission exposes no further actions")
+
+
+func _test_emergency_route_and_oxygen_branch() -> void:
+	var simulation: MissionSimulation = _new_simulation()
+	_execute(simulation, "inspect", "telemetry_console")
+	_execute(simulation, "move", "central_junction")
+	_execute(simulation, "take", "oxygen_canister")
+	var before_oxygen := int((simulation.snapshot().get("resources", {}) as Dictionary).get("oxygen", 0))
+	_execute(simulation, "use", "oxygen_canister")
+	_expect(int((simulation.snapshot().get("resources", {}) as Dictionary).get("oxygen", 0)) > before_oxygen, "optional oxygen route restores supply")
+	_execute(simulation, "take", "emergency_cell")
+	_execute(simulation, "move", "power_bay")
+	_execute(simulation, "inspect", "cable_panel")
+	_confirm_action(simulation, "use", "emergency_cell")
+	var bypassed := simulation.snapshot()
+	_expect_equal(str((bypassed.get("flags", {}) as Dictionary).get("power_route", "")), "emergency_bypass", "emergency cell commits a distinct power route")
+	_expect_equal(str((bypassed.get("puzzles", {}) as Dictionary).get("power", "")), "bypassed", "emergency route bypasses cable solution")
+	_execute(simulation, "take", "sealant_kit")
+	_execute(simulation, "move", "central_junction")
+	_execute(simulation, "move", "coolant_gallery")
+	_execute(simulation, "inspect", "valve_manifold")
+	_perform_coolant_solution(simulation)
+	_execute(simulation, "use", "sealant_kit")
+	_execute(simulation, "move", "central_junction")
+	_execute(simulation, "move", "escape_pod")
+	_execute(simulation, "use", "launch_console")
+	_expect_equal(str(simulation.snapshot().get("outcome", "")), "costly_success", "emergency route reaches a deliberate costly success")
 
 
 func _test_illegal_actions_and_carry_slot() -> void:
@@ -232,10 +323,7 @@ func _test_wrong_cable_costly_completion() -> void:
 	_execute(simulation, "move", "central_junction")
 	_execute(simulation, "move", "coolant_gallery")
 	_execute(simulation, "inspect", "valve_manifold")
-	var sequence := _valve_sequence(simulation)
-	_execute(simulation, "toggle", str(sequence[0]))
-	_execute(simulation, "toggle", str(sequence[1]))
-	_confirm_action(simulation, "toggle", str(sequence[2]))
+	_perform_coolant_solution(simulation)
 	_execute(simulation, "use", "sealant_kit")
 	_execute(simulation, "move", "central_junction")
 	_execute(simulation, "move", "escape_pod")
@@ -274,6 +362,19 @@ func _confirm_action(simulation: MissionSimulation, action_id: String, target: S
 	var result: Dictionary = simulation.confirm(proposal_id, true)
 	_expect_equal(str(result.get("status", "")), "executed", "confirmed action executes %s:%s" % [action_id, target])
 	return result
+
+
+func _perform_coolant_solution(simulation: MissionSimulation) -> void:
+	var required := _coolant_targets(simulation)
+	_expect_equal(required.size(), 2, "coolant pressure puzzle has a two-regulator solution")
+	for value: Variant in required:
+		var target := str(value)
+		var proposal := simulation.propose("toggle", target)
+		if str(proposal.get("status", "")) == "confirmation_required":
+			var result := simulation.confirm(int(proposal.get("proposal_id", -1)), true)
+			_expect_equal(str(result.get("status", "")), "executed", "confirmed pressure regulator executes: %s" % target)
+		else:
+			_expect_equal(str(proposal.get("status", "")), "executed", "pressure regulator executes: %s" % target)
 
 
 func _expect(condition: bool, label: String) -> void:

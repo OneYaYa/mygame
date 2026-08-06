@@ -2,6 +2,7 @@ extends Node
 
 
 const DecisionServiceClass := preload("res://scripts/services/npc_decision_service.gd")
+const ContextCompilerClass := preload("res://scripts/services/npc_context_compiler.gd")
 const ProceduralAudioClass := preload("res://scripts/services/procedural_audio.gd")
 const CORE_SCRIPT_PATH := "res://scripts/core/mission_simulation.gd"
 
@@ -9,6 +10,7 @@ const CORE_SCRIPT_PATH := "res://scripts/core/mission_simulation.gd"
 
 var _simulation: RefCounted
 var _decision_service: NpcDecisionService
+var _context_compiler: NpcContextCompiler
 var _audio: ProceduralAudio
 var _snapshot: Dictionary = {}
 var _last_confirmation_id := -1
@@ -18,6 +20,7 @@ var _last_player_message := ""
 
 
 func _ready() -> void:
+	_context_compiler = ContextCompilerClass.new() as NpcContextCompiler
 	_audio = ProceduralAudioClass.new()
 	_audio.name = "ProceduralAudio"
 	add_child(_audio)
@@ -126,58 +129,27 @@ func _on_message_submitted(text: String) -> void:
 	ui.append_dialogue("OPERATOR", text, "player")
 	ui.set_thinking(true)
 	ui.show_candidate("")
-	var context := _build_npc_context()
+	var context := _build_npc_context(text)
 	_decision_service.request_decision(context, text)
 	_last_player_message = text
 	_remember_player_facts(text)
 	_record_conversation("player", text)
 
 
-func _build_npc_context() -> Dictionary:
+func _build_npc_context(player_text: String = "") -> Dictionary:
 	var context: Dictionary = {}
 	if _simulation != null and _simulation.has_method("build_npc_context"):
 		var value: Variant = _simulation.call("build_npc_context")
 		if value is Dictionary:
 			context = (value as Dictionary).duplicate(true)
-	var npc: Dictionary = _dictionary(context.get("npc", _snapshot.get("npc", {})))
-	var local_state: Dictionary = _dictionary(context.get("local_state", context.get("state", {}))).duplicate(true)
-	if local_state.is_empty():
-		# This fallback remains a local projection. It deliberately excludes global
-		# flags, puzzles, other rooms and the operator-only power telemetry.
-		local_state = {
-			"room_id": str(_snapshot.get("room_id", "")),
-			"room_name": str(_snapshot.get("room_name", _snapshot.get("room_id", "未知舱段"))),
-			"observation": str(_snapshot.get("observation_summary", "等待局部观察。")),
-			"visible_items": _array(_snapshot.get("room_items", [])).duplicate(true),
-			"carried_item": str(_snapshot.get("carried_item", "")),
-			"oxygen": float(_dictionary(_snapshot.get("resources", {})).get("oxygen", 0.0)),
-		}
-	var visible: Array = []
-	var local_observation := str(local_state.get("observation", "")).strip_edges()
-	if not local_observation.is_empty():
-		visible.append(local_observation)
-	for item: Variant in _array(local_state.get("visible_items", [])):
-		visible.append(str(item))
-	var observation: Dictionary = _dictionary(context.get("observation", {}))
-	if observation.is_empty():
-		observation = {
-			"room_id": str(local_state.get("room_id", "")),
-			"room_name": str(local_state.get("room_name", local_state.get("room_id", "未知舱段"))),
-			"visible": visible,
-			"summary": local_observation if not local_observation.is_empty() else "等待局部观察。",
-		}
-	context["npc"] = npc
-	context["state"] = local_state
-	context["snapshot"] = local_state
-	context["observation"] = observation
-	context["visible_observations"] = visible
-	context["available_actions"] = _valid_actions()
-	context["actions"] = context["available_actions"]
-	context["history"] = _conversation_history.slice(maxi(0, _conversation_history.size() - 12)).duplicate(true)
-	context["conversation_memory"] = _conversation_facts.duplicate(true)
-	# Operator-only telemetry is a player clue layer and must never enter the NPC prompt.
-	context.erase("operator_telemetry")
-	return context
+	return _context_compiler.compile(
+		context,
+		_snapshot,
+		_valid_actions(),
+		_conversation_history,
+		_conversation_facts,
+		player_text
+	)
 
 
 func _on_decision_ready(decision: Dictionary) -> void:
@@ -191,6 +163,8 @@ func _on_decision_ready(decision: Dictionary) -> void:
 	var reply := str(decision.get("reply", "通讯中断。"))
 	ui.append_dialogue(npc_name, reply, "npc")
 	_record_conversation("npc", reply)
+	var current_actions := _valid_actions()
+	ui.set_actions(current_actions)
 	var candidate_valid := bool(decision.get("candidate_valid", false))
 	ui.show_candidate(
 		str(decision.get("action", "")) if candidate_valid else "",
@@ -200,7 +174,7 @@ func _on_decision_ready(decision: Dictionary) -> void:
 	var view_npc := npc.duplicate(true)
 	view_npc["mood"] = str(decision.get("mood", view_npc.get("mood", "focused")))
 	view_snapshot["npc"] = view_npc
-	view_snapshot["available_actions"] = _valid_actions()
+	view_snapshot["available_actions"] = current_actions
 	ui.render_snapshot(view_snapshot)
 	if candidate_valid:
 		_audio.play_cue("candidate")
@@ -312,17 +286,17 @@ func _placeholder_snapshot() -> Dictionary:
 		"npc": {"name": "林岚", "room_id": "relay", "mood": "focused", "status": "STANDBY"},
 		"objective": "等待本地 MissionSimulation；只读 UI 已就绪。",
 		"rooms": [
-			{"id": "relay", "label": "中继舱", "code": "RLY-01", "status": "safe"},
-			{"id": "junction", "label": "联络井", "code": "JNC-02", "status": "unknown"},
-			{"id": "workshop", "label": "维修间", "code": "WRK-03", "status": "unknown"},
-			{"id": "life_support", "label": "生命支持", "code": "LFS-04", "status": "offline"},
-			{"id": "escape", "label": "逃生舱", "code": "ESC-05", "status": "locked"},
+			{"id": "relay_control", "label": "中继控制室", "code": "RLY-01", "status": "safe"},
+			{"id": "central_junction", "label": "中央交汇舱", "code": "JNC-02", "status": "unknown"},
+			{"id": "power_bay", "label": "主电网舱", "code": "PWR-03", "status": "offline"},
+			{"id": "coolant_gallery", "label": "冷却回廊", "code": "CLT-04", "status": "danger"},
+			{"id": "escape_pod", "label": "逃生舱", "code": "ESC-05", "status": "locked"},
 		],
 		"links": [
-			{"from": "relay", "to": "junction", "state": "open"},
-			{"from": "junction", "to": "workshop", "state": "unknown"},
-			{"from": "workshop", "to": "life_support", "state": "locked"},
-			{"from": "workshop", "to": "escape", "state": "unknown"},
+			{"from": "central_junction", "to": "relay_control", "state": "open"},
+			{"from": "central_junction", "to": "power_bay", "state": "open"},
+			{"from": "central_junction", "to": "coolant_gallery", "state": "open"},
+			{"from": "central_junction", "to": "escape_pod", "state": "locked"},
 		],
 	}
 

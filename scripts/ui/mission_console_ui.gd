@@ -29,6 +29,7 @@ const COLOR_GREEN := Color("68b596")
 var _snapshot: Dictionary = {}
 var _actions: Array[Dictionary] = []
 var _log_entries: Array[Dictionary] = []
+var _system_entries: Array[Dictionary] = []
 var _pending_proposal: Dictionary = {}
 var _pending_candidate: Dictionary = {}
 var _connection_status := "local"
@@ -39,6 +40,7 @@ var _settings: Dictionary = {
 	"muted": false,
 	"reduced_motion": false,
 	"online_enabled": true,
+	"quick_safe_actions": true,
 }
 
 var _mission_label: Label
@@ -59,8 +61,14 @@ var _npc_state: Label
 var _npc_observation: RichTextLabel
 var _dialogue_log: RichTextLabel
 var _candidate_label: Label
-var _quick_box: VBoxContainer
+var _quick_box: GridContainer
 var _telemetry_box: VBoxContainer
+var _local_clue_box: VBoxContainer
+var _workbench_remote: Label
+var _workbench_local: Label
+var _workbench_summary: Label
+var _pinned_remote := ""
+var _pinned_local := ""
 var _candidate_panel: PanelContainer
 var _candidate_action_label: Label
 var _candidate_target_label: Label
@@ -88,6 +96,7 @@ var _volume_slider: HSlider
 var _mute_check: CheckButton
 var _motion_check: CheckButton
 var _online_check: CheckButton
+var _quick_action_check: CheckButton
 
 
 func _ready() -> void:
@@ -136,7 +145,8 @@ func render_snapshot(snapshot: Dictionary) -> void:
 	var social: Dictionary = _dictionary(snapshot.get("npc_social", {}))
 	var trust := int(social.get("trust", 50))
 	var link_state := "信赖" if trust >= 60 else "疏离" if trust < 35 else "协作"
-	_npc_state.text = "%s  ·  %s  ·  %s" % [_mood_label(mood), npc_status.to_upper(), link_state]
+	var comm_cycles := int(social.get("communication_cycles", 0))
+	_npc_state.text = "%s  ·  %s  ·  %s  ·  通讯周期 %d" % [_mood_label(mood), npc_status.to_upper(), link_state, comm_cycles]
 	_npc_state.add_theme_color_override("font_color", _mood_color(mood))
 	_refresh_portrait()
 	_npc_observation.text = _observation_text(snapshot, npc)
@@ -151,8 +161,9 @@ func render_snapshot(snapshot: Dictionary) -> void:
 	var max_turns := int(snapshot.get("max_turns", snapshot.get("turn_limit", 0)))
 	_clock_label.text = "TURN %02d%s" % [turn, " / %02d" % max_turns if max_turns > 0 else ""]
 	_mission_label.text = str(snapshot.get("mission_name", snapshot.get("mission_title", snapshot.get("mission_id", "BLINDSPOT RELAY")))).to_upper()
-	_objective_text.text = _objective_body(snapshot)
+	_render_objective_panel()
 	_render_operator_telemetry(snapshot)
+	_render_local_evidence(snapshot)
 
 	var outcome := str(snapshot.get("outcome", ""))
 	if bool(snapshot.get("is_terminal", false)) and not outcome.is_empty():
@@ -181,6 +192,9 @@ func append_dialogue(speaker: String, text: String, kind: String = "npc") -> voi
 	var clean := text.strip_edges()
 	if clean.is_empty():
 		return
+	if speaker.strip_edges().to_upper() == "SYSTEM":
+		append_system(clean, kind)
+		return
 	_log_entries.append({
 		"speaker": speaker,
 		"text": clean,
@@ -193,12 +207,19 @@ func append_dialogue(speaker: String, text: String, kind: String = "npc") -> voi
 
 
 func append_system(text: String, severity: String = "info") -> void:
-	append_dialogue("SYSTEM", text, severity)
+	_append_system_entry({
+		"speaker": "SYSTEM",
+		"text": text,
+		"kind": severity,
+		"time": Time.get_time_string_from_system(),
+	})
 
 
 func clear_log() -> void:
 	_log_entries.clear()
+	_system_entries.clear()
 	_dialogue_log.clear()
+	_render_objective_panel()
 
 
 func set_connection_status(status: String, detail: String = "") -> void:
@@ -252,9 +273,9 @@ func show_candidate(action_id: String, target: String = "") -> void:
 	_candidate_note.text = (
 		"高风险请求。点击后由本地核心校验并立即执行，不再重复弹窗。"
 		if dangerous
-		else "林岚提出了这一项行动请求。只有你授权后，本地核心才会尝试执行。"
+		else "安全请求已通过本地校验。点击按钮或在输入框留空时按 Enter 即可授权。"
 	)
-	_authorize_button.text = "确认风险并执行" if dangerous else "授权这一步"
+	_authorize_button.text = "确认风险并执行" if dangerous else "授权这一步  [Enter]"
 	_candidate_label.text = "林岚正在等你决定是否授权这一项行动。"
 	_candidate_label.add_theme_color_override("font_color", COLOR_AMBER)
 	_status_line.text = "收到一项行动请求；未授权前不会改变世界状态"
@@ -306,11 +327,13 @@ func show_outcome(outcome: String, snapshot: Dictionary = {}) -> void:
 	var resources: Dictionary = _dictionary(snapshot.get("resources", {}))
 	var debrief: Dictionary = _dictionary(snapshot.get("debrief", {}))
 	_outcome_dialog.title = str(debrief.get("title", title))
-	_outcome_dialog.dialog_text = "%s\n\nOUTCOME: %s\nSCENARIO: %s\nTURN: %s\nO₂: %s\nPOWER: %s\nMISTAKES: %s\n关系：%s\n\n可从右上角重新开始新的事故变体。" % [
+	_outcome_dialog.dialog_text = "%s\n\nOUTCOME: %s\nSCENARIO: %s\nROUTE: %s\nTURN: %s\nCOMM CYCLES: %s\nO₂: %s\nPOWER: %s\nMISTAKES: %s\n关系：%s\n\n可从右上角重新开始新的事故变体。" % [
 		str(debrief.get("body", "任务记录已封存。")),
 		outcome.to_upper(),
 		str(debrief.get("scenario_id", snapshot.get("scenario_id", "--"))),
+		str(debrief.get("power_route", "--")).to_upper(),
 		str(snapshot.get("turn", "--")),
+		str(debrief.get("communication_cycles", 0)),
 		str(resources.get("oxygen", "--")),
 		str(resources.get("power", "--")),
 		str(snapshot.get("mistakes", 0)),
@@ -322,6 +345,9 @@ func show_outcome(outcome: String, snapshot: Dictionary = {}) -> void:
 func reset_console() -> void:
 	_pending_proposal.clear()
 	_pending_candidate.clear()
+	_pinned_remote = ""
+	_pinned_local = ""
+	_update_workbench()
 	if _danger_dialog.visible:
 		_danger_dialog.hide()
 	if _outcome_dialog.visible:
@@ -448,11 +474,12 @@ func _build_body(parent: VBoxContainer) -> void:
 
 
 func _build_left_column(parent: HBoxContainer) -> void:
-	var box := _section(parent, "FACILITY / 设施遥测", Vector2(330, 0))
+	var box := _section(parent, "FACILITY / 设施遥测", Vector2(400, 0))
 	_left_panel = box.get_parent().get_parent() as Control
 	_facility_map = FacilityMapClass.new()
-	_facility_map.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_facility_map.size_flags_vertical = Control.SIZE_FILL
 	box.add_child(_facility_map)
+	_facility_map.custom_minimum_size.y = 250.0
 	var rule := HSeparator.new()
 	box.add_child(rule)
 	var resource_title := _small_header("RESOURCE BUDGET / 资源")
@@ -478,9 +505,11 @@ func _build_left_column(parent: HBoxContainer) -> void:
 	facts.add_child(_carried_value)
 	_objective_text = RichTextLabel.new()
 	_objective_text.bbcode_enabled = true
-	_objective_text.custom_minimum_size.y = 72
+	_objective_text.custom_minimum_size.y = 140
 	_objective_text.fit_content = false
 	_objective_text.scroll_active = true
+	_objective_text.selection_enabled = true
+	_objective_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_objective_text.text = "[color=#789398]等待任务核心投影目标……[/color]"
 	box.add_child(_objective_text)
 
@@ -489,11 +518,11 @@ func _build_center_column(parent: HBoxContainer) -> void:
 	var box := _section(parent, "REMOTE CHANNEL / 林岚", Vector2(0, 0))
 	(box.get_parent().get_parent() as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var upper := HBoxContainer.new()
-	upper.custom_minimum_size.y = 218
+	upper.custom_minimum_size.y = 250
 	upper.add_theme_constant_override("separation", 10)
 	box.add_child(upper)
 	_portrait = PortraitClass.new()
-	_portrait.custom_minimum_size = Vector2(240, 218)
+	_portrait.custom_minimum_size = Vector2(220, 250)
 	upper.add_child(_portrait)
 	var identity := VBoxContainer.new()
 	identity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -513,6 +542,7 @@ func _build_center_column(parent: HBoxContainer) -> void:
 	_npc_observation.bbcode_enabled = true
 	_npc_observation.fit_content = false
 	_npc_observation.scroll_active = true
+	_npc_observation.custom_minimum_size.y = 126
 	_npc_observation.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_npc_observation.text = "[color=#789398]OBSERVATION[/color]\n等待林岚的局部观察。"
 	identity.add_child(_npc_observation)
@@ -537,8 +567,10 @@ func _build_right_column(parent: HBoxContainer) -> void:
 	var box := _section(parent, "OPERATOR CHANNEL / 调度员", Vector2(312, 0))
 	_right_panel = box.get_parent().get_parent() as Control
 	box.add_child(_small_header("CHECK IN / 先和他说话"))
-	_quick_box = VBoxContainer.new()
-	_quick_box.add_theme_constant_override("separation", 4)
+	_quick_box = GridContainer.new()
+	_quick_box.columns = 2
+	_quick_box.add_theme_constant_override("h_separation", 4)
+	_quick_box.add_theme_constant_override("v_separation", 4)
 	box.add_child(_quick_box)
 	var quick_prompts: Array[Dictionary] = [
 		{"label": "尝试询问他的状态", "message": "林岚，你现在感觉怎么样？哪里最难受？"},
@@ -554,6 +586,7 @@ func _build_right_column(parent: HBoxContainer) -> void:
 		button.text = "%02d  %s" % [index + 1, label]
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.set_meta("quick_message", message)
 		button.pressed.connect(_submit_quick.bind(message))
 		_quick_box.add_child(button)
@@ -564,8 +597,13 @@ func _build_right_column(parent: HBoxContainer) -> void:
 	_telemetry_box.add_theme_constant_override("separation", 3)
 	_telemetry_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(_telemetry_box)
+	box.add_child(_small_header("LOCAL EVIDENCE / 林岚已确认线索"))
+	_local_clue_box = VBoxContainer.new()
+	_local_clue_box.add_theme_constant_override("separation", 3)
+	box.add_child(_local_clue_box)
+	_build_clue_workbench(box)
 	var privacy := Label.new()
-	privacy.text = "此处数据不会发送给林岚。"
+	privacy.text = "点击两侧线索固定到工作台；远端数据不会发送给林岚。"
 	privacy.add_theme_font_size_override("font_size", 10)
 	privacy.add_theme_color_override("font_color", Color(COLOR_MUTED, 0.78))
 	box.add_child(privacy)
@@ -573,6 +611,40 @@ func _build_right_column(parent: HBoxContainer) -> void:
 	box.add_child(candidate_separator)
 	box.add_child(_small_header("REQUEST / 单步授权"))
 	_build_candidate_card(box)
+
+
+func _build_clue_workbench(parent: VBoxContainer) -> void:
+	parent.add_child(_small_header("CLUE WORKBENCH / 线索工作台"))
+	var panel := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("09161c")
+	style.border_color = Color("3e7074")
+	style.set_border_width_all(1)
+	panel.add_theme_stylebox_override("panel", style)
+	parent.add_child(panel)
+	var margin := _margin(7, 5)
+	panel.add_child(margin)
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 3)
+	margin.add_child(content)
+	_workbench_remote = Label.new()
+	_workbench_remote.text = "REMOTE  //  点击一条调度遥测"
+	_workbench_remote.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_workbench_remote.add_theme_color_override("font_color", COLOR_CYAN)
+	_workbench_remote.add_theme_font_size_override("font_size", 10)
+	content.add_child(_workbench_remote)
+	_workbench_local = Label.new()
+	_workbench_local.text = "LOCAL   //  点击一条现场线索"
+	_workbench_local.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_workbench_local.add_theme_color_override("font_color", COLOR_AMBER)
+	_workbench_local.add_theme_font_size_override("font_size", 10)
+	content.add_child(_workbench_local)
+	_workbench_summary = Label.new()
+	_workbench_summary.text = "等待拼合两侧证据。"
+	_workbench_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_workbench_summary.add_theme_color_override("font_color", COLOR_MUTED)
+	_workbench_summary.add_theme_font_size_override("font_size", 10)
+	content.add_child(_workbench_summary)
 
 
 func _build_candidate_card(parent: VBoxContainer) -> void:
@@ -697,10 +769,11 @@ func _build_dialogs() -> void:
 func _build_settings_dialog() -> void:
 	_settings_dialog = Window.new()
 	_settings_dialog.title = "控制台设置 / SETTINGS"
-	_settings_dialog.size = Vector2i(500, 410)
-	_settings_dialog.min_size = Vector2i(420, 360)
+	_settings_dialog.size = Vector2i(520, 460)
+	_settings_dialog.min_size = Vector2i(440, 410)
 	_settings_dialog.transient = true
 	_settings_dialog.exclusive = false
+	_settings_dialog.visible = false
 	_settings_dialog.close_requested.connect(_settings_dialog.hide)
 	add_child(_settings_dialog)
 	var margin := MarginContainer.new()
@@ -746,6 +819,11 @@ func _build_settings_dialog() -> void:
 	_online_check.set_pressed_no_signal(bool(_settings.get("online_enabled", true)))
 	_online_check.toggled.connect(_on_settings_control_changed.unbind(1))
 	content.add_child(_online_check)
+	_quick_action_check = CheckButton.new()
+	_quick_action_check.text = "安全候选可按 Enter 快速授权（危险动作仍需明确确认）"
+	_quick_action_check.set_pressed_no_signal(bool(_settings.get("quick_safe_actions", true)))
+	_quick_action_check.toggled.connect(_on_settings_control_changed.unbind(1))
+	content.add_child(_quick_action_check)
 	var close_button := Button.new()
 	close_button.text = "保存并返回控制台"
 	close_button.pressed.connect(_settings_dialog.hide)
@@ -869,15 +947,48 @@ func _observation_text(snapshot: Dictionary, npc: Dictionary) -> String:
 
 func _objective_body(snapshot: Dictionary) -> String:
 	var objective := str(snapshot.get("objective", snapshot.get("current_objective", "抵达逃生舱；交换信息后再确认行动。")))
-	var last_value: Variant = snapshot.get("last_event", "")
-	var last_event := str((last_value as Dictionary).get("text", "")) if last_value is Dictionary else str(last_value)
 	var result := "[color=#789398]OBJECTIVE[/color]\n%s" % _escape_bbcode(objective)
-	if not last_event.is_empty():
-		result += "\n[color=#d3a354]LAST[/color] %s" % _escape_bbcode(last_event)
 	var hint := _context_hint(snapshot)
 	if not hint.is_empty():
 		result += "\n[color=#62b9b3]HINT[/color] %s" % _escape_bbcode(hint)
 	return result
+
+
+func _render_objective_panel() -> void:
+	if not is_instance_valid(_objective_text):
+		return
+	var result := _objective_body(_snapshot)
+	if not _system_entries.is_empty():
+		result += "\n\n[color=#789398]SYSTEM FEED / 系统事件[/color]"
+		# Keep the panel glanceable. Full deduplicated history remains in memory,
+		# while the left rail behaves like a live status display for the latest event.
+		var start := maxi(0, _system_entries.size() - 1)
+		for index: int in range(start, _system_entries.size()):
+			var entry: Dictionary = _system_entries[index]
+			var kind := str(entry.get("kind", "info"))
+			var color := _log_color(kind).to_html(false)
+			var timestamp := _escape_bbcode(str(entry.get("time", "--:--")))
+			var message := _escape_bbcode(str(entry.get("text", "")).strip_edges().left(260))
+			result += "\n[color=#526d73]%s[/color] [color=%s][b]SYSTEM[/b][/color]  %s" % [timestamp, color, message]
+	_objective_text.text = result
+
+
+func _append_system_entry(entry: Dictionary) -> void:
+	var clean := str(entry.get("text", "")).strip_edges()
+	if clean.is_empty():
+		return
+	var source_id := str(entry.get("source_id", ""))
+	if not source_id.is_empty():
+		for existing: Dictionary in _system_entries:
+			if str(existing.get("source_id", "")) == source_id:
+				return
+	var stored := entry.duplicate(true)
+	stored["speaker"] = "SYSTEM"
+	stored["text"] = clean
+	_system_entries.append(stored)
+	if _system_entries.size() > 40:
+		_system_entries = _system_entries.slice(_system_entries.size() - 40)
+	_render_objective_panel()
 
 
 func _context_hint(snapshot: Dictionary) -> String:
@@ -903,19 +1014,25 @@ func _ingest_snapshot_log(snapshot: Dictionary) -> void:
 	var existing_ids: Dictionary = {}
 	for entry: Dictionary in _log_entries:
 		existing_ids[str(entry.get("source_id", ""))] = true
+	for entry: Dictionary in _system_entries:
+		existing_ids[str(entry.get("source_id", ""))] = true
 	for index: int in range(log.size()):
 		var value: Variant = log[index]
 		var entry: Dictionary = value as Dictionary if value is Dictionary else {"text": str(value)}
 		var source_id := str(entry.get("id", "core:%s:%s" % [entry.get("turn", 0), index]))
 		if existing_ids.has(source_id):
 			continue
-		_log_entries.append({
+		var normalized := {
 			"source_id": source_id,
 			"speaker": str(entry.get("speaker", "SYSTEM")),
 			"text": str(entry.get("text", entry.get("message", ""))),
 			"kind": str(entry.get("kind", entry.get("type", "info"))),
 			"time": str(entry.get("time", "T%02d" % int(snapshot.get("turn", 0)))),
-		})
+		}
+		if str(normalized.get("speaker", "SYSTEM")).to_upper() == "SYSTEM":
+			_append_system_entry(normalized)
+		else:
+			_log_entries.append(normalized)
 	if _log_entries.size() > 100:
 		_log_entries = _log_entries.slice(_log_entries.size() - 100)
 	_render_log()
@@ -924,6 +1041,8 @@ func _ingest_snapshot_log(snapshot: Dictionary) -> void:
 func _render_log() -> void:
 	_dialogue_log.clear()
 	for entry: Dictionary in _log_entries:
+		if str(entry.get("speaker", "")).to_upper() == "SYSTEM":
+			continue
 		var kind := str(entry.get("kind", "info"))
 		var color := _log_color(kind)
 		var speaker := _escape_bbcode(str(entry.get("speaker", "SYSTEM")))
@@ -951,12 +1070,81 @@ func _render_operator_telemetry(snapshot: Dictionary) -> void:
 		var line := str(raw).strip_edges()
 		if line.is_empty():
 			continue
-		var label := Label.new()
-		label.text = "◆  %s" % line
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.add_theme_color_override("font_color", COLOR_CYAN)
-		label.add_theme_font_size_override("font_size", 11)
-		_telemetry_box.add_child(label)
+		var button := Button.new()
+		button.text = "◆  %s" % line
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.add_theme_color_override("font_color", COLOR_CYAN)
+		button.add_theme_font_size_override("font_size", 11)
+		button.tooltip_text = "固定到线索工作台"
+		button.pressed.connect(_pin_remote_clue.bind(line))
+		_telemetry_box.add_child(button)
+	_update_workbench()
+
+
+func _render_local_evidence(snapshot: Dictionary) -> void:
+	if not is_instance_valid(_local_clue_box):
+		return
+	for child: Node in _local_clue_box.get_children():
+		child.queue_free()
+	var evidence: Dictionary = _dictionary(snapshot.get("evidence", {}))
+	var added := 0
+	for key: String in ["power_local", "coolant_local"]:
+		var line := str(evidence.get(key, "")).strip_edges()
+		if line.is_empty() or line.begins_with("等待"):
+			continue
+		var button := Button.new()
+		button.text = "◇  %s" % line
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.add_theme_color_override("font_color", COLOR_AMBER)
+		button.add_theme_font_size_override("font_size", 10)
+		button.tooltip_text = "固定到线索工作台"
+		button.pressed.connect(_pin_local_clue.bind(line))
+		_local_clue_box.add_child(button)
+		added += 1
+	if added == 0:
+		var waiting := Label.new()
+		waiting.text = "◇  让林岚检查现场设备后，可固定他的读数。"
+		waiting.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		waiting.add_theme_color_override("font_color", COLOR_MUTED)
+		waiting.add_theme_font_size_override("font_size", 10)
+		_local_clue_box.add_child(waiting)
+	_update_workbench()
+
+
+func _pin_remote_clue(line: String) -> void:
+	_pinned_remote = line.strip_edges()
+	_update_workbench()
+
+
+func _pin_local_clue(line: String) -> void:
+	_pinned_local = line.strip_edges()
+	_update_workbench()
+
+
+func _update_workbench() -> void:
+	if not is_instance_valid(_workbench_remote) or not is_instance_valid(_workbench_local) or not is_instance_valid(_workbench_summary):
+		return
+	_workbench_remote.text = "REMOTE  //  %s" % (_pinned_remote if not _pinned_remote.is_empty() else "点击一条调度遥测")
+	_workbench_local.text = "LOCAL   //  %s" % (_pinned_local if not _pinned_local.is_empty() else "点击一条现场线索")
+	if _pinned_remote.is_empty() or _pinned_local.is_empty():
+		_workbench_summary.text = "等待拼合两侧证据。"
+		_workbench_summary.add_theme_color_override("font_color", COLOR_MUTED)
+		return
+	var remote_power := _pinned_remote.contains("PWR-03") or _pinned_remote.contains("闭环")
+	var local_power := _pinned_local.contains("接头") or _pinned_local.contains("Ω")
+	var remote_coolant := _pinned_remote.contains("CLT-04") or _pinned_remote.contains("目标") and _pinned_remote.contains("kPa")
+	var local_coolant := _pinned_local.contains("阀铭牌") or _pinned_local.contains("kPa")
+	if remote_power and local_power:
+		_workbench_summary.text = "同域证据已对齐：用远端所需闭环读数，在现场三只接头中寻找相同读数。"
+		_workbench_summary.add_theme_color_override("font_color", COLOR_GREEN)
+	elif remote_coolant and local_coolant:
+		_workbench_summary.text = "同域证据已对齐：从当前压力出发，组合现场增减量，使结果等于远端目标压力。"
+		_workbench_summary.add_theme_color_override("font_color", COLOR_GREEN)
+	else:
+		_workbench_summary.text = "这两条证据来自不同系统；换一条线索再进行拼合。"
+		_workbench_summary.add_theme_color_override("font_color", COLOR_RED)
 
 
 func _resolve_candidate(action_id: String, target: String) -> Dictionary:
@@ -1028,6 +1216,8 @@ func _submit_message(text: String) -> void:
 		return
 	var clean := text.strip_edges().left(500)
 	if clean.is_empty():
+		if bool(_settings.get("quick_safe_actions", true)) and not _pending_candidate.is_empty() and not bool(_pending_candidate.get("dangerous", _pending_candidate.get("requires_confirmation", false))):
+			_authorize_candidate()
 		return
 	_message_input.clear()
 	message_submitted.emit(clean)
@@ -1097,6 +1287,7 @@ func _refresh_portrait() -> void:
 	state["mistakes"] = int(_snapshot.get("mistakes", 0))
 	state["turn"] = int(_snapshot.get("turn", 0))
 	state["flags"] = _dictionary(_snapshot.get("flags", {})).duplicate(true)
+	state["npc_social"] = _dictionary(_snapshot.get("npc_social", {})).duplicate(true)
 	state["thinking"] = _thinking
 	state["candidate_pending"] = not _pending_candidate.is_empty()
 	state["pending_confirmation"] = (
@@ -1198,6 +1389,7 @@ func _on_settings_control_changed() -> void:
 	_settings["muted"] = bool(_mute_check.button_pressed)
 	_settings["reduced_motion"] = bool(_motion_check.button_pressed)
 	_settings["online_enabled"] = bool(_online_check.button_pressed)
+	_settings["quick_safe_actions"] = bool(_quick_action_check.button_pressed)
 	_save_settings()
 	_apply_settings(true)
 
@@ -1233,9 +1425,9 @@ func _apply_responsive_layout() -> void:
 	if not is_instance_valid(_left_panel) or not is_instance_valid(_right_panel) or not is_instance_valid(_portrait):
 		return
 	var compact := size.x < 1180.0
-	_left_panel.custom_minimum_size.x = 258.0 if compact else 330.0
+	_left_panel.custom_minimum_size.x = 310.0 if compact else 400.0
 	_right_panel.custom_minimum_size.x = 270.0 if compact else 312.0
-	_portrait.custom_minimum_size.x = 190.0 if compact else 240.0
+	_portrait.custom_minimum_size.x = 175.0 if compact else 220.0
 	if is_instance_valid(_settings_button):
 		_settings_button.text = "⚙" if size.x < 1080.0 else "⚙  SETTINGS"
 

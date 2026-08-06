@@ -7,13 +7,13 @@ signal confirmation_required(proposal: Dictionary)
 signal mission_ended(outcome: String, state_snapshot: Dictionary)
 
 const DEFAULT_MISSION_PATH: String = "res://data/mission.json"
+const PowerPuzzle := preload("res://scripts/core/puzzles/power_routing_puzzle.gd")
+const CoolantPuzzle := preload("res://scripts/core/puzzles/coolant_pressure_puzzle.gd")
 const EXPECTED_ACTION_IDS: PackedStringArray = [
 	"move", "inspect", "take", "drop", "connect", "toggle", "use", "wait"
 ]
-const CABLE_TARGETS: PackedStringArray = ["blue_cable", "red_cable", "yellow_cable"]
-const VALVE_TARGETS: PackedStringArray = ["valve_i", "valve_b", "valve_p"]
-const VALVE_ROLES: PackedStringArray = ["intake", "bypass", "purge"]
-const CABLE_READINGS: PackedStringArray = ["4.2 Ω", "6.8 Ω", "2.4 Ω"]
+const CABLE_TARGETS: PackedStringArray = PowerPuzzle.TARGETS
+const VALVE_TARGETS: PackedStringArray = CoolantPuzzle.TARGETS
 
 var _mission_path: String = DEFAULT_MISSION_PATH
 var _mission_data: Dictionary = {}
@@ -149,16 +149,23 @@ func valid_actions() -> Array[Dictionary]:
 
 	if room_id == "power_bay" and bool(flags.get("power_panel_inspected", false)) and not bool(flags.get("grid_online", false)) and not bool(flags.get("phase_cable_connected", false)):
 		for cable_id: String in CABLE_TARGETS:
-			_append_action(actions, "connect", cable_id, "连接%s" % _target_label(cable_id), true)
+			_append_action(actions, "connect", cable_id, "连接%s" % _target_label(cable_id), true, _npc_can_attempt_dangerous(), "林岚现在过于恐惧，先稳定通讯再让他接触带电线路。")
 
 	if room_id == "coolant_gallery" and bool(flags.get("manifold_inspected", false)) and not bool(flags.get("valves_aligned", false)):
 		for valve_id: String in VALVE_TARGETS:
-			_append_action(actions, "toggle", valve_id, "切换%s" % _target_label(valve_id), _valve_role(valve_id) == "purge")
+			var vents_oxygen := CoolantPuzzle.is_vent(_state.get("scenario", {}) as Dictionary, valve_id)
+			var active := bool((flags.get("valve_states", {}) as Dictionary).get(valve_id, false))
+			var valve_label := "%s%s" % ["复位" if active else "接入", _target_label(valve_id)]
+			_append_action(actions, "toggle", valve_id, valve_label, vents_oxygen and not active, _npc_can_attempt_dangerous() or not vents_oxygen or active, "林岚的呼吸已经乱了，无法安全执行排气调节。")
 
 	if room_id == "power_bay" and carried_item == "phase_fuse" and bool(flags.get("phase_cable_connected", false)) and not bool(flags.get("grid_online", false)):
 		_append_action(actions, "use", "phase_fuse", "安装相位保险芯")
+	if room_id == "power_bay" and carried_item == "emergency_cell" and bool(flags.get("power_panel_inspected", false)) and not bool(flags.get("grid_online", false)):
+		_append_action(actions, "use", "emergency_cell", "接入应急旁路电芯", true, _npc_can_attempt_dangerous(), "林岚现在无法稳定完成一次不可逆的旁路接线。")
 	if room_id == "coolant_gallery" and carried_item == "sealant_kit" and bool(flags.get("valves_aligned", false)) and not bool(flags.get("leak_sealed", false)):
 		_append_action(actions, "use", "sealant_kit", "使用低温密封剂")
+	if carried_item == "oxygen_canister" and _resource("oxygen") < _max_resource("oxygen"):
+		_append_action(actions, "use", "oxygen_canister", "使用便携氧气罐")
 	if room_id == "escape_pod" and bool(flags.get("escape_unlocked", false)):
 		_append_action(actions, "use", "launch_console", "启动逃生舱")
 
@@ -252,11 +259,17 @@ func restart() -> Dictionary:
 			"phase_cable_connected": false,
 			"connected_cable": "",
 			"grid_online": false,
+			"power_route": "uncommitted",
+			"emergency_power": false,
 			"manifold_inspected": false,
-			"valve_step": 0,
+			"valve_states": {"valve_i": false, "valve_b": false, "valve_p": false},
+			"coolant_pressure": int(scenario.get("coolant_start_pressure", 40)),
+			"coolant_adjustments": 0,
 			"valves_aligned": false,
 			"leak_sealed": false,
 			"escape_unlocked": false,
+			"oxygen_boost_used": false,
+			"focused_scan_ready": false,
 		},
 		"puzzles": {
 			"power": "unsolved",
@@ -267,6 +280,9 @@ func restart() -> Dictionary:
 			"trust": 50,
 			"fear": 35,
 			"checkins": 0,
+			"conversation_since_cycle": 0,
+			"communication_cycles": 0,
+			"first_reassurance_free": true,
 			"last_player_line": "",
 			"last_npc_mood": "focused",
 		},
@@ -337,7 +353,8 @@ func build_npc_context() -> Dictionary:
 		local_state["grid_online"] = bool(flags.get("grid_online", false))
 	elif str(current.get("room_id", "")) == "coolant_gallery":
 		local_state["manifold_inspected"] = bool(flags.get("manifold_inspected", false))
-		local_state["completed_valve_steps"] = int(flags.get("valve_step", 0))
+		local_state["coolant_pressure"] = int(flags.get("coolant_pressure", 0))
+		local_state["valve_states"] = (flags.get("valve_states", {}) as Dictionary).duplicate(true)
 		local_state["valves_aligned"] = bool(flags.get("valves_aligned", false))
 		local_state["leak_sealed"] = bool(flags.get("leak_sealed", false))
 		if bool(flags.get("manifold_inspected", false)):
@@ -372,10 +389,17 @@ func record_conversation(player_text: String, decision: Dictionary) -> Dictionar
 	var fear := int(social.get("fear", 35))
 	var intent := str(decision.get("intent", "conversation"))
 	var mood := str(decision.get("mood", "focused"))
+	var advances_cycle := intent in ["conversation", "report", "clarify", "refuse", "reassure"]
 	if intent == "reassure":
-		trust += 4
-		fear -= 3
+		trust += 5
+		fear -= 8
 		social["checkins"] = int(social.get("checkins", 0)) + 1
+		var flags: Dictionary = _state.get("flags", {}) as Dictionary
+		flags["focused_scan_ready"] = true
+		_state["flags"] = flags
+		if bool(social.get("first_reassurance_free", true)):
+			advances_cycle = false
+			social["first_reassurance_free"] = false
 	elif intent == "report":
 		trust += 1
 	elif intent == "refuse":
@@ -386,13 +410,29 @@ func record_conversation(player_text: String, decision: Dictionary) -> Dictionar
 	if compact.contains("闭嘴") or compact.contains("废物") or compact.contains("快点照做"):
 		trust -= 8
 		fear += 6
+	if advances_cycle:
+		social["conversation_since_cycle"] = int(social.get("conversation_since_cycle", 0)) + 1
+		if int(social.get("conversation_since_cycle", 0)) >= 3:
+			social["conversation_since_cycle"] = 0
+			social["communication_cycles"] = int(social.get("communication_cycles", 0)) + 1
+			var resources: Dictionary = _state.get("resources", {}) as Dictionary
+			resources["oxygen"] = int(resources.get("oxygen", 0)) - 1
+			_state["resources"] = resources
+			var log: Array = _state.get("log", []) as Array
+			log.append({
+				"id": "comm:%d" % int(social.get("communication_cycles", 0)),
+				"turn": int(_state.get("turn", 0)),
+				"type": "communication",
+				"text": "通讯持续占用呼吸调节器：氧气消耗 1%。",
+			})
+			_state["log"] = log
 	social["trust"] = clampi(trust, 0, 100)
 	social["fear"] = clampi(fear, 0, 100)
 	social["last_player_line"] = player_text.left(120)
 	social["last_npc_mood"] = mood
 	_state["npc_social"] = social
 	var beliefs: Dictionary = _state.get("npc_beliefs", {}) as Dictionary
-	if compact.contains("Ω") or compact.contains("欧") or (compact.contains("阀") and (compact.contains("顺序") or compact.contains("先"))):
+	if compact.contains("Ω") or compact.contains("欧") or compact.contains("kPa") or compact.contains("千帕") or compact.contains("压力"):
 		var claims: Array = beliefs.get("operator_claims", []) as Array
 		claims.append(player_text.left(100))
 		if claims.size() > 3:
@@ -400,6 +440,12 @@ func record_conversation(player_text: String, decision: Dictionary) -> Dictionar
 		beliefs["operator_claims"] = claims
 		beliefs["confidence"] = clampi(int(social.get("trust", 50)), 10, 90)
 	_state["npc_beliefs"] = beliefs
+	if _resource("oxygen") <= 0:
+		var ending := _finish_failure("oxygen_depleted")
+		var ending_log: Array = _state.get("log", []) as Array
+		ending["turn"] = int(_state.get("turn", 0))
+		ending_log.append(ending)
+		_state["log"] = ending_log
 	return snapshot()
 
 
@@ -475,6 +521,8 @@ func _validate_action(action: Dictionary) -> Dictionary:
 		return {"ok": false, "reason": "未知动作：%s" % action_id}
 	for available: Dictionary in valid_actions():
 		if str(available.get("id", "")) == action_id and str(available.get("target", "")) == target:
+			if not bool(available.get("enabled", true)):
+				return {"ok": false, "reason": str(available.get("disabled_reason", "林岚现在无法安全执行该动作。"))}
 			return {
 				"ok": true,
 				"dangerous": bool(available.get("dangerous", false)),
@@ -503,8 +551,10 @@ func _invalid_action_reason(action_id: String, target: String) -> String:
 func _danger_reason(action_id: String, target: String) -> String:
 	if action_id == "connect":
 		return "相位电缆带电。错误连接会消耗大量电力并损伤氧气回路，是否执行？"
-	if action_id == "toggle" and _valve_role(target) == "purge":
-		return "排放会立即损失舱内氧气；必须确认前两步顺序正确，是否执行？"
+	if action_id == "toggle" and CoolantPuzzle.is_vent(_state.get("scenario", {}) as Dictionary, target):
+		return "该调节器会向舱外泄压并消耗氧气；请先核对目标压力，是否执行？"
+	if action_id == "use" and target == "emergency_cell":
+		return "旁路电芯会烧毁事故遥测并锁定为代价撤离路线，是否执行？"
 	return "该动作可能造成不可逆后果，是否执行？"
 
 
@@ -541,6 +591,7 @@ func _execute_action(action: Dictionary) -> Dictionary:
 			event = _finish_failure("oxygen_depleted" if _resource("oxygen") <= 0 else "power_depleted")
 	if oxygen_before > 25 and _resource("oxygen") <= 25 and not bool(_state.get("is_terminal", false)):
 		event["npc_line"] = "调度，我的呼吸器开始抢气了。别断线——我还能走，但每一步都得算。"
+	_apply_social_consequence(event)
 	event["turn"] = int(_state.get("turn", 0))
 	event["action"] = action.duplicate(true)
 	_state["last_event"] = event.duplicate(true)
@@ -556,6 +607,23 @@ func _execute_action(action: Dictionary) -> Dictionary:
 	if bool(_state.get("is_terminal", false)):
 		mission_ended.emit(str(_state.get("outcome", "failure")), state_view)
 	return result
+
+
+func _apply_social_consequence(event: Dictionary) -> void:
+	var social: Dictionary = _state.get("npc_social", {}) as Dictionary
+	var trust := int(social.get("trust", 50))
+	var fear := int(social.get("fear", 35))
+	if bool(event.get("mistake", false)):
+		trust -= 6
+		fear += 12
+	elif str(event.get("type", "")) == "puzzle_solved":
+		trust += 2
+		fear -= 6
+	elif str(event.get("type", "")) == "resource":
+		fear -= 5
+	social["trust"] = clampi(trust, 0, 100)
+	social["fear"] = clampi(fear, 0, 100)
+	_state["npc_social"] = social
 
 
 func _apply_move(target: String) -> Dictionary:
@@ -606,6 +674,14 @@ func _apply_inspect(target: String) -> Dictionary:
 			text = "逃生舱自检完成。启动将立即结束本次任务。"
 		_:
 			text = "没有发现新的可验证信息。"
+	if target in ["cable_panel", "valve_manifold"] and bool(flags.get("focused_scan_ready", false)):
+		flags["focused_scan_ready"] = false
+		var resources: Dictionary = _state.get("resources", {}) as Dictionary
+		resources["oxygen"] = mini(_max_resource("oxygen"), int(resources.get("oxygen", 0)) + 1)
+		_state["resources"] = resources
+		text += " 林岚在稳定呼吸后完成了聚焦细扫，本次检查未额外消耗氧气。"
+		if npc_line.is_empty():
+			npc_line = "我把呼吸压稳了，刻度这次看得很清楚。你慢慢对，我保持这个位置。"
 	_state["flags"] = flags
 	var event: Dictionary = {"type": "inspection", "text": text, "target": target}
 	if not npc_line.is_empty():
@@ -639,69 +715,35 @@ func _apply_connect(target: String) -> Dictionary:
 	var flags: Dictionary = _state.get("flags", {}) as Dictionary
 	var resources: Dictionary = _state.get("resources", {}) as Dictionary
 	var scenario: Dictionary = _state.get("scenario", {}) as Dictionary
-	if target == str(scenario.get("correct_cable", "")):
+	var resolution: Dictionary = PowerPuzzle.resolve_connection(target, scenario)
+	resources["power"] = int(resources.get("power", 0)) + int(resolution.get("power_delta", 0))
+	resources["oxygen"] = int(resources.get("oxygen", 0)) + int(resolution.get("oxygen_delta", 0))
+	if bool(resolution.get("success", false)):
 		flags["phase_cable_connected"] = true
 		flags["connected_cable"] = target
-		resources["power"] = int(resources.get("power", 0)) - 2
+		flags["power_route"] = "phase_fuse"
 		_state["flags"] = flags
 		_state["resources"] = resources
-		return {
-			"type": "puzzle",
-			"text": "控制器接受该接头，闭环相位锁定；现在可以安装保险芯。",
-			"puzzle": "power",
-			"npc_line": "锁定灯亮了……好。控制器里‘咔’地弹开一个小盖，我看见保险芯槽了。",
-		}
+		return (resolution.get("event", {}) as Dictionary).duplicate(true)
 	_state["mistakes"] = int(_state.get("mistakes", 0)) + 1
-	resources["power"] = int(resources.get("power", 0)) - 18
-	resources["oxygen"] = int(resources.get("oxygen", 0)) - 6
 	_state["resources"] = resources
-	return {
-		"type": "hazard",
-		"text": "%s触发短路，电力与氧气回路同时受损。相位连接没有建立。" % _target_label(target),
-		"puzzle": "power",
-		"mistake": true,
-		"npc_line": "断开了……冲击把我撞到舱壁。给我两秒，我还在线；下一次别让我猜。",
-	}
+	return (resolution.get("event", {}) as Dictionary).duplicate(true)
 
 
 func _apply_toggle(target: String) -> Dictionary:
 	var flags: Dictionary = _state.get("flags", {}) as Dictionary
 	var resources: Dictionary = _state.get("resources", {}) as Dictionary
-	var step: int = int(flags.get("valve_step", 0))
-	var sequence: Array = (_state.get("scenario", {}) as Dictionary).get("valve_sequence", []) as Array
-	var expected: String = str(sequence[step]) if step < sequence.size() else ""
-	if target == expected:
-		step += 1
-		flags["valve_step"] = step
-		if _valve_role(target) == "purge":
-			resources["oxygen"] = int(resources.get("oxygen", 0)) - 6
-		if step == sequence.size():
-			flags["valves_aligned"] = true
-			_state["flags"] = flags
-			_state["resources"] = resources
-			return {
-				"type": "puzzle",
-				"text": "排压完成，冷却剂裂口已经暴露；现在可以使用密封剂。",
-				"puzzle": "coolant",
-				"npc_line": "排气声停了。裂口就在护板后面，我伸手够得到……但得先拿到密封剂。",
-			}
-		_state["flags"] = flags
-		_state["resources"] = resources
-		return {"type": "puzzle", "text": "阀门顺序正确：%d/3。" % step, "puzzle": "coolant"}
-	_state["mistakes"] = int(_state.get("mistakes", 0)) + 1
-	flags["valve_step"] = 0
-	resources["oxygen"] = int(resources.get("oxygen", 0)) - 6
-	if _valve_role(target) == "purge":
-		resources["oxygen"] = int(resources.get("oxygen", 0)) - 6
+	var resolution := CoolantPuzzle.resolve_toggle(target, _state.get("scenario", {}) as Dictionary, flags)
+	flags["valve_states"] = (resolution.get("states", {}) as Dictionary).duplicate(true)
+	flags["coolant_pressure"] = int(resolution.get("pressure", flags.get("coolant_pressure", 0)))
+	flags["coolant_adjustments"] = int(resolution.get("adjustments", 0))
+	flags["valves_aligned"] = bool(resolution.get("aligned", false))
+	resources["oxygen"] = int(resources.get("oxygen", 0)) + int(resolution.get("oxygen_delta", 0))
+	if bool(resolution.get("mistake", false)):
+		_state["mistakes"] = int(_state.get("mistakes", 0)) + 1
 	_state["flags"] = flags
 	_state["resources"] = resources
-	return {
-		"type": "hazard",
-		"text": "阀门顺序错误，联锁复位并泄出额外氧气。控制器已回到初始阶段。",
-		"puzzle": "coolant",
-		"mistake": true,
-		"npc_line": "阀组弹回去了——冷气灌进袖口了。等一下……下次别再让我蒙顺序。",
-	}
+	return (resolution.get("event", {}) as Dictionary).duplicate(true)
 
 
 func _apply_use(target: String) -> Dictionary:
@@ -711,6 +753,7 @@ func _apply_use(target: String) -> Dictionary:
 	if target == "phase_fuse":
 		_state["carried_item"] = ""
 		flags["grid_online"] = true
+		flags["power_route"] = "phase_fuse"
 		puzzles["power"] = "solved"
 		resources["power"] = mini(_max_resource("power"), int(resources.get("power", 0)) + 20)
 		_state["flags"] = flags
@@ -718,6 +761,35 @@ func _apply_use(target: String) -> Dictionary:
 		_state["resources"] = resources
 		_update_escape_lock()
 		return {"type": "puzzle_solved", "text": "相位保险芯接通，主电网恢复。", "puzzle": "power"}
+	if target == "emergency_cell":
+		_state["carried_item"] = ""
+		flags["grid_online"] = true
+		flags["emergency_power"] = true
+		flags["power_route"] = "emergency_bypass"
+		puzzles["power"] = "bypassed"
+		resources["power"] = mini(_max_resource("power"), int(resources.get("power", 0)) + 8)
+		_state["flags"] = flags
+		_state["puzzles"] = puzzles
+		_state["resources"] = resources
+		_update_escape_lock()
+		return {
+			"type": "puzzle_solved",
+			"text": "应急电芯烧穿诊断缓存并建立临时母线。电网已恢复，但本轮只能获得代价撤离评价。",
+			"puzzle": "power",
+			"route": "emergency_bypass",
+			"npc_line": "旁路线亮了，遥测屏也彻底黑了……至少门有电。我们得接受这个代价。",
+		}
+	if target == "oxygen_canister":
+		_state["carried_item"] = ""
+		flags["oxygen_boost_used"] = true
+		resources["oxygen"] = mini(_max_resource("oxygen"), int(resources.get("oxygen", 0)) + 24)
+		_state["flags"] = flags
+		_state["resources"] = resources
+		return {
+			"type": "resource",
+			"text": "便携氧气罐接入呼吸器，恢复 24% 个人供氧。",
+			"npc_line": "供气稳下来了……这口气真像重新活了一次。好，继续。",
+		}
 	if target == "sealant_kit":
 		_state["carried_item"] = ""
 		flags["leak_sealed"] = true
@@ -735,6 +807,7 @@ func _apply_use(target: String) -> Dictionary:
 		var rules: Dictionary = _mission_data.get("rules", {}) as Dictionary
 		var clean_run: bool = int(_state.get("mistakes", 0)) == 0 \
 			and bool(flags.get("telemetry_inspected", false)) \
+			and not bool(flags.get("emergency_power", false)) \
 			and _resource("oxygen") >= int(rules.get("success_oxygen_threshold", 50)) \
 			and _resource("power") >= int(rules.get("success_power_threshold", 40))
 		_state["outcome"] = "success" if clean_run else "costly_success"
@@ -742,10 +815,11 @@ func _apply_use(target: String) -> Dictionary:
 		_state["is_terminal"] = true
 		var social: Dictionary = _state.get("npc_social", {}) as Dictionary
 		var trust := int(social.get("trust", 50))
-		var relationship_line := "林岚在脱离后仍保持着通讯。" if trust >= 60 else "林岚沉默地完成了脱离程序。" if trust < 35 else "林岚确认安全后关闭了中继。"
+		var relationship_line := "林岚在脱离后仍保持着通讯，并主动报出自己的生命体征。" if trust >= 60 else "林岚沉默地完成了脱离程序。" if trust < 35 else "林岚确认安全后关闭了中继。"
+		var route_line := "应急旁路保存了他的生命，但事故诊断记录已被烧毁。" if bool(flags.get("emergency_power", false)) else "相位闭环与事故记录均被完整保留。"
 		return {
 			"type": "ending",
-			"text": ("逃生舱平稳脱离 K-17。林岚与遥测记录均完整获救。" if clean_run else "逃生舱带伤脱离 K-17。林岚获救，但错误操作造成的损失无法追回。") + relationship_line,
+			"text": ("逃生舱平稳脱离 K-17。林岚与遥测记录均完整获救。" if clean_run else "逃生舱带伤脱离 K-17。林岚获救，但任务代价已经写入记录。") + route_line + relationship_line,
 			"outcome": _state["outcome"],
 		}
 	return {"type": "error", "text": "该目标目前无法使用。"}
@@ -800,12 +874,14 @@ func _available_move_targets() -> Array[String]:
 	return output
 
 
-func _append_action(actions: Array[Dictionary], action_id: String, target: String, label: String, dangerous: bool = false) -> void:
+func _append_action(actions: Array[Dictionary], action_id: String, target: String, label: String, dangerous: bool = false, enabled: bool = true, disabled_reason: String = "") -> void:
 	actions.append({
 		"id": action_id,
 		"target": target,
 		"label": label,
 		"dangerous": dangerous,
+		"enabled": enabled,
+		"disabled_reason": disabled_reason,
 		"keywords": _action_keywords(action_id, target),
 	})
 
@@ -923,7 +999,7 @@ func _visible_hazards(room_id: String, flags: Dictionary) -> Array[String]:
 ## build_npc_context(); Lin Lan must describe the physical side herself.
 func _operator_telemetry(flags: Dictionary) -> Array[String]:
 	var telemetry: Array[String] = [
-		"本轮事故签名：%s。重开任务会生成新的线路读数与阀门映射。" % str((_state.get("scenario", {}) as Dictionary).get("id", "UNKNOWN")),
+		"本轮事故签名：%s。重开任务会生成新的线路读数与压力标定。" % str((_state.get("scenario", {}) as Dictionary).get("id", "UNKNOWN")),
 		"ESC-05 联锁：主电网握手缺失；冷却压差不稳定。",
 	]
 	if not bool(flags.get("telemetry_inspected", false)):
@@ -932,65 +1008,38 @@ func _operator_telemetry(flags: Dictionary) -> Array[String]:
 	var scenario: Dictionary = _state.get("scenario", {}) as Dictionary
 	var required_reading := str(scenario.get("required_reading", "未知"))
 	if bool(flags.get("grid_online", false)):
-		telemetry.append("PWR-03：启动闭环稳定，保险芯在线。")
+		telemetry.append("PWR-03：%s。" % ("应急旁路供电；事故缓存已损坏" if bool(flags.get("emergency_power", false)) else "启动闭环稳定，保险芯在线"))
 	elif bool(flags.get("phase_cable_connected", false)):
 		telemetry.append("PWR-03：%s 启动闭环已锁定；控制器等待保险芯。" % required_reading)
 	else:
 		telemetry.append("PWR-03 启动记录：本轮控制器需要 %s 闭环返回；必须与现场三只接头的读数交叉核对。" % required_reading)
-	var step: int = int(flags.get("valve_step", 0))
+	var current_pressure := int(flags.get("coolant_pressure", scenario.get("coolant_start_pressure", 0)))
+	var target_pressure := int(scenario.get("coolant_target_pressure", 0))
 	if bool(flags.get("leak_sealed", false)):
 		telemetry.append("CLT-04：压差恢复，裂口监测稳定。")
 	elif bool(flags.get("valves_aligned", false)):
-		telemetry.append("CLT-04：受控排压完成；维护口处裂口已暴露。")
-	elif step == 2:
-		telemetry.append("CLT-04 阶段记录：来流与回环均已确认；排气联锁现可授权。")
-	elif step == 1:
-		telemetry.append("CLT-04 阶段记录：来流已确认；等待辅助回环建立压差平衡。")
+		telemetry.append("CLT-04：%d kPa 目标窗口已锁定；维护口处裂口已暴露。" % target_pressure)
 	else:
-		telemetry.append("CLT-04 旧阶段记录：先建立来流，再经辅助回环平衡；两项确认后才允许向舱外排气。")
+		telemetry.append("CLT-04 压力模型：当前 %d kPa；必须调节到 %d kPa。现场三只调节器的增减量只能由林岚读取。" % [current_pressure, target_pressure])
 	return telemetry
 
 
 func _build_scenario() -> Dictionary:
-	var shuffled_readings := _shuffled_strings(CABLE_READINGS)
-	var cable_readings: Dictionary = {}
-	for index: int in range(CABLE_TARGETS.size()):
-		cable_readings[CABLE_TARGETS[index]] = shuffled_readings[index]
-	var correct_cable := CABLE_TARGETS[_variant_rng.randi_range(0, CABLE_TARGETS.size() - 1)]
-	var shuffled_roles := _shuffled_strings(VALVE_ROLES)
-	var valve_roles: Dictionary = {}
-	for index: int in range(VALVE_TARGETS.size()):
-		valve_roles[VALVE_TARGETS[index]] = shuffled_roles[index]
-	var valve_sequence: Array[String] = []
-	for required_role: String in VALVE_ROLES:
-		for valve_id: String in VALVE_TARGETS:
-			if str(valve_roles.get(valve_id, "")) == required_role:
-				valve_sequence.append(valve_id)
-				break
-	return {
-		"id": "K17-%04d" % int(abs(_variant_rng.randi()) % 10000),
-		"cable_readings": cable_readings,
-		"correct_cable": correct_cable,
-		"required_reading": str(cable_readings.get(correct_cable, "")),
-		"valve_roles": valve_roles,
-		"valve_sequence": valve_sequence,
-	}
-
-
-func _shuffled_strings(source: PackedStringArray) -> Array[String]:
-	var result: Array[String] = []
-	for value: String in source:
-		result.append(value)
-	for index: int in range(result.size() - 1, 0, -1):
-		var other := _variant_rng.randi_range(0, index)
-		var temporary := result[index]
-		result[index] = result[other]
-		result[other] = temporary
-	return result
+	var scenario := PowerPuzzle.build_scenario(_variant_rng)
+	scenario.merge(CoolantPuzzle.build_scenario(_variant_rng), true)
+	scenario["id"] = "K17-%04d" % int(abs(_variant_rng.randi()) % 10000)
+	return scenario
 
 
 func _current_observation_summary(room_id: String, flags: Dictionary) -> String:
 	var base := str(_room(room_id).get("observation", ""))
+	var room_items: Dictionary = _state.get("room_items", {}) as Dictionary
+	var items_here: Array = room_items.get(room_id, []) as Array
+	if not items_here.is_empty():
+		var item_names: Array[String] = []
+		for value: Variant in items_here:
+			item_names.append(_item_name(str(value)))
+		base += "\n可见物资：%s。" % "、".join(item_names)
 	if room_id == "power_bay" and bool(flags.get("power_panel_inspected", false)):
 		return "%s\n已确认现场读数：%s" % [base, _cable_detail_text()]
 	if room_id == "coolant_gallery" and bool(flags.get("manifold_inspected", false)):
@@ -999,32 +1048,11 @@ func _current_observation_summary(room_id: String, flags: Dictionary) -> String:
 
 
 func _cable_detail_text() -> String:
-	var readings: Dictionary = (_state.get("scenario", {}) as Dictionary).get("cable_readings", {}) as Dictionary
-	return "蓝色接头 %s；红色接头 %s；黄色接头 %s。" % [
-		str(readings.get("blue_cable", "读数不清")),
-		str(readings.get("red_cable", "读数不清")),
-		str(readings.get("yellow_cable", "读数不清")),
-	]
+	return PowerPuzzle.detail_text(_state.get("scenario", {}) as Dictionary)
 
 
 func _valve_detail_text() -> String:
-	return "I 阀接%s；B 阀接%s；P 阀接%s。" % [
-		_valve_role_description(_valve_role("valve_i")),
-		_valve_role_description(_valve_role("valve_b")),
-		_valve_role_description(_valve_role("valve_p")),
-	]
-
-
-func _valve_role(valve_id: String) -> String:
-	return str(((_state.get("scenario", {}) as Dictionary).get("valve_roles", {}) as Dictionary).get(valve_id, ""))
-
-
-func _valve_role_description(role: String) -> String:
-	match role:
-		"intake": return "结霜的来流管"
-		"bypass": return "细窄的辅助回环管"
-		"purge": return "通往舱外的排气道"
-		_: return "无法辨认的管路"
+	return CoolantPuzzle.detail_text(_state.get("scenario", {}) as Dictionary)
 
 
 func _evidence_view(flags: Dictionary) -> Dictionary:
@@ -1047,8 +1075,8 @@ func _npc_known_facts(flags: Dictionary) -> Array[String]:
 		facts.append("相位闭环已经被控制器接受。")
 	if bool(flags.get("manifold_inspected", false)):
 		facts.append(_valve_detail_text())
-	if int(flags.get("valve_step", 0)) > 0:
-		facts.append("阀门联锁已完成 %d/3 步。" % int(flags.get("valve_step", 0)))
+	if int(flags.get("coolant_adjustments", 0)) > 0:
+		facts.append("冷却回路当前为 %d kPa，已经执行 %d 次调节。" % [int(flags.get("coolant_pressure", 0)), int(flags.get("coolant_adjustments", 0))])
 	return facts
 
 
@@ -1075,6 +1103,11 @@ func _npc_mood() -> String:
 	return "focused"
 
 
+func _npc_can_attempt_dangerous() -> bool:
+	var social: Dictionary = _state.get("npc_social", {}) as Dictionary
+	return int(social.get("fear", 35)) < 70 and int(social.get("trust", 50)) >= 25
+
+
 func _hazard_stage(turn: int) -> String:
 	if turn >= 14 or _resource("oxygen") <= 25:
 		return "critical"
@@ -1091,6 +1124,8 @@ func _ending_debrief() -> Dictionary:
 	var trust := int(social.get("trust", 50))
 	var relationship := "互相信任" if trust >= 60 else "关系紧张" if trust < 35 else "保持专业"
 	var title := "完整撤离" if outcome == "success" else "代价撤离" if outcome == "costly_success" else "通讯终止"
+	var flags: Dictionary = _state.get("flags", {}) as Dictionary
+	var route := str(flags.get("power_route", "uncommitted"))
 	var body := "林岚与事故遥测完整获救。" if outcome == "success" else "林岚获救，但设施损失被记录在案。" if outcome == "costly_success" else str(_state.get("ending_reason", "任务失败"))
 	return {
 		"title": title,
@@ -1099,6 +1134,9 @@ func _ending_debrief() -> Dictionary:
 		"trust": trust,
 		"checkins": int(social.get("checkins", 0)),
 		"mistakes": int(_state.get("mistakes", 0)),
+		"power_route": route,
+		"oxygen_boost_used": bool(flags.get("oxygen_boost_used", false)),
+		"communication_cycles": int(social.get("communication_cycles", 0)),
 		"scenario_id": str((_state.get("scenario", {}) as Dictionary).get("id", "")),
 	}
 

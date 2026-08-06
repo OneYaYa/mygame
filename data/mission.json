@@ -3,7 +3,7 @@
   "mission": {
     "id": "blindspot_relay_vertical_slice",
     "title": "盲区中继：K-17",
-    "objective": "协助林岚恢复电网与冷却回路，并从逃生舱撤离。"
+    "objective": "协助林岚恢复或旁路电网、稳定冷却压力，并从逃生舱撤离。"
   },
   "npc": {
     "id": "lin_lan",
@@ -62,6 +62,14 @@
     "sealant_kit": {
       "name": "低温密封剂",
       "description": "用于封闭排压后暴露的冷却剂裂口。"
+    },
+    "emergency_cell": {
+      "name": "应急旁路电芯",
+      "description": "可以跳过相位闭环临时恢复电网，但会烧毁事故遥测并导致代价撤离。"
+    },
+    "oxygen_canister": {
+      "name": "便携氧气罐",
+      "description": "一次性补充个人供氧；占用唯一携带槽。"
     }
   },
   "rooms": [
@@ -77,9 +85,9 @@
       "id": "central_junction",
       "name": "中央交汇舱",
       "links": ["relay_control", "power_bay", "coolant_gallery", "escape_pod"],
-      "items": [],
+      "items": ["emergency_cell", "oxygen_canister"],
       "inspect_targets": ["escape_bulkhead"],
-      "observation": "四条短廊在这里汇合。冷雾贴着地面流动，逃生舱隔门上的两枚联锁灯都是红色。"
+      "observation": "四条短廊在这里汇合。冷雾贴着地面流动，逃生舱隔门上的两枚联锁灯都是红色。墙边应急箱已经弹开，旁路电芯和便携氧气罐都能取用，但林岚一次只能带一件。"
     },
     {
       "id": "power_bay",

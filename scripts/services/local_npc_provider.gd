@@ -10,8 +10,8 @@ const ACTION_VERBS: Dictionary = {
 	"take": ["拿起", "拿上", "拾取", "捡起", "带上", "拿"],
 	"drop": ["放下", "留下", "丢下"],
 	"connect": ["连接", "接上", "插上", "接入"],
-	"toggle": ["切换", "扳动", "旋转", "拧开", "开阀", "开启阀", "打开阀"],
-	"use": ["使用", "安装", "启动", "发射", "涂上", "密封"],
+	"toggle": ["切换", "调节", "接入", "复位", "扳动", "旋转", "拧开", "开阀", "开启阀", "打开阀"],
+	"use": ["使用", "安装", "接入", "启动", "发射", "涂上", "密封"],
 	"wait": ["等待", "原地等", "保持原位", "别动"],
 }
 
@@ -28,6 +28,8 @@ const TARGET_ALIASES: Dictionary = {
 	"launch_console": ["发射控制器", "发射台", "逃生舱控制器"],
 	"phase_fuse": ["相位保险芯", "保险芯", "保险栓", "熔芯"],
 	"sealant_kit": ["低温密封剂", "密封剂", "修补剂", "密封包"],
+	"emergency_cell": ["应急旁路电芯", "旁路电芯", "应急电芯", "备用电芯"],
+	"oxygen_canister": ["便携氧气罐", "氧气罐", "供氧罐"],
 	"blue_cable": ["蓝色套管接头", "蓝色接头", "蓝接头", "蓝线", "蓝色", "4.2Ω", "4.2欧"],
 	"red_cable": ["红色陶瓷接头", "红色接头", "红接头", "红线", "红色", "陶瓷"],
 	"yellow_cable": ["黄色编织接头", "黄色接头", "黄接头", "黄线", "黄色", "编织线"],
@@ -200,7 +202,7 @@ func _observation_reply(room_name: String, observation: Dictionary, state: Dicti
 
 func _puzzle_uncertainty_reply(room_name: String, observation: Dictionary) -> String:
 	var detail := str(observation.get("summary", "")).strip_edges()
-	return "我在%s，眼前只有这些：%s步骤牌没了。你那边要是还有旧记录，帮我对一下——我不想拿命蒙。" % [room_name, detail]
+	return "我在%s，眼前只有这些：%s远端目标值不在我这块屏上。你把目标告诉我，我们一起算，别让我拿命蒙。" % [room_name, detail]
 
 
 func _sensory_reply(room_name: String, observation: Dictionary) -> String:
@@ -218,7 +220,7 @@ func _concern_reply(room_name: String, observation: Dictionary, state: Dictionar
 	match str(observation.get("room_id", "")):
 		"relay_control": return "那台遥测台还在响，可屏幕已经黑了。我不知道它有没有把东西送出去。"
 		"power_bay": return "这三个接头一直在噼啪响。标签全烧了，我只认得它们通向哪里。"
-		"coolant_gallery": return "I、B、P 后面的管子我还能认，可步骤牌没了。我不敢随便碰。"
+		"coolant_gallery": return "I、B、P 的增减量我能读到，可目标压力只在你那边。我不敢随便碰。"
 		_: return "我最怕身后那道联锁再落下来。它现在怎么样，我从这里看不全。"
 
 
