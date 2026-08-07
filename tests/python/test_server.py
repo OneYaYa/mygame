@@ -131,6 +131,7 @@ class ServerTests(unittest.TestCase):
         self.assertIn("不要写成医疗报告", body["instructions"])
         self.assertIn("不知道自己在游戏中", body["instructions"])
         self.assertIn("不要主动讲操作教程", body["instructions"])
+        self.assertIn("时间跳跃", body["instructions"])
         self.assertIn("你别断线，让我缓口气", body["instructions"])
         self.assertNotIn("左肩挫伤", body["instructions"])
         self.assertIn("男性维护技术员", body["instructions"])
@@ -469,6 +470,25 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(result["provider"], "memory")
         self.assertEqual(result["decision"]["action"], "none")
         self.assertIn("陈锋", result["decision"]["reply"])
+
+    def test_player_authored_time_jump_is_rejected_without_model_call(self) -> None:
+        payload = dict(self.payload)
+        payload["player_text"] = "过了一年"
+        payload["state"] = {
+            "room_id": "central_junction",
+            "room_name": "中央交汇舱",
+            "oxygen": 71,
+        }
+
+        with patch.object(server, "call_openai") as mocked_openai:
+            result = server.decide(payload, self.settings)
+
+        mocked_openai.assert_not_called()
+        self.assertEqual(result["provider"], "state_guard")
+        self.assertEqual(result["decision"]["action"], "none")
+        self.assertEqual(result["decision"]["quality_guard"], "unsupported_time_jump")
+        self.assertIn("没有过去一年", result["decision"]["reply"])
+        self.assertIn("中央交汇舱", result["decision"]["reply"])
 
     def test_explicit_action_reply_stays_in_character(self) -> None:
         actions = [

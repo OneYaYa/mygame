@@ -25,6 +25,10 @@ const COLOR_CYAN := Color("62b9b3")
 const COLOR_AMBER := Color("d3a354")
 const COLOR_RED := Color("d45e57")
 const COLOR_GREEN := Color("68b596")
+const GENERIC_ACTION_KEYWORDS: Array[String] = [
+	"move", "inspect", "take", "drop", "connect", "toggle", "use", "wait",
+	"去", "检查", "拿", "放下", "连接", "阀", "使用", "等待",
+]
 
 var _snapshot: Dictionary = {}
 var _actions: Array[Dictionary] = []
@@ -75,6 +79,8 @@ var _candidate_target_label: Label
 var _candidate_note: Label
 var _authorize_button: Button
 var _reject_button: Button
+var _keyword_scroll: ScrollContainer
+var _keyword_box: HBoxContainer
 var _message_input: LineEdit
 var _send_button: Button
 var _cancel_button: Button
@@ -177,6 +183,7 @@ func set_actions(actions: Array[Dictionary]) -> void:
 	_actions = []
 	for action: Dictionary in actions:
 		_actions.append(action.duplicate(true))
+	_render_keyword_cards()
 	# The whitelist is deliberately not rendered. It is an internal guard used to
 	# resolve one NPC request at a time.
 	if not _pending_candidate.is_empty():
@@ -479,7 +486,7 @@ func _build_left_column(parent: HBoxContainer) -> void:
 	_facility_map = FacilityMapClass.new()
 	_facility_map.size_flags_vertical = Control.SIZE_FILL
 	box.add_child(_facility_map)
-	_facility_map.custom_minimum_size.y = 250.0
+	_facility_map.custom_minimum_size.y = 200.0
 	var rule := HSeparator.new()
 	box.add_child(rule)
 	var resource_title := _small_header("RESOURCE BUDGET / 资源")
@@ -505,7 +512,7 @@ func _build_left_column(parent: HBoxContainer) -> void:
 	facts.add_child(_carried_value)
 	_objective_text = RichTextLabel.new()
 	_objective_text.bbcode_enabled = true
-	_objective_text.custom_minimum_size.y = 140
+	_objective_text.custom_minimum_size.y = 150
 	_objective_text.fit_content = false
 	_objective_text.scroll_active = true
 	_objective_text.selection_enabled = true
@@ -592,21 +599,30 @@ func _build_right_column(parent: HBoxContainer) -> void:
 		_quick_box.add_child(button)
 	var separator := HSeparator.new()
 	box.add_child(separator)
-	box.add_child(_small_header("OPERATOR TELEMETRY / 调度员独占遥测"))
+	var evidence_scroll := ScrollContainer.new()
+	evidence_scroll.custom_minimum_size.y = 160
+	evidence_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	evidence_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	evidence_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	box.add_child(evidence_scroll)
+	var evidence_box := VBoxContainer.new()
+	evidence_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	evidence_box.add_theme_constant_override("separation", 4)
+	evidence_scroll.add_child(evidence_box)
+	evidence_box.add_child(_small_header("OPERATOR TELEMETRY / 调度员独占遥测"))
 	_telemetry_box = VBoxContainer.new()
 	_telemetry_box.add_theme_constant_override("separation", 3)
-	_telemetry_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	box.add_child(_telemetry_box)
-	box.add_child(_small_header("LOCAL EVIDENCE / 林岚已确认线索"))
+	evidence_box.add_child(_telemetry_box)
+	evidence_box.add_child(_small_header("LOCAL EVIDENCE / 林岚已确认线索"))
 	_local_clue_box = VBoxContainer.new()
 	_local_clue_box.add_theme_constant_override("separation", 3)
-	box.add_child(_local_clue_box)
-	_build_clue_workbench(box)
+	evidence_box.add_child(_local_clue_box)
+	_build_clue_workbench(evidence_box)
 	var privacy := Label.new()
 	privacy.text = "点击两侧线索固定到工作台；远端数据不会发送给林岚。"
 	privacy.add_theme_font_size_override("font_size", 10)
 	privacy.add_theme_color_override("font_color", Color(COLOR_MUTED, 0.78))
-	box.add_child(privacy)
+	evidence_box.add_child(privacy)
 	var candidate_separator := HSeparator.new()
 	box.add_child(candidate_separator)
 	box.add_child(_small_header("REQUEST / 单步授权"))
@@ -696,13 +712,35 @@ func _build_candidate_card(parent: VBoxContainer) -> void:
 
 func _build_composer(parent: VBoxContainer) -> void:
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size.y = 76
+	panel.custom_minimum_size.y = 90
 	parent.add_child(panel)
 	var margin := _margin(10, 8)
 	panel.add_child(margin)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 4)
+	margin.add_child(column)
+	var keyword_row := HBoxContainer.new()
+	keyword_row.add_theme_constant_override("separation", 8)
+	column.add_child(keyword_row)
+	var keyword_header := Label.new()
+	keyword_header.text = "KEYWORDS / 点击填入"
+	keyword_header.add_theme_color_override("font_color", COLOR_MUTED)
+	keyword_header.add_theme_font_size_override("font_size", 10)
+	keyword_header.custom_minimum_size.x = 138
+	keyword_row.add_child(keyword_header)
+	_keyword_scroll = ScrollContainer.new()
+	_keyword_scroll.custom_minimum_size.y = 28
+	_keyword_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_keyword_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_keyword_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	keyword_row.add_child(_keyword_scroll)
+	_keyword_box = HBoxContainer.new()
+	_keyword_box.add_theme_constant_override("separation", 5)
+	_keyword_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_keyword_scroll.add_child(_keyword_box)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
-	margin.add_child(row)
+	column.add_child(row)
 	var channel := Label.new()
 	channel.text = "TX\nOPERATOR"
 	channel.add_theme_color_override("font_color", COLOR_CYAN)
@@ -710,7 +748,7 @@ func _build_composer(parent: VBoxContainer) -> void:
 	channel.custom_minimum_size.x = 84
 	row.add_child(channel)
 	_message_input = LineEdit.new()
-	_message_input.placeholder_text = "和林岚对话，追问他看见、听见和担心的事……"
+	_message_input.placeholder_text = "输入指令或追问他，例如：检查遥测台；AI 提议后仍需在右侧授权"
 	_message_input.max_length = 500
 	_message_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_message_input.text_submitted.connect(_submit_message)
@@ -947,9 +985,20 @@ func _observation_text(snapshot: Dictionary, npc: Dictionary) -> String:
 
 func _objective_body(snapshot: Dictionary) -> String:
 	var objective := str(snapshot.get("objective", snapshot.get("current_objective", "抵达逃生舱；交换信息后再确认行动。")))
-	var result := "[color=#789398]OBJECTIVE[/color]\n%s" % _escape_bbcode(objective)
+	var guidance: Dictionary = _dictionary(snapshot.get("guidance", {}))
+	var result := ""
+	if not guidance.is_empty():
+		var instruction := str(guidance.get("instruction", "")).strip_edges()
+		var example := str(guidance.get("example_command", "")).strip_edges()
+		result = "[color=#d3a354][b]NEXT / 现在做什么[/b][/color]\n%s" % _escape_bbcode(instruction)
+		if not example.is_empty():
+			result += "\n[color=#62b9b3]输入示例[/color]  “%s”" % _escape_bbcode(example)
+		result += "\n[color=#789398]操作方式[/color]  输入指令 → AI 提出动作 → 右侧授权执行"
+		result += "\n\n[color=#789398]OBJECTIVE / 总目标[/color]\n%s" % _escape_bbcode(objective)
+	else:
+		result = "[color=#789398]OBJECTIVE[/color]\n%s" % _escape_bbcode(objective)
 	var hint := _context_hint(snapshot)
-	if not hint.is_empty():
+	if guidance.is_empty() and not hint.is_empty():
 		result += "\n[color=#62b9b3]HINT[/color] %s" % _escape_bbcode(hint)
 	return result
 
@@ -1241,6 +1290,77 @@ func _submit_quick(text: String) -> void:
 		message_submitted.emit(text)
 
 
+func _render_keyword_cards() -> void:
+	if not is_instance_valid(_keyword_box):
+		return
+	for child: Node in _keyword_box.get_children():
+		_keyword_box.remove_child(child)
+		child.queue_free()
+	var keywords: Array[String] = []
+	var guidance: Dictionary = _dictionary(_snapshot.get("guidance", {}))
+	for raw: Variant in _array(guidance.get("keywords", [])):
+		_append_keyword(keywords, str(raw))
+	for action: Dictionary in _actions:
+		for raw: Variant in _array(action.get("keywords", [])):
+			_append_keyword(keywords, str(raw))
+			if keywords.size() >= 10:
+				break
+		if keywords.size() >= 10:
+			break
+	if keywords.is_empty():
+		keywords.append("林岚")
+	for keyword: String in keywords:
+		var button := Button.new()
+		button.text = "＋ %s" % keyword
+		button.add_theme_font_size_override("font_size", 11)
+		button.tooltip_text = "填入“%s”；仍需自行补充动词并发送" % keyword
+		button.set_meta("keyword", keyword)
+		button.pressed.connect(_insert_keyword.bind(keyword))
+		_keyword_box.add_child(button)
+	call_deferred("_reset_keyword_scroll")
+
+
+func _reset_keyword_scroll() -> void:
+	if is_instance_valid(_keyword_scroll):
+		_keyword_scroll.scroll_horizontal = 0
+
+
+func _append_keyword(output: Array[String], raw: String) -> void:
+	var clean := raw.strip_edges()
+	if clean.is_empty() or clean in GENERIC_ACTION_KEYWORDS or clean in output:
+		return
+	if clean.contains("_") or clean.length() > 18:
+		return
+	output.append(clean)
+
+
+func _insert_keyword(keyword: String) -> void:
+	if _thinking or not is_instance_valid(_message_input):
+		return
+	var clean := keyword.strip_edges()
+	if clean.is_empty():
+		return
+	var current := _message_input.text
+	var existing_at := current.find(clean)
+	if existing_at >= 0:
+		_message_input.caret_column = existing_at + clean.length()
+	else:
+		var caret := clampi(_message_input.caret_column, 0, current.length())
+		_message_input.text = current.left(caret) + clean + current.substr(caret)
+		_message_input.caret_column = caret + clean.length()
+	focus_message_input()
+
+
+func get_keyword_card_texts() -> Array[String]:
+	var result: Array[String] = []
+	if not is_instance_valid(_keyword_box):
+		return result
+	for child: Node in _keyword_box.get_children():
+		if child is Button:
+			result.append(str((child as Button).get_meta("keyword", "")))
+	return result
+
+
 func _emit_action(action_id: String, target: String, arguments: Dictionary) -> void:
 	action_requested.emit(action_id, target, arguments.duplicate(true))
 
@@ -1424,12 +1544,16 @@ func _scale_font_overrides(node: Node, font_scale: float) -> void:
 func _apply_responsive_layout() -> void:
 	if not is_instance_valid(_left_panel) or not is_instance_valid(_right_panel) or not is_instance_valid(_portrait):
 		return
-	var compact := size.x < 1180.0
-	_left_panel.custom_minimum_size.x = 310.0 if compact else 400.0
-	_right_panel.custom_minimum_size.x = 270.0 if compact else 312.0
-	_portrait.custom_minimum_size.x = 175.0 if compact else 220.0
+	# Use the actual visible viewport rather than this control's computed minimum
+	# size. The three columns can otherwise make `size.x` wider than the window,
+	# preventing the compact branch precisely when the right rail is clipped.
+	var viewport_width := get_viewport_rect().size.x
+	var compact := viewport_width < 1440.0
+	_left_panel.custom_minimum_size.x = 350.0 if compact else 400.0
+	_right_panel.custom_minimum_size.x = 280.0 if compact else 312.0
+	_portrait.custom_minimum_size.x = 180.0 if compact else 220.0
 	if is_instance_valid(_settings_button):
-		_settings_button.text = "⚙" if size.x < 1080.0 else "⚙  SETTINGS"
+		_settings_button.text = "⚙" if viewport_width < 1080.0 else "⚙  SETTINGS"
 
 
 func _create_theme() -> Theme:

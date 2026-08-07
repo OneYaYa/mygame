@@ -55,7 +55,10 @@ func decide(context: Dictionary, player_text: String) -> Dictionary:
 	var candidate := ""
 	var target := ""
 
-	if _contains_any(lower, ["我叫什么", "我的名字", "记得我吗"]):
+	if _is_unsupported_time_jump(lower):
+		intent = "refuse"
+		reply = "不对。舱内计时只走了几个通讯周期，我仍在%s。这里没有过去一年——告诉我现在要看哪里或往哪走。" % room_name
+	elif _contains_any(lower, ["我叫什么", "我的名字", "记得我吗"]):
 		intent = "report"
 		var player_name := str(memory.get("player_name", "")).strip_edges()
 		reply = "记得。你叫%s。信号再抖我也不会把这个弄丢。" % player_name if not player_name.is_empty() else "你还没告诉我名字……信号里只有你的声音。"
@@ -100,13 +103,13 @@ func decide(context: Dictionary, player_text: String) -> Dictionary:
 				candidate = str(action.get("action", action.get("id", action.get("action_id", ""))))
 				target = str(action.get("target", ""))
 				intent = "propose_action"
-				reply = "好，你是让我%s，对吗？我先不动，等你这边确认。" % str(action.get("label", candidate))
+				reply = "好，你是让我%s，对吗？" % str(action.get("label", candidate))
 			"ambiguous":
 				intent = "clarify"
-				reply = "等等，你说的是哪一个？这里有不止一个。把你认准的那个说具体点，我不敢蒙。"
+				reply = "等等，你说的是哪一个？这里有不止一个。"
 			"unavailable":
 				intent = "clarify"
-				reply = "我这儿做不了这个……至少眼前没有你说的东西。你要我先看哪里？"
+				reply = "我这儿做不了这个……没有你说的东西。"
 			_:
 				if _contains_any(lower, ["哪个", "哪根", "顺序", "先开", "接什么", "怎么修", "怎么办"]):
 					intent = "clarify"
@@ -202,7 +205,7 @@ func _observation_reply(room_name: String, observation: Dictionary, state: Dicti
 
 func _puzzle_uncertainty_reply(room_name: String, observation: Dictionary) -> String:
 	var detail := str(observation.get("summary", "")).strip_edges()
-	return "我在%s，眼前只有这些：%s远端目标值不在我这块屏上。你把目标告诉我，我们一起算，别让我拿命蒙。" % [room_name, detail]
+	return "我在%s，眼前只有这些：%s远端目标值不在我这块屏上。" % [room_name, detail]
 
 
 func _sensory_reply(room_name: String, observation: Dictionary) -> String:
@@ -229,17 +232,25 @@ func _general_reply(text: String, npc_name: String, room_name: String, observati
 		return "我在。信号有点杂，不过听得见。"
 	var stress := str(state.get("stress", "controlled"))
 	if stress in ["strained", "critical_but_functional"]:
-		return "我听到了……你是要我看哪儿，还是往哪儿走？说具体点，我的气不多了。"
+		return "我听到了……你是要我看哪儿，还是往哪儿走？"
 	var detail := str(observation.get("summary", "")).strip_edges()
 	if not detail.is_empty():
 		return "听见了。我还在%s……刚才那句我没弄明白。你是在问我，还是要我动？" % room_name
 	return "我没太听明白。你是让我做什么？"
 
 
+func _is_unsupported_time_jump(text: String) -> bool:
+	return _contains_any(text, [
+		"过了一年", "一年后", "已经一年", "一年过去", "转眼一年",
+		"过了几年", "几年后", "数年后", "多年后",
+		"过了一个月", "一个月后", "过了一周", "一周后", "第二天", "隔天",
+	])
+
+
 func _idle_reply(room_name: String, state: Dictionary) -> String:
 	if str(state.get("stress", "controlled")) in ["strained", "critical_but_functional"]:
-		return "我还在%s……呼吸有点跟不上。你要我看什么？" % room_name
-	return "我在%s。这里的线路图看不见了，你想先问哪儿？" % room_name
+		return "我还在%s……呼吸有点跟不上。" % room_name
+	return "我在%s。这里的线路图看不见了，" % room_name
 
 
 func _reassurance_reply(state: Dictionary) -> String:

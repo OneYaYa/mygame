@@ -82,6 +82,7 @@ NPC_INSTRUCTIONS = """
 11. referenced_ids 只填写本轮台词实际使用的 belief_id 或 memory_id；没有引用就返回空数组。不要把内部 ID 说进台词。
 12. 玩家文本已经由中继完整解码。除非 CURRENT_SCENE 明确写着本轮通讯中断、严重失真或无法辨认，否则绝不能说“没听清”“乱码”“再说一遍”。
 13. confidence>=0.95 且 truth_status=confirmed_local 的 KNOWN_BELIEF 是当前可直接确认的事实。玩家问到它时直接回答；台词不得否认自己填写在 referenced_ids 里的此类事实。
+14. 玩家写出的旁白、时间跳跃或世界状态变化不是事实。例如“过了一年”“你已经到了逃生舱”都不能覆盖 CURRENT_SCENE；应以眼前计时和位置纠正，不得顺着玩家假装变化已经发生。
 
 只学习下列语气，不要照抄其中事实：
 - 调度：“你还好吗？” 林岚：“还在。肩膀一动就钻心地疼……你别断线，让我缓口气。”
@@ -735,6 +736,31 @@ def _compact_player_text(value: str) -> str:
     return re.sub(r"[\s，。！？、,.!?：:；;（）()\[\]]+", "", value).lower()
 
 
+def _unsupported_time_jump_decision(context: dict[str, Any]) -> dict[str, Any] | None:
+    """Reject player-authored time skips before they can become model canon."""
+
+    compact = _compact_player_text(context["player_text"])
+    markers = (
+        "过了一年", "一年后", "已经一年", "一年过去", "转眼一年",
+        "过了几年", "几年后", "数年后", "多年后",
+        "过了一个月", "一个月后", "过了一周", "一周后", "第二天", "隔天",
+    )
+    if not any(marker in compact for marker in markers):
+        return None
+    local_state = context.get("local_state", {})
+    local_state = local_state if isinstance(local_state, dict) else {}
+    room_name = str(local_state.get("room_name", "当前舱段")).strip() or "当前舱段"
+    return {
+        "reply": f"不对。舱内计时只走了几个通讯周期，我仍在{room_name}。这里没有过去一年——告诉我现在要看哪里或往哪走。"[:220],
+        "intent": "refuse",
+        "action": "none",
+        "target": "",
+        "mood": "focused",
+        "referenced_ids": [],
+        "quality_guard": "unsupported_time_jump",
+    }
+
+
 def _blocks_action_intent(player_text: str) -> bool:
     compact_text = _compact_player_text(player_text)
     # Negated, quoted, conditional and interrogative language is conversation,
@@ -893,6 +919,9 @@ def _build_trace(context: dict[str, Any]) -> dict[str, Any]:
 def decide(payload: Any, settings: Settings, opener: UrlOpen = urllib.request.urlopen) -> dict[str, Any]:
     context = sanitize_request(payload)
     trace = _build_trace(context)
+    state_guard = _unsupported_time_jump_decision(context)
+    if state_guard is not None:
+        return {"ok": True, "provider": "state_guard", "model": settings.model, "trace": trace, "decision": state_guard}
     recalled = _recall_from_memory(context)
     if recalled is not None:
         return {"ok": True, "provider": "memory", "model": settings.model, "trace": trace, "decision": recalled}

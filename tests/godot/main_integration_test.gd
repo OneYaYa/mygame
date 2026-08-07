@@ -35,10 +35,15 @@ func _ready() -> void:
 		_check(value is String, "visible observations must be strings")
 	var ui: Node = main.get_node("MissionConsoleUI")
 	var left_panel := ui.get("_left_panel") as Control
+	var right_panel := ui.get("_right_panel") as Control
 	var objective_text := ui.get("_objective_text") as RichTextLabel
 	var observation_text := ui.get("_npc_observation") as RichTextLabel
-	_check(left_panel != null and left_panel.custom_minimum_size.x >= 400.0, "facility panel should be wide enough to reduce wrapped scrolling")
-	_check(objective_text != null and objective_text.custom_minimum_size.y >= 140.0, "objective and system feed should have a taller reading area")
+	_check(left_panel != null and left_panel.custom_minimum_size.x >= 350.0, "facility panel should stay wide enough to reduce wrapped scrolling in the 1280 layout")
+	_check(right_panel != null and right_panel.custom_minimum_size.x <= 280.0, "1280 layout should compact the operator rail before it can overflow")
+	_check(right_panel != null and right_panel.get_global_rect().end.x <= ui.get_global_rect().end.x - 8.0, "operator rail should remain fully inside the visible console")
+	_check(objective_text != null and objective_text.custom_minimum_size.y >= 150.0, "objective, next step and system feed should have a taller reading area")
+	_check(objective_text != null and objective_text.text.contains("NEXT / 现在做什么") and objective_text.text.contains("检查遥测台"), "left panel should lead with an exact first step")
+	_check(objective_text != null and objective_text.text.contains("输入指令 → AI 提出动作 → 右侧授权执行"), "left panel should explain the command and authorization loop")
 	_check(observation_text != null and observation_text.custom_minimum_size.y >= 126.0, "local observation should have a taller reading area")
 	var facility_map := ui.get("_facility_map") as Control
 	var map_links := facility_map.get("_links") as Array
@@ -114,6 +119,13 @@ func _ready() -> void:
 	var retired_pronoun := String.chr(0x5979)
 	_check(candidate_hint != null and not candidate_hint.text.contains(retired_pronoun), "candidate guidance should use the male character pronoun")
 	_check(message_input != null and message_input.placeholder_text.contains("追问他"), "message placeholder should use the male character pronoun")
+	var keyword_cards := ui.call("get_keyword_card_texts") as Array
+	_check("遥测台" in keyword_cards and "中继控制室" in keyword_cards, "keyword cards should expose current special nouns")
+	message_input.text = "请检查"
+	message_input.caret_column = message_input.text.length()
+	ui.call("_insert_keyword", "遥测台")
+	_check(message_input.text == "请检查遥测台", "clicking a keyword card should insert it at the input caret without sending")
+	message_input.clear()
 	var portrait := ui.get("_portrait") as Control
 	_check(portrait != null and portrait.has_method("get_debug_visual_state"), "pixel scene should expose semantic visual state for tests")
 	var initial_visual := portrait.call("get_debug_visual_state") as Dictionary

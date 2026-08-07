@@ -52,6 +52,7 @@ func snapshot() -> Dictionary:
 	var room_id: String = str(_state.get("room_id", ""))
 	var room: Dictionary = _room(room_id)
 	var room_items: Dictionary = _state.get("room_items", {}) as Dictionary
+	var carried_item: String = str(_state.get("carried_item", ""))
 	var all_rooms: Array[Dictionary] = []
 	for room_variant: Variant in (_mission_data.get("rooms", []) as Array):
 		var configured_room: Dictionary = room_variant as Dictionary
@@ -97,9 +98,10 @@ func snapshot() -> Dictionary:
 		"links": all_links,
 		"reachable_rooms": _available_move_targets(),
 		"resources": (_state.get("resources", {}) as Dictionary).duplicate(true),
-		"carried_item": str(_state.get("carried_item", "")),
-		"carried_item_name": _item_name(str(_state.get("carried_item", ""))) if not str(_state.get("carried_item", "")).is_empty() else "无",
+		"carried_item": carried_item,
+		"carried_item_name": _item_name(carried_item) if not carried_item.is_empty() else "无",
 		"room_items": (room_items.get(room_id, []) as Array).duplicate(true),
+		"guidance": _guidance_view(flags, room_id, carried_item, room_items),
 		"action_ids": Array(EXPECTED_ACTION_IDS),
 		"flags": flags.duplicate(true),
 		"puzzles": (_state.get("puzzles", {}) as Dictionary).duplicate(true),
@@ -590,7 +592,7 @@ func _execute_action(action: Dictionary) -> Dictionary:
 		if not bool(_state.get("is_terminal", false)) and _resources_depleted():
 			event = _finish_failure("oxygen_depleted" if _resource("oxygen") <= 0 else "power_depleted")
 	if oxygen_before > 25 and _resource("oxygen") <= 25 and not bool(_state.get("is_terminal", false)):
-		event["npc_line"] = "调度，我的呼吸器开始抢气了。别断线——我还能走，但每一步都得算。"
+		event["npc_line"] = "调度，我的呼吸器开始抢气了。"
 	_apply_social_consequence(event)
 	event["turn"] = int(_state.get("turn", 0))
 	event["action"] = action.duplicate(true)
@@ -860,6 +862,132 @@ func _resource(resource_id: String) -> int:
 func _max_resource(resource_id: String) -> int:
 	var rules: Dictionary = _mission_data.get("rules", {}) as Dictionary
 	return int(rules.get("max_%s" % resource_id, 100))
+
+
+## Player-facing route guidance. It describes the next operation without exposing
+## randomized puzzle answers, and is derived from the same authoritative state as
+## valid_actions() so it cannot point at an impossible step.
+func _guidance_view(flags: Dictionary, room_id: String, carried_item: String, room_items: Dictionary) -> Dictionary:
+	if bool(_state.get("is_terminal", false)):
+		return _guide("complete", "本轮任务已经结束。可使用右上角 RESTART 生成新的事故变体。", "", [])
+
+	if not bool(flags.get("telemetry_inspected", false)):
+		if room_id == "relay_control":
+			return _guide(
+				"restore_telemetry",
+				"先取得调度端线索：让林岚检查中继控制室的遥测台。",
+				"检查遥测台",
+				["遥测台", "中继控制室"]
+			)
+		return _guide(
+			"return_for_telemetry",
+			"遥测数据还没恢复，后续无法判断接头和压力。先返回中继控制室检查遥测台。",
+			"回到中继控制室",
+			["中继控制室", "遥测台"]
+		)
+
+	if not bool(flags.get("grid_online", false)):
+		match room_id:
+			"relay_control":
+				if carried_item == "phase_fuse":
+					return _guide("carry_fuse", "保险芯已带上。先去中央交汇舱，再进入主电网舱。", "前往中央交汇舱", ["相位保险芯", "中央交汇舱", "主电网舱"])
+				if carried_item.is_empty():
+					return _guide("take_fuse", "完整修复路线需要相位保险芯；先拿起它，再前往中央交汇舱。", "拿起相位保险芯", ["相位保险芯", "中央交汇舱"])
+				return _guide("free_slot_for_fuse", "林岚一次只能带一件。先放下或使用当前物品，再拿相位保险芯。", "放下%s" % _item_name(carried_item), [_item_name(carried_item), "相位保险芯"])
+			"central_junction":
+				if carried_item in ["phase_fuse", "emergency_cell"]:
+					return _guide("enter_power_bay", "供电部件已经选好。现在进入主电网舱，先检查电缆面板。", "前往主电网舱", [_item_name(carried_item), "主电网舱", "电缆面板"])
+				if carried_item.is_empty():
+					return _guide(
+						"choose_power_route",
+						"两条供电路线：返回中继控制室拿相位保险芯可完整修复；或拿这里的应急旁路电芯快速恢复，但结局会付出代价。选好后去主电网舱。",
+						"拿起应急旁路电芯",
+						["相位保险芯", "应急旁路电芯", "中继控制室", "主电网舱"]
+					)
+				return _guide("free_slot_for_route", "唯一携带槽已被%s占用。先使用或放下它，再选择供电部件。" % _item_name(carried_item), "放下%s" % _item_name(carried_item), [_item_name(carried_item), "相位保险芯", "应急旁路电芯"])
+			"power_bay":
+				if not bool(flags.get("power_panel_inspected", false)):
+					return _guide("inspect_power", "先让林岚检查电缆面板，取得三只接头的现场读数。", "检查电缆面板", ["电缆面板", "蓝色套管接头", "红色陶瓷接头", "黄色编织接头"])
+				if carried_item == "emergency_cell":
+					return _guide("use_bypass", "旁路路线已就绪。接入应急旁路电芯会立即恢复电网，但这是不可逆的代价选择。", "接入应急旁路电芯", ["应急旁路电芯"])
+				if bool(flags.get("phase_cable_connected", false)):
+					if carried_item == "phase_fuse":
+						return _guide("install_fuse", "相位接头已经对齐。现在安装相位保险芯，恢复主电网。", "安装相位保险芯", ["相位保险芯"])
+					return _guide("retrieve_fuse", "接头已经对齐，但林岚没有携带保险芯。返回中继控制室取回它。", "返回中央交汇舱", ["中央交汇舱", "中继控制室", "相位保险芯"])
+				if carried_item == "phase_fuse":
+					return _guide(
+						"match_power_clues",
+						"点击右侧一条 PWR-03 遥测和一条现场接头读数固定到工作台；找出阻值相同的接头，再明确下令连接。",
+						"连接蓝色套管接头",
+						["PWR-03", "蓝色套管接头", "红色陶瓷接头", "黄色编织接头"]
+					)
+				return _guide("retrieve_power_part", "电缆面板已检查，但缺少供电部件。经中央交汇舱返回中继控制室拿保险芯，或在中央舱拿旁路电芯。", "返回中央交汇舱", ["中央交汇舱", "相位保险芯", "应急旁路电芯"])
+			_:
+				return _guide("power_first", "逃生舱首先需要恢复电网。返回中央交汇舱，然后前往主电网舱。", "返回中央交汇舱", ["中央交汇舱", "主电网舱"])
+
+	if not bool(flags.get("leak_sealed", false)):
+		var sealant_room: String = _item_room_id(room_items, "sealant_kit")
+		match room_id:
+			"power_bay":
+				if carried_item == "sealant_kit":
+					return _guide("carry_sealant", "密封剂已带上。经中央交汇舱前往冷却回廊。", "返回中央交汇舱", ["低温密封剂", "中央交汇舱", "冷却回廊"])
+				if carried_item.is_empty():
+					if sealant_room == "power_bay":
+						return _guide("take_sealant", "电网已恢复。拿起主电网舱里的低温密封剂，再去冷却回廊。", "拿起低温密封剂", ["低温密封剂", "冷却回廊"])
+					return _guide("find_dropped_sealant", "低温密封剂留在%s。先经中央交汇舱取回它，再前往冷却回廊。" % _room_name(sealant_room), "返回中央交汇舱", [_room_name(sealant_room), "低温密封剂", "冷却回廊"])
+				return _guide("free_slot_for_sealant", "下一阶段需要低温密封剂，它现在位于%s。先腾出唯一携带槽再去取回。" % _room_name(sealant_room), "放下%s" % _item_name(carried_item), [_item_name(carried_item), _room_name(sealant_room), "低温密封剂"])
+			"central_junction":
+				if carried_item == "sealant_kit":
+					return _guide("enter_coolant", "低温密封剂已带上。现在进入冷却回廊，先检查冷却阀组。", "前往冷却回廊", ["低温密封剂", "冷却回廊", "冷却阀组"])
+				if carried_item.is_empty() and sealant_room == "central_junction":
+					return _guide("take_dropped_sealant", "低温密封剂就在中央交汇舱。先拿起它，再进入冷却回廊。", "拿起低温密封剂", ["低温密封剂", "冷却回廊"])
+				if carried_item.is_empty():
+					return _guide("retrieve_sealant", "冷却裂口需要低温密封剂，它现在位于%s。先去取回，再进入冷却回廊。" % _room_name(sealant_room), "前往%s" % _room_name(sealant_room), [_room_name(sealant_room), "低温密封剂", "冷却回廊"])
+				return _guide("free_slot_for_sealant_route", "唯一携带槽已被%s占用。先放下或使用它，再去%s取低温密封剂。" % [_item_name(carried_item), _room_name(sealant_room)], "放下%s" % _item_name(carried_item), [_item_name(carried_item), _room_name(sealant_room), "低温密封剂"])
+			"coolant_gallery":
+				if not bool(flags.get("manifold_inspected", false)):
+					return _guide("inspect_coolant", "先检查冷却阀组，读取 I、B、P 三只调节器的现场增减量。", "检查冷却阀组", ["冷却阀组", "I 阀", "B 阀", "P 阀"])
+				if not bool(flags.get("valves_aligned", false)):
+					return _guide(
+						"match_coolant_clues",
+						"点击右侧 CLT-04 目标压力和现场阀组读数固定到工作台；从当前压力组合增减量，明确下令接入或复位 I/B/P 阀。",
+						"接入 I 阀",
+						["CLT-04", "I 阀", "B 阀", "P 阀"]
+					)
+				if carried_item == "sealant_kit":
+					return _guide("seal_leak", "压力已经稳定。使用低温密封剂封住裂口，解除第二道联锁。", "使用低温密封剂", ["低温密封剂"])
+				if carried_item.is_empty() and sealant_room == "coolant_gallery":
+					return _guide("take_local_sealant", "压力已经稳定，低温密封剂就在这里。先拿起它，再封住裂口。", "拿起低温密封剂", ["低温密封剂"])
+				return _guide("retrieve_missing_sealant", "压力已经稳定，但缺少密封剂。它现在位于%s，先经中央交汇舱取回。" % _room_name(sealant_room), "返回中央交汇舱", ["中央交汇舱", _room_name(sealant_room), "低温密封剂"])
+			_:
+				return _guide("coolant_next", "电网已经恢复。经中央交汇舱前往冷却回廊，稳定压力并密封裂口。", "前往中央交汇舱", ["中央交汇舱", "冷却回廊", "低温密封剂"])
+
+	if room_id == "escape_pod":
+		return _guide("launch", "两道联锁均已解除。启动逃生舱即可完成撤离。", "启动逃生舱", ["发射控制器", "逃生舱"])
+	if room_id == "central_junction":
+		return _guide("enter_escape", "两道联锁均已解除。现在前往逃生舱。", "前往逃生舱", ["逃生舱"])
+	return _guide("return_to_escape", "两道联锁均已解除。先返回中央交汇舱，再进入逃生舱。", "返回中央交汇舱", ["中央交汇舱", "逃生舱"])
+
+
+func _guide(stage: String, instruction: String, example_command: String, keywords: Array) -> Dictionary:
+	return {
+		"stage": stage,
+		"instruction": instruction,
+		"example_command": example_command,
+		"keywords": keywords.duplicate(),
+	}
+
+
+func _room_contains_item(room_items: Dictionary, room_id: String, item_id: String) -> bool:
+	return item_id in (room_items.get(room_id, []) as Array)
+
+
+func _item_room_id(room_items: Dictionary, item_id: String) -> String:
+	for room_id_variant: Variant in room_items:
+		var room_id: String = str(room_id_variant)
+		if _room_contains_item(room_items, room_id, item_id):
+			return room_id
+	return "power_bay"
 
 
 func _available_move_targets() -> Array[String]:

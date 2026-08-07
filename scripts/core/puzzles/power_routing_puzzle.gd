@@ -50,7 +50,7 @@ static func resolve_connection(target: String, scenario: Dictionary) -> Dictiona
 			"text": "%s触发短路，电力与氧气回路同时受损。相位连接没有建立。" % target_label(target),
 			"puzzle": "power",
 			"mistake": true,
-			"npc_line": "断开了……冲击把我撞到舱壁。给我两秒，我还在线；下一次别让我猜。",
+			"npc_line": "断开了……冲击把我撞到舱壁。给我两秒，我还在线",
 		},
 	}
 

@@ -66,8 +66,31 @@ func _test_initial_contract() -> void:
 	var intro := str(state.get("npc_intro", ""))
 	_expect(not intro.is_empty(), "snapshot includes a trapped-person introduction")
 	_expect(not intro.contains("明确指令") and not intro.contains("复述") and not intro.contains("授权"), "intro never speaks UI mechanics aloud")
-	_expect(intro.contains("别断线") and intro.contains("好吗"), "intro sounds like a frightened person seeking contact")
+	_expect(intro.contains("调度") and intro.contains("能听见吗") and intro.contains("被困"), "intro sounds like a frightened person seeking contact")
 	_expect((state.get("operator_telemetry", []) as Array).size() >= 2, "snapshot exposes operator-only telemetry")
+	var initial_guide := state.get("guidance", {}) as Dictionary
+	_expect(str(initial_guide.get("instruction", "")).contains("遥测台"), "initial guidance names the first useful objective")
+	_expect_equal(str(initial_guide.get("example_command", "")), "检查遥测台", "initial guidance gives an exact command example")
+	var early_junction: MissionSimulation = _new_simulation()
+	_execute(early_junction, "move", "central_junction")
+	var recovery_guide := early_junction.snapshot().get("guidance", {}) as Dictionary
+	_expect(str(recovery_guide.get("instruction", "")).contains("返回中继控制室") and str(recovery_guide.get("instruction", "")).contains("遥测台"), "central-junction guidance recovers players who skipped telemetry")
+	var route_choice: MissionSimulation = _new_simulation()
+	_execute(route_choice, "inspect", "telemetry_console")
+	_execute(route_choice, "move", "central_junction")
+	var route_guide := route_choice.snapshot().get("guidance", {}) as Dictionary
+	_expect(str(route_guide.get("instruction", "")).contains("相位保险芯") and str(route_guide.get("instruction", "")).contains("应急旁路电芯"), "central-junction guidance explains both power routes")
+	var dropped_sealant: MissionSimulation = _new_simulation()
+	var edge_state: Dictionary = dropped_sealant.get("_state") as Dictionary
+	(edge_state.get("flags", {}) as Dictionary)["telemetry_inspected"] = true
+	(edge_state.get("flags", {}) as Dictionary)["grid_online"] = true
+	edge_state["room_id"] = "power_bay"
+	var edge_items: Dictionary = edge_state.get("room_items", {}) as Dictionary
+	(edge_items.get("power_bay", []) as Array).erase("sealant_kit")
+	(edge_items.get("central_junction", []) as Array).append("sealant_kit")
+	var dropped_guide := dropped_sealant.snapshot().get("guidance", {}) as Dictionary
+	_expect(str(dropped_guide.get("instruction", "")).contains("中央交汇舱"), "guidance tracks a sealant kit dropped in another room")
+	_expect(not str(dropped_guide.get("example_command", "")).contains("放下phase_fuse"), "empty carry slot never produces a bogus drop command")
 
 
 func _test_context_compiler_protocol_and_trace() -> void:
@@ -143,6 +166,9 @@ func _test_local_language_and_ambiguity() -> void:
 	_expect_equal(str(explicit.get("action", "")), "connect", "explicit Chinese verb maps to connect")
 	_expect_equal(str(explicit.get("target", "")), "blue_cable", "explicit color maps to stable target id")
 	_expect(not str(explicit.get("reply", "")).contains("复述") and not str(explicit.get("reply", "")).contains("授权"), "action acknowledgement stays in character instead of reciting UI mechanics")
+	var false_time_jump: Dictionary = provider.decide(context, "过了一年")
+	_expect_equal(str(false_time_jump.get("action", "missing")), "", "local provider never turns a player-authored time skip into an action")
+	_expect(str(false_time_jump.get("reply", "")).contains("没有过去一年") and str(false_time_jump.get("reply", "")).contains("主电网舱"), "local provider rejects a false time jump and preserves the current room")
 	for negated_text: String in ["不要连接蓝色接头", "先别连接红色接头", "如果安全就连接黄色接头"]:
 		var negated: Dictionary = provider.decide(context, negated_text)
 		_expect_equal(str(negated.get("action", "missing")), "", "negated or conditional local command proposes no action")
